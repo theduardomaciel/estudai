@@ -33,7 +33,7 @@ export default function Profile(props: Props) {
                         </div>
                     </div>
                 </div>
-                <Button onClick={props.onClick}>
+                <Button classes={styles.openMenu} onClick={props.onClick}>
                     <Image src="/icons/menu.svg" height={24} width={24} />
                 </Button>
             </div>

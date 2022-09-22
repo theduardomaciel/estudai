@@ -132,3 +132,13 @@
     border-radius: 2.5rem;
     background-color: var(--light-gray);
 }
+
+.openMenu {
+    display: flex;
+}
+
+@media (min-width: 1024px) {
+    .openMenu {
+        display: none;
+    }
+}

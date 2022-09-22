@@ -8,7 +8,8 @@
     border-radius: 0.5rem;
     background-color: none;
 
-    min-width: fit-content;
+    /* min-width: fit-content; */
+    flex: 1;
 
     transition: 0.35s;
 }

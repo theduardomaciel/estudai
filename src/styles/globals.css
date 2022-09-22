@@ -10,6 +10,8 @@
 
     color-scheme: light dark;
 
+    --menu-width: 35%;
+
     --primary-01: #6337AB;
     --primary-02: #7642CB;
     --primary-03: #905AE7;

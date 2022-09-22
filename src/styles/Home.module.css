@@ -3,8 +3,25 @@
     flex-direction: column;
     align-items: flex-start;
 
+    position: initial;
+
     width: 100%;
-    padding: 3.5rem;
+    height: 100%;
+
+    transition: 1s;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    position: initial;
+    flex: 1;
+
+    width: 100%;
+
+    padding: 3.5rem 3.5rem 0px 3.5rem;
     gap: 2.5rem;
 }
 
@@ -14,6 +31,20 @@
     font-style: normal;
     font-weight: 700;
     font-size: 2.4rem;
+
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    gap: 1.5rem;
+
+    flex-wrap: wrap;
 }
 
 .actionButtons {
@@ -21,14 +52,15 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+
+    gap: 1.5rem;
 
     align-items: stretch;
 
     height: 100%;
 }
 
-.actionButtons div {
+.actionButtons .viewType {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -39,6 +71,18 @@
 
     background: var(--background-02);
     border-radius: 0.5rem;
+}
+
+.subheader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    gap: 1.5rem;
+
+    flex-wrap: wrap;
 }
 
 .menuHeader {
@@ -123,4 +167,72 @@
     justify-content: space-between;
 
     height: 100%;
+}
+
+.actionButtons .viewType {
+    display: none;
+}
+
+.actionButtons,
+.addButton {
+    min-width: 100%;
+}
+
+.tasks {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: visible;
+}
+
+.tasks .subContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    gap: 1.5rem;
+
+    padding-inline: 3.5rem;
+    padding-bottom: 3.5rem;
+}
+
+.tasks .subContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.tasks .subContainer {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+@media (min-width: 1024px) {
+
+    .container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* var(--menu-width); */
+        flex: 1;
+        width: calc(100vw - var(--menu-width));
+        margin-left: auto;
+    }
+
+    .container .title {
+        width: fit-content;
+    }
+
+    .actionButtons,
+    .addButton {
+        min-width: fit-content;
+    }
+
+    .actionButtons .viewType {
+        display: flex;
+    }
+
+    .tasks {
+        overflow-y: hidden;
+    }
 }
