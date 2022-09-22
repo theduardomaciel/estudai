@@ -1,0 +1,126 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    width: 100%;
+    padding: 3.5rem;
+    gap: 2.5rem;
+}
+
+.container .title {
+    color: var(--primary-02);
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.4rem;
+}
+
+.actionButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    align-items: stretch;
+
+    height: 100%;
+}
+
+.actionButtons div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2.5rem;
+
+    padding-inline: 2rem;
+    align-items: center;
+
+    background: var(--background-02);
+    border-radius: 0.5rem;
+}
+
+.menuHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.intervalCount {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-04);
+
+    text-align: center;
+}
+
+.intervalCount span {
+    font-size: 1.4rem;
+    color: var(--primary-03);
+}
+
+.eventHolder {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.eventHolder h6 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.2rem;
+
+    display: flex;
+    align-items: center;
+
+    color: var(--primary-04);
+}
+
+.card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem;
+
+    background: linear-gradient(90deg, var(--primary-01) 0%, var(--primary-03) 100%);
+    box-shadow: 0px 0.4rem 2.5rem 0.5rem rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+}
+
+.card h5 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+
+    margin-top: 0.5rem;
+    max-width: 70%;
+
+    color: var(--light);
+}
+
+.card p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--light);
+
+    min-width: fit-content;
+}
+
+.card .cardColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    height: 100%;
+}

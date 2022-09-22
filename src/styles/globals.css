@@ -1,0 +1,105 @@
+:root {
+    font-size: 62.5%;
+    /* 
+    100% ----- 16px
+    x  ------- 10px
+    
+    1rem = 10px
+    */
+    font-family: Inter, Raleway, Trirong, Karla, sans-serif;
+
+    color-scheme: light dark;
+
+    --primary-01: #6337AB;
+    --primary-02: #7642CB;
+    --primary-03: #905AE7;
+    --primary-04: #A57CE8;
+
+    --background-01: #F1ECF4;
+    --background-02: #E1D0FD;
+    --background-03: #E9DCFF;
+    --light: #FFFFFF;
+
+    --font-dark: #141414;
+    --font-dark-02: #29252C;
+    --font-light: #797979;
+    --light-gray: #D9D9D9;
+
+    --red-01: #FF0331;
+    --red-02: #FE2950;
+
+    background-color: var(--background-01);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* As caixas agora passam a ser contadas a partir da borda, e não do conteúdo, evitando problemas com o "padding" */
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+ul {
+    list-style-type: none;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: 'Inter';
+    font-size: 1.6rem;
+
+    overflow: overlay;
+    background-color: var(--background-01);
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+}
+
+.click {
+    cursor: pointer;
+}
+
+/* @media (prefers-color-scheme: dark) {
+    html {
+        color-scheme: dark;
+    }
+
+    body {
+        color: white;
+        background: black;
+    }
+} */
