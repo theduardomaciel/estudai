@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { NextPage } from 'next'
 
+import Head from 'next/head';
 import Image from 'next/image'
 
 // Icons
@@ -21,13 +22,16 @@ import SectionSelector from '../components/SectionSelector';
 import Calendar from '../components/Calendar';
 import Label from '../components/Label';
 import TopicsGroup from '../components/Topic/TopicsGroup';
+import Task from '../components/Task';
+import Sidebar from '../components/Sidebar';
 
 // Stylesheets
 import styles from '../styles/Home.module.css'
 
+
+// Divider
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 import { styled } from '@stitches/react';
-import Task from '../components/Task';
 
 const StyledSeparator = styled(SeparatorPrimitive.Root, {
     backgroundColor: " var(--primary-04)",
@@ -55,43 +59,43 @@ const Home: NextPage = () => {
 
     return (
         <main>
+            <Head>
+                <title>estudaí</title>
+            </Head>
+            <Sidebar />
             <div className={styles.container}>
-                <div className={styles.wrapper}>
-                    <Profile onClick={toggleMenu} />
-                    <div className={styles.header}>
-                        <h3 className={styles.title}>Tarefas pendentes</h3>
-                        <div className={styles.actionButtons}>
-                            <div className={styles.viewType}>
-                                <ListIcon style={{ cursor: "pointer" }} />
-                                <CardIcon style={{ cursor: "pointer" }} />
-                            </div>
-                            <Button
-                                classes={styles.addButton}
-                                style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
-                                icon={<Image src="/icons/add.svg" height={18} width={18} />}
-                                title='Adicionar tarefa'
-                            />
+                <Profile onClick={toggleMenu} />
+                <div className={styles.header}>
+                    <h3 className={styles.title}>Tarefas pendentes</h3>
+                    <div className={styles.actionButtons}>
+                        <div className={styles.viewType}>
+                            <ListIcon style={{ cursor: "pointer" }} />
+                            <CardIcon style={{ cursor: "pointer" }} />
                         </div>
-                    </div>
-                    <div className={styles.subheader}>
-                        <SectionSelector sections={["Bimestre atual", "Completado"]} />
-                        <Button style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }} icon={<FilterIcon width={22} height={22} />} title='Filtrar' />
+                        <Button
+                            classes={styles.addButton}
+                            style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
+                            icon={<Image src="/icons/add.svg" height={18} width={18} />}
+                            title='Adicionar tarefa'
+                        />
                     </div>
                 </div>
+                <div className={styles.subheader}>
+                    <SectionSelector sections={["Bimestre atual", "Completado"]} />
+                    <Button style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }} icon={<FilterIcon width={22} height={22} />} title='Filtrar' />
+                </div>
                 <div className={styles.tasks}>
-                    <div className={styles.subContainer}>
-                        <Task />
-                        <Task />
-                        <Task />
-                        <Task />
-                    </div>
+                    <Task />
+                    <Task />
+                    <Task />
+                    <Task />
                 </div>
             </div>
             <Menu isOpened={menuOpened}>
                 <div className={styles.menuHeader}>
                     <div className='row'>
                         <h3>Agenda</h3>
-                        <Button icon={<CloseIcon />} onClick={toggleMenu} style={{ padding: "0.25rem" }} />
+                        <Button classes={styles.closeButton} icon={<CloseIcon />} onClick={toggleMenu} style={{ padding: "0.25rem" }} />
                     </div>
                     <Calendar />
                     <div className={styles.eventHolder} >

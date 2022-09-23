@@ -7,13 +7,11 @@ interface Props {
 }
 
 export default function UsersPortraits(props: Props) {
-    return <ul className={styles.container}>
+    return <div className={styles.container}>
         {
             props.imagesUrls.map((url, index) =>
-                <li key={index}>
-                    <img className={styles.image} src={url} alt="imagem de usuário" />
-                </li>
+                <img key={index} className={styles.image} src={url} alt="imagem de usuário" />
             )
         }
-    </ul>
+    </div>
 }

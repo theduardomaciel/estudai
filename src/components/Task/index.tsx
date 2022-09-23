@@ -32,8 +32,10 @@ export default function Task(props: TaskProps) {
             </div>
         </div>
         <div className={`${styles.column} ${styles.two}`}>
-            <UsersPortraits imagesUrls={["https://picsum.photos/id/25/24/24", "https://picsum.photos/id/21/24/24", "https://picsum.photos/id/421/24/24", "https://picsum.photos/id/123/24/24"]} />
-            <p className={styles.usersAmount}>+ de 10 membros já concluíram a atividade</p>
+            <div className={styles.usersHolder}>
+                <UsersPortraits imagesUrls={["https://picsum.photos/id/25/24/24", "https://picsum.photos/id/21/24/24", "https://picsum.photos/id/421/24/24", "https://picsum.photos/id/123/24/24"]} />
+                <p className={styles.usersAmount}>+ de 10 membros já concluíram a atividade</p>
+            </div>
             <div className={styles.deadline}>
                 <ClockIcon />
                 entrega até 29/02

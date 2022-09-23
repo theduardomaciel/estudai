@@ -42,15 +42,15 @@ export default function Calendar(props: Props) {
 
     // Dias no mês atual
     const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
-    console.log("mês atual:", months[currentMonth])
+    //console.log("mês atual:", months[currentMonth])
 
     const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth)
-    console.log("primeiro dia do mês atual :", firstDayOfMonth)
+    //console.log("primeiro dia do mês atual :", firstDayOfMonth)
 
     const lastDateOfMonth = getLastDateOfMonth(currentYear, currentMonth);
 
     const lastDateOfLastMonth = getLastDateOfMonth(currentYear, currentMonth - 1)
-    console.log("último dia do mês passado: ", lastDateOfLastMonth)
+    //console.log("último dia do mês passado: ", lastDateOfLastMonth)
 
     let calendar = [
         "default", "default", "default", "default", "default", "default", "default",

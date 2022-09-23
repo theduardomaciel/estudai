@@ -10,7 +10,10 @@
 
     color-scheme: light dark;
 
-    --menu-width: 35%;
+    --menu-width: 40rem;
+
+    --sidebar-width: 10rem;
+    --sidebar-height: 10rem;
 
     --primary-01: #6337AB;
     --primary-02: #7642CB;
@@ -57,6 +60,10 @@ html {
 
 ul {
     list-style-type: none;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
 }
 
 html,
@@ -93,6 +100,40 @@ main {
 
 .click {
     cursor: pointer;
+}
+
+.filled {
+    /* font-variation-settings: 'FILL' 1;
+    transition: 3s; */
+    animation: fill 0.5s ease-in-out forwards;
+}
+
+.outlined {
+    animation: outline 0.5s ease-in-out forwards;
+}
+
+/* .pulse {
+    animation: pulse 3s infinite;
+} */
+
+@keyframes fill {
+    0% {
+        font-variation-settings: 'FILL' 0;
+    }
+
+    100% {
+        font-variation-settings: 'FILL' 1;
+    }
+}
+
+@keyframes outline {
+    0% {
+        font-variation-settings: 'FILL' 1;
+    }
+
+    100% {
+        font-variation-settings: 'FILL' 0;
+    }
 }
 
 /* @media (prefers-color-scheme: dark) {

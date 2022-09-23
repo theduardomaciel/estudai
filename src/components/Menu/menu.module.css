@@ -56,6 +56,17 @@
     color: var(--font-dark-02);
 }
 
+.content::-webkit-scrollbar {
+    display: none;
+}
+
+.content {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
 @media (min-width: 1024px) {
     .holder {
         display: flex;
@@ -65,7 +76,7 @@
 
         width: var(--menu-width);
 
-        z-index: 5;
+        z-index: 3;
 
         transform: translateY(0%);
 
@@ -77,6 +88,8 @@
         background: var(--background-01);
         border-top: 0px;
         border-left: 1px solid var(--light-gray);
+
+        transition: 0s;
     }
 
     .content {
