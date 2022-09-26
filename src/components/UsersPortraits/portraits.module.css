@@ -16,7 +16,7 @@
 }
 
 @media (min-width: 1024px) {
-    .container {
+    .container:not(.card) {
         justify-content: flex-end;
     }
 }

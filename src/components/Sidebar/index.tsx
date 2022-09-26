@@ -12,8 +12,6 @@ export default function Sidebar() {
 
     const sectionBar = useRef<HTMLDivElement | null>(null);
 
-    const lastBarPosition = sessionStorage.getItem('lastBarPosition') as string;
-
     const dashboardButton = useRef<HTMLSpanElement | null>(null);
     const groupsButton = useRef<HTMLSpanElement | null>(null);
     const settingsButton = useRef<HTMLSpanElement | null>(null);
@@ -47,6 +45,10 @@ export default function Sidebar() {
     }
 
     useEffect(() => {
+        if (sectionBar.current) {
+            const lastBarPosition = window !== undefined && window.sessionStorage.getItem('lastBarPosition') as string;
+            sectionBar.current.style.top = lastBarPosition as string;
+        }
         moveSectionBar(section ? section : "dashboard")
     }, [])
 
@@ -63,7 +65,6 @@ export default function Sidebar() {
             <span ref={settingsButton} className={`material-symbols-rounded ${section === "settings" ? "filled" : "outlined"}`}>settings</span>
         </Link>
         <span className={`material-symbols-rounded`}>exit_to_app</span>
-        <div ref={sectionBar} style={{ top: lastBarPosition ? lastBarPosition : 0 }} className={styles.sectionBar} />
-
+        <div ref={sectionBar} className={styles.sectionBar} />
     </nav>
 }

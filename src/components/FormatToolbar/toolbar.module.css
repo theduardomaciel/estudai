@@ -1,0 +1,9 @@
+.container {
+    display: flex;
+    padding: 0.35rem;
+    min-width: max-content;
+    border-radius: 0.6rem;
+    background-color: var(--light);
+    border: 1px solid var(--primary-03);
+    /* box-shadow: 0 0.25rem 1rem var(--font-dark); */
+}

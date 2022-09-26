@@ -1,0 +1,16 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0.8rem 2rem;
+
+    background: var(--primary-03);
+    border-radius: 0.6rem;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.6rem;
+
+    color: var(--light);
+}

@@ -22,8 +22,15 @@
     transition: 0.65s;
 }
 
-.button:hover {
-    filter: brightness(1.1);
+.button:not(.sendForm):hover {
+    filter: brightness(1.15);
+    outline: 2px solid var(--primary-04);
+}
+
+.button.selected {
+    background-color: var(--primary-02);
+    border: 1px solid var(--primary-04);
+    outline: 2px solid var(--primary-04);
 }
 
 .sendForm {
@@ -34,11 +41,23 @@
     box-shadow: 0px 0.4rem 1rem rgba(0, 0, 0, 0.25);
     border-radius: 0.5rem;
 
+    /* width: 100%; */
+    /* remover caso não queira que preencha o view inteiro */
+
     font-family: 'Inter';
     font-style: normal;
     font-weight: 700;
     font-size: 1.2rem;
 
+    transform: translateY(0%);
+
     color: var(--light);
     text-transform: uppercase;
+
+    transition: 0.25s;
+}
+
+.sendForm:hover {
+    box-shadow: 0px 0.4rem 1rem rgba(0, 0, 0, 0.35);
+    transform: translateY(-2.5%);
 }

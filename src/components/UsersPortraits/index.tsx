@@ -1,4 +1,5 @@
 import React from "react";
+import { useAppContext } from "../../context/appContext";
 
 import styles from "./portraits.module.css"
 
@@ -7,7 +8,9 @@ interface Props {
 }
 
 export default function UsersPortraits(props: Props) {
-    return <div className={styles.container}>
+    const { viewMode } = useAppContext();
+
+    return <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
         {
             props.imagesUrls.map((url, index) =>
                 <img key={index} className={styles.image} src={url} alt="imagem de usuário" />

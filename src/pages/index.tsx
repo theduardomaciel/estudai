@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState } from 'react';
 import type { NextPage } from 'next'
 
@@ -20,28 +21,20 @@ import Button from '../components/Button'
 import Menu from '../components/Menu';
 import SectionSelector from '../components/SectionSelector';
 import Calendar from '../components/Calendar';
-import Label from '../components/Label';
 import TopicsGroup from '../components/Topic/TopicsGroup';
-import Task from '../components/Task';
+import TaskView from '../components/Task';
 import Sidebar from '../components/Sidebar';
+import TextInput from '../components/Input';
+import { Separator } from '../components/Separator';
 
 // Stylesheets
 import styles from '../styles/Home.module.css'
 
-
-// Divider
-import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { styled } from '@stitches/react';
-
-const StyledSeparator = styled(SeparatorPrimitive.Root, {
-    backgroundColor: " var(--primary-04)",
-    borderRadius: 5,
-    '&[data-orientation=horizontal]': { height: 1, width: '100%' },
-    '&[data-orientation=vertical]': { height: '100%', width: 1 },
-});
+// App Context
+import { useAppContext } from '../context/appContext';
 
 const Home: NextPage = () => {
-    const [menuOpened, setMenuOpened] = useState(false)
+    const [menuOpened, setMenuOpened] = useState(false);
 
     function toggleMenu() {
         setMenuOpened(!menuOpened)
@@ -57,6 +50,11 @@ const Home: NextPage = () => {
         });
     }
 
+    const [focusMinutes, setFocusMinutes] = useState(60);
+    const focusPauses = focusMinutes ? Math.max(1, Math.floor(focusMinutes / 25)) : 0;
+
+    const { changeViewMode, viewMode } = useAppContext();
+
     return (
         <main>
             <Head>
@@ -65,30 +63,32 @@ const Home: NextPage = () => {
             <Sidebar />
             <div className={styles.container}>
                 <Profile onClick={toggleMenu} />
-                <div className={styles.header}>
-                    <h3 className={styles.title}>Tarefas pendentes</h3>
+                <div className={"header"}>
+                    <h3 className={"title"}>Tarefas pendentes</h3>
                     <div className={styles.actionButtons}>
                         <div className={styles.viewType}>
-                            <ListIcon style={{ cursor: "pointer" }} />
-                            <CardIcon style={{ cursor: "pointer" }} />
+                            <ListIcon className={`${styles.listIcon} ${viewMode === "list" && styles.active}`} onClick={() => changeViewMode("list")} style={{ cursor: "pointer" }} />
+                            <CardIcon className={`${styles.cardIcon} ${viewMode === "card" && styles.active}`} onClick={() => changeViewMode('card')} style={{ cursor: "pointer" }} />
                         </div>
-                        <Button
-                            classes={styles.addButton}
-                            style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
-                            icon={<Image src="/icons/add.svg" height={18} width={18} />}
-                            title='Adicionar tarefa'
-                        />
+                        <Link href={`/create`}>
+                            <Button
+                                classes={styles.addButton}
+                                style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
+                                icon={<Image src="/icons/add.svg" height={18} width={18} />}
+                                title='Adicionar tarefa'
+                            />
+                        </Link>
                     </div>
                 </div>
                 <div className={styles.subheader}>
                     <SectionSelector sections={["Bimestre atual", "Completado"]} />
                     <Button style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }} icon={<FilterIcon width={22} height={22} />} title='Filtrar' />
                 </div>
-                <div className={styles.tasks}>
-                    <Task />
-                    <Task />
-                    <Task />
-                    <Task />
+                <div className={`${styles.tasks} ${viewMode === "card" ? styles.cardView : ""}`}>
+                    <TaskView />
+                    <TaskView />
+                    <TaskView />
+                    <TaskView />
                 </div>
             </div>
             <Menu isOpened={menuOpened}>
@@ -116,11 +116,11 @@ const Home: NextPage = () => {
                     </div>
                 </div>
 
-                <div className={styles.menuHeader}>
-                    <div className='row'>
+                <div className={styles.focus}>
+                    <div className={`row`}>
                         <h3>Foco</h3>
                     </div>
-                    <Label label='Nome da tarefa' inputPlaceholder='Insira o nome da tarefa aqui' />
+                    <TextInput label='Nome da tarefa' placeholder='Insira o nome da tarefa aqui' />
                     <div className={'row'} style={{ gap: "1.5rem" }}>
                         <LeftChevron className="click" onClick={() => moveScroll(-25)} />
                         <TopicsGroup topics={[
@@ -147,12 +147,17 @@ const Home: NextPage = () => {
                         ]} />
                         <LeftChevron onClick={() => moveScroll(25)} className="click" style={{ transform: "rotate(180deg)" }} />
                     </div>
-                    <Label label='Tempo de atividade' inputPlaceholder='60' fixedUnit='minutos' />
-                    <div className="row">
+                    <TextInput
+                        onChange={(event) => setFocusMinutes(parseInt(event.target.value))}
+                        label='Tempo de atividade'
+                        placeholder='60'
+                        fixedUnit='minutos'
+                    />
+                    <div /* style={{ gap: "2.5rem" }} */ className="row">
                         <Button icon={<TimerIcon />} title={'Iniciar Foco'} buttontype="sendForm" />
-                        <StyledSeparator decorative orientation="vertical" />
+                        <Separator decorative orientation="vertical" />
                         <p className={styles.intervalCount}>Você terá <br />
-                            <span>3 intervalos</span></p>
+                            <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
                     </div>
                 </div>
             </Menu>

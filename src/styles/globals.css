@@ -89,6 +89,14 @@ main {
     align-items: center;
 }
 
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+textarea {
+    resize: none;
+}
+
 .row {
     display: flex;
     flex-direction: row;
@@ -100,6 +108,39 @@ main {
 
 .click {
     cursor: pointer;
+    user-select: none;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    gap: 1.5rem;
+
+    flex-wrap: wrap;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.title {
+    color: var(--primary-02);
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.4rem;
+
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .title {
+        width: fit-content;
+    }
 }
 
 .filled {
