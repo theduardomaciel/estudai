@@ -4,9 +4,6 @@ import Image from 'next/image'
 // Components
 import Button from '../Button'
 
-// Icons
-import LeftArrow from "/public/icons/left_arrow.svg"
-
 import styles from './calendar.module.css'
 
 interface Props {
@@ -86,9 +83,9 @@ export default function Calendar(props: Props) {
             {
                 props.hasMonthSelector &&
                 <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>
-                    <LeftArrow onClick={decreaseMonth} style={{ cursor: "pointer" }} />
+                    <span className={`material-symbols-rounded click`} onClick={decreaseMonth}>chevron_left</span>
                     <p>{months[currentMonth]}</p>
-                    <LeftArrow style={{ transform: "rotate(180deg)", cursor: "pointer" }} onClick={increaseMonth} />
+                    <span className={`material-symbols-rounded click`} onClick={increaseMonth}>chevron_right</span>
                 </div>
             }
             <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>

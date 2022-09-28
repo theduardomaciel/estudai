@@ -16,6 +16,8 @@
 
 .days {
     padding-inline: 1.125rem;
+    color: var(--primary-03);
+
 }
 
 .days p {
@@ -26,8 +28,6 @@
     display: flex;
     align-items: center;
     text-align: center;
-
-    color: var(--primary-03);
 }
 
 .calendar {

@@ -11,7 +11,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     iconSize?: string | number;
     iconPosition?: 'left' | 'right';
     iconColor?: string;
-    buttontype?: 'sendForm'
+    buttontype?: 'sendForm' | 'fillHover'
     iconFill?: number;
 }
 

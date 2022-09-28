@@ -108,6 +108,9 @@ textarea {
 
 .click {
     cursor: pointer;
+}
+
+.static {
     user-select: none;
 }
 

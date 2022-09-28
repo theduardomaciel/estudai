@@ -25,11 +25,11 @@
     transition: 0.45s;
 }
 
-.button:not(.sendForm):hover {
+.button:not(.sendForm):not(.fillHover):hover {
     outline: 2px solid var(--primary-04);
 }
 
-.button:not(.sendForm):active {
+.button:not(.sendForm):not(.fillHover):active {
     outline: 2px solid var(--light);
     transition: 0.1s;
 }
@@ -67,4 +67,16 @@
 .sendForm:hover {
     box-shadow: 0px 0.4rem 1rem rgba(0, 0, 0, 0.35);
     transform: translateY(-2.5%);
+}
+
+
+.fillHover {
+    border: 0px;
+}
+
+.fillHover:hover {
+    outline: transparent;
+    border: transparent;
+
+    background-color: var(--primary-02);
 }

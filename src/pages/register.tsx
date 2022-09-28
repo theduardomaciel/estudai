@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { NextPage } from 'next'
 
+import { motion, AnimatePresence } from "framer-motion"
+
 import Link from 'next/link';
 import Head from 'next/head';
 
@@ -16,62 +18,235 @@ import HoodIcon from "/public/icons/hood.svg";
 import Button from '../components/Button';
 import { Separator } from '../components/Separator';
 import Device from '../components/Landing/Device';
+import { GoogleButton } from './login';
+
+interface TimerProps {
+    current?: boolean;
+}
+
+const unselectedStyle = {
+    padding: "2rem 2.5rem",
+    gap: "2.5rem",
+    justifyContent: "flex-start",
+    backgroundColor: "var(--light)",
+    border: "2px solid var(--primary-03)",
+    color: "var(--primary-02)",
+    width: "100%",
+    borderRadius: "1rem",
+}
+
+const selectedStyle = {
+    padding: "2rem 2.5rem",
+    gap: "2.5rem",
+    justifyContent: "flex-start",
+    backgroundColor: "var(--primary-02)",
+    border: "2px solid var(--primary-03)",
+    color: "var(--light)",
+    width: "100%",
+    borderRadius: "1rem",
+}
+
+const separator = {
+    backgroundColor: "var(--primary-02)", width: "10rem", height: 2, cursor: "pointer"
+}
+
+const TimerIcon = (props: TimerProps) => <div className={`${styles.timer} `}>
+    <span className={`material-symbols-rounded filled`}>check_circle</span>
+</div>
+
+const variants = {
+    enter: (direction: number) => {
+        return {
+            x: direction > 0 ? 1000 : -1000,
+            opacity: 0
+        };
+    },
+    center: {
+        zIndex: 1,
+        x: 0,
+        opacity: 1
+    },
+    exit: (direction: number) => {
+        return {
+            zIndex: 0,
+            x: direction < 0 ? 1000 : -1000,
+            opacity: 0,
+        };
+    }
+};
+
+const transition = {
+    x: { type: "spring", stiffness: 300, damping: 30 },
+    opacity: { duration: 0.2 },
+}
+
+let actualSelected: null | number = null;
+const INTERVAL_TIME = 4;
 
 const Landing: NextPage = () => {
-    const [selected, setSelected] = useState<number | null>(null)
+    const [[section, direction], setSection] = useState([1, 0]);
+    const [selected, setSelected] = useState<null | number>(null);
 
-    const unselectedStyle = {
-        padding: "2rem 2.5rem",
-        gap: "2.5rem",
-        justifyContent: "flex-start",
-        backgroundColor: "var(--light)",
-        border: "2px solid var(--primary-03)",
-        color: "var(--primary-02)",
-        width: "100%",
-        borderRadius: "1rem",
+    const changeSection = (newSection: number) => {
+        setSelected(newSection)
+        actualSelected = newSection;
+        const timeout = setTimeout(() => {
+            console.log(newSection, actualSelected)
+            if (newSection == actualSelected) {
+                console.log("Passando de seção")
+                setSection([2, 1])
+                setSelected(null)
+            } else {
+                console.log("não anima")
+            }
+        }, INTERVAL_TIME * 1000);
+        return () => clearTimeout(timeout);
     }
 
-    const selectedStyle = {
-        padding: "2rem 2.5rem",
-        gap: "2.5rem",
-        justifyContent: "flex-start",
-        backgroundColor: "var(--primary-02)",
-        border: "2px solid var(--primary-03)",
-        color: "var(--light)",
-        width: "100%",
-        borderRadius: "1rem",
-    }
-
-    /* let progressValue = 0;
-    const progressEndValue = 100;
-    const speed = 50;
-
-    const runTimer = (timer: any) => {
-        console.log(timer)
-        if (timer) {
-            const progress = setInterval(() => {
-                progressValue++;
-                timer.style.background = `conic-gradient(
-                    #4d5bf9 ${progressValue * 3.6}deg,
-                    #cadcff ${progressValue * 3.6}deg
-            )`
-                console.log(timer.style.background)
-                if (progressValue === progressEndValue) {
-                    clearInterval(progress)
-                    progressValue = 0;
-                    console.log("Acabou.")
+    const Section1 = <motion.div
+        className={styles.section}
+        key={section}
+        custom={direction}
+        variants={variants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={transition}
+    >
+        <header style={{ alignItems: "center", "textAlign": "center" }}>
+            <h1>Organize seus estudos.</h1>
+            <p>Escolha em que tipo de curso você se encaixa para que possamos preparar a plataforma para você.</p>
+        </header>
+        <div className={styles.cardsHolder}>
+            <Button
+                icon={'backpack'}
+                iconFill={1}
+                classes={selected === 0 ? styles.current : ""}
+                iconSize={"4.2rem"}
+                style={selected === 0 ? selectedStyle : unselectedStyle}
+                onClick={(event) => changeSection(0)}
+            >
+                <div className={styles.buttonInfo} >
+                    <h6>Estou cursando o ensino fundamental</h6>
+                    <p>Preciso de ajuda para revisar assuntos base</p>
+                </div>
+                {
+                    selected === 0 &&
+                    <TimerIcon current={selected === 0 ? true : false} />
                 }
-            }, speed)
-        }
-    } */
+            </Button>
+            <Button
+                icon={'book'}
+                iconFill={1}
+                classes={selected === 1 ? styles.current : ""}
+                iconSize={"4.2rem"}
+                style={selected === 1 ? selectedStyle : unselectedStyle}
+                onClick={(event) => changeSection(1)}
+            >
+                <div className={styles.buttonInfo} >
+                    <h6>Estou cursando o ensino médio</h6>
+                    <p>Preciso de ajuda para organizar horários e ter sanidade mental </p>
+                </div>
+                {
+                    selected === 1 &&
+                    <TimerIcon current={selected === 1 ? true : false} />
+                }
+            </Button>
+            <Button
+                icon={<HoodIcon className={`${styles.icon} ${selected === 2 ? styles.selected : ""}`} />}
+                iconFill={1}
+                classes={selected === 2 ? styles.current : ""}
+                iconSize={"4.2rem"}
+                style={selected === 2 ? selectedStyle : unselectedStyle}
+                onClick={(event) => changeSection(2)}
+            >
+                <div className={styles.buttonInfo}>
+                    <h6>Estou cursando o ensino superior</h6>
+                    <p>Preciso de ajuda para organizar horários e ter sanidade mental sem recorrer às drogas e/ou outros métodos ilícitos</p>
+                </div>
+                {
+                    selected === 2 &&
+                    <TimerIcon current={selected === 2 ? true : false} />
+                }
+            </Button>
+            <p className={styles.outro}>Não possuo filiação a nenhuma instituição de ensino</p>
+        </div>
+        <div className={'row'} style={{ justifyContent: "center", gap: "1rem" }}>
+            <Separator style={separator} orientation='horizontal' />
+            <Separator style={separator} orientation='horizontal' />
+            <Separator style={separator} orientation='horizontal' />
+        </div>
+        <Link href={"/login"}>
+            <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
+        </Link>
+    </motion.div>
 
-    useEffect(() => {
+    const Section2 = <motion.div
+        className={styles.section}
+        key={section}
+        custom={direction}
+        variants={variants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={transition}
+    >
+        <header>
+            <h1>Criar sua conta</h1>
+            <p>Agora que já sabemos do que você precisa, entre com sua conta Google abaixo para cadastrar-se na plataforma.</p>
+        </header>
+        <GoogleButton onClick={authenticate} />
+        <div className={'row'} style={{ justifyContent: "center", gap: "1rem" }}>
+            <Separator style={separator} orientation='horizontal' />
+            <Separator style={separator} orientation='horizontal' />
+            <Separator style={separator} orientation='horizontal' />
+        </div>
+        <div onClick={() => setSection([1, -1])} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
+            <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
+            <p className={loginStyles.link}>Voltar para o início</p>
+        </div>
+    </motion.div>
 
-    }, [selected])
+    const Section3 = <motion.div
+        className={styles.section}
+        key={section}
+        custom={direction}
+        variants={variants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={transition}
+    >
+        <header>
+            <h1>Já estamos prontos!</h1>
+            <p>Aproveite todas as funcionalidades da plataforma e organize os seus estudos de uma vez por todas.
+                <br />
+                Nunca mais uma matéria ficará atrasada.</p>
+        </header>
+        <Link href={"/home"}>
+            <Button
+                style={{ padding: "1rem 1.5rem", width: "100%" }}
+                title='Entrar na plataforma'
+            />
+        </Link>
+        <Separator style={separator} orientation='horizontal' />
+        <div onClick={() => setSection([1, -1])} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
+            <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
+            <p className={loginStyles.link}>Voltar para o início</p>
+        </div>
+    </motion.div>
 
-    const TimerIcon = () => <div className={styles.timer}>
-        <span className={`material-symbols-rounded filled`}>check_circle</span>
+    const Error = <div>
+        <p style={{ color: "var(--primary-02)", textAlign: "center" }}>
+            Houve um erro interno. <br /> Por favor, reinicie a página.
+        </p>
     </div>
+
+    const sections = [Error, Section1, Section2, Section3]
+
+    function authenticate() {
+        setSection([3, 1])
+    }
 
     return (
         <main className={loginStyles.holder}>
@@ -80,69 +255,9 @@ const Landing: NextPage = () => {
             </Head>
             <div className={loginStyles.container} style={{ gap: "3.5rem" }}>
                 <Logo width={121.19} height={58.72} style={{ minHeight: 58 }} />
-                <header style={{ alignItems: "center", "textAlign": "center" }}>
-                    <h1>Organize seus estudos.</h1>
-                    <p>Escolha em que tipo de curso você se encaixa para que possamos preparar a plataforma para você.</p>
-                </header>
-                <div className={styles.cardsHolder}>
-                    <Button
-                        icon={'backpack'}
-                        iconFill={1}
-                        iconSize={"4.2rem"}
-                        style={selected === 0 ? selectedStyle : unselectedStyle}
-                        onClick={(event) => setSelected(0)}
-                    >
-                        <div className={styles.buttonInfo} >
-                            <h6>Estou cursando o ensino fundamental</h6>
-                            <p>Preciso de ajuda para revisar assuntos base</p>
-                        </div>
-                        {
-                            selected === 0 &&
-                            <TimerIcon />
-                        }
-                    </Button>
-                    <Button
-                        icon={'book'}
-                        iconFill={1}
-                        iconSize={"4.2rem"}
-                        style={selected === 1 ? selectedStyle : unselectedStyle}
-                        onClick={(event) => setSelected(1)}
-                    >
-                        <div className={styles.buttonInfo} >
-                            <h6>Estou cursando o ensino médio</h6>
-                            <p>Preciso de ajuda para organizar horários e ter sanidade mental </p>
-                        </div>
-                        {
-                            selected === 1 &&
-                            <TimerIcon />
-                        }
-                    </Button>
-                    <Button
-                        icon={<HoodIcon className={`${styles.icon} ${selected === 2 ? styles.selected : ""}`} />}
-                        iconFill={1}
-                        iconSize={"4.2rem"}
-                        style={selected === 2 ? selectedStyle : unselectedStyle}
-                        onClick={(event) => setSelected(2)}
-                    >
-                        <div className={styles.buttonInfo}>
-                            <h6>Estou cursando o ensino superior</h6>
-                            <p>Preciso de ajuda para organizar horários e ter sanidade mental sem recorrer às drogas e/ou outros métodos ilícitos</p>
-                        </div>
-                        {
-                            selected === 2 &&
-                            <TimerIcon />
-                        }
-                    </Button>
-                    <p className={styles.outro}>Não possuo filiação a nenhuma instituição de ensino</p>
-                </div>
-                <div className={'row'} style={{ justifyContent: "center", gap: "1rem" }}>
-                    <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
-                    <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
-                    <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
-                </div>
-                <Link href={"/login"}>
-                    <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
-                </Link>
+                <AnimatePresence initial={false} custom={direction} mode="wait">
+                    {sections[section]}
+                </AnimatePresence>
             </div>
             <Device additionalClass={loginStyles.device} />
         </main>

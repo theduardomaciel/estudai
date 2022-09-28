@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import styles from "./sidebar.module.css";
 
-const sections = ["dashboard", "groups", "settings"]
+const sections = ["home", "groups", "settings"]
 
 export default function Sidebar() {
     const router = useRouter();
@@ -49,12 +49,12 @@ export default function Sidebar() {
             const lastBarPosition = window !== undefined && window.sessionStorage.getItem('lastBarPosition') as string;
             sectionBar.current.style.top = lastBarPosition as string;
         }
-        moveSectionBar(section ? section : "dashboard")
+        moveSectionBar(section ? section : "home")
     }, [])
 
     return <nav className={`${styles.container} pulse`}>
-        <Link href={`/`}>
-            <span ref={dashboardButton} className={`material-symbols-rounded ${section === "" ? "filled" : "outlined"}`}>space_dashboard</span>
+        <Link href={`/home`}>
+            <span ref={dashboardButton} className={`material-symbols-rounded ${section === "home" ? "filled" : "outlined"}`}>space_dashboard</span>
         </Link>
 
         <Link href={"/groups"}>

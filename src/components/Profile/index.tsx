@@ -23,7 +23,7 @@ export default function Profile(props: Props) {
             </div>
             <div className={styles.row2}>
                 <div className={styles.pendingReminder}>
-                    <Image src="/icons/notification.svg" height={24} width={24} />
+                    <span className="material-symbols-rounded">notifications_active</span>
                     <p>Você tem <span> 6 atividades </span> pendentes.</p>
                     <div className={styles.progressHolder}>
                         <p>61%</p>
@@ -33,9 +33,7 @@ export default function Profile(props: Props) {
                         </div>
                     </div>
                 </div>
-                <Button classes={styles.openMenu} onClick={props.onClick}>
-                    <Image src="/icons/menu.svg" height={24} width={24} />
-                </Button>
+                <Button classes={styles.openMenu} onClick={props.onClick} icon={"menu"} />
             </div>
         </div>
     )

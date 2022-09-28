@@ -12,7 +12,7 @@ interface Props {
 export default function LandingHeader(props: Props) {
     return (
         <div className={`${styles.container}`}>
-            <Logo />
+            <Logo width={78.19} height={38} />
             <Note showOnlyInDesktop tag='ALPHA' description='Este projeto ainda está em andamento.' />
             <Link href={"/login"}>
                 <p className={styles.link}>Entrar</p>

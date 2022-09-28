@@ -4,7 +4,7 @@ import Head from 'next/head';
 import type { NextPage } from 'next'
 
 // Stylesheets
-import styles from '../styles/Groups.module.css'
+import styles from '../../styles/Groups.module.css'
 
 // Components
 import Sidebar from '../../components/Sidebar';
@@ -22,7 +22,7 @@ const Groups: NextPage = () => {
             <div className={styles.container}>
                 <Profile />
                 <div className={"header"}>
-                    <h3 className={"title"}>Tarefas pendentes</h3>
+                    <h3 className={"title"}>Meus Grupos</h3>
                     <Link href={`/create`}>
                         <Button
                             classes={styles.addButton}

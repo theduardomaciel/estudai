@@ -15,6 +15,28 @@ import Button from '../components/Button';
 import { Separator } from '../components/Separator';
 import Device from '../components/Landing/Device';
 
+interface Props {
+    onClick?: () => void;
+}
+
+export const GoogleButton = (props: Props) => <Button
+    icon={<GoogleLogo />}
+    onClick={props.onClick}
+    title={"Entrar com Google"}
+    style={{
+        padding: "1.2rem",
+        gap: "3rem",
+        backgroundColor: "var(--light)",
+        border: "1px solid var(--light-gray)",
+        color: "var(--font-light)",
+        fontFamily: "Inter",
+        width: "100%",
+        fontWeight: 500,
+        fontSize: "1.4rem",
+        boxShadow: "0px 4px 15px 2px rgba(0, 0, 0, 0.1)",
+        borderRadius: "0.5rem",
+    }} />
+
 const Login: NextPage = () => {
     return (
         <main className={styles.holder}>
@@ -27,22 +49,9 @@ const Login: NextPage = () => {
                     <h1>Log in</h1>
                     <p>Entre com sua conta para desfrutar de todas as funcionalidades da plataforma.</p>
                 </header>
-                <Button
-                    icon={<GoogleLogo />}
-                    title={"Entrar com Google"}
-                    style={{
-                        padding: "1.2rem",
-                        gap: "3rem",
-                        backgroundColor: "var(--light)",
-                        border: "1px solid var(--light-gray)",
-                        color: "var(--font-light)",
-                        fontFamily: "Inter",
-                        width: "100%",
-                        fontWeight: 500,
-                        fontSize: "1.4rem",
-                        boxShadow: "0px 4px 15px 2px rgba(0, 0, 0, 0.1)",
-                        borderRadius: "0.5rem",
-                    }} />
+                <Link href={`/home`}>
+                    <GoogleButton />
+                </Link>
                 <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                 <Link href={"/register"}>
                     <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>

@@ -1,13 +1,11 @@
 import { useRouter } from 'next/router';
 import styles from './navigator.module.css'
 
-// Icons
-import DirectoryArrow from "/public/icons/directory_arrow.svg"
-
 interface Props {
     onClick?: () => void;
     directory: string;
     parentDirectory?: string;
+    suppressBackButton?: boolean;
 }
 
 export default function Navigator(props: Props) {
@@ -15,7 +13,10 @@ export default function Navigator(props: Props) {
 
     return (
         <div className={`${styles.container} ${props.parentDirectory ? "parentDirectory" : ""}`}>
-            <DirectoryArrow onClick={() => router.back()} style={{ cursor: "pointer" }} />
+            {
+                !props.suppressBackButton &&
+                <span className={`material-symbols-rounded click`} onClick={() => router.back()}>subdirectory_arrow_left</span>
+            }
             {
                 props.parentDirectory ?
                     <h3><span>{props.parentDirectory} /</span>{props.directory}</h3>

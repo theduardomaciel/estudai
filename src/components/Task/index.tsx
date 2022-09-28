@@ -3,12 +3,6 @@ import UsersPortraits from "../UsersPortraits";
 
 import styles from "./task.module.css"
 
-// Ícones das Matérias
-import Biologia from "/public/icons/subjects/biologia.svg";
-
-// Ícones
-import ClockIcon from "/public/icons/clock.svg";
-
 // Contexto
 import { useAppContext } from "../../context/appContext";
 import Link from "next/link";
@@ -24,7 +18,7 @@ export default function TaskView(props: TaskProps) {
         <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
             <div className={styles.column}>
                 <div className={styles.icon}>
-                    <Biologia />
+                    <span className={`material-symbols-rounded`}>grass</span>
                 </div>
                 <div className={styles.description}>
                     <h4>Biologia</h4>
@@ -44,7 +38,7 @@ export default function TaskView(props: TaskProps) {
                     <p className={styles.usersAmount}>+ de 10 membros já concluíram a atividade</p>
                 </div>
                 <div className={styles.deadline}>
-                    <ClockIcon />
+                    <span className={`material-symbols-rounded`}>schedule</span>
                     entrega até 29/02
                 </div>
             </div>

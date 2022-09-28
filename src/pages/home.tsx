@@ -57,14 +57,14 @@ const Home: NextPage = () => {
                     <h3 className={"title"}>Tarefas pendentes</h3>
                     <div className={styles.actionButtons}>
                         <div className={styles.viewType}>
-                            <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
-                            <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
+                            <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded click ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
+                            <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded click ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
                         </div>
-                        <Link href={`/create`}>
+                        <Link href={`/task/create`}>
                             <Button
                                 classes={styles.addButton}
                                 style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
-                                icon={<Image src="/icons/add.svg" height={18} width={18} />}
+                                icon={"add"}
                                 title='Adicionar tarefa'
                             />
                         </Link>
@@ -102,7 +102,7 @@ const Home: NextPage = () => {
                             </div>
                             <div className={styles.cardColumn} style={{ alignItems: "flex-end" }}>
                                 <div className='row' style={{ gap: "0.25rem", width: "fit-content" }}>
-                                    <span className={`material-symbols-rounded`}>calendar_today</span>
+                                    <span style={{ fontSize: "1.2rem" }} className={`material-symbols-rounded`}>calendar_today</span>
                                     <p>29/02</p>
                                 </div>
                                 <p style={{ textAlign: "end" }}>90 questões</p>
@@ -117,7 +117,7 @@ const Home: NextPage = () => {
                     </div>
                     <TextInput label='Nome da tarefa' placeholder='Insira o nome da tarefa aqui' />
                     <div className={'row'} style={{ gap: "1.5rem" }}>
-                        <span className={`material-symbols-rounded click`} onClick={() => moveScroll(-25)} >left_chevron</span>
+                        <span className={`material-symbols-rounded click`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
                         <TopicsGroup topics={[
                             {
                                 icon: '📒',
@@ -140,7 +140,7 @@ const Home: NextPage = () => {
                                 title: 'Revisão'
                             }
                         ]} />
-                        <span className={`material-symbols-rounded click`} onClick={() => moveScroll(25)}>right_chevron</span>
+                        <span className={`material-symbols-rounded click`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
                     </div>
                     <TextInput
                         onChange={(event) => setFocusMinutes(parseInt(event.target.value))}

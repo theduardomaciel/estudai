@@ -4,8 +4,8 @@ import Head from 'next/head';
 import type { NextPage } from 'next'
 
 // Stylesheets
-import styles from '../styles/CreateTask.module.css';
-import inputStyles from "../components/Input/label.module.css";
+import styles from '../../styles/CreateTask.module.css';
+import inputStyles from "../../components/Input/label.module.css";
 
 // Components
 import Sidebar from '../../components/Sidebar';

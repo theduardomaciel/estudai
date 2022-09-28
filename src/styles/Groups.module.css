@@ -59,6 +59,8 @@
         width: calc(100vw - var(--sidebar-width));
         margin-left: auto;
 
+        padding: 3.5rem;
+
         transition: 0s;
     }
 

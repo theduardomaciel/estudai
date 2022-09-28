@@ -38,12 +38,14 @@ const Landing: NextPage = () => {
                 <div className={styles.title}>
                     <h1>Organize seus estudos.</h1>
                     <p>Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.</p>
-                    <Button
-                        icon={'arrow_right_alt'}
-                        title={"Criar uma conta"}
-                        iconPosition="right"
-                        style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem" }}
-                    />
+                    <Link href={"/register"}>
+                        <Button
+                            icon={'arrow_right_alt'}
+                            title={"Criar uma conta"}
+                            iconPosition="right"
+                            style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem" }}
+                        />
+                    </Link>
                 </div>
                 <Device />
             </div>

@@ -1,11 +1,8 @@
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { useEffect } from 'react';
+import { MouseEvent, useEffect } from 'react';
 import { useRef } from 'react';
 
 import styles from "./label.module.css"
-
-// Icons
-import LeftChevron from "/public/icons/left_chevron.svg";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
     label?: string;
@@ -42,7 +39,7 @@ const Input = (props: Props) => {
         }, 1000 * 0.1);
     }
 
-    function increaseCount(event: MouseEvent) {
+    function increaseCount(event: MouseEvent<HTMLSpanElement>) {
         const button = event.target as HTMLDivElement;
         animateArrow(button)
 
@@ -51,7 +48,7 @@ const Input = (props: Props) => {
         }
     }
 
-    function decreaseCount(event: MouseEvent) {
+    function decreaseCount(event: MouseEvent<HTMLSpanElement>) {
         const button = event.target as HTMLDivElement;
         animateArrow(button)
 
@@ -70,8 +67,8 @@ const Input = (props: Props) => {
                 <div style={{ display: "flex", flexDirection: "row", width: "100%", height: props.height }}>
                     {
                         props.numberControl && <div className={`${styles.increaseControl}`}>
-                            <LeftChevron onClick={increaseCount} className={styles.increaseArrow} />
-                            <LeftChevron onClick={decreaseCount} className={styles.decreaseArrow} />
+                            <span className={`click material-symbols-rounded ${styles.increaseArrow}`} onClick={increaseCount}>expand_less</span>
+                            <span className={`click material-symbols-rounded ${styles.decreaseArrow}`} onClick={decreaseCount}>expand_more</span>
                         </div>
                     }
                     <input
