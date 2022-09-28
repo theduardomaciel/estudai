@@ -159,14 +159,12 @@
     gap: 1.5rem;
 }
 
-.listIcon path,
-.cardIcon path {
-    fill: var(--primary-04);
+.icon {
+    color: var(--primary-04);
 }
 
-.listIcon.active path,
-.cardIcon.active path {
-    fill: var(--primary-01);
+.icon.active {
+    color: var(--primary-01);
 }
 
 .tasks.cardView {

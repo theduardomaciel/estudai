@@ -1,0 +1,88 @@
+.buttonInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+
+    gap: 0.5rem;
+}
+
+.buttonInfo h6 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+.buttonInfo p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.cardsHolder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 2rem;
+}
+
+.cardsHolder .outro {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.2rem;
+
+    cursor: pointer;
+    color: var(--primary-02);
+    transition: 0.35s;
+}
+
+.cardsHolder .outro:hover {
+    font-weight: 800;
+}
+
+.icon path {
+    fill: var(--primary-02);
+}
+
+.icon.selected path {
+    fill: var(--light);
+}
+
+.timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+
+    padding: 0.075rem;
+
+    background-color: var(--primary-02);
+
+    border-radius: 50%;
+}
+
+.timer span {
+    z-index: 1;
+}
+
+.timer::after {
+    content: "";
+    position: absolute;
+
+    z-index: 0;
+
+    height: 100%;
+    width: 100%;
+
+    background-color: transparent;
+
+    border-radius: 50%;
+}

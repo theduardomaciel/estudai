@@ -6,6 +6,8 @@
     padding: 0.8rem;
     gap: 1rem;
 
+    position: relative;
+
     background: var(--primary-03);
 
     border: 1px solid var(--primary-04);
@@ -17,14 +19,19 @@
     font-size: 1.4rem;
 
     cursor: pointer;
+    user-select: none;
 
     color: var(--light);
-    transition: 0.65s;
+    transition: 0.45s;
 }
 
 .button:not(.sendForm):hover {
-    filter: brightness(1.15);
     outline: 2px solid var(--primary-04);
+}
+
+.button:not(.sendForm):active {
+    outline: 2px solid var(--light);
+    transition: 0.1s;
 }
 
 .button.selected {

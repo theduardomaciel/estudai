@@ -7,13 +7,13 @@ import type { NextPage } from 'next'
 import styles from '../styles/Task.module.css';
 
 // Components
-import Sidebar from '../components/Sidebar';
-import Navigator from '../components/Navigator';
+import Sidebar from '../../components/Sidebar';
+import Navigator from '../../components/Navigator';
 
-import Button from '../components/Button';
-import UsersPortraits from '../components/UsersPortraits';
-import { Separator } from '../components/Separator';
-import SectionSelector from '../components/SectionSelector';
+import Button from '../../components/Button';
+import UsersPortraits from '../../components/UsersPortraits';
+import { Separator } from '../../components/Separator';
+import SectionSelector from '../../components/SectionSelector';
 
 const Task: NextPage = () => {
     return (

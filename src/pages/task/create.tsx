@@ -8,20 +8,20 @@ import styles from '../styles/CreateTask.module.css';
 import inputStyles from "../components/Input/label.module.css";
 
 // Components
-import Sidebar from '../components/Sidebar';
-import Navigator from '../components/Navigator';
-import Section from '../components/Section';
+import Sidebar from '../../components/Sidebar';
+import Navigator from '../../components/Navigator';
+import Section from '../../components/Section';
 
 // Select Components
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../components/Input/Select';
+import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../components/Input/Select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import Input, { InputLabel } from '../components/Input';
-import Calendar from '../components/Calendar';
-import Menu from '../components/Menu';
-import FormatToolbar from '../components/FormatToolbar';
-import Button from '../components/Button';
-import UsersPortraits from '../components/UsersPortraits';
+import Input, { InputLabel } from '../../components/Input';
+import Calendar from '../../components/Calendar';
+import Menu from '../../components/Menu';
+import FormatToolbar from '../../components/FormatToolbar';
+import Button from '../../components/Button';
+import UsersPortraits from '../../components/UsersPortraits';
 
 const CreateTask: NextPage = () => {
     const ActivityType = () => <div className={styles.selectHolder}>

@@ -11,10 +11,10 @@ function debounce(func: Function, time = 100) {
 }
 
 export const useScreenSize = () => {
-    const [isScreenWide, setIsScreenWide] = useState(window.innerWidth >= WIDE_SIZE ? true : false);
+    const [isScreenWide, setIsScreenWide] = useState(false);
     const [screenSize, setScreenSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: 0,
+        height: 0
     });
 
     const width = screenSize.width;
@@ -37,11 +37,20 @@ export const useScreenSize = () => {
         });
     }
 
-    const debouncedFunction = debounce(handleScreenResize, 100)
+    /* const debouncedFunction = debounce(handleScreenResize, 100)
 
     useEffect(() => {
         window.addEventListener('resize', debouncedFunction);
         return () => window.removeEventListener('resize', debouncedFunction);
+    }) */
+
+    useEffect(() => {
+        handleScreenResize()
+    }, [])
+
+    useEffect(() => {
+        window.addEventListener('resize', handleScreenResize);
+        return () => window.removeEventListener('resize', handleScreenResize);
     })
 
     return { isScreenWide, width, height };

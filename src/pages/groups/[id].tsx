@@ -7,10 +7,10 @@ import type { NextPage } from 'next'
 import styles from '../styles/Groups.module.css'
 
 // Components
-import Sidebar from '../components/Sidebar';
-import Profile from '../components/Profile';
+import Sidebar from '../../components/Sidebar';
+import Profile from '../../components/Profile';
 import Link from 'next/link';
-import Button from '../components/Button';
+import Button from '../../components/Button';
 
 const Groups: NextPage = () => {
     return (

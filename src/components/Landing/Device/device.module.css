@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--font-dark);
+    padding: 1.55rem;
+    border-radius: 2.5rem;
+
+    z-index: 5;
+}
+
+.container .image {
+    overflow: hidden;
+    border-radius: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 85%;
+    }
+}

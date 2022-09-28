@@ -1,0 +1,119 @@
+.holder {
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+    width: 100%;
+
+    overflow: hidden;
+    position: relative;
+
+    background-color: var(--light);
+    /*  background: linear-gradient(180deg, var(--light) 0%, var(--light) 56.25%, var(--background-02) 100%); */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    padding: 5rem 3.5rem;
+    /* gap: 3.5rem; */
+    gap: 5rem;
+    height: fit-content;
+
+    overflow-y: scroll;
+
+    max-width: 50rem;
+    background-color: var(--light);
+
+    width: 100%;
+}
+
+.container::-webkit-scrollbar {
+    display: none;
+}
+
+.container {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.container header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    gap: 2.5rem;
+}
+
+.container header h1 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 3.2rem;
+
+    color: var(--font-dark);
+}
+
+.container header p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.6rem;
+
+    color: var(--font-light);
+}
+
+.link {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    color: var(--primary-02);
+}
+
+.link span {
+    margin-inline: 0.5rem;
+}
+
+#device {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .holder {
+        align-items: flex-start;
+        background-color: var(--background-02);
+    }
+
+    #device {
+        display: flex;
+
+        position: absolute;
+        bottom: -10%;
+        right: -25rem;
+
+        max-width: 70%;
+    }
+
+    .container {
+        padding: 3.5rem 6.5rem;
+        width: 45%;
+        max-width: 75%;
+        height: 100%;
+
+        justify-content: center;
+
+    }
+}
