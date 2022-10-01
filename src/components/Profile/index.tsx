@@ -1,11 +1,13 @@
 import Image from 'next/image'
 import { useState } from 'react'
+import { User } from '../../types/User';
 import Button from '../Button'
 
 import styles from './profile.module.css'
 
 interface Props {
     onClick?: () => void;
+    user?: User;
 }
 
 export default function Profile(props: Props) {
@@ -13,12 +15,12 @@ export default function Profile(props: Props) {
         <div className={styles.holder}>
             <div className={styles.profile}>
                 {/* <div > */}
-                <img className={styles.image} src={"https://github.com/theduardomaciel.png"} />
+                <img className={styles.image} src={props.user?.image_url} />
                 {/* </div> */}
 
                 <div className={styles.text}>
                     <p>Bom dia,</p>
-                    <p>Fulano da Silva</p>
+                    <p>{`${props.user?.firstName} ${props.user?.lastName}`}</p>
                 </div>
             </div>
             <div className={styles.row2}>

@@ -36,12 +36,13 @@ export function AuthProvider({ children }: ContextProviderProps) {
             const outdatedUser = JSON.parse(outdatedUserString)
             setUser(outdatedUser) // enquanto os novos dados carregam, exibimos os antigos
 
-            const updatedUser = await api.get(`/users/${outdatedUser.id}`)
-            setUser(updatedUser.data)
+            const response = await api.get(`/users/${outdatedUser.id}`)
+            setUser(response.data)
 
-            setCookie(undefined, 'nextauth.user', JSON.stringify(user), {
+            setCookie(undefined, 'nextauth.user', JSON.stringify(response.data), {
                 maxAge: 60 * 60 * 24 * 30, // 1 month (60 seconds * 60 minutes * 24 hours * 30 days)
             })
+            console.log(user)
         }
         getUser()
     }, [])
@@ -71,7 +72,7 @@ export function AuthProvider({ children }: ContextProviderProps) {
                 maxAge: 60 * 60 * 24 // 1 day (60 seconds * 60 minutes * 24 hours)
             })
 
-            setCookie(undefined, 'nextauth.user', JSON.stringify(user), {
+            setCookie(undefined, 'nextauth.user', JSON.stringify(responseUser), {
                 maxAge: 60 * 60 * 24 * 30, // 1 month (60 seconds * 60 minutes * 24 hours * 30 days)
             })
 

@@ -33,6 +33,7 @@ export const GoogleButton = (props: Props) => <Button
     disabled={props.loading}
     isLoading={props.loading}
     title={"Entrar com Google"}
+    iconColor={'var(--primary-02)'}
     style={{
         padding: "1.2rem",
         gap: "3rem",

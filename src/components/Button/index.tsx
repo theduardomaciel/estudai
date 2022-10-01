@@ -25,8 +25,8 @@ function Button(props: ButtonProps) {
         {
             props.isLoading ?
                 <div className={styles.loader}>
-                    <div style={{ borderColor: `${props.iconColor} transparent transparent transparent` }} />
-                    {/* <div /> */}
+                    <div style={{ borderColor: `${props.iconColor ? props.iconColor : "var(--light)"} transparent transparent transparent` }} />
+                    <div style={{ borderColor: `${props.iconColor ? props.iconColor : "var(--light)"} transparent transparent transparent` }} />
                 </div>
                 :
                 <>

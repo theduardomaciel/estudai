@@ -73,7 +73,7 @@ export default function DashboardModal({ isVisible, setIsVisible, actionFunction
                                         title={buttonText}
                                         isLoading={isLoading}
                                         icon={Icon}
-                                        iconColor={color}
+                                        iconColor={'var(--light)'}
                                         style={{
                                             background: color,
                                             padding: `0.7rem 1.5rem`

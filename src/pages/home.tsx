@@ -24,10 +24,11 @@ import styles from '../styles/Home.module.css'
 // App Context
 import { useAppContext } from '../contexts/AppContext';
 import { getAPIClient } from '../lib/api';
+import { User } from '../types/User';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    /* const apiClient = getAPIClient(context); */
-    const { ['nextauth.token']: token } = parseCookies(context)
+    const apiClient = getAPIClient(context);
+    const { ['nextauth.token']: token, ['nextauth.user']: outdatedUserString } = parseCookies(context)
 
     if (!token) {
         return {
@@ -38,16 +39,27 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 
-    /* const user = apiClient.get(`/users/${1}`) */
+    const outdatedUser = JSON.parse(outdatedUserString);
+    console.log(outdatedUser, outdatedUserString)
+
+    let user: User | null = null;
+    if (outdatedUser) {
+        const response = await apiClient.get(`/users/${outdatedUser.id}`)
+        console.log(response)
+        if (response.status === 200) {
+            user = response.data;
+        }
+    }
 
     return {
         props: {
-
+            user
         }
     }
 }
 
-const Home: NextPage = () => {
+const Home: NextPage = (props: any) => {
+    console.log(props)
     const [menuOpened, setMenuOpened] = useState(false);
 
     function toggleMenu() {
@@ -76,7 +88,7 @@ const Home: NextPage = () => {
             </Head>
             <Sidebar />
             <div className={styles.container}>
-                <Profile onClick={toggleMenu} />
+                <Profile onClick={toggleMenu} user={props.user} />
                 <div className={"header"}>
                     <h3 className={"title"}>Tarefas pendentes</h3>
                     <div className={styles.actionButtons}>
