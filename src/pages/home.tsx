@@ -1,9 +1,10 @@
-import Link from 'next/link';
+import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
+
 import { useState } from 'react';
-import type { NextPage } from 'next'
+import { parseCookies } from 'nookies';
 
 import Head from 'next/head';
-import Image from 'next/image'
+import Link from 'next/link';
 
 // Componentes
 import Profile from '../components/Profile'
@@ -21,7 +22,30 @@ import { Separator } from '../components/Separator';
 import styles from '../styles/Home.module.css'
 
 // App Context
-import { useAppContext } from '../context/appContext';
+import { useAppContext } from '../contexts/AppContext';
+import { getAPIClient } from '../lib/api';
+
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+    /* const apiClient = getAPIClient(context); */
+    const { ['nextauth.token']: token } = parseCookies(context)
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false
+            }
+        }
+    }
+
+    /* const user = apiClient.get(`/users/${1}`) */
+
+    return {
+        props: {
+
+        }
+    }
+}
 
 const Home: NextPage = () => {
     const [menuOpened, setMenuOpened] = useState(false);

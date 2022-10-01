@@ -28,14 +28,14 @@ export default function SettingCard(props: Props) {
                     icon={props.buttonIcon ? props.buttonIcon : 'save'}
                     buttontype={"fillHover"}
                     iconFill={1}
-                    style={{
-                        textTransform: "uppercase",
-                        background: "transparent",
-                        padding: "0.5rem 1rem",
-                        gap: "1.5rem",
-                        borderRadius: "0.5rem",
-                        border: "0.5px solid var(--light)"
-                    }}
+                /* style={{
+                    textTransform: "uppercase",
+                    background: "transparent",
+                    padding: "0.5rem 1rem",
+                    gap: "1.5rem",
+                    borderRadius: "0.5rem",
+                    border: "0.5px solid var(--light)"
+                }} */
                 />
             </div>
         </div>

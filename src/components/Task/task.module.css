@@ -35,7 +35,8 @@
     padding: 3.5rem 2.5rem;
     gap: 2.5rem;
 
-    width: 37.5rem;
+    /* width: 37.5rem; */
+    width: 100%;
 
     background: var(--light);
     border: 1px solid var(--primary-03);

@@ -173,7 +173,8 @@
 
     gap: 1rem;
     margin: 0 auto;
-    grid-template-columns: repeat(auto-fit, minmax(37.5rem, 1fr));
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
 
     row-gap: 3.5rem;
 }

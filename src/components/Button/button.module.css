@@ -25,11 +25,15 @@
     transition: 0.45s;
 }
 
-.button:not(.sendForm):not(.fillHover):hover {
+.button.loading {
+    cursor: not-allowed;
+}
+
+.button:not(.sendForm):not(.fillHover):not(.loading):hover {
     outline: 2px solid var(--primary-04);
 }
 
-.button:not(.sendForm):not(.fillHover):active {
+.button:not(.sendForm):not(.fillHover):not(.loading):active {
     outline: 2px solid var(--light);
     transition: 0.1s;
 }
@@ -64,19 +68,55 @@
     transition: 0.25s;
 }
 
-.sendForm:hover {
+.sendForm:not(.loading):hover {
     box-shadow: 0px 0.4rem 1rem rgba(0, 0, 0, 0.35);
     transform: translateY(-2.5%);
 }
 
 
 .fillHover {
-    border: 0px;
+    outline: 1px solid var(--light);
+    text-transform: uppercase;
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    gap: 1.5rem;
+    border-radius: 0.5rem;
 }
 
-.fillHover:hover {
-    outline: transparent;
-    border: transparent;
-
+.fillHover:not(.loading):hover {
+    outline: 0px;
     background-color: var(--primary-02);
+}
+
+.loader {
+    display: flex;
+    align-self: center;
+    width: 3rem;
+    height: 3rem;
+}
+
+.loader div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+
+    border: 0.25rem solid var(--primary-02);
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+/* .loader div:nth-child(2) {
+    animation-delay: 0.1s;
+} */
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

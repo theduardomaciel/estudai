@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next'
 
 import { motion, AnimatePresence } from "framer-motion"
@@ -7,18 +7,21 @@ import Link from 'next/link';
 import Head from 'next/head';
 
 // Stylesheets
-import loginStyles from '../styles/Login.module.css';
-import styles from "../styles/Register.module.css";
+import loginStyles from '../../styles/Login.module.css';
+import styles from "../../styles/Register.module.css";
 
 // Icons
 import Logo from "/public/logo.svg";
 import HoodIcon from "/public/icons/hood.svg";
 
 // Components
-import Button from '../components/Button';
-import { Separator } from '../components/Separator';
-import Device from '../components/Landing/Device';
+import Button from '../../components/Button';
+import { Separator } from '../../components/Separator';
+import Device from '../../components/Landing/Device';
 import { GoogleButton } from './login';
+import { useGoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../../contexts/AuthContext';
+import { useRouter } from 'next/router';
 
 interface TimerProps {
     current?: boolean;
@@ -47,7 +50,7 @@ const selectedStyle = {
 }
 
 const separator = {
-    backgroundColor: "var(--primary-02)", width: "10rem", height: 2, cursor: "pointer"
+    backgroundColor: "var(--primary-02)", width: "35%", height: 1
 }
 
 const TimerIcon = (props: TimerProps) => <div className={`${styles.timer} `}>
@@ -80,27 +83,69 @@ const transition = {
     opacity: { duration: 0.2 },
 }
 
-let actualSelected: null | number = null;
 const INTERVAL_TIME = 4;
 
-const Landing: NextPage = () => {
-    const [[section, direction], setSection] = useState([1, 0]);
+const Register: NextPage = () => {
+    const router = useRouter();
+    const { registered } = router.query;
+
+    const { signIn } = useAuth();
+    const [isLoading, setLoading] = useState(false);
+
+    const [[section, direction], setSection] = useState(registered ? [3, 1] : [1, 0]);
     const [selected, setSelected] = useState<null | number>(null);
 
+    const progressBar = useRef<HTMLDivElement>(null);
+
+    const [currentTimeout, setCurrentTimeout] = useState<ReturnType<typeof setTimeout> | null>(null)
     const changeSection = (newSection: number) => {
-        setSelected(newSection)
-        actualSelected = newSection;
-        const timeout = setTimeout(() => {
-            console.log(newSection, actualSelected)
-            if (newSection == actualSelected) {
-                console.log("Passando de seção")
-                setSection([2, 1])
+        // Removemos a animação da barra de progresso
+        if (progressBar.current) {
+            console.log("Reiniciando a animação")
+            progressBar.current.classList.remove(styles.animate)
+        }
+
+        console.log("Limpando timeout")
+        clearTimeout(currentTimeout as ReturnType<typeof setTimeout>)
+        setCurrentTimeout(null)
+
+        // Caso o usuário selecione novamente a mesma opção, cancelamos a seleção
+        if (newSection === selected) {
+            setSelected(null)
+        } else {
+            // Alteramos a seção selecionada pelo usuário
+            setSelected(newSection)
+
+            setTimeout(() => {
+                // Iniciamos a animação da barra de progresso
+                if (progressBar.current) {
+                    console.log("Animando barra para o 100%")
+                    progressBar.current.classList.toggle(styles.animate)
+                }
+            }, 250);
+
+            const timeout = setTimeout(() => {
+                console.log("timeout", currentTimeout)
+                /* if (currentTimeout !== null && selected !== null && selected === newSection) { */
+                console.log(`Avançando seção com a opção ${selected} selecionada.`)
+
+                // Reiniciamos o valor do state
                 setSelected(null)
-            } else {
-                console.log("não anima")
-            }
-        }, INTERVAL_TIME * 1000);
-        return () => clearTimeout(timeout);
+
+                // Progredimos para a próxima seção
+                setSection([2, 1])
+
+                // Removemos a animação da barra de progresso
+                if (progressBar.current) {
+                    progressBar.current.classList.toggle(styles.animate)
+                }
+                clearTimeout(currentTimeout as ReturnType<typeof setTimeout>)
+                setCurrentTimeout(null)
+                /* } */
+            }, INTERVAL_TIME * 1000);
+
+            setCurrentTimeout(timeout)
+        }
     }
 
     const Section1 = <motion.div
@@ -169,14 +214,10 @@ const Landing: NextPage = () => {
                     <TimerIcon current={selected === 2 ? true : false} />
                 }
             </Button>
-            <p className={styles.outro}>Não possuo filiação a nenhuma instituição de ensino</p>
+            <p onClick={() => setSection([2, 1])} className={styles.outro}>Não possuo filiação a nenhuma instituição de ensino</p>
         </div>
-        <div className={'row'} style={{ justifyContent: "center", gap: "1rem" }}>
-            <Separator style={separator} orientation='horizontal' />
-            <Separator style={separator} orientation='horizontal' />
-            <Separator style={separator} orientation='horizontal' />
-        </div>
-        <Link href={"/login"}>
+        <div ref={progressBar} className={styles.progressBar} />
+        <Link href={"/auth/login"}>
             <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
         </Link>
     </motion.div>
@@ -194,13 +235,11 @@ const Landing: NextPage = () => {
         <header>
             <h1>Criar sua conta</h1>
             <p>Agora que já sabemos do que você precisa, entre com sua conta Google abaixo para cadastrar-se na plataforma.</p>
+            <p><span className='bold'>Lembre-se de permitir o acesso ao Google Drive! </span><br />
+                Caso o acesso não seja concedido, você será incapaz de enviar anexos em atividades!</p>
         </header>
-        <GoogleButton onClick={authenticate} />
-        <div className={'row'} style={{ justifyContent: "center", gap: "1rem" }}>
-            <Separator style={separator} orientation='horizontal' />
-            <Separator style={separator} orientation='horizontal' />
-            <Separator style={separator} orientation='horizontal' />
-        </div>
+        <GoogleButton onClick={authenticate} loading={isLoading} />
+        <Separator style={separator} orientation='horizontal' />
         <div onClick={() => setSection([1, -1])} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
             <p className={loginStyles.link}>Voltar para o início</p>
@@ -230,10 +269,6 @@ const Landing: NextPage = () => {
             />
         </Link>
         <Separator style={separator} orientation='horizontal' />
-        <div onClick={() => setSection([1, -1])} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
-            <p className={loginStyles.link}>Voltar para o início</p>
-        </div>
     </motion.div>
 
     const Error = <div>
@@ -244,8 +279,27 @@ const Landing: NextPage = () => {
 
     const sections = [Error, Section1, Section2, Section3]
 
+    /*  */
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: async ({ code }) => {
+            const response = await signIn(code, { courseSelected: selected })
+            console.log(response, "deu tudo certo")
+            if (typeof response === "boolean" && response === true) {
+                setSection([3, 1])
+            }
+        },
+        onError(errorResponse) {
+            console.log(errorResponse)
+            setLoading(false)
+        },
+        scope: "https://www.googleapis.com/auth/drive", //https://www.googleapis.com/auth/drive.file
+        flow: 'auth-code',
+    });
+
     function authenticate() {
-        setSection([3, 1])
+        googleLogin()
+        setLoading(true)
     }
 
     return (
@@ -253,7 +307,7 @@ const Landing: NextPage = () => {
             <Head>
                 <title>Criar uma conta</title>
             </Head>
-            <div className={loginStyles.container} style={{ gap: "3.5rem" }}>
+            <div className={`${loginStyles.container} ${section === 3 ? loginStyles.fullScreen : ""}`} style={{ gap: "3.5rem" }}>
                 <Logo width={121.19} height={58.72} style={{ minHeight: 58 }} />
                 <AnimatePresence initial={false} custom={direction} mode="wait">
                     {sections[section]}
@@ -264,4 +318,4 @@ const Landing: NextPage = () => {
     )
 }
 
-export default Landing;
+export default Register;

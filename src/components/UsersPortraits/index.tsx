@@ -1,5 +1,5 @@
 import React from "react";
-import { useAppContext } from "../../context/appContext";
+import { useAppContext } from "../../contexts/AppContext";
 
 import styles from "./portraits.module.css"
 

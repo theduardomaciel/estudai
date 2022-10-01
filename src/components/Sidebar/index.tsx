@@ -1,12 +1,21 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+// Stylesheets
 import styles from "./sidebar.module.css";
+
+// Authentication
+import { useAuth } from "../../contexts/AuthContext";
+
+import LogoutModalPreset from "../Modal/Presets/LogoutModal";
 
 const sections = ["home", "groups", "settings"]
 
 export default function Sidebar() {
+    const { signOut } = useAuth();
+
     const router = useRouter();
     const section = router.asPath.split("/")[1] as string;
 
@@ -44,6 +53,8 @@ export default function Sidebar() {
         }
     }
 
+    const { setLogoutModalVisible, LogoutModal } = LogoutModalPreset();
+
     useEffect(() => {
         if (sectionBar.current) {
             const lastBarPosition = window !== undefined && window.sessionStorage.getItem('lastBarPosition') as string;
@@ -64,7 +75,8 @@ export default function Sidebar() {
         <Link href={"/settings"}>
             <span ref={settingsButton} className={`material-symbols-rounded ${section === "settings" ? "filled" : "outlined"}`}>settings</span>
         </Link>
-        <span className={`material-symbols-rounded`}>exit_to_app</span>
+        <span onClick={() => setLogoutModalVisible(true)} className={`material-symbols-rounded`}>exit_to_app</span>
         <div ref={sectionBar} className={styles.sectionBar} />
+        {LogoutModal}
     </nav>
 }

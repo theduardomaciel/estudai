@@ -14,7 +14,7 @@ export default function LandingHeader(props: Props) {
         <div className={`${styles.container}`}>
             <Logo width={78.19} height={38} />
             <Note showOnlyInDesktop tag='ALPHA' description='Este projeto ainda está em andamento.' />
-            <Link href={"/login"}>
+            <Link href={"/auth/login"}>
                 <p className={styles.link}>Entrar</p>
             </Link>
         </div>

@@ -7,7 +7,7 @@
 
     width: 100%;
 
-    border: 1px solid var(--primary-03);
+    outline: 1px solid var(--primary-03);
     border-radius: 0.5rem;
 }
 
@@ -63,4 +63,11 @@
     color: var(--light);
 }
 
-@media (min-width: 1024px) {}
+@media (min-width: 1024px) {
+    .footer {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2.5rem;
+    }
+}

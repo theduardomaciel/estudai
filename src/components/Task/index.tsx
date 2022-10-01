@@ -4,7 +4,7 @@ import UsersPortraits from "../UsersPortraits";
 import styles from "./task.module.css"
 
 // Contexto
-import { useAppContext } from "../../context/appContext";
+import { useAppContext } from "../../contexts/AppContext";
 import Link from "next/link";
 
 interface TaskProps {
