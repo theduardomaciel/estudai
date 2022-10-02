@@ -13,7 +13,6 @@ import Navigator from '../../components/Navigator';
 import Section from '../../components/Section';
 
 // Select Components
-import * as LabelPrimitive from '@radix-ui/react-label';
 import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../components/Input/Select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import Input, { InputLabel } from '../../components/Input';
@@ -22,177 +21,199 @@ import Menu from '../../components/Menu';
 import FormatToolbar from '../../components/FormatToolbar';
 import Button from '../../components/Button';
 import UsersPortraits from '../../components/UsersPortraits';
+import AttachmentsLoader from '../../components/AttachmentLoader';
+
+// Form
+const ActivityType = <div className={styles.selectHolder}>
+    <InputLabel label='Qual o tipo de atividade?' />
+    <Select name='type'>
+        <SelectTrigger aria-label="activity-type" defaultValue={'obligatory'}>
+            <SelectValue placeholder="Selecione o tipo de atividade" />
+            <SelectIcon>
+                <ChevronDownIcon />
+            </SelectIcon>
+        </SelectTrigger>
+        <SelectContent>
+            <SelectScrollDownButton>
+                <ChevronUpIcon />
+            </SelectScrollDownButton>
+            <SelectViewport>
+                <SelectGroup>
+                    <SelectLabel>Atividades</SelectLabel>
+                    <SelectItem value="obligatory">
+                        <SelectItemText>Obrigatória {`(AV3)`}</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="elective">
+                        <SelectItemText>Eletiva </SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                </SelectGroup>
+
+                <SelectSeparator />
+
+                <SelectGroup>
+                    <SelectLabel>Avaliações</SelectLabel>
+                    <SelectItem value="av1">
+                        <SelectItemText>Mensal {`(AV1)`}</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="av2">
+                        <SelectItemText>Bimestral {`(AV2)`}</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="recuperation" disabled>
+                        <SelectItemText>Recuperação</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                </SelectGroup>
+
+                <SelectSeparator />
+
+                <SelectGroup>
+                    <SelectLabel>Estudos eletivos</SelectLabel>
+                    <SelectItem value="6" disabled>
+                        <SelectItemText>Evento</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                </SelectGroup>
+            </SelectViewport>
+            <SelectScrollDownButton>
+                <ChevronDownIcon />
+            </SelectScrollDownButton>
+        </SelectContent>
+    </Select>
+</div>
+
+const ActivityRealization = <div className={styles.selectHolder}>
+    <InputLabel label='Como a atividade deve ser realizada?' />
+    <Select name='mode'>
+        <SelectTrigger aria-label="activity-mode">
+            <SelectValue placeholder="Selecione como será realizada" />
+            <SelectIcon>
+                <ChevronDownIcon />
+            </SelectIcon>
+        </SelectTrigger>
+        <SelectContent>
+            <SelectScrollDownButton>
+                <ChevronUpIcon />
+            </SelectScrollDownButton>
+            <SelectViewport>
+                <SelectGroup>
+                    {/* <SelectLabel>Atividades</SelectLabel> */}
+                    <SelectItem value="written">
+                        <SelectItemText>Manuscrita</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="typed">
+                        <SelectItemText>Digitada</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="both">
+                        <SelectItemText>Digitada e impressa</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="free">
+                        <SelectItemText>Sem restrição</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                </SelectGroup>
+            </SelectViewport>
+            <SelectScrollDownButton>
+                <ChevronDownIcon />
+            </SelectScrollDownButton>
+        </SelectContent>
+    </Select>
+</div>
+
+const Subjects = <div className={styles.selectHolder}>
+    <InputLabel label='Qual a matéria da atividade?' />
+    <Select name='subject'>
+        <SelectTrigger aria-label="subject">
+            <SelectValue placeholder="Escolha a matéria" />
+            <SelectIcon>
+                <ChevronDownIcon />
+            </SelectIcon>
+        </SelectTrigger>
+        <SelectContent>
+            <SelectScrollDownButton>
+                <ChevronUpIcon />
+            </SelectScrollDownButton>
+            <SelectViewport>
+                <SelectGroup>
+                    <SelectItem value="química">
+                        <SelectItemText>Química</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="física">
+                        <SelectItemText>Física</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="biologia">
+                        <SelectItemText>Biologia</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="matemática">
+                        <SelectItemText>Matemática</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                </SelectGroup>
+            </SelectViewport>
+            <SelectScrollDownButton>
+                <ChevronDownIcon />
+            </SelectScrollDownButton>
+        </SelectContent>
+    </Select>
+</div>
+
+interface TaskData {
+    type: string;
+    mode: string;
+    maxScore: number;
+    subject: string;
+}
+
+interface AttachmentsType {
+    files: Array<string>,
+    links: Array<string>
+}
 
 const CreateTask: NextPage = () => {
-    const ActivityType = () => <div className={styles.selectHolder}>
-        <InputLabel label='Qual o tipo de atividade?' />
-        <Select defaultValue='eletiva'>
-            <SelectTrigger aria-label="ActivityType">
-                <SelectValue placeholder="Selecione o tipo de atividade" />
-                <SelectIcon>
-                    <ChevronDownIcon />
-                </SelectIcon>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectScrollDownButton>
-                    <ChevronUpIcon />
-                </SelectScrollDownButton>
-                <SelectViewport>
-                    <SelectGroup>
-                        <SelectLabel>Atividades</SelectLabel>
-                        <SelectItem value="obrigatória">
-                            <SelectItemText>Obrigatória {`(AV3)`}</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="eletiva">
-                            <SelectItemText>Eletiva </SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-
-                    <SelectSeparator />
-
-                    <SelectGroup>
-                        <SelectLabel>Avaliações</SelectLabel>
-                        <SelectItem value="av1">
-                            <SelectItemText>Mensal {`(AV1)`}</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="av2">
-                            <SelectItemText>Bimestral {`(AV2)`}</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="recuperação" disabled>
-                            <SelectItemText>Recuperação</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-
-                    <SelectSeparator />
-
-                    <SelectGroup>
-                        <SelectLabel>Estudos eletivos</SelectLabel>
-                        <SelectItem value="evento" disabled>
-                            <SelectItemText>Evento</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectViewport>
-                <SelectScrollDownButton>
-                    <ChevronDownIcon />
-                </SelectScrollDownButton>
-            </SelectContent>
-        </Select>
-    </div>
-
-    const ActivityRealization = () => <div className={styles.selectHolder}>
-        <InputLabel label='Como a atividade deve ser realizada?' />
-        <Select>
-            <SelectTrigger aria-label="ActivityRealization">
-                <SelectValue placeholder="Selecione como será realizada" />
-                <SelectIcon>
-                    <ChevronDownIcon />
-                </SelectIcon>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectScrollDownButton>
-                    <ChevronUpIcon />
-                </SelectScrollDownButton>
-                <SelectViewport>
-                    <SelectGroup>
-                        {/* <SelectLabel>Atividades</SelectLabel> */}
-                        <SelectItem value="manuscrita">
-                            <SelectItemText>Manuscrita</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="digitada">
-                            <SelectItemText>Digitada</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="digitadaeimpressa">
-                            <SelectItemText>Digitada e impressa</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="livre">
-                            <SelectItemText>Livre</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectViewport>
-                <SelectScrollDownButton>
-                    <ChevronDownIcon />
-                </SelectScrollDownButton>
-            </SelectContent>
-        </Select>
-    </div>
-
-    const Subjects = () => <div className={styles.selectHolder}>
-        <InputLabel label='Qual a matéria da atividade?' />
-        <Select>
-            <SelectTrigger aria-label="ActivityType">
-                <SelectValue placeholder="Escolha a matéria" />
-                <SelectIcon>
-                    <ChevronDownIcon />
-                </SelectIcon>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectScrollDownButton>
-                    <ChevronUpIcon />
-                </SelectScrollDownButton>
-                <SelectViewport>
-                    <SelectGroup>
-                        <SelectItem value="química">
-                            <SelectItemText>Química</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="física">
-                            <SelectItemText>Física</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="biologia">
-                            <SelectItemText>Biologia</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="matemática">
-                            <SelectItemText>Matemática</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectViewport>
-                <SelectScrollDownButton>
-                    <ChevronDownIcon />
-                </SelectScrollDownButton>
-            </SelectContent>
-        </Select>
-    </div>
+    const [taskData, setTaskData] = useState<TaskData>({
+        type: "",
+        mode: "",
+        maxScore: 0,
+        subject: "",
+    })
+    const [date, setDate] = useState("")
 
     return (
         <main className={styles.holder}>
@@ -200,13 +221,20 @@ const CreateTask: NextPage = () => {
                 <title>Adicionar tarefa</title>
             </Head>
             <Sidebar />
-            <div className={styles.container}>
+            <form
+                className={styles.container}
+                onChange={(event) => {
+                    const formData = new FormData(event.currentTarget);
+                    setTaskData(Object.fromEntries(formData.entries()) as unknown as TaskData)
+                    console.log(Object.fromEntries(formData.entries()))
+                }}
+            >
                 <Navigator directory='Adicionar tarefa' />
                 <div className={styles.basicInfo}>
                     <div className={styles.column}>
                         <Section title='Detalhes Iniciais' />
-                        <ActivityType />
-                        <ActivityRealization />
+                        {ActivityType}
+                        {ActivityRealization}
                         <Input
                             height={"4.2rem"}
                             type="number"
@@ -217,33 +245,18 @@ const CreateTask: NextPage = () => {
                     </div>
                     <div className={styles.column}>
                         <Section title='Classificação' />
-                        <Subjects />
-                        <div className='header'>
-                            <Section title='Descrição' />
+                        {Subjects}
+                        <div className={'header'}>
+                            <Section classes={styles.descriptionHeader} title='Descrição' />
                             <FormatToolbar />
                         </div>
-                        <div contentEditable className={inputStyles.input} style={{ padding: "1.2rem 1.2rem", height: "100%" }} />
-                    </div>
-                </div>
-                <div className={styles.column}>
-                    <div className='header'>
-                        <Section title='Anexos' />
-                        <Button
-                            classes={styles.addButton}
-                            style={{ backgroundColor: "var(--primary-02)", padding: "0.5rem 1rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
-                            icon={"link"}
-                            title='Adicionar link'
-                        />
-                    </div>
-                    <div className={styles.attachment}>
-                        <div className={styles.guide}>
-                            <h6>Arraste arquivos para cá</h6>
-                            <p>ou</p>
-                            <Button title='Procurar' style={{ backgroundColor: "var(--light)", padding: "0.3rem 1.2rem 0.3rem 1.2rem", color: "var(--primary-03)" }} />
+                        <div className={`${inputStyles.input} ${styles.inputHolder}`}>
+                            <div contentEditable className={styles.input}></div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <AttachmentsLoader />
+            </form>
             <Menu flex isOpened={true}>
                 <div className={styles.section}>
                     <div className='row'>
@@ -260,7 +273,7 @@ const CreateTask: NextPage = () => {
                         icon={'person'}
                         title='Minha Conta'
                         style={{ width: "100%", borderRadius: "0.7rem", justifyContent: "flex-start", paddingLeft: "2rem" }}
-                        selected={false}
+                        isSelected={false}
                     />
                     <div className={styles.section} style={{ gap: "0.5rem" }}>
                         <h6>Grupos</h6>
@@ -295,7 +308,7 @@ const CreateTask: NextPage = () => {
                             <span className={`material-symbols-rounded`}>chevron_right</span>
                         </div>
                     </div>
-                    <Button icon={"send"} title={'Enviar Atividade'} buttontype="sendForm" />
+                    <Button onClick={() => console.log(taskData)} icon={"send"} title={'Enviar Atividade'} preset="sendForm" />
                 </div>
             </Menu>
         </main>
