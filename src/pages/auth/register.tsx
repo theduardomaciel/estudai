@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import type { NextPage } from 'next'
+import { parseCookies } from 'nookies';
+import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
 
 import { motion, AnimatePresence } from "framer-motion"
 
 import Link from 'next/link';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 // Stylesheets
 import loginStyles from '../../styles/Login.module.css';
@@ -18,10 +20,11 @@ import HoodIcon from "/public/icons/hood.svg";
 import Button from '../../components/Button';
 import { Separator } from '../../components/Separator';
 import Device from '../../components/Landing/Device';
+
+// Authentication
 import { GoogleButton } from './login';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../contexts/AuthContext';
-import { useRouter } from 'next/router';
 
 interface TimerProps {
     current?: boolean;
@@ -85,6 +88,25 @@ const transition = {
 
 const INTERVAL_TIME = 4;
 
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+    const { ['nextauth.token']: token } = parseCookies(context)
+
+    if (token) {
+        return {
+            redirect: {
+                destination: "/home",
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {
+
+        }
+    }
+}
+
 const Register: NextPage = () => {
     const router = useRouter();
     const { registered } = router.query;
@@ -147,6 +169,8 @@ const Register: NextPage = () => {
             setCurrentTimeout(timeout)
         }
     }
+
+    /*  */
 
     const Section1 = <motion.div
         className={styles.section}
@@ -296,6 +320,7 @@ const Register: NextPage = () => {
         scope: "https://www.googleapis.com/auth/drive", //https://www.googleapis.com/auth/drive.file
         flow: 'auth-code',
     });
+
 
     function authenticate() {
         googleLogin()

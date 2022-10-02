@@ -4,13 +4,6 @@ import { useRef } from 'react';
 
 import styles from "./label.module.css"
 
-type Props = React.InputHTMLAttributes<HTMLInputElement> & {
-    label?: string;
-    fixedUnit?: string;
-    height?: string | number;
-    numberControl?: boolean;
-}
-
 interface InputLabelProps {
     label: string;
 }
@@ -19,18 +12,14 @@ export const InputLabel = (props: InputLabelProps) => <LabelPrimitive.Root class
     {props.label}
 </LabelPrimitive.Root>
 
-const Input = (props: Props) => {
+type Props = React.InputHTMLAttributes<HTMLInputElement> & {
+    label?: string;
+    fixedUnit?: string;
+    height?: string | number;
+    numberControl?: boolean;
+}
+const Input = ({ label, fixedUnit, height, numberControl, ...rest }: Props) => {
     const input = useRef<HTMLInputElement | null>(null);
-    const fixedUnit = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        if (input.current && fixedUnit.current) {
-            const fixedUnitWidth = fixedUnit.current?.offsetWidth as number;
-            const inputHeight = input.current?.offsetHeight as number;
-            input.current.style.paddingRight = `${fixedUnitWidth + 10}px`
-            fixedUnit.current.style.height = `${inputHeight}px`
-        }
-    }, [])
 
     function animateArrow(button: HTMLElement) {
         button.classList.toggle(styles.clicked)
@@ -43,8 +32,14 @@ const Input = (props: Props) => {
         const button = event.target as HTMLDivElement;
         animateArrow(button)
 
+        console.log('increasing', input.current)
+
         if (input.current && parseInt(input.current.value)) {
             input.current.value = (Math.max(0, parseInt(input.current.value) + 1)).toString()
+        } else {
+            if (input.current) {
+                input.current.value = "0"
+            }
         }
     }
 
@@ -54,35 +49,41 @@ const Input = (props: Props) => {
 
         if (input.current && parseInt(input.current.value)) {
             input.current.value = (Math.max(0, parseInt(input.current.value) - 1)).toString()
+        } else {
+            if (input.current) {
+                input.current.value = "0"
+            }
         }
     }
 
     return <div className={styles.flex}>
         {
-            props.label &&
-            <InputLabel label={props.label} />
+            label &&
+            <InputLabel label={label} />
         }
         {
-            props.fixedUnit ?
-                <div style={{ display: "flex", flexDirection: "row", width: "100%", height: props.height }}>
+            fixedUnit ?
+                <div className={styles.fixedUnitFrame}>
                     {
-                        props.numberControl && <div className={`${styles.increaseControl}`}>
+                        numberControl &&
+                        <div className={`${styles.increaseControl}`}>
                             <span className={`click material-symbols-rounded ${styles.increaseArrow}`} onClick={increaseCount}>expand_less</span>
                             <span className={`click material-symbols-rounded ${styles.decreaseArrow}`} onClick={decreaseCount}>expand_more</span>
                         </div>
                     }
                     <input
-                        style={{ height: props.height ? "100%" : "3rem", textAlign: props.numberControl ? "end" : "start" }}
+                        name='maxScore'
+                        style={{ height: height ? "100%" : "3rem", textAlign: numberControl ? "end" : "start", paddingRight: "7.5rem" }}
                         className={styles.input}
                         ref={input}
-                        {...props}
+                        {...rest}
                     />
-                    <div ref={fixedUnit} className={`${styles.input} ${styles.fixedUnit}`}>
-                        {props.fixedUnit}
+                    <div className={`${styles.input} ${styles.fixedUnit}`}>
+                        {fixedUnit}
                     </div>
                 </div>
                 :
-                <input className={styles.input} type="text" id="taskName" {...props} />
+                <input className={styles.input} type="text" id="taskName" {...rest} />
         }
 
     </div>

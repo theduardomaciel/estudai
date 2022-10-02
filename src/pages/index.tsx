@@ -29,7 +29,7 @@ import { parseCookies } from 'nookies';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['nextauth.token']: token } = parseCookies(context)
-    console.log(token)
+
     if (token) {
         return {
             redirect: {
@@ -62,8 +62,7 @@ const Landing: NextPage = () => {
                         <Button
                             icon={'arrow_right_alt'}
                             title={"Criar uma conta"}
-                            iconPosition="right"
-                            style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem" }}
+                            style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse" }}
                         />
                     </Link>
                 </div>

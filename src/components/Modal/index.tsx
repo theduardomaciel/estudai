@@ -33,7 +33,7 @@ export default function DashboardModal({ isVisible, setIsVisible, actionFunction
     };
 
     return (
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence /* exitBeforeEnter */>
             {
                 isVisible && (
                     <motion.div

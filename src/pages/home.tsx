@@ -1,4 +1,4 @@
-import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
+import type { GetServerSideProps, GetServerSidePropsContext, InferGetStaticPropsType, NextPage } from 'next'
 
 import { useState } from 'react';
 import { parseCookies } from 'nookies';
@@ -45,9 +45,14 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     let user: User | null = null;
     if (outdatedUser) {
         const response = await apiClient.get(`/users/${outdatedUser.id}`)
-        console.log(response)
         if (response.status === 200) {
             user = response.data;
+        }
+    }
+
+    if (!user) {
+        return {
+            notFound: true,
         }
     }
 
@@ -58,8 +63,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
 }
 
-const Home: NextPage = (props: any) => {
-    console.log(props)
+const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
     const [menuOpened, setMenuOpened] = useState(false);
 
     function toggleMenu() {
@@ -88,7 +92,7 @@ const Home: NextPage = (props: any) => {
             </Head>
             <Sidebar />
             <div className={styles.container}>
-                <Profile onClick={toggleMenu} user={props.user} />
+                <Profile onClick={toggleMenu} user={user} />
                 <div className={"header"}>
                     <h3 className={"title"}>Tarefas pendentes</h3>
                     <div className={styles.actionButtons}>
@@ -185,7 +189,7 @@ const Home: NextPage = (props: any) => {
                         fixedUnit='minutos'
                     />
                     <div /* style={{ gap: "2.5rem" }} */ className="row">
-                        <Button icon={'av_timer'} title={'Iniciar Foco'} buttontype="sendForm" />
+                        <Button icon={'av_timer'} title={'Iniciar Foco'} preset="sendForm" />
                         <Separator decorative orientation="vertical" />
                         <p className={styles.intervalCount}>Você terá <br />
                             <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
@@ -196,4 +200,4 @@ const Home: NextPage = (props: any) => {
     )
 }
 
-export default Home
+export default Home;

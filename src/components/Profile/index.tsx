@@ -11,6 +11,22 @@ interface Props {
 }
 
 export default function Profile(props: Props) {
+
+    function getGreetings() {
+        const now = new Date();
+        const actualHour = now.getHours()
+
+        if (actualHour > 4 && actualHour <= 11) {
+            return "Bom dia,"
+        } else if (now.getHours() > 11 && actualHour <= 18) {
+            return "Boa tarde,"
+        } else if (now.getHours() > 18) {
+            return "Boa noite,"
+        } else {
+            return "Bem vindo,"
+        }
+    }
+
     return (
         <div className={styles.holder}>
             <div className={styles.profile}>
@@ -19,7 +35,7 @@ export default function Profile(props: Props) {
                 {/* </div> */}
 
                 <div className={styles.text}>
-                    <p>Bom dia,</p>
+                    <p>{getGreetings()}</p>
                     <p>{`${props.user?.firstName} ${props.user?.lastName}`}</p>
                 </div>
             </div>

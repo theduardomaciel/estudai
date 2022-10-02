@@ -12,7 +12,6 @@ export default function LogoutModalPreset() {
 
     async function logout() {
         setLoading(true)
-
         signOut()
     }
 

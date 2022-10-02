@@ -15,7 +15,7 @@
     padding: 3.5rem;
     gap: 2.5rem;
 
-    transition: 1s;
+    /* transition: 1s; */
 }
 
 .basicInfo {
@@ -37,6 +37,7 @@
     gap: 2.5rem;
 
     width: 100%;
+    min-width: 47%;
     /* mobile */
 
     height: 100%;
@@ -66,58 +67,6 @@
     font-size: 1rem;
 
     color: var(--light);
-}
-
-.attachment {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2.5rem;
-    gap: 1rem;
-
-    width: 100%;
-    height: 100%;
-
-    background: #FFFFFF;
-
-    border: 1px solid var(--background-02);
-    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-}
-
-
-.attachment .guide {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2.5rem;
-    gap: 0.5rem;
-
-    background: var(--background-02);
-
-    border: 1px dashed var(--primary-04);
-    border-radius: 1rem;
-}
-
-.attachment .guide h6 {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 1.6rem;
-    text-align: center;
-
-    color: var(--primary-02);
-}
-
-.attachment .guide p {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 50;
-    font-size: 0.8rem;
-    text-align: center;
-
-    color: var(--primary-03);
 }
 
 .group {
@@ -182,6 +131,52 @@
     border-radius: 50%;
 }
 
+.descriptionHeader {
+    display: none;
+}
+
+.inputHolder {
+    height: 100%;
+    min-height: 15rem;
+    padding: 1.2rem;
+}
+
+.column .input {
+    text-align: left;
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: 100%;
+    resize: none;
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    line-break: normal;
+
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.input:focus {
+    outline: none;
+    border: none;
+}
+
+.input::-webkit-scrollbar {
+    display: none;
+}
+
+@media (min-width: 1240px) {
+    .descriptionHeader {
+        display: flex;
+    }
+}
+
 @media (min-width: 1024px) {
     .holder {
         flex-direction: row;
@@ -198,7 +193,12 @@
         transition: 0s;
     }
 
+    .inputHolder {
+        min-height: initial;
+    }
+
     .basicInfo {
+        flex: 1;
         flex-direction: row;
     }
 }

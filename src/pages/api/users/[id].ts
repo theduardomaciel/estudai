@@ -16,6 +16,7 @@ async function handler(request: NextApiRequest, response: NextApiResponse) {
                 id: id as string,
             }
         })
+        console.log(user, "🐶 Usuário obtido com sucesso!")
         response.status(200).json(user);
     } catch (error) {
         console.log(error)

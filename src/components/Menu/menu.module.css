@@ -16,7 +16,7 @@
 
     z-index: 5;
 
-    background: var(--background-01);
+    background: #F5EEFA;
     border-top: 1px solid var(--light-gray);
 
     transition: 1s;
@@ -107,7 +107,7 @@
         left: initial;
         right: 0;
 
-        background: var(--background-01);
+        background: #F5EEFA;
         border-top: 0px;
         border-left: 1px solid var(--light-gray);
 

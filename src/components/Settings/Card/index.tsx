@@ -26,16 +26,8 @@ export default function SettingCard(props: Props) {
                 <Button
                     title={props.footerButtonText ? props.footerButtonText : "Salvar"}
                     icon={props.buttonIcon ? props.buttonIcon : 'save'}
-                    buttontype={"fillHover"}
+                    preset={"fillHover"}
                     iconFill={1}
-                /* style={{
-                    textTransform: "uppercase",
-                    background: "transparent",
-                    padding: "0.5rem 1rem",
-                    gap: "1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "0.5px solid var(--light)"
-                }} */
                 />
             </div>
         </div>

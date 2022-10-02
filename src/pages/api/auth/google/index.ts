@@ -39,15 +39,12 @@ async function handler(request: NextApiRequest, response: NextApiResponse) {
 
     try {
         const userInfo = decode(tokens.id_token as string) as GoogleResponse;
-        console.log(userInfo)
 
         let user = await prisma.user.findUnique({
             where: {
                 email: userInfo.email
             }
         })
-
-        console.log(user, isRegisterProcess)
 
         if (user === null && isRegisterProcess === false) {
             response.status(201).json({ error: "Incorrect route accessed." })

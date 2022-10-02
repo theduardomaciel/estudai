@@ -3,45 +3,52 @@ import React from "react";
 import styles from "./button.module.css"
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    style?: React.CSSProperties;
     title?: string;
-    icon?: React.ReactElement | string;
     classes?: string;
-    selected?: boolean;
-    iconSize?: string | number;
-    iconPosition?: 'left' | 'right';
-    iconColor?: string;
-    buttontype?: 'sendForm' | 'fillHover'
-    iconFill?: number;
+    isSelected?: boolean;
     isLoading?: boolean;
+    icon?: React.ReactElement | string;
+    iconSize?: string | number;
+    iconFill?: number;
+    iconColor?: string;
+    preset?: 'sendForm' | 'fillHover'
+    ref?: React.ForwardedRef<any>;
 }
 
-function Button(props: ButtonProps) {
+function Button({ title, classes, isSelected, isLoading, icon, iconSize, iconFill, iconColor, preset, ref, children, ...rest }: ButtonProps) {
     return <button
-        style={{ flexDirection: props.iconPosition === "right" ? "row-reverse" : "row" }}
-        className={` ${props.classes} ${styles.button} ${props.selected ? styles.selected : ""} ${props.buttontype ? styles[props.buttontype] : ""} ${props.isLoading ? styles.loading : ""}`}
-        {...props}
+        ref={ref}
+        className={`${classes} ${styles.button} 
+            ${isSelected ? styles.selected : ""} 
+            ${preset ? styles[preset] : ""} 
+            ${isLoading ? styles.loading : ""}
+        `}
+        disabled={isLoading}
+        {...rest}
     >
         {
-            props.isLoading ?
+            isLoading ?
                 <div className={styles.loader}>
-                    <div style={{ borderColor: `${props.iconColor ? props.iconColor : "var(--light)"} transparent transparent transparent` }} />
-                    <div style={{ borderColor: `${props.iconColor ? props.iconColor : "var(--light)"} transparent transparent transparent` }} />
+                    <div style={{ borderColor: `${iconColor ? iconColor : "var(--light)"} transparent transparent transparent` }} />
+                    <div style={{ borderColor: `${iconColor ? iconColor : "var(--light)"} transparent transparent transparent` }} />
                 </div>
                 :
                 <>
-                    {typeof props.icon === "string" ?
-                        <span
-                            style={{ fontSize: props.iconSize ? props.iconSize : "", color: props.iconColor ? props.iconColor : "" }}
-                            className={`material-symbols-rounded ${props.iconFill === 1 ? "filled" : "outlined"}`}
-                        >
-                            {props.icon}
-                        </span> :
-                        <div>
-                            {props.icon}
-                        </div>}
-                    {props.title && props.title}
-                    {props.children}
+                    {
+                        icon && typeof icon === "string" ?
+                            <span
+                                style={{ fontSize: iconSize, color: iconColor }}
+                                className={`material-symbols-rounded ${iconFill === 1 ? "filled" : "outlined"}`}
+                            >
+                                {icon}
+                            </span> :
+                            icon &&
+                            <div>
+                                {icon}
+                            </div>
+                    }
+                    {title && title}
+                    {children}
                 </>
         }
     </button>

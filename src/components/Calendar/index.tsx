@@ -49,22 +49,18 @@ export default function Calendar(props: Props) {
     const lastDateOfLastMonth = getLastDateOfMonth(currentYear, currentMonth - 1)
     //console.log("último dia do mês passado: ", lastDateOfLastMonth)
 
-    let calendar = [
-        "default", "default", "default", "default", "default", "default", "default",
-        "default", "default", "default", "default", "default", "default", "default",
-        "default", "default", "default", "default", "default", "default", "default",
-        "default", "default", "default", "default", "default", "default", "default",
-        "default", "default", "default", "default", "default", "default", "default",
-    ]
+    const calendarLength = firstDayOfMonth > 4 ? 42 : 35;
+    let calendar = new Array(calendarLength).fill('default')
 
     const isBeforeMonth = (day: number) => day < firstDayOfMonth;
     const isAfterMonth = (day: number) => day > lastDateOfMonth + firstDayOfMonth
 
-    for (let index = 0; index < 35; index++) {
+    for (let index = 0; index < calendarLength; index++) {
         if (isBeforeMonth(index) || isAfterMonth(index + 1)) {
             calendar[index] = "outsideRange"
         }
     }
+    console.log(calendar)
 
     function decreaseMonth() {
         if (currentMonth > 0) {
@@ -78,14 +74,26 @@ export default function Calendar(props: Props) {
         }
     }
 
+    function setDate(day: number, month: number) {
+        console.log("Dia: ", day, "Mês: ", month)
+    }
+
     return (
         <div className={styles.holder}>
             {
                 props.hasMonthSelector &&
                 <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>
-                    <span className={`material-symbols-rounded click`} onClick={decreaseMonth}>chevron_left</span>
+                    {
+                        currentMonth !== 0 ?
+                            <span className={`material-symbols-rounded click static`} onClick={decreaseMonth}>chevron_left</span>
+                            : <div style={{ width: 24 }}></div>
+                    }
                     <p>{months[currentMonth]}</p>
-                    <span className={`material-symbols-rounded click`} onClick={increaseMonth}>chevron_right</span>
+                    {
+                        currentMonth !== 11 ?
+                            <span className={`material-symbols-rounded click static `} onClick={increaseMonth}>chevron_right</span>
+                            : <div style={{ width: 24 }}></div>
+                    }
                 </div>
             }
             <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>
@@ -99,16 +107,21 @@ export default function Calendar(props: Props) {
             </div>
             <ul className={styles.calendar}>
                 {
-                    calendar.map((dayStatus, index) => <li key={index} className={`${styles.day} ${styles[dayStatus]}`}>
-                        {isBeforeMonth(index) ?
+                    calendar.map((dayStatus, index) => {
+                        const day = isBeforeMonth(index) ?
                             lastDateOfLastMonth - (firstDayOfMonth - 1) + index
                             :
                             isAfterMonth(index + 1) ?
                                 (index - firstDayOfMonth) - lastDateOfMonth + 1
                                 :
                                 index - firstDayOfMonth + 1
-                        }
-                    </li>)
+
+                        const calendarMonth = isBeforeMonth(index) ? currentMonth : isAfterMonth(index + 1) ? currentMonth + 2 : currentMonth + 1;
+
+                        return <li key={index} className={`${styles.day} ${styles[dayStatus]}`} onClick={() => setDate(day, calendarMonth)}>
+                            {day}
+                        </li>
+                    })
                 }
             </ul>
         </div>

@@ -1,10 +1,14 @@
-import type { NextPage } from 'next'
+import React, { useState } from 'react';
+import { parseCookies } from 'nookies';
+import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
 
 // Authentication
-import { CodeResponse, useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../../contexts/AuthContext';
 
 import Link from 'next/link';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 // Stylesheets
 import styles from '../../styles/Login.module.css'
@@ -17,21 +21,34 @@ import GoogleLogo from "/public/google_logo.svg";
 import Button from '../../components/Button';
 import { Separator } from '../../components/Separator';
 import Device from '../../components/Landing/Device';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-
-import { useAuth } from '../../contexts/AuthContext';
 
 interface Props {
     onClick?: () => void;
     loading?: boolean;
 }
 
-export const GoogleButton = (props: Props) => <Button
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+    const { ['nextauth.token']: token } = parseCookies(context)
+
+    if (token) {
+        return {
+            redirect: {
+                destination: "/home",
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {
+
+        }
+    }
+}
+
+export const GoogleButton = React.forwardRef((props: any, ref) => <Button
+    ref={ref}
     icon={<GoogleLogo />}
-    onClick={props.onClick}
-    disabled={props.loading}
-    isLoading={props.loading}
     title={"Entrar com Google"}
     iconColor={'var(--primary-02)'}
     style={{
@@ -46,10 +63,11 @@ export const GoogleButton = (props: Props) => <Button
         fontSize: "1.4rem",
         boxShadow: "0px 4px 15px 2px rgba(0, 0, 0, 0.1)",
         borderRadius: "0.5rem",
-    }} />
+    }}
+    {...props}
+/>)
 
 const Login: NextPage = () => {
-    const router = useRouter();
     const { signIn } = useAuth();
     const [isLoading, setLoading] = useState(false);
 
@@ -78,10 +96,12 @@ const Login: NextPage = () => {
                     <h1>Log in</h1>
                     <p>Entre com sua conta para desfrutar de todas as funcionalidades da plataforma.</p>
                 </header>
-                <GoogleButton loading={isLoading} onClick={() => {
-                    googleLogin()
-                    setLoading(true)
-                }} />
+                <GoogleButton
+                    isLoading={isLoading}
+                    onClick={() => {
+                        googleLogin()
+                        setLoading(true)
+                    }} />
                 <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                 <Link href={"/auth/register"}>
                     <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>

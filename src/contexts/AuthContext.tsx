@@ -103,6 +103,7 @@ export function AuthProvider({ children }: ContextProviderProps) {
         setUser(null)
         setToken(null)
 
+        console.log("Retornando usuário para a tela inicial após des-logar.")
         router.push(`/`)
     }
 
