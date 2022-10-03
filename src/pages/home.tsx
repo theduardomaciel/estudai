@@ -132,7 +132,7 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                         <h3>Agenda</h3>
                         <Button classes={styles.closeButton} icon={'close'} onClick={toggleMenu} style={{ padding: "0.25rem" }} />
                     </div>
-                    <Calendar />
+                    <Calendar linkToCreate />
                     <div className={styles.eventHolder} >
                         <h6>Próximo evento importante</h6>
                         <div className={styles.card}>

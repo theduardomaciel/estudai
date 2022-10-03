@@ -18,11 +18,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 function Button({ title, classes, isSelected, isLoading, icon, iconSize, iconFill, iconColor, preset, ref, children, ...rest }: ButtonProps) {
     return <button
         ref={ref}
-        className={`${classes} ${styles.button} 
-            ${isSelected ? styles.selected : ""} 
-            ${preset ? styles[preset] : ""} 
-            ${isLoading ? styles.loading : ""}
-        `}
+        className={`${classes} ${styles.button} ${isSelected ? 'buttonSelected' : ""}  ${preset ? styles[preset] : ""}  ${isLoading ? styles.loading : ""} `}
         disabled={isLoading}
         {...rest}
     >

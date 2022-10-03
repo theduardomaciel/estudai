@@ -10,7 +10,6 @@
     position: initial;
 
     width: 100%;
-    height: 100%;
 
     padding: 3.5rem;
     gap: 2.5rem;
@@ -91,6 +90,8 @@
 
     border: 1px solid var(--primary-03);
     border-radius: 1rem;
+
+    transition: 0.5s;
 }
 
 .group::-webkit-scrollbar {
@@ -151,6 +152,8 @@
     width: 100%;
     max-width: 100%;
 
+    min-height: 15rem;
+
     overflow-y: scroll;
     overflow-x: hidden;
 
@@ -171,9 +174,15 @@
     display: none;
 }
 
-@media (min-width: 1240px) {
+@media (min-width: 1385px) {
     .descriptionHeader {
         display: flex;
+    }
+}
+
+@media (min-height: 576px) {
+    .container {
+        height: 100%;
     }
 }
 
@@ -191,6 +200,10 @@
         margin-left: auto;
 
         transition: 0s;
+    }
+
+    .column .input {
+        min-height: initial;
     }
 
     .inputHolder {

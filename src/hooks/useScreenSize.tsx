@@ -2,14 +2,6 @@ import { useEffect, useState } from "react";
 
 const WIDE_SIZE = 1024;
 
-function debounce(func: Function, time = 100) {
-    let timer: any;
-    return function (event: any) {
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(func, time, event);
-    };
-}
-
 export const useScreenSize = () => {
     const [isScreenWide, setIsScreenWide] = useState(false);
     const [screenSize, setScreenSize] = useState({

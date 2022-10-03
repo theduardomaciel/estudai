@@ -38,12 +38,6 @@
     transition: 0.1s;
 }
 
-.button.selected {
-    background-color: var(--primary-02);
-    border: 1px solid var(--primary-04);
-    outline: 2px solid var(--primary-04);
-}
-
 .sendForm {
     padding: 1rem 2rem;
     gap: 1.5rem;

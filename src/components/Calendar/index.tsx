@@ -5,10 +5,12 @@ import Image from 'next/image'
 import Button from '../Button'
 
 import styles from './calendar.module.css'
+import Link from 'next/link';
 
 interface Props {
     hasMonthSelector?: boolean;
-    onClick?: () => void;
+    setDate?: any;
+    linkToCreate?: boolean;
 }
 
 // Funções do blog do: https://bobbyhadz.com/
@@ -45,37 +47,49 @@ export default function Calendar(props: Props) {
     //console.log("primeiro dia do mês atual :", firstDayOfMonth)
 
     const lastDateOfMonth = getLastDateOfMonth(currentYear, currentMonth);
-
     const lastDateOfLastMonth = getLastDateOfMonth(currentYear, currentMonth - 1)
     //console.log("último dia do mês passado: ", lastDateOfLastMonth)
 
     const calendarLength = firstDayOfMonth > 4 ? 42 : 35;
-    let calendar = new Array(calendarLength).fill('default')
+    const [calendar, setCalendar] = useState(new Array(calendarLength).fill('default'))
 
     const isBeforeMonth = (day: number) => day < firstDayOfMonth;
     const isAfterMonth = (day: number) => day > lastDateOfMonth + firstDayOfMonth
 
-    for (let index = 0; index < calendarLength; index++) {
-        if (isBeforeMonth(index) || isAfterMonth(index + 1)) {
-            calendar[index] = "outsideRange"
+    useEffect(() => {
+        let newCalendar = calendar;
+        for (let index = 0; index < calendarLength; index++) {
+            console.log("atualizou")
+            if (isBeforeMonth(index) || isAfterMonth(index + 1)) {
+                newCalendar[index] = "outsideRange"
+            }
         }
-    }
-    console.log(calendar)
+        setCalendar(newCalendar)
+        console.log(calendar)
+    }, [currentMonth])
 
     function decreaseMonth() {
         if (currentMonth > 0) {
             setCurrentMonth(currentMonth - 1)
+            setSelected(undefined)
         }
     }
 
     function increaseMonth() {
         if (currentMonth < 11) {
             setCurrentMonth(currentMonth + 1)
+            setSelected(undefined)
         }
     }
 
-    function setDate(day: number, month: number) {
+    const [selected, setSelected] = useState<number | undefined>(undefined);
+
+    function setDate(index: number, day: number, month: number) {
         console.log("Dia: ", day, "Mês: ", month)
+        setSelected(index)
+        if (props.setDate) {
+            props.setDate(`${day}/${month}/${currentYear}`)
+        }
     }
 
     return (
@@ -118,9 +132,17 @@ export default function Calendar(props: Props) {
 
                         const calendarMonth = isBeforeMonth(index) ? currentMonth : isAfterMonth(index + 1) ? currentMonth + 2 : currentMonth + 1;
 
-                        return <li key={index} className={`${styles.day} ${styles[dayStatus]}`} onClick={() => setDate(day, calendarMonth)}>
-                            {day}
-                        </li>
+                        return <Link href={props.linkToCreate ? `/task/create?date=${`${day}/${calendarMonth}/${currentYear}`}` : ""}>
+                            <li
+                                key={index}
+                                onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
+                                onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
+                                className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
+                                onClick={() => setDate(index, day, calendarMonth)}
+                            >
+                                {day}
+                            </li>
+                        </Link>
                     })
                 }
             </ul>

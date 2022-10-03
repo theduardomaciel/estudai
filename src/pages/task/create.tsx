@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import type { NextPage } from 'next'
 
+
 // Stylesheets
 import styles from '../../styles/CreateTask.module.css';
 import inputStyles from "../../components/Input/label.module.css";
@@ -11,10 +12,6 @@ import inputStyles from "../../components/Input/label.module.css";
 import Sidebar from '../../components/Sidebar';
 import Navigator from '../../components/Navigator';
 import Section from '../../components/Section';
-
-// Select Components
-import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../components/Input/Select';
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import Input, { InputLabel } from '../../components/Input';
 import Calendar from '../../components/Calendar';
 import Menu from '../../components/Menu';
@@ -22,6 +19,20 @@ import FormatToolbar from '../../components/FormatToolbar';
 import Button from '../../components/Button';
 import UsersPortraits from '../../components/UsersPortraits';
 import AttachmentsLoader from '../../components/AttachmentLoader';
+
+// Select Components
+import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../components/Input/Select';
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+
+// Editor
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import { Editor } from '@tiptap/core';
+
+
+import Highlight from '@tiptap/extension-highlight'
+import Underline from '@tiptap/extension-underline'
+import TextAlign from '@tiptap/extension-text-align'
 
 // Form
 const ActivityType = <div className={styles.selectHolder}>
@@ -215,6 +226,20 @@ const CreateTask: NextPage = () => {
     })
     const [date, setDate] = useState("")
 
+    const editor = useEditor({
+        extensions: [
+            StarterKit,
+            Underline,
+            TextAlign.configure({
+                types: ['heading', 'paragraph'],
+            }),
+            Highlight.configure({ multicolor: true }),
+        ],
+        content: ``,
+    })
+
+    const [storage, setStorage] = useState("");
+
     return (
         <main className={styles.holder}>
             <Head>
@@ -248,10 +273,10 @@ const CreateTask: NextPage = () => {
                         {Subjects}
                         <div className={'header'}>
                             <Section classes={styles.descriptionHeader} title='Descrição' />
-                            <FormatToolbar />
+                            <FormatToolbar editor={editor as Editor} />
                         </div>
-                        <div className={`${inputStyles.input} ${styles.inputHolder}`}>
-                            <div contentEditable className={styles.input}></div>
+                        <div className={styles.input}>
+                            <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />
                         </div>
                     </div>
                 </div>
@@ -262,7 +287,7 @@ const CreateTask: NextPage = () => {
                     <div className='row'>
                         <h3>Agenda</h3>
                     </div>
-                    <Calendar hasMonthSelector />
+                    <Calendar setDate={setDate} hasMonthSelector />
                 </div>
 
                 <div className={styles.section}>
@@ -272,13 +297,14 @@ const CreateTask: NextPage = () => {
                     <Button
                         icon={'person'}
                         title='Minha Conta'
+                        onClick={() => setStorage('account')}
                         style={{ width: "100%", borderRadius: "0.7rem", justifyContent: "flex-start", paddingLeft: "2rem" }}
-                        isSelected={false}
+                        isSelected={storage === "account"}
                     />
                     <div className={styles.section} style={{ gap: "0.5rem" }}>
                         <h6>Grupos</h6>
                         <div className={styles.groups}>
-                            <div className={styles.group}>
+                            <div className={`${styles.group} ${storage === "group" ? 'buttonSelected' : ""} click`} onClick={() => setStorage('group')}>
                                 <div className={'header'}>
                                     <h3 style={{ color: "var(--light)" }}>Terceirão</h3>
                                     <UsersPortraits imagesUrls={["https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png"]} />

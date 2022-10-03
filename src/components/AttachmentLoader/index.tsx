@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 // Stylesheets
 import createTaskStyles from "../../styles/CreateTask.module.css"
@@ -9,6 +9,14 @@ import Button from "../Button"
 import Section from "../Section"
 
 export default function AttachmentsLoader() {
+    const dragFrame = useRef<HTMLDivElement | null>(null);
+
+    const removeDragStyle = () => {
+        if (dragFrame.current) {
+            dragFrame.current.classList.remove(styles.dragEnter)
+        }
+    }
+
     return <div className={createTaskStyles.column}>
         <div className='header'>
             <Section title='Anexos' />
@@ -18,14 +26,42 @@ export default function AttachmentsLoader() {
                 title='Adicionar link'
             />
         </div>
-        <div className={styles.attachment}>
+        <div
+            ref={dragFrame}
+            className={styles.attachmentHolder}
+            onDragEnter={(event) => {
+                if (dragFrame.current) {
+                    dragFrame.current.classList.add(styles.dragEnter)
+                }
+            }}
+            onDragLeave={() => removeDragStyle()}
+            onDragOver={(event) => {
+                //console.log('File(s) in drop zone');
+                // Prevent default behavior (Prevent file from being opened)
+                event.preventDefault();
+            }}
+            onDrop={(event) => {
+                console.log('File dropped');
+                // Prevent default behavior (Prevent file from being opened)
+                event.preventDefault();
+                removeDragStyle()
+            }}
+        >
             <div className={styles.guide}>
-                <h6>Arraste arquivos para cá</h6>
-                <p>ou</p>
-                <Button
-                    title='Procurar'
-                    style={{ backgroundColor: "var(--light)", padding: "0.3rem 1.2rem 0.3rem 1.2rem", color: "var(--primary-03)" }}
-                />
+                <div className={styles.beforeHover}>
+                    <h6>Arraste arquivos para cá</h6>
+                    <p>ou</p>
+                    <Button
+                        title='Procurar'
+                        style={{ backgroundColor: "var(--light)", padding: "0.3rem 1.2rem 0.3rem 1.2rem", color: "var(--primary-03)" }}
+                    />
+                </div>
+                <div className={styles.afterHover}>
+                    <span className={`material-symbols-rounded filled`}>
+                        upload_file
+                    </span>
+                    <h6>Carregar</h6>
+                </div>
             </div>
         </div>
     </div>

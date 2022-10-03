@@ -17,7 +17,6 @@
 .days {
     padding-inline: 1.125rem;
     color: var(--primary-03);
-
 }
 
 .days p {
@@ -64,9 +63,19 @@
     transition: 0.35s;
 }
 
+.day.selected,
 .day:hover {
     border: 1px solid var(--light);
     background-color: var(--primary-02);
+
+    color: var(--background-02);
+    font-weight: 700;
+
+    font-size: 1.8rem;
+}
+
+.day:active {
+    font-size: 5rem;
 }
 
 .default {
@@ -78,14 +87,6 @@
     background-color: var(--primary-03);
     border: 1px dashed var(--primary-02);
     color: var(--primary-02);
-}
-
-.selected {
-    background-color: var(--light);
-    border: 1px solid var(--primary-04);
-
-    font-weight: 700;
-    color: var(--primary-03);
 }
 
 .outsideRange {
