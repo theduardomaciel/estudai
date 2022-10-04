@@ -172,6 +172,11 @@ textarea {
     outline: 2px solid var(--primary-04) !important;
 }
 
+input[type='file'],
+input[type='submit'] {
+    display: none
+}
+
 @media (min-width: 1024px) {
     .title {
         width: fit-content;

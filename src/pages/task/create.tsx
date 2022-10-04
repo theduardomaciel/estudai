@@ -33,6 +33,7 @@ import { Editor } from '@tiptap/core';
 import Highlight from '@tiptap/extension-highlight'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
+import { Attachment } from '../../types/Attachment';
 
 // Form
 const ActivityType = <div className={styles.selectHolder}>
@@ -238,22 +239,21 @@ const CreateTask: NextPage = () => {
         content: ``,
     })
 
-    const [storage, setStorage] = useState("");
+    const [storage, setStorage] = useState("account");
+
+    const [files, setFiles] = useState<Array<Attachment>>([])
 
     return (
-        <main className={styles.holder}>
+        <form className={styles.holder} onChange={(event) => {
+            const formData = new FormData(event.currentTarget);
+            setTaskData(Object.fromEntries(formData.entries()) as unknown as TaskData)
+            console.log(Object.fromEntries(formData.entries()))
+        }}>
             <Head>
                 <title>Adicionar tarefa</title>
             </Head>
             <Sidebar />
-            <form
-                className={styles.container}
-                onChange={(event) => {
-                    const formData = new FormData(event.currentTarget);
-                    setTaskData(Object.fromEntries(formData.entries()) as unknown as TaskData)
-                    console.log(Object.fromEntries(formData.entries()))
-                }}
-            >
+            <div className={styles.container} >
                 <Navigator directory='Adicionar tarefa' />
                 <div className={styles.basicInfo}>
                     <div className={styles.column}>
@@ -280,8 +280,8 @@ const CreateTask: NextPage = () => {
                         </div>
                     </div>
                 </div>
-                <AttachmentsLoader />
-            </form>
+                <AttachmentsLoader setAttachments={setFiles} attachments={files} style={{ paddingBottom: "3.5rem" }} />
+            </div>
             <Menu flex isOpened={true}>
                 <div className={styles.section}>
                     <div className='row'>
@@ -337,7 +337,7 @@ const CreateTask: NextPage = () => {
                     <Button onClick={() => console.log(taskData)} icon={"send"} title={'Enviar Atividade'} preset="sendForm" />
                 </div>
             </Menu>
-        </main>
+        </form>
     )
 }
 

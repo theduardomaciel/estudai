@@ -38,6 +38,15 @@
     transition: 0.1s;
 }
 
+.input {
+    display: flex;
+    position: relative;
+}
+
+.input div {
+    z-index: 3;
+}
+
 .sendForm {
     padding: 1rem 2rem;
     gap: 1.5rem;

@@ -50,7 +50,8 @@ model Account {
 
 model Attachment {
     id        String   @id @default(uuid())
-    title     String
+    name      String
+    type      String
     link      String
     tags      Json?
     createdAt DateTime @default(now())

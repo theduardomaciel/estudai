@@ -2,7 +2,7 @@ import React from "react";
 
 import styles from "./button.module.css"
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & React.InputHTMLAttributes<HTMLInputElement> & {
     title?: string;
     classes?: string;
     isSelected?: boolean;
@@ -13,11 +13,21 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     iconColor?: string;
     preset?: 'sendForm' | 'fillHover'
     ref?: React.ForwardedRef<any>;
+    isInput?: boolean;
 }
 
-function Button({ title, classes, isSelected, isLoading, icon, iconSize, iconFill, iconColor, preset, ref, children, ...rest }: ButtonProps) {
+function Button({ title, classes, isSelected, isLoading, icon, iconSize, iconFill, iconColor, preset, ref, children, isInput, ...rest }: ButtonProps) {
+
+    const Element = ({ children, className, ...rest }: any) => isInput ?
+        <div className={className}>
+            <div>{children}</div>
+            <input id={title} {...rest} type="submit" />
+        </div> :
+        <button {...rest}>{children}</button>
+
     return <button
         ref={ref}
+        type={preset === "sendForm" ? "submit" : "button"}
         className={`${classes} ${styles.button} ${isSelected ? 'buttonSelected' : ""}  ${preset ? styles[preset] : ""}  ${isLoading ? styles.loading : ""} `}
         disabled={isLoading}
         {...rest}

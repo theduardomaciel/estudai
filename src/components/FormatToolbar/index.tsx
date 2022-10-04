@@ -82,14 +82,6 @@ export default function FormatToolbar({ editor }: Props) {
 
     /* const properties = [
         ...(isBold ? ['bold'] : []),
-        ...(isItalic ? ['italic'] : []),
-        ...(isStrike ? ['strikethrough'] : []),
-
-        ...(isLeft ? ['left'] : []),
-        ...(isCenter ? ['center'] : []),
-        ...(isRight ? ['right'] : []),
-
-        ...(isHighlighted ? ['highlight'] : []),
     ]; */
 
     return (
@@ -111,25 +103,11 @@ export default function FormatToolbar({ editor }: Props) {
                         case 'underline':
                             editor.chain().focus().toggleUnderline().run();
                             break;
+                        case 'highlight':
+                            editor.chain().focus().toggleHighlight().run();
+                            break;
                     }
                 }}
-            /* onValueChange={(values: string[]) => {
-                console.log(values)
-                values.forEach(value => {
-                    switch (value) {
-                        case 'bold':
-                            editor.chain().focus().toggleBold().run();
-                            break;
-                        case 'italic':
-                            editor.chain().focus().toggleItalic().run();
-                            break;
-                        case 'strikethrough':
-                            editor.chain().focus().toggleStrike().run();
-                            break;
-                    }
-                });
-            }} */
-            /* value={properties} */
             >
                 <ToolbarToggleItem value="bold" aria-label="Bold" className={isBold ? 'selected' : ""}>
                     <FontBoldIcon />
@@ -137,32 +115,12 @@ export default function FormatToolbar({ editor }: Props) {
                 <ToolbarToggleItem value="italic" aria-label="Italic" className={isItalic ? 'selected' : ""}>
                     <FontItalicIcon />
                 </ToolbarToggleItem>
-                <ToolbarToggleItem value="strikethrough" aria-label="Strike through"
-                    className={isStrike ? 'selected' : ""}
-                /* disabled={
-                    !editor.can()
-                        .chain()
-                        .focus()
-                        .toggleStrike()
-                        .run()
-                } */
-                >
+                <ToolbarToggleItem value="strikethrough" aria-label="Strike through" className={isStrike ? 'selected' : ""}>
                     <StrikethroughIcon />
                 </ToolbarToggleItem>
-                <ToolbarToggleItem value="underline" aria-label="Underline"
-                    className={isUnderlined ? 'selected' : ""}
-                >
+                <ToolbarToggleItem value="underline" aria-label="Underline" className={isUnderlined ? 'selected' : ""} >
                     <UnderlineIcon />
                 </ToolbarToggleItem>
-            </ToolbarToggleGroup>
-            <ToolbarSeparator />
-            <ToolbarToggleGroup type="single" defaultValue="left" aria-label="Text decoration" onValueChange={(value: string) => {
-                switch (value) {
-                    case 'highlight':
-                        editor.chain().focus().toggleHighlight().run();
-                        break;
-                }
-            }}>
                 <ToolbarToggleItem value="highlight" aria-label="Highlight" className={isHighlighted ? 'selected' : ""}>
                     {/* <span className="material-symbols-rounded" style={{ fontSize: "1.6rem" }}>
                         border_color

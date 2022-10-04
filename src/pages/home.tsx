@@ -25,6 +25,7 @@ import styles from '../styles/Home.module.css'
 import { useAppContext } from '../contexts/AppContext';
 import { getAPIClient } from '../lib/api';
 import { User } from '../types/User';
+import getUser from '../services/getUser';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const apiClient = getAPIClient(context);
@@ -42,13 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     const outdatedUser = JSON.parse(outdatedUserString);
     console.log(outdatedUser, outdatedUserString)
 
-    let user: User | null = null;
-    if (outdatedUser) {
-        const response = await apiClient.get(`/users/${outdatedUser.id}`)
-        if (response.status === 200) {
-            user = response.data;
-        }
-    }
+    const user = getUser(outdatedUser.id)
 
     if (!user) {
         return {

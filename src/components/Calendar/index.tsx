@@ -59,13 +59,12 @@ export default function Calendar(props: Props) {
     useEffect(() => {
         let newCalendar = calendar;
         for (let index = 0; index < calendarLength; index++) {
-            console.log("atualizou")
             if (isBeforeMonth(index) || isAfterMonth(index + 1)) {
                 newCalendar[index] = "outsideRange"
             }
         }
         setCalendar(newCalendar)
-        console.log(calendar)
+        /* console.log(calendar) */
     }, [currentMonth])
 
     function decreaseMonth() {

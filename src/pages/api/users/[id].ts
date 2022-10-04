@@ -7,15 +7,12 @@ import { allowMethods } from '../../../middlewares/allowMethods';
 import { captureErrors } from '../../../middlewares/captureErrors';
 
 import prisma from '../../../lib/prisma';
+import getUser from '../../../services/getUser';
 
 async function handler(request: NextApiRequest, response: NextApiResponse) {
     const { id } = request.query;
     try {
-        const user = await prisma.user.findUnique({
-            where: {
-                id: id as string,
-            }
-        })
+        const user = getUser(id as string)
         console.log(user, "🐶 Usuário obtido com sucesso!")
         response.status(200).json(user);
     } catch (error) {
