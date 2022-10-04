@@ -8,13 +8,14 @@ import buttonStyles from '../Button/button.module.css';
 // Components
 import Button from "../Button"
 import Section from "../Section"
+import File from "./File";
 
 // Icons
 import DocAttachment from "/public/icons/attachment/doc.svg";
 import PDFAttachment from "/public/icons/attachment/pdf.svg";
-import { Attachment } from "../../types/Attachment";
 
-let counter = 0;
+import { Attachment } from "../../types/Attachment";
+import AttachmentTag from "./Tag";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
     attachments: Attachment[];
@@ -23,6 +24,7 @@ type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
 
 export default function AttachmentsLoader({ attachments, setAttachments, ...rest }: Props) {
     const dragFrame = useRef<HTMLDivElement | null>(null);
+    const counter = useRef<number>(0);
 
     const removeDragStyle = () => {
         if (dragFrame.current) {
@@ -76,35 +78,8 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
         }
     }
 
-    const Attachment = (props: Attachment) => <li key={props.id} className={styles.attachment}>
-        <div className={styles.header}>
-            {
-                props.type === "doc" ?
-                    <DocAttachment className={styles.icon} />
-                    :
-                    <PDFAttachment className={styles.icon} />
-            }
-            <span className={`material-symbols-rounded ${styles.close}`} onClick={() => {
-                let array = [...attachments]; // make a separate copy of the array
-                const index = parseInt(props.id as string);
-                console.log(props.id, index, array)
-                if (index !== -1) {
-                    array.splice(index, 1);
-                    setAttachments(array)
-                    console.log("Anexo removido com sucesso!")
-                }
-            }}>
-                close
-            </span>
-        </div>
-        <p>{props.name}</p>
-        <div className={styles.classes}>
-
-        </div>
-    </li>
-
     const hasFiles = attachments.length !== 0;
-    const listItems = attachments.map((file, index) => <Attachment id={index.toString()} type={file.type} name={file.name} />);
+    const listItems = attachments.map((file, index) => <File id={index.toString()} file={file} attachments={attachments} setAttachments={setAttachments} />);
 
     return <div className={createTaskStyles.column} {...rest}>
         <div className='header'>
@@ -120,15 +95,17 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             className={styles.attachmentHolder}
             onDragEnter={(event) => {
                 event.preventDefault();
-                counter++;
+                counter.current++;
+                console.log(counter)
 
                 if (dragFrame.current) {
                     dragFrame.current.classList.add(styles.dragEnter)
                 }
             }}
             onDragLeave={() => {
-                counter--;
-                if (counter === 0) {
+                counter.current--;
+                console.log(counter)
+                if (counter.current === 0) {
                     removeDragStyle()
                 }
             }}
@@ -141,34 +118,47 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                 console.log('File dropped');
                 // Prevent default behavior (Prevent file from being opened)
                 event.preventDefault();
+
+                counter.current = 0;
                 removeDragStyle()
                 processFile("drag", event)
             }}
             /* onClick={() => attachments.length > 0 } */
             style={{ justifyContent: !hasFiles ? "center" : "flex-start", alignItems: !hasFiles ? "center" : "flex-start" }}
         >
-            <div className={styles.guide} >
-                <div className={styles.beforeHover}>
-                    {
-                        !hasFiles &&
-                        <>
-                            <h6>Arraste arquivos para cá</h6>
-                            <p>ou</p>
-                        </>
-                    }
-                    <label className={`${styles.search} ${buttonStyles.button}`} htmlFor="attachmentUpload">Procurar</label>
-                    <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" />
+            {
+                !hasFiles &&
+                <div className={styles.guide} style={{ width: hasFiles ? "100%" : "fit-content" }}>
+                    <div className={styles.beforeHover}>
+                        {
+                            !hasFiles &&
+                            <>
+                                <h6>Arraste arquivos para cá</h6>
+                                <p>ou</p>
+                            </>
+                        }
+                        <label className={`${styles.searchFile} ${buttonStyles.button}`} htmlFor="attachmentUpload">{hasFiles ? "Adicionar arquivo" : "Escolher arquivo"}</label>
+                        <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" />
+                    </div>
+                    <div className={styles.afterHover}>
+                        <span className={`material-symbols-rounded filled`}>
+                            upload_file
+                        </span>
+                        <h6>Carregar</h6>
+                    </div>
                 </div>
-                <div className={styles.afterHover}>
-                    <span className={`material-symbols-rounded filled`}>
-                        upload_file
-                    </span>
-                    <h6>Carregar</h6>
-                </div>
-            </div>
-            <ul>
+            }
+            <ul key={'list'}>
                 {listItems}
             </ul>
+            <label className={styles.picker} htmlFor="attachmentUpload" />
+            <div className={styles.tagsHolder}>
+                <div>
+                    <span className="material-symbols-rounded">sell</span>
+                    <p>Tags</p>
+                </div>
+                <AttachmentTag index={"1"} name={"Lista de Questões"} icon={'print'} />
+            </div>
         </div>
     </div>
 }

@@ -1,10 +1,12 @@
 .attachmentHolder {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 2.5rem;
+    padding: 2.5rem 2.5rem calc(2.5rem + 5rem) 2.5rem;
     gap: 1rem;
+
+    position: relative;
 
     width: 100%;
     height: 100%;
@@ -18,12 +20,25 @@
     transition: 0.15s;
 }
 
+.picker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    cursor: pointer;
+    z-index: 0;
+}
+
 .attachmentHolder ul {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 1.5rem;
     row-gap: 1.5rem;
+
+    width: 100%;
 }
 
 .attachmentHolder .guide {
@@ -34,6 +49,7 @@
 
     /* pointer-events: none; */
     background: var(--background-02);
+    z-index: 2;
 
     border: 1px dashed var(--primary-04);
     border-radius: 1rem;
@@ -101,55 +117,48 @@
     font-size: 3.5rem;
 }
 
-.attachmentHolder.dragEnter li {
+/* .attachmentHolder.dragEnter li {
     display: none;
-}
+} */
 
-.search {
+.searchFile {
     background-color: var(--light);
     padding: 0.3rem 1.2rem 0.3rem 1.2rem;
     color: var(--primary-03);
 }
 
-.attachment {
+.tagsHolder {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 2rem;
-    gap: 1.25rem;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5rem 2.5rem;
+    gap: 1.5rem;
 
-    background: var(--background-01);
-    user-select: none;
-
-    border: 1px dashed var(--primary-04);
-    border-radius: 1rem;
-}
-
-.attachment .header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    height: 5rem;
     width: 100%;
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    background: var(--primary-04);
+    border-radius: 0px 0px 0.5rem 0.5rem;
 }
 
-.attachment .header .close {
-    color: var(--primary-02);
-    /* font-size: 1.8rem; */
-    cursor: pointer;
-}
+.tagsHolder div:nth-child(1) {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
 
-.attachment svg path {
-    fill: var(--primary-02);
-}
+    justify-content: flex-start;
+    align-items: center;
 
-.attachment p {
-    font-family: 'Inter';
+    font-family: 'Raleway';
     font-style: normal;
-    font-weight: 600;
-    font-size: 1.2rem;
-    line-height: 1.2rem;
+    font-weight: 800;
+    font-size: 1.6rem;
 
-    color: var(--primary-02);
+    color: var(--light);
 }
 
 @media (min-width: 1024px) {

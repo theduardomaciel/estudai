@@ -1,0 +1,45 @@
+.attachment {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem;
+    gap: 1.25rem;
+
+    min-width: 12.5rem;
+    max-width: 25rem;
+
+    z-index: 2;
+
+    background: var(--background-01);
+    user-select: none;
+
+    border: 1px dashed var(--primary-04);
+    border-radius: 1rem;
+}
+
+.attachment .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.attachment .header .close {
+    color: var(--primary-02);
+    /* font-size: 1.8rem; */
+    cursor: pointer;
+}
+
+.attachment svg path {
+    fill: var(--primary-02);
+}
+
+.attachment p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+
+    color: var(--primary-02);
+}
