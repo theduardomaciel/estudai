@@ -1,78 +1,50 @@
-/* import React, { Dispatch, SetStateAction } from "react"
+import React, { RefObject } from "react"
 
 // Drag 'n drop
 import { useMultiDrag } from 'react-dnd-multi-backend'
+import { useScreenSize } from "../../../hooks/useScreenSize";
+import { getTagInfo } from "../../../utils/getTagInfo";
 
 // Stylesheets
 import styles from "./styles.module.css";
 
-const CardTypes = {
-    CARD: 'card'
+export interface TagProps {
+    index: number | string;
+    tagId: number;
+    tagType?: 'card' | 'placed_card';
 }
 
-interface Props {
-    icon: string | any;
-    name: string;
-    index: string;
-}
+type Props = React.LiHTMLAttributes<HTMLLIElement> & TagProps;
 
-export default function AttachmentTag({ icon, name, index }: Props) {
+export const Tag = React.forwardRef(({ index, tagId, tagType, ...rest }: Props, ref) => {
+    const typedRef = ref as RefObject<HTMLLIElement>;
+    const [name, icon] = getTagInfo(tagId);
+
+    return <li key={index} className={styles.tag} ref={typedRef} {...rest} >
+        <span className="material-symbols-rounded">{icon}</span>
+        <p>{name}</p>
+    </li>
+});
+
+export default function AttachmentTag({ tagId, index, tagType }: Props) {
     const [[dragProps], { html5: [html5Props, html5Drag], touch: [touchProps, touchDrag] }] = useMultiDrag({
-        type: 'card',
-        item: { color: "red" },
+        type: tagType ? tagType : 'card',
+        item: { tagId: tagId, index: index },
         collect: (monitor) => {
             return {
                 isDragging: monitor.isDragging(),
             }
         },
-    })
+    });
+
+    const { isScreenWide } = useScreenSize();
 
     return (
-        <>
-            <li key={index} className={styles.tag} ref={html5Drag}>
-                <span className="material-symbols-rounded">{icon}</span>
-                <p>{name}</p>
-            </li>
-            <li key={index + 1} className={styles.tag} ref={touchDrag}>
-                <span className="material-symbols-rounded">{icon}</span>
-                <p>{name}</p>
-            </li>
-        </>
-    );
-} */
-
-import React, { Dispatch, SetStateAction } from "react"
-
-// Drag 'n drop
-import { useMultiDrag } from 'react-dnd-multi-backend'
-
-// Stylesheets
-import styles from "./styles.module.css";
-
-interface Props {
-    icon: string | any;
-    name: string;
-    index: string;
-}
-
-export default function AttachmentTag({ icon, name, index }: Props) {
-    const [[dragProps], { html5: [html5Props, html5Drag], touch: [touchProps, touchDrag] }] = useMultiDrag({
-        type: 'card',
-        item: { color: 'red' },
-        collect: (monitor) => {
-            return {
-                isDragging: monitor.isDragging(),
-            }
-        },
-    })
-
-    const containerStyle = { opacity: dragProps.isDragging ? 0.5 : 1 }
-    const html5DragStyle = { backgroundColor: 'red', opacity: html5Props.isDragging ? 0.5 : 1 }
-    const touchDragStyle = { backgroundColor: 'red', opacity: touchProps.isDragging ? 0.5 : 1 }
-    return (
-        <div style={containerStyle}>
-            {/* <div style={html5DragStyle} ref={html5Drag}>HTML5</div> */}
-            <div style={touchDragStyle} ref={touchDrag}>Touch</div>
-        </div>
+        <Tag
+            tagId={tagId}
+            index={index}
+            ref={isScreenWide ? html5Drag : touchDrag}
+            style={html5Props.isDragging || touchProps.isDragging ? { border: `0.5px dashed var(--light)`, opacity: 0.5 } : { border: `1px solid var(--primary-02)`, opacity: 1 }}
+        />
     )
 }

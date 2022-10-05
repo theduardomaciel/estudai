@@ -11,30 +11,21 @@ import { LanguageProvider } from '../contexts/LanguageContext'
 import { ThemeProvider } from '../contexts/ThemeContext'
 
 // Drag 'n Drop
-import { DndProvider, Preview, PreviewState } from 'react-dnd-multi-backend'
+import { DndProvider, Preview } from 'react-dnd-multi-backend'
 import { HTML5toTouch } from 'rdndmb-html5-to-touch' // or any other pipeline
 
-const Block = ({ row, text, item, style }: { row: number, text: string, item: { color: string }, style: CSSProperties }): JSX.Element => {
-    return <div style={{
-        ...style,
-        top: `${row * 60}px`,
-        backgroundColor: item.color,
-        width: '50px',
-        height: '50px',
-        whiteSpace: 'nowrap',
-    }}>Generated {text}</div>
-}
-
-const ComponentPreview = ({ text }: { text: string }): JSX.Element => {
+const ComponentPreview = (): JSX.Element => {
     return (
-        <Preview generator={({ item, style }: PreviewState<{ color: string }>): JSX.Element => {
-            return <Block row={2} text={`${text} with Component`} item={item} style={style} />
+        <Preview generator={({ itemType, item, style, ref }: { itemType: any, item: TagProps, style: CSSProperties, ref: any }): JSX.Element => {
+            return <Tag tagId={item.tagId} index={item.index} style={style} />
         }} />
     )
 }
 
 // Stylesheets
 import '../styles/globals.css'
+import { Tag, TagProps } from '../components/AttachmentLoader/Tag';
+import { getTagInfo } from '../utils/getTagInfo';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return <React.Fragment>
@@ -45,7 +36,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                         <AppContextProvider>
                             <DndProvider options={HTML5toTouch}>
                                 <Component {...pageProps} />
-                                <ComponentPreview text={'teste'} />
+                                <ComponentPreview />
                             </DndProvider>
                         </AppContextProvider>
                     </ThemeProvider>

@@ -21,7 +21,7 @@ export default function Navigator(props: Props) {
                 props.parentDirectory ?
                     <h3><span>{props.parentDirectory} /</span>{props.directory}</h3>
                     :
-                    <h3>{props.directory}</h3>
+                    <h3 onClick={() => router.back()}>{props.directory}</h3>
             }
         </div>
     )

@@ -89,7 +89,7 @@ const transition = {
 const INTERVAL_TIME = 4;
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['nextauth.token']: token } = parseCookies(context)
+    const { ['auth.token']: token } = parseCookies(context)
 
     if (token) {
         return {
@@ -151,9 +151,6 @@ const Register: NextPage = () => {
                 /* if (currentTimeout !== null && selected !== null && selected === newSection) { */
                 console.log(`Avançando seção com a opção ${selected} selecionada.`)
 
-                // Reiniciamos o valor do state
-                setSelected(null)
-
                 // Progredimos para a próxima seção
                 setSection([2, 1])
 
@@ -168,6 +165,17 @@ const Register: NextPage = () => {
 
             setCurrentTimeout(timeout)
         }
+    }
+
+    function returnToSection1() {
+        // Reiniciamos o valor do state
+        setSelected(null)
+
+        // Removemos o estado de carregamento
+        setLoading(false)
+
+        // Voltamos
+        setSection([1, -1])
     }
 
     /*  */
@@ -262,9 +270,9 @@ const Register: NextPage = () => {
             <p><span className='bold'>Lembre-se de permitir o acesso ao Google Drive! </span><br />
                 Caso o acesso não seja concedido, você será incapaz de enviar anexos em atividades!</p>
         </header>
-        <GoogleButton onClick={authenticate} loading={isLoading} />
+        <GoogleButton onClick={authenticate} isLoading={isLoading} />
         <Separator style={separator} orientation='horizontal' />
-        <div onClick={() => setSection([1, -1])} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
+        <div onClick={returnToSection1} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
             <p className={loginStyles.link}>Voltar para o início</p>
         </div>
@@ -307,9 +315,8 @@ const Register: NextPage = () => {
 
     const googleLogin = useGoogleLogin({
         onSuccess: async ({ code }) => {
-            const response = await signIn(code, { courseSelected: selected })
-            console.log(response, "deu tudo certo")
-            if (typeof response === "boolean" && response === true) {
+            const response = await signIn(code, { course: selected as number })
+            if (response) {
                 setSection([3, 1])
             }
         },

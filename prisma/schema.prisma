@@ -12,7 +12,7 @@ generator client {
 }
 
 model User {
-    id        String  @id @default(cuid())
+    id        Int     @id @default(autoincrement())
     firstName String
     lastName  String?
     username  String?
@@ -20,7 +20,7 @@ model User {
     email     String  @unique
     image_url String
 
-    courseType   Int?
+    course       Int?
     timeMeasure  Int?
     defaultColor Int?
     language     String?
@@ -28,24 +28,44 @@ model User {
     account Account?
 
     tasks       Task[]
-    tests       Test[]
-    events      Event[]
     attachments Attachment[]
+
+    groups Group[]
 
     @@map("users")
 }
 
 model Account {
-    id            String  @id @default(cuid())
-    userId        String  @unique
-    refresh_token String? @db.Text
-    access_token  String? @db.Text
-    expires_at    Int?
-    id_token      String? @db.Text
+    id           String @id @default(uuid())
+    access_token String
+    expires_at   Int?
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    google_access_token  String? @db.Text
+    google_refresh_token String? @db.Text
+    google_expires_at    Int?
+
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId Int  @unique
 
     @@map("accounts")
+}
+
+model Group {
+    name String
+    id   Int    @id @unique @default(autoincrement())
+
+    subgroups     Json[]
+    pinnedMessage String
+    shareLink     String? @unique
+    private       Boolean @default(false)
+
+    createdAt DateTime
+    tasks     Task[]
+
+    users  User[]
+    admins Int[] // lista contendo o id dos usuários
+
+    @@map("groups")
 }
 
 model Attachment {
@@ -53,74 +73,46 @@ model Attachment {
     name      String
     type      String
     link      String
-    tags      Json?
+    tags      Int[]    @default([])
     createdAt DateTime @default(now())
 
-    user   User   @relation(fields: [userId], references: [id])
-    userId String
+    createdBy User @relation(fields: [userId], references: [id])
+    userId    Int
+
+    task   Task? @relation(fields: [taskId], references: [id])
+    taskId Int?
 
     @@map("attachments")
 }
 
 model Task {
-    id          Int     @id @default(autoincrement())
-    description String
+    id Int @id @default(autoincrement())
+
+    // Geral (general)
+    subjects    Int[]
+    description String? // precisa ser opcional já que avaliações não têm descrição, somente as matérias
+
+    // Atividade (activity)
     type        String
     mode        String?
     maxScore    Int?
-    subject     String
-    attachments Json?
+    attachments Attachment[]
 
-    share   Group? @relation(fields: [groupId], references: [id])
+    // Avaliação (test)
+    questionsAmount Int?
+    contents        Json
+
+    // Evento (event)
+    title   String?
+    address String?
+
+    concludedBy Int[]
+
+    group   Group? @relation(fields: [groupId], references: [id])
     groupId Int?
 
-    userId String
-    User   User   @relation(fields: [userId], references: [id])
+    User   User @relation(fields: [userId], references: [id])
+    userId Int
 
     @@map("tasks")
-}
-
-model Test {
-    id              Int      @id @default(autoincrement())
-    questionsAmount Int?
-    subjects        String[]
-    contents        Json
-    attachments     Json?
-
-    share   Group? @relation(fields: [groupId], references: [id])
-    groupId Int?
-
-    userId String
-    User   User   @relation(fields: [userId], references: [id])
-
-    @@map("tests")
-}
-
-model Event {
-    id          Int    @id @default(autoincrement())
-    title       String
-    address     String
-    description String
-    attachments Json?
-
-    share   Group? @relation(fields: [groupId], references: [id])
-    groupId Int?
-
-    userId String
-    User   User   @relation(fields: [userId], references: [id])
-
-    @@map("events")
-}
-
-model Group {
-    name String
-    id   Int    @id @unique @default(autoincrement())
-
-    shareLink String? @unique
-
-    tasks  Task[]
-    tests  Test[]
-    events Event[]
-
-    @@map("groups")
 }

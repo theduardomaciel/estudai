@@ -71,7 +71,9 @@
     color: var(--background-02);
     font-weight: 700;
 
-    font-size: 1.8rem;
+    outline: 1px solid var(--primary-02);
+
+    font-size: 1.6rem;
 }
 
 .day:active {
@@ -93,6 +95,12 @@
     background-color: var(--font-light);
     color: var(--light);
     font-weight: 400;
+}
+
+.today {
+    background-color: var(--light);
+    border: 1px dashed var(--primary-02);
+    color: var(--primary-02);
 }
 
 .add {

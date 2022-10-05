@@ -5,7 +5,7 @@ export type Attachment = {
     name: string;
     type: string;
     link?: string;
-    tags?: JSON;
+    tags: Array<number>;
     createdAt?: Date | string;
-    user?: User;
+    createdBy?: User;
 }

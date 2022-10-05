@@ -15,7 +15,8 @@ import DocAttachment from "/public/icons/attachment/doc.svg";
 import PDFAttachment from "/public/icons/attachment/pdf.svg";
 
 import { Attachment } from "../../types/Attachment";
-import AttachmentTag from "./Tag";
+import AttachmentTag, { TagProps } from "./Tag";
+import { useMultiDrop } from "react-dnd-multi-backend";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
     attachments: Attachment[];
@@ -24,6 +25,7 @@ type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
 
 export default function AttachmentsLoader({ attachments, setAttachments, ...rest }: Props) {
     const dragFrame = useRef<HTMLDivElement | null>(null);
+
     const counter = useRef<number>(0);
 
     const removeDragStyle = () => {
@@ -37,6 +39,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             name: file.name,
             type: file.type,
             link: file.toString(),
+            tags: []
         } as Attachment;
         return newAttachment
     }
@@ -69,6 +72,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             const event = triggerEvent as React.ChangeEvent<HTMLInputElement>;
             const files = event.currentTarget.files as FileList;
             const file = files[0] as File;
+            console.log(event.currentTarget.files)
             if (file) {
                 console.log(file)
                 const newAttachment = formatNewFile(file)
@@ -79,7 +83,9 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
     }
 
     const hasFiles = attachments.length !== 0;
-    const listItems = attachments.map((file, index) => <File id={index.toString()} file={file} attachments={attachments} setAttachments={setAttachments} />);
+    const listItems = attachments.map((file, index) =>
+        <File id={`card_${index}`} index={index} file={file} attachments={attachments} setAttachments={setAttachments} />
+    );
 
     return <div className={createTaskStyles.column} {...rest}>
         <div className='header'>
@@ -96,7 +102,6 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             onDragEnter={(event) => {
                 event.preventDefault();
                 counter.current++;
-                console.log(counter)
 
                 if (dragFrame.current) {
                     dragFrame.current.classList.add(styles.dragEnter)
@@ -104,7 +109,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             }}
             onDragLeave={() => {
                 counter.current--;
-                console.log(counter)
+
                 if (counter.current === 0) {
                     removeDragStyle()
                 }
@@ -124,7 +129,11 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                 processFile("drag", event)
             }}
             /* onClick={() => attachments.length > 0 } */
-            style={{ justifyContent: !hasFiles ? "center" : "flex-start", alignItems: !hasFiles ? "center" : "flex-start" }}
+            style={{
+                justifyContent: !hasFiles ? "center" : "flex-start",
+                alignItems: !hasFiles ? "center" : "flex-start",
+                padding: hasFiles ? `2.5rem 2.5rem 7.5rem 2.5rem` : `2.5rem`
+            }}
         >
             {
                 !hasFiles &&
@@ -138,7 +147,6 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                             </>
                         }
                         <label className={`${styles.searchFile} ${buttonStyles.button}`} htmlFor="attachmentUpload">{hasFiles ? "Adicionar arquivo" : "Escolher arquivo"}</label>
-                        <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" />
                     </div>
                     <div className={styles.afterHover}>
                         <span className={`material-symbols-rounded filled`}>
@@ -152,13 +160,19 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                 {listItems}
             </ul>
             <label className={styles.picker} htmlFor="attachmentUpload" />
-            <div className={styles.tagsHolder}>
-                <div>
-                    <span className="material-symbols-rounded">sell</span>
-                    <p>Tags</p>
+            <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" />
+            {
+                hasFiles && <div className={styles.tagsHolder}>
+                    <div>
+                        <span className="material-symbols-rounded">sell</span>
+                        <p>Tags</p>
+                    </div>
+                    <AttachmentTag index={"1"} tagId={1} />
+                    <AttachmentTag index={"2"} tagId={2} />
+                    <AttachmentTag index={"3"} tagId={3} />
+                    <AttachmentTag index={"4"} tagId={4} />
                 </div>
-                <AttachmentTag index={"1"} name={"Lista de Questões"} icon={'print'} />
-            </div>
+            }
         </div>
     </div>
 }

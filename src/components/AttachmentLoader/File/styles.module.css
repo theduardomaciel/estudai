@@ -34,7 +34,7 @@
     fill: var(--primary-02);
 }
 
-.attachment p {
+.attachment .fileName {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 600;
@@ -42,4 +42,23 @@
     line-height: 1.2rem;
 
     color: var(--primary-02);
+}
+
+.attachment.hovered {
+    border: 1px solid var(--primary-02);
+    animation: pulseAnimation 1s infinite;
+}
+
+@keyframes pulseAnimation {
+    0% {
+        outline: 1px dashed var(--primary-04);
+    }
+
+    /* 50% {
+        outline: 1.5rem solid rgba(118, 66, 203, 0.5);
+    } */
+
+    100% {
+        outline: 3px dashed var(--primary-04);
+    }
 }

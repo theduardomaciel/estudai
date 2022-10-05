@@ -33,6 +33,7 @@ console.log(daysInJanuary); // 👉️ 31 */
 
 const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
 
+
 export default function Calendar(props: Props) {
 
     const date = new Date();
@@ -56,11 +57,21 @@ export default function Calendar(props: Props) {
     const isBeforeMonth = (day: number) => day < firstDayOfMonth;
     const isAfterMonth = (day: number) => day > lastDateOfMonth + firstDayOfMonth
 
+    const getDay = (index: number) => isBeforeMonth(index) ?
+        lastDateOfLastMonth - (firstDayOfMonth - 1) + index
+        :
+        isAfterMonth(index + 1) ?
+            (index - firstDayOfMonth) - lastDateOfMonth + 1
+            :
+            index - firstDayOfMonth + 1;
+
     useEffect(() => {
         let newCalendar = calendar;
         for (let index = 0; index < calendarLength; index++) {
             if (isBeforeMonth(index) || isAfterMonth(index + 1)) {
                 newCalendar[index] = "outsideRange"
+            } else if (getDay(index) === date.getDate()) {
+                newCalendar[index] = 'today'
             }
         }
         setCalendar(newCalendar)
@@ -121,19 +132,11 @@ export default function Calendar(props: Props) {
             <ul className={styles.calendar}>
                 {
                     calendar.map((dayStatus, index) => {
-                        const day = isBeforeMonth(index) ?
-                            lastDateOfLastMonth - (firstDayOfMonth - 1) + index
-                            :
-                            isAfterMonth(index + 1) ?
-                                (index - firstDayOfMonth) - lastDateOfMonth + 1
-                                :
-                                index - firstDayOfMonth + 1
-
+                        const day = getDay(index)
                         const calendarMonth = isBeforeMonth(index) ? currentMonth : isAfterMonth(index + 1) ? currentMonth + 2 : currentMonth + 1;
 
                         return <Link href={props.linkToCreate ? `/task/create?date=${`${day}/${calendarMonth}/${currentYear}`}` : ""}>
-                            <li
-                                key={index}
+                            <li key={day.toString()}
                                 onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
                                 onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
                                 className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}

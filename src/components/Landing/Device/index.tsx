@@ -13,17 +13,15 @@ interface Props {
 export default function Device(props: Props) {
     const { isScreenWide } = useScreenSize();
 
-    const width = isScreenWide ? 996 : 290;
-    const height = isScreenWide ? 560 : 600;
+    /* const width = isScreenWide ? 996 : 290;
+    const height = isScreenWide ? 560 : 600; */
 
     return (
         <div id={props.additionalClass} className={`${styles.container} ${props.additionalClass}`}>
-            <div className={styles.image}>
+            <div className={styles.imageHolder}>
                 <Image
-                    className={styles.imageS}
+                    className={styles.image}
                     src={isScreenWide ? DesktopScreenshot : MobileScreenshot}
-                    width={width}
-                    height={height}
                 />
             </div>
         </div>

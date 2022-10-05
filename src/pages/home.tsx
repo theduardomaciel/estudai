@@ -23,33 +23,28 @@ import styles from '../styles/Home.module.css'
 
 // App Context
 import { useAppContext } from '../contexts/AppContext';
-import { getAPIClient } from '../lib/api';
-import { User } from '../types/User';
+
+// Server Props
 import getUser from '../services/getUser';
+import getUserIdByToken from '../services/getUserIdByToken';
+import removeCookies from '../services/removeCookies';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const apiClient = getAPIClient(context);
-    const { ['nextauth.token']: token, ['nextauth.user']: outdatedUserString } = parseCookies(context)
+    const { ['auth.token']: token } = parseCookies(context)
 
-    if (!token) {
+    const userId = await getUserIdByToken(token);
+
+    if (userId === null) {
+        await removeCookies(context);
         return {
             redirect: {
-                destination: "/",
-                permanent: false
-            }
+                destination: '/',
+                permanent: false,
+            },
         }
     }
 
-    const outdatedUser = JSON.parse(outdatedUserString);
-    console.log(outdatedUser, outdatedUserString)
-
-    const user = getUser(outdatedUser.id)
-
-    if (!user) {
-        return {
-            notFound: true,
-        }
-    }
+    const user = await getUser(userId as number);
 
     return {
         props: {

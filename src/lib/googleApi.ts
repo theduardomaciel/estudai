@@ -2,7 +2,7 @@ import axios from "axios";
 import { parseCookies } from "nookies";
 
 export function getGoogleAPIClient(ctx?: any) {
-    const { 'nextauth.googleAccessToken': accessToken, 'nextauth.googleRefreshToken': refreshToken } = parseCookies(ctx)
+    const { 'auth.googleAccessToken': accessToken, 'auth.googleRefreshToken': refreshToken } = parseCookies(ctx)
 
     const api = axios.create({
         baseURL: 'https://www.googleapis.com/upload/drive/v3'

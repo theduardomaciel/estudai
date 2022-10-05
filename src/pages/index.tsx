@@ -24,12 +24,23 @@ import PaperPlaneIcon from "/public/landing/paper_plane.svg";
 import BaskharaIcon from "/public/landing/baskhara.svg";
 
 // App Context
-import { useAppContext } from '../contexts/AppContext';
 import { parseCookies } from 'nookies';
+import getUserIdByToken from '../services/getUserIdByToken';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['nextauth.token']: token } = parseCookies(context)
+    const { ['auth.token']: token } = parseCookies(context)
 
+    /* if (token) {
+        const userId = await getUserIdByToken(token);
+        if (userId) {
+            return {
+                redirect: {
+                    destination: "/home",
+                    permanent: false
+                }
+            }
+        }
+    } */
     if (token) {
         return {
             redirect: {
@@ -40,9 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
 
     return {
-        props: {
-
-        }
+        props: {}
     }
 }
 

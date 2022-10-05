@@ -28,7 +28,7 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['nextauth.token']: token } = parseCookies(context)
+    const { ['auth.token']: token } = parseCookies(context)
 
     if (token) {
         return {
@@ -46,8 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
 }
 
-export const GoogleButton = React.forwardRef((props: any, ref) => <Button
-    ref={ref}
+export const GoogleButton = (props: any) => <Button
     icon={<GoogleLogo />}
     title={"Entrar com Google"}
     iconColor={'var(--primary-02)'}
@@ -65,15 +64,24 @@ export const GoogleButton = React.forwardRef((props: any, ref) => <Button
         borderRadius: "0.5rem",
     }}
     {...props}
-/>)
+/>
 
 const Login: NextPage = () => {
     const { signIn } = useAuth();
+    const router = useRouter();
+
     const [isLoading, setLoading] = useState(false);
+    const [section, setSection] = useState<'notAccount' | null>(null)
 
     const googleLogin = useGoogleLogin({
         onSuccess: async ({ code }) => {
-            signIn(code)
+            const success = await signIn(code)
+
+            if (success) {
+                router.push(`/home`)
+            } else {
+                setSection('notAccount')
+            }
         },
         onError(errorResponse) {
             console.log(errorResponse)
@@ -90,22 +98,43 @@ const Login: NextPage = () => {
             <Head>
                 <title>Login</title>
             </Head>
-            <div className={styles.container}>
+            <div className={`${styles.container} ${section === 'notAccount' ? styles.fullScreen : ""}`}>
                 <Logo width={121.19} height={58.72} />
-                <header>
-                    <h1>Log in</h1>
-                    <p>Entre com sua conta para desfrutar de todas as funcionalidades da plataforma.</p>
-                </header>
-                <GoogleButton
-                    isLoading={isLoading}
-                    onClick={() => {
-                        googleLogin()
-                        setLoading(true)
-                    }} />
-                <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
-                <Link href={"/auth/register"}>
-                    <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>
-                </Link>
+                {
+                    section === null ?
+                        <>
+                            <header>
+                                <h1>Log in</h1>
+                                <p>Entre com sua conta para desfrutar de todas as funcionalidades da plataforma.</p>
+                            </header>
+                            <GoogleButton
+                                isLoading={isLoading}
+                                onClick={() => {
+                                    googleLogin()
+                                    setLoading(true)
+                                }} />
+                            <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
+                            <Link href={"/auth/register"}>
+                                <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>
+                            </Link>
+                        </>
+                        :
+                        <>
+                            <header>
+                                <h1>Eita!</h1>
+                                <p>Parece que você ainda não criou sua conta na plataforma. <br />
+                                    Crie sua conta agora para aproveitar todas as funcionalidades de sua conta Estudaí.
+                                </p>
+                            </header>
+                            <Link href={"/auth/register"}>
+                                <Button
+                                    style={{ padding: "1rem 1.5rem", width: "100%" }}
+                                    title='Criar uma conta'
+                                />
+                            </Link>
+                            <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
+                        </>
+                }
             </div>
             <Device additionalClass={styles.device} />
         </main>

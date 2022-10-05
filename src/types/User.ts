@@ -6,7 +6,7 @@ export type User = {
     role?: "user",
     email: string,
     image_url: string,
-    courseType: null | number,
+    course: null | number,
     timeMeasure: null | number,
     defaultColor: null | string;
     language: null

@@ -241,7 +241,8 @@ const CreateTask: NextPage = () => {
 
     const [storage, setStorage] = useState("account");
 
-    const [files, setFiles] = useState<Array<Attachment>>([{ name: "testando", type: "doc" }])
+    // { name: "testando", type: "doc", tags: [] }
+    const [files, setFiles] = useState<Array<Attachment>>([])
 
     return (
         <form className={styles.holder} onChange={(event) => {

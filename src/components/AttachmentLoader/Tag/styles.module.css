@@ -8,6 +8,9 @@
 
     cursor: grab;
 
+    z-index: 3;
+
+    color: var(--light);
     background: var(--primary-02);
     border: 0.5px dashed var(--light);
     border-radius: 3rem;
@@ -23,6 +26,4 @@
     line-height: 1rem;
 
     letter-spacing: 0.03em;
-
-    color: var(--light);
 }
