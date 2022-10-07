@@ -175,6 +175,38 @@
     display: none;
 }
 
+.darkFrame {
+    display: none;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0, 0, 0);
+    opacity: 0;
+    z-index: 4;
+
+    transition: 1s;
+}
+
+.darkFrame.uploading {
+    display: flex;
+
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
 @media (min-width: 1385px) {
     .descriptionHeader {
         display: flex;

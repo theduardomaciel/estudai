@@ -68,10 +68,16 @@ export default function Calendar(props: Props) {
     useEffect(() => {
         let newCalendar = calendar;
         for (let index = 0; index < calendarLength; index++) {
-            if (isBeforeMonth(index) || isAfterMonth(index + 1)) {
+            const beforeMonth = isBeforeMonth(index);
+            const afterMonth = isAfterMonth(index + 1);
+
+            if (beforeMonth || afterMonth) {
                 newCalendar[index] = "outsideRange"
-            } else if (getDay(index) === date.getDate()) {
+            } else if (currentMonth === date.getMonth() && getDay(index) === date.getDate()) {
+                console.log(currentMonth, date.getMonth(), getDay(index), date.getDate())
                 newCalendar[index] = 'today'
+            } else {
+                newCalendar[index] = 'default'
             }
         }
         setCalendar(newCalendar)

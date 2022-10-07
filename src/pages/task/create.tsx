@@ -34,6 +34,8 @@ import Highlight from '@tiptap/extension-highlight'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
 import { Attachment } from '../../types/Attachment';
+import { useRouter } from 'next/router';
+import DashboardModal from '../../components/Modal';
 
 // Form
 const ActivityType = <div className={styles.selectHolder}>
@@ -219,13 +221,10 @@ interface AttachmentsType {
 }
 
 const CreateTask: NextPage = () => {
-    const [taskData, setTaskData] = useState<TaskData>({
-        type: "",
-        mode: "",
-        maxScore: 0,
-        subject: "",
-    })
-    const [date, setDate] = useState("")
+    const router = useRouter();
+    const initialDate = router.query.date;
+
+    const [date, setDate] = useState(initialDate ? initialDate : "")
 
     const editor = useEditor({
         extensions: [
@@ -244,11 +243,22 @@ const CreateTask: NextPage = () => {
     // { name: "testando", type: "doc", tags: [] }
     const [files, setFiles] = useState<Array<Attachment>>([])
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
     return (
-        <form className={styles.holder} onChange={(event) => {
+        <form className={styles.holder} onSubmit={(event) => {
+            event.preventDefault(); // evitar que a página seja recarregada
+
             const formData = new FormData(event.currentTarget);
-            setTaskData(Object.fromEntries(formData.entries()) as unknown as TaskData)
-            console.log(Object.fromEntries(formData.entries()))
+            const taskData = Object.fromEntries(formData.entries()) as unknown as TaskData;
+
+            setUploading(true)
+            setModalVisible(true)
+
+            setTimeout(() => {
+                setUploading(false)
+            }, 5 * 1000);
         }}>
             <Head>
                 <title>Adicionar tarefa</title>
@@ -286,7 +296,7 @@ const CreateTask: NextPage = () => {
             <Menu flex isOpened={true}>
                 <div className={styles.section}>
                     <div className='row'>
-                        <h3>Agenda</h3>
+                        <h3>Escolha o dia da tarefa</h3>
                     </div>
                     <Calendar setDate={setDate} hasMonthSelector />
                 </div>
@@ -302,7 +312,7 @@ const CreateTask: NextPage = () => {
                         style={{ width: "100%", borderRadius: "0.7rem", justifyContent: "flex-start", paddingLeft: "2rem" }}
                         isSelected={storage === "account"}
                     />
-                    <div className={styles.section} style={{ gap: "0.5rem" }}>
+                    {/* <div className={styles.section} style={{ gap: "0.5rem" }}>
                         <h6>Grupos</h6>
                         <div className={styles.groups}>
                             <div className={`${styles.group} ${storage === "group" ? 'buttonSelected' : ""} click`} onClick={() => setStorage('group')}>
@@ -334,10 +344,19 @@ const CreateTask: NextPage = () => {
                             </div>
                             <span className={`material-symbols-rounded`}>chevron_right</span>
                         </div>
-                    </div>
-                    <Button onClick={() => console.log(taskData)} icon={"send"} title={'Enviar Atividade'} preset="sendForm" />
+                    </div> */}
                 </div>
+                <Button icon={"send"} title={'Enviar Atividade'} preset="sendForm" />
             </Menu>
+            <div className={`${styles.darkFrame} ${uploading ? styles.uploading : ""}`}></div>
+            <DashboardModal
+                isVisible={modalVisible}
+                color={`var(--primary-02)`}
+                Icon={'cloud_upload'}
+                setIsVisible={setModalVisible}
+                title={"Ainda não acabamos!"}
+                description={`Estamos carregando os anexos carregados para o seu Drive.\nEnquanto enviamos os arquivos, você poder acompanhar o progresso de upload :)`}
+            />
         </form>
     )
 }

@@ -63,6 +63,8 @@
     text-align: center;
     color: var(--primary-03);
     width: 100%;
+
+    white-space: pre-line;
 }
 
 .buttonsHolder {

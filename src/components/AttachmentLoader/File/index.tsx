@@ -1,12 +1,13 @@
-import React, { Dispatch, SetStateAction } from "react"
+import { parseCookies } from "nookies";
+import React, { Dispatch, SetStateAction, useEffect } from "react"
 
 // Drag 'n drop
 import { useMultiDrop } from 'react-dnd-multi-backend'
 import { useScreenSize } from "../../../hooks/useScreenSize";
+import { api } from "../../../lib/api";
 
 // Types
 import { Attachment } from "../../../types/Attachment";
-import { getTagInfo } from "../../../utils/getTagInfo";
 import { Tag, TagProps } from "../Tag";
 
 // Stylesheets
@@ -16,14 +17,74 @@ import styles from "./styles.module.css";
 import DocAttachment from "/public/icons/attachment/doc.svg";
 import PDFAttachment from "/public/icons/attachment/pdf.svg";
 
+function divideFileInChunks(fileData: File) {
+    const fileChunks = [];
+    const maxBlob = 256 * 10 * 1024; // each chunk size (2.5MB)
+    let offset = 0;
+    while (offset < fileData.size) {
+        const chunkSize = Math.min(maxBlob, fileData.size - offset);
+        fileChunks.push({
+            blob: fileData.slice(offset, (offset + chunkSize)),
+            start: offset,
+            end: offset + chunkSize,
+        })
+        offset += chunkSize;
+    }
+    return fileChunks;
+}
+
+export async function uploadFile(fileData: File) {
+    const meta = {
+        name: fileData.name,
+        mimeType: fileData.type,
+    };
+
+    const fileChunks = divideFileInChunks(fileData); // divide the file into chunks
+    console.warn(fileChunks)
+
+    async function uploadChunks(googleSessionUrl: string, length: string) {
+        for (let i = 0; i < fileChunks.length; i += 1) {
+            const formData = new FormData();
+
+            formData.append('blob', fileChunks[i].blob, 'blobChunk');
+            formData.append('start', fileChunks[i].start.toString());
+            formData.append('end', fileChunks[i].end.toString());
+            /* formData.append('sessionUrl', googleSessionUrl);
+            formData.append('length', length); */
+
+            console.log("Enviando chunk...", formData)
+
+            const chunkUpload = await api.post(`/upload/sendChunksToDrive`, formData)
+
+            console.log(`${i + 1} Chunk Uploaded of ${fileChunks.length}`);
+        }
+        return Promise.resolve('File Uploaded Successfully');
+    }
+
+    try {
+        const response = await api.post(`/upload/getGoogleSessionUrl`, JSON.stringify({ meta }), {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        console.log("Google Session Data URL: ", response.data)
+        if (response.data) {
+            await uploadChunks(response.data, fileData.size.toString())
+        }
+    } catch (error) {
+        console.log(error)
+        return false;
+    }
+}
+
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
     attachments: Attachment[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
-    file: Attachment;
+    attachment: Attachment;
     index: number;
 };
 
-export default function File({ attachments, setAttachments, index, file, ...rest }: Props) {
+export default function File({ attachment, attachments, setAttachments, index, ...rest }: Props) {
     const [[dropProps], { html5: [html5DropProps, html5Drop], touch: [touchDropProps, touchDrop] }] = useMultiDrop({
         accept: 'card',
         drop: (item: TagProps) => {
@@ -71,7 +132,7 @@ export default function File({ attachments, setAttachments, index, file, ...rest
         >
             <div className={styles.header}>
                 {
-                    file.type === "doc" ?
+                    attachment.type === "doc" ?
                         <DocAttachment className={styles.icon} />
                         :
                         <PDFAttachment className={styles.icon} />
@@ -89,21 +150,21 @@ export default function File({ attachments, setAttachments, index, file, ...rest
                     close
                 </span>
             </div>
-            <p className={styles.fileName}>{file.name}</p>
+            <p className={styles.fileName}>{attachment.name}</p>
             <div className={styles.classes}>
-                {
-                    attachments[index].tags && attachments[index].tags.length > 0 &&
-                    <ul key={'tagsList'}>
-                        {attachments[index].tags.map((tag, tagIndex) => {
+                <ul key={'tagsList'}>
+                    {
+                        attachments[index].tags && attachments[index].tags.length > 0 &&
+                        attachments[index].tags.map((tag, tagIndex) => {
                             //console.log(tag, attachments[index].tags)
                             return <Tag key={tagIndex} tagId={tag} index={tagIndex} style={{ cursor: "pointer" }} tagType={"placed_card"} onClick={(event) => onTagClick(event, tagIndex)} />
-                        })}
-                    </ul>
-                }
-                {
-                    isHovered &&
-                    <Tag index={index} tagId={tagObject.tagId} style={{ opacity: 0.25 }} />
-                }
+                        })
+                    }
+                    {
+                        isHovered &&
+                        <Tag index={index} tagId={tagObject.tagId} style={{ opacity: 0.25 }} />
+                    }
+                </ul>
             </div>
         </li>
     );

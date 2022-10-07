@@ -8,7 +8,7 @@ import buttonStyles from '../Button/button.module.css';
 // Components
 import Button from "../Button"
 import Section from "../Section"
-import File from "./File";
+import File, { uploadFile } from "./File";
 
 // Icons
 import DocAttachment from "/public/icons/attachment/doc.svg";
@@ -78,13 +78,16 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                 const newAttachment = formatNewFile(file)
                 // [...previousState.myArray, 'new value']
                 setAttachments(attachments.concat(newAttachment))
+
+                console.log('Iniciando processo de upload do arquivo.')
+                uploadFile(file)
             }
         }
     }
 
     const hasFiles = attachments.length !== 0;
     const listItems = attachments.map((file, index) =>
-        <File id={`card_${index}`} index={index} file={file} attachments={attachments} setAttachments={setAttachments} />
+        <File id={`card_${index}`} index={index} attachment={file} attachments={attachments} setAttachments={setAttachments} />
     );
 
     return <div className={createTaskStyles.column} {...rest}>
@@ -152,7 +155,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                         <span className={`material-symbols-rounded filled`}>
                             upload_file
                         </span>
-                        <h6>Carregar</h6>
+                        <h6>Solte para carregar</h6>
                     </div>
                 </div>
             }

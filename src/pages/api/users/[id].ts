@@ -12,7 +12,7 @@ import getUser from '../../../services/getUser';
 async function handler(request: NextApiRequest, response: NextApiResponse) {
     const { id } = request.query;
     try {
-        const user = getUser(id as string)
+        const user = getUser(parseInt(id as string))
         console.log(user, "🐶 Usuário obtido com sucesso!")
         response.status(200).json(user);
     } catch (error) {

@@ -51,7 +51,7 @@ export default function DashboardModal({ isVisible, setIsVisible, actionFunction
                             </div>
 
                             <h2>{title}</h2>
-                            {description}
+                            <p>{description}</p>
 
                             <div className={styles.buttonsHolder}>
                                 {

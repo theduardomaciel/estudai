@@ -2,8 +2,6 @@ import axios from 'axios';
 import { createContext, useContext, useEffect, useState } from "react";
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
 
-import { googleApi } from '../lib/googleApi';
-
 import { api } from '../lib/api';
 import { useRouter } from 'next/router';
 import removeCookies from '../services/removeCookies';
@@ -34,6 +32,7 @@ export function AuthProvider({ children }: ContextProviderProps) {
 
             if (response.status === 200) {
                 const { appToken, google_access_token, google_refresh_token } = response.data;
+                console.log(google_access_token)
 
                 setCookie(undefined, 'auth.token', appToken as string, {
                     maxAge: 60 * 60 * 24 // 1 day (60 seconds * 60 minutes * 24 hours)
@@ -47,9 +46,10 @@ export function AuthProvider({ children }: ContextProviderProps) {
                     maxAge: 60 * 60 * 24 * 30, // 1 month (60 seconds * 60 minutes * 24 hours * 30 days)
                 })
 
-                setToken(appToken)
+                //googleApi.defaults.headers.common['Authorization'] = `Bearer ${google_access_token}`;
+                api.defaults.headers.common['Authorization'] = `Bearer ${appToken}`;
 
-                googleApi.defaults.headers.common['Authorization'] = `Bearer ${google_access_token}`;
+                setToken(appToken)
 
                 return true;
             } else if (response.status === 201) {
