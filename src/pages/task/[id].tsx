@@ -4,7 +4,7 @@ import Head from 'next/head';
 import type { NextPage } from 'next'
 
 // Stylesheets
-import styles from '../styles/Task.module.css';
+import styles from "../../styles/CreateTask.module.css"
 
 // Components
 import Sidebar from '../../components/Sidebar';

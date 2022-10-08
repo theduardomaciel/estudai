@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import DashboardModal from '..';
+import Modal from '..';
 
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -12,20 +12,21 @@ export default function LogoutModalPreset() {
 
     async function logout() {
         setLoading(true)
-        signOut()
+        await signOut()
     }
 
     return {
-        LogoutModal: <DashboardModal
+        LogoutModal: <Modal
             isVisible={isModalVisible}
             setIsVisible={setModalVisible}
             color={`var(--primary-02)`}
             Icon={'exit_to_app'}
             title={"Tem certeza que deseja sair?"}
-            description={<p>Será necessário entrar com sua conta novamente para poder acessar a plataforma.</p>}
+            description={"Será necessário entrar com sua conta novamente para poder acessar a plataforma."}
             buttonText="LOG-OUT"
             actionFunction={logout}
             isLoading={isLoading}
+            zIndex={25}
         />,
         setLogoutModalVisible: setModalVisible
     }

@@ -24,12 +24,14 @@ const Groups: NextPage = () => {
                 <div className={"header"}>
                     <h3 className={"title"}>Tarefas pendentes</h3>
                     <Link href={`/create`}>
-                        <Button
-                            classes={styles.addButton}
-                            style={{ backgroundColor: "var(--primary-02)", padding: "0.75rem 1.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
-                            icon={"group_add"}
-                            title='Entrar em um grupo'
-                        />
+                        <a href="">
+                            <Button
+                                classes={styles.addButton}
+                                style={{ backgroundColor: "var(--primary-02)", padding: "0.75rem 1.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
+                                icon={"group_add"}
+                                title='Entrar em um grupo'
+                            />
+                        </a>
                     </Link>
                 </div>
             </div>

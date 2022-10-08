@@ -20,7 +20,7 @@ type Props = {
 import { AnimatePresence } from "framer-motion";
 import Button from '../Button';
 
-export default function DashboardModal({ isVisible, setIsVisible, actionFunction, color, isLoading, Icon, title, description, buttonText, suppressReturnButton, zIndex }: Props) {
+export default function Modal({ isVisible, setIsVisible, actionFunction, color, isLoading, Icon, title, description, buttonText, suppressReturnButton, zIndex }: Props) {
     const backdropVariants = {
         open: {
             opacity: 1,

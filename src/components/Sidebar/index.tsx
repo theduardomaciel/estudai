@@ -63,20 +63,28 @@ export default function Sidebar() {
         moveSectionBar(section ? section : "home")
     }, [])
 
-    return <nav className={`${styles.container} pulse`}>
-        <Link href={`/home`}>
-            <span ref={dashboardButton} className={`material-symbols-rounded ${section === "home" ? "filled" : "outlined"}`}>space_dashboard</span>
-        </Link>
+    return <>
+        <nav className={`${styles.container} pulse`}>
+            <Link href={`/home`}>
+                <a href="">
+                    <span ref={dashboardButton} className={`material-symbols-rounded ${section === "home" ? "filled" : "outlined"}`}>space_dashboard</span>
+                </a>
+            </Link>
 
-        <Link href={"/groups"}>
-            <span ref={groupsButton} className={`material-symbols-rounded ${section === "groups" ? "filled" : "outlined"}`}>group</span>
-        </Link>
+            <Link href={"/groups"}>
+                <a href="">
+                    <span ref={groupsButton} className={`material-symbols-rounded ${section === "groups" ? "filled" : "outlined"}`}>group</span>
+                </a>
+            </Link>
 
-        <Link href={"/settings"}>
-            <span ref={settingsButton} className={`material-symbols-rounded ${section === "settings" ? "filled" : "outlined"}`}>settings</span>
-        </Link>
-        <span onClick={() => setLogoutModalVisible(true)} className={`material-symbols-rounded`}>exit_to_app</span>
-        <div ref={sectionBar} className={styles.sectionBar} />
+            <Link href={"/settings"}>
+                <a href="">
+                    <span ref={settingsButton} className={`material-symbols-rounded ${section === "settings" ? "filled" : "outlined"}`}>settings</span>
+                </a>
+            </Link>
+            <span onClick={() => setLogoutModalVisible(true)} className={`material-symbols-rounded`}>exit_to_app</span>
+            <div ref={sectionBar} className={styles.sectionBar} />
+        </nav>
         {LogoutModal}
-    </nav>
+    </>
 }

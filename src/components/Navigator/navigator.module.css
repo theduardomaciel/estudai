@@ -28,12 +28,12 @@
     color: var(--primary-04);
 }
 
-.container h3 span {
+.container h3 {
     cursor: pointer;
     margin-right: 0.5rem;
 }
 
-.container h3 span:hover {
+.container:hover h3 {
     text-decoration: underline;
 }
 

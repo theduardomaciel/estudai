@@ -87,7 +87,7 @@ const Login: NextPage = () => {
             console.log(errorResponse)
             setLoading(false)
         },
-        scope: "https://www.googleapis.com/auth/drive", //https://www.googleapis.com/auth/drive.file
+        scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata", //https://www.googleapis.com/auth/drive.file
         flow: 'auth-code',
         /* ux_mode: "redirect",
         redirect_uri: "http://localhost:3000/auth/login" */
@@ -115,7 +115,9 @@ const Login: NextPage = () => {
                                 }} />
                             <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                             <Link href={"/auth/register"}>
-                                <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>
+                                <a href="">
+                                    <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>
+                                </a>
                             </Link>
                         </>
                         :
@@ -127,10 +129,12 @@ const Login: NextPage = () => {
                                 </p>
                             </header>
                             <Link href={"/auth/register"}>
-                                <Button
-                                    style={{ padding: "1rem 1.5rem", width: "100%" }}
-                                    title='Criar uma conta'
-                                />
+                                <a href="">
+                                    <Button
+                                        style={{ padding: "1rem 1.5rem", width: "100%" }}
+                                        title='Criar uma conta'
+                                    />
+                                </a>
                             </Link>
                             <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                         </>

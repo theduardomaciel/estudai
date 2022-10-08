@@ -27,6 +27,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
     const dragFrame = useRef<HTMLDivElement | null>(null);
 
     const counter = useRef<number>(0);
+    const [errorMessage, setErrorMessage] = useState("")
 
     const removeDragStyle = () => {
         if (dragFrame.current) {
@@ -44,7 +45,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
         return newAttachment
     }
 
-    function processFile(type: 'input' | 'drag', triggerEvent: any) {
+    async function processFile(type: 'input' | 'drag', triggerEvent: any) {
         if (type === "drag") {
             const event = triggerEvent as React.DragEvent<HTMLDivElement>;
             if (event.dataTransfer.items) {
@@ -72,22 +73,24 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             const event = triggerEvent as React.ChangeEvent<HTMLInputElement>;
             const files = event.currentTarget.files as FileList;
             const file = files[0] as File;
-            console.log(event.currentTarget.files)
+
             if (file) {
-                console.log(file)
                 const newAttachment = formatNewFile(file)
                 // [...previousState.myArray, 'new value']
                 setAttachments(attachments.concat(newAttachment))
 
-                console.log('Iniciando processo de upload do arquivo.')
-                uploadFile(file)
+                console.log(file, 'Iniciando processo de upload do arquivo.')
+                const errorMessage = await uploadFile(file)
+                if (errorMessage) {
+                    setErrorMessage(errorMessage)
+                }
             }
         }
     }
 
     const hasFiles = attachments.length !== 0;
     const listItems = attachments.map((file, index) =>
-        <File id={`card_${index}`} index={index} attachment={file} attachments={attachments} setAttachments={setAttachments} />
+        <File key={index} id={`card_${index}`} index={index} attachment={file} attachments={attachments} setAttachments={setAttachments} />
     );
 
     return <div className={createTaskStyles.column} {...rest}>
@@ -99,83 +102,106 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                 title='Adicionar link'
             />
         </div>
-        <div
-            ref={dragFrame}
-            className={styles.attachmentHolder}
-            onDragEnter={(event) => {
-                event.preventDefault();
-                counter.current++;
+        {
+            errorMessage === "" ?
+                <div
+                    ref={dragFrame}
+                    className={styles.attachmentHolder}
+                    onDragEnter={(event) => {
+                        event.preventDefault();
+                        counter.current++;
 
-                if (dragFrame.current) {
-                    dragFrame.current.classList.add(styles.dragEnter)
-                }
-            }}
-            onDragLeave={() => {
-                counter.current--;
-
-                if (counter.current === 0) {
-                    removeDragStyle()
-                }
-            }}
-            onDragOver={(event) => {
-                //console.log('File(s) in drop zone');
-                // Prevent default behavior (Prevent file from being opened)
-                event.preventDefault();
-            }}
-            onDrop={(event) => {
-                console.log('File dropped');
-                // Prevent default behavior (Prevent file from being opened)
-                event.preventDefault();
-
-                counter.current = 0;
-                removeDragStyle()
-                processFile("drag", event)
-            }}
-            /* onClick={() => attachments.length > 0 } */
-            style={{
-                justifyContent: !hasFiles ? "center" : "flex-start",
-                alignItems: !hasFiles ? "center" : "flex-start",
-                padding: hasFiles ? `2.5rem 2.5rem 7.5rem 2.5rem` : `2.5rem`
-            }}
-        >
-            {
-                !hasFiles &&
-                <div className={styles.guide} style={{ width: hasFiles ? "100%" : "fit-content" }}>
-                    <div className={styles.beforeHover}>
-                        {
-                            !hasFiles &&
-                            <>
-                                <h6>Arraste arquivos para cá</h6>
-                                <p>ou</p>
-                            </>
+                        if (dragFrame.current) {
+                            dragFrame.current.classList.add(styles.dragEnter)
                         }
-                        <label className={`${styles.searchFile} ${buttonStyles.button}`} htmlFor="attachmentUpload">{hasFiles ? "Adicionar arquivo" : "Escolher arquivo"}</label>
-                    </div>
-                    <div className={styles.afterHover}>
-                        <span className={`material-symbols-rounded filled`}>
-                            upload_file
-                        </span>
-                        <h6>Solte para carregar</h6>
+                    }}
+                    onDragLeave={() => {
+                        counter.current--;
+
+                        if (counter.current === 0) {
+                            removeDragStyle()
+                        }
+                    }}
+                    onDragOver={(event) => {
+                        //console.log('File(s) in drop zone');
+                        // Prevent default behavior (Prevent file from being opened)
+                        event.preventDefault();
+                    }}
+                    onDrop={(event) => {
+                        console.log('File dropped');
+                        // Prevent default behavior (Prevent file from being opened)
+                        event.preventDefault();
+
+                        counter.current = 0;
+                        removeDragStyle()
+                        processFile("drag", event)
+                    }}
+                    /* onClick={() => attachments.length > 0 } */
+                    style={{
+                        justifyContent: !hasFiles ? "center" : "flex-start",
+                        alignItems: !hasFiles ? "center" : "flex-start",
+                        padding: hasFiles ? `2.5rem 2.5rem 7.5rem 2.5rem` : `2.5rem`
+                    }}
+                >
+                    {
+                        !hasFiles &&
+                        <div className={styles.guide} style={{ width: hasFiles ? "100%" : "fit-content" }}>
+                            <div className={styles.beforeHover}>
+                                {
+                                    !hasFiles &&
+                                    <>
+                                        <h6>Arraste arquivos para cá</h6>
+                                        <p>ou</p>
+                                    </>
+                                }
+                                <label className={`${styles.searchFile} ${buttonStyles.button}`} htmlFor="attachmentUpload">{hasFiles ? "Adicionar arquivo" : "Escolher arquivo"}</label>
+                            </div>
+                            <div className={styles.afterHover}>
+                                <span className={`material-symbols-rounded filled`}>
+                                    upload_file
+                                </span>
+                                <h6>Solte para carregar</h6>
+                            </div>
+                        </div>
+                    }
+                    <ul>
+                        {listItems}
+                    </ul>
+                    <label className={styles.picker} htmlFor="attachmentUpload" />
+                    <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" />
+                    {
+                        hasFiles && <div className={styles.tagsHolder}>
+                            <div>
+                                <span className="material-symbols-rounded">sell</span>
+                                <p>Tags</p>
+                            </div>
+                            <AttachmentTag index={"1"} tagId={1} />
+                            <AttachmentTag index={"2"} tagId={2} />
+                            <AttachmentTag index={"3"} tagId={3} />
+                            <AttachmentTag index={"4"} tagId={4} />
+                        </div>
+                    }
+                </div>
+                :
+                <div className={`${styles.attachmentHolder} ${styles.expired}`}>
+                    <span className={`${styles.icon} static material-symbols-rounded`}>
+                        sentiment_dissatisfied
+                    </span>
+                    <div className="">
+                        {
+                            errorMessage === "google_error" ?
+                                <>
+                                    <p>{`Eita!\nParece que o nosso acesso a sua conta Google expirou :(`}</p>
+                                    <p>Para anexar arquivos novamente, entre novamente na plataforma para revalidar seus dados.</p>
+                                </>
+                                :
+                                <>
+                                    <p>{`Eita!\nTivemos um problema interno no servidor :(`}</p>
+                                    <p>Por favor, tente reiniciar a página para resolver o erro.</p>
+                                </>
+                        }
                     </div>
                 </div>
-            }
-            <ul key={'list'}>
-                {listItems}
-            </ul>
-            <label className={styles.picker} htmlFor="attachmentUpload" />
-            <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" />
-            {
-                hasFiles && <div className={styles.tagsHolder}>
-                    <div>
-                        <span className="material-symbols-rounded">sell</span>
-                        <p>Tags</p>
-                    </div>
-                    <AttachmentTag index={"1"} tagId={1} />
-                    <AttachmentTag index={"2"} tagId={2} />
-                    <AttachmentTag index={"3"} tagId={3} />
-                    <AttachmentTag index={"4"} tagId={4} />
-                </div>
-            }
-        </div>
+        }
     </div>
 }

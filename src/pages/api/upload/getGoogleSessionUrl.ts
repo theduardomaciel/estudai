@@ -1,41 +1,96 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { Middleware, Next, use } from "next-api-route-middleware";
+import { createRouter } from 'next-connect';
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 // API
-import { getGoogleAPIClient } from "../../../lib/googleApi";
+import axios, { AxiosError } from 'axios';
+import { getAPIClient } from '../../../lib/api';
 
-// Middlewares
-import { captureErrors } from "../../../middlewares/captureErrors";
-import { allowMethods } from "../../../middlewares/allowMethods";
-import { parseCookies } from "nookies";
+// Types
+import { Credentials } from 'google-auth-library';
+import prisma from '../../../lib/prisma';
+
+// DB
+
 
 const url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { meta } = req.body;
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
-    const googleApi = getGoogleAPIClient()
+router
+    .post(async (req, res) => {
+        const { meta, userId } = req.body;
 
-    const token = req.cookies['auth.googleAccessToken'];
-    console.log("TOKEN", token)
+        let googleToken = req.cookies['auth.googleAccessToken'];
+        const googleRefreshToken = req.cookies['auth.googleAccessToken'];
+        const appToken = req.cookies['auth.token'];
 
-    if (meta) {
-        const body = JSON.stringify(meta);
-        try {
-            const response = await googleApi.post(url, body, {
+        const api = getAPIClient(undefined, appToken)
+
+        async function returnURL() {
+            const body = JSON.stringify(meta);
+            const response = await axios.post(url, body, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${googleToken}`,
+                    'Content-Type': 'application/json; charset=UTF-8'
                 }
             })
             const googleSessionUrl = response.headers.location;
+            console.log("O link da seção do Google para upload foi obtido com sucesso!")
             res.status(200).json(googleSessionUrl)
-        } catch (error) {
-            console.log(error)
-            res.status(500).send({ error: 'Internal Server Error' })
         }
-    } else {
-        res.status(500).send({ error: 'No data provided.' })
-    }
-};
 
-export default use(captureErrors, allowMethods(['POST']), handler);
+        if (meta) {
+            try {
+                await returnURL()
+            } catch (err: any) {
+                const error = err as AxiosError;
+                if (error.response?.status == 401) {
+                    console.log("O token de acesso ao Google do usuário expirou, obtendo um novo...")
+
+                    try {
+                        const response = await api.post(`/auth/google/regenerateCredentials`, { refreshToken: googleRefreshToken })
+                        if (response.status === 200) {
+                            console.log(`Novas credenciais obtidas com sucesso. Aplicando-as...`)
+
+                            // Obtemos as novas credenciais
+                            const newCredentials = response.data as Credentials;
+                            console.log(newCredentials, "Novas credenciais.")
+
+                            // Atualizamos o token Google na conta do usuário
+                            await prisma.account.update({
+                                where: {
+                                    userId: parseInt(userId)
+                                },
+                                data: {
+                                    google_access_token: newCredentials.access_token,
+                                    google_refresh_token: newCredentials.refresh_token,
+                                    expires_at: newCredentials.expiry_date
+                                }
+                            })
+
+                            // Atualizamos o token Google na função
+                            googleToken = newCredentials.access_token as string;
+
+                            await returnURL();
+                        } else {
+                            res.status(401).send({ error: 'Google refresh and access token expired.' })
+                        }
+                    } catch (error) {
+                        res.status(401).send({ error: 'Google refresh and access token expired.' })
+                    }
+                }
+            }
+        } else {
+            res.status(500).send({ error: 'No data provided.' })
+        }
+    })
+
+export default router.handler({
+    onError: (err: any, req, res) => {
+        console.error(err.stack);
+        res.status(500).end("Something broke!");
+    },
+    onNoMatch: (req, res) => {
+        res.status(404).end("Page is not found");
+    },
+});

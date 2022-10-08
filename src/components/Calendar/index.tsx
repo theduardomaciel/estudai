@@ -74,14 +74,12 @@ export default function Calendar(props: Props) {
             if (beforeMonth || afterMonth) {
                 newCalendar[index] = "outsideRange"
             } else if (currentMonth === date.getMonth() && getDay(index) === date.getDate()) {
-                console.log(currentMonth, date.getMonth(), getDay(index), date.getDate())
                 newCalendar[index] = 'today'
             } else {
                 newCalendar[index] = 'default'
             }
         }
         setCalendar(newCalendar)
-        /* console.log(calendar) */
     }, [currentMonth])
 
     function decreaseMonth() {
@@ -141,15 +139,20 @@ export default function Calendar(props: Props) {
                         const day = getDay(index)
                         const calendarMonth = isBeforeMonth(index) ? currentMonth : isAfterMonth(index + 1) ? currentMonth + 2 : currentMonth + 1;
 
-                        return <Link href={props.linkToCreate ? `/task/create?date=${`${day}/${calendarMonth}/${currentYear}`}` : ""}>
-                            <li key={day.toString()}
-                                onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
-                                onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
-                                className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
-                                onClick={() => setDate(index, day, calendarMonth)}
-                            >
-                                {day}
-                            </li>
+                        return <Link
+                            href={props.linkToCreate ? `/task/create?date=${`${day}/${calendarMonth}/${currentYear}`}` : ""}
+                            key={index.toString()}
+                        >
+                            <a>
+                                <li
+                                    onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
+                                    onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
+                                    className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
+                                    onClick={() => setDate(index, day, calendarMonth)}
+                                >
+                                    {day}
+                                </li>
+                            </a>
                         </Link>
                     })
                 }

@@ -23,7 +23,7 @@ const Groups: NextPage = () => {
                 <Profile />
                 <div className={"header"}>
                     <h3 className={"title"}>Meus Grupos</h3>
-                    <Link href={`/create`}>
+                    <Link href={`/group/`}>
                         <Button
                             classes={styles.addButton}
                             style={{ backgroundColor: "var(--primary-02)", padding: "0.75rem 1.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}

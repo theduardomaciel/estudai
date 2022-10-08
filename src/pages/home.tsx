@@ -90,13 +90,15 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                             <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded click ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
                             <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded click ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
                         </div>
-                        <Link href={`/task/create`}>
-                            <Button
-                                classes={styles.addButton}
-                                style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
-                                icon={"add"}
-                                title='Adicionar tarefa'
-                            />
+                        <Link href={`/task/new`}>
+                            <a href="">
+                                <Button
+                                    classes={styles.addButton}
+                                    style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
+                                    icon={"add"}
+                                    title='Adicionar tarefa'
+                                />
+                            </a>
                         </Link>
                     </div>
                 </div>

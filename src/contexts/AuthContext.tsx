@@ -65,7 +65,7 @@ export function AuthProvider({ children }: ContextProviderProps) {
     }
 
     async function signOut() {
-        await removeCookies(undefined);
+        await removeCookies();
 
         setToken(null)
 

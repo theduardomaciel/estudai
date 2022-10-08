@@ -22,6 +22,32 @@
     transition: 0.15s;
 }
 
+.attachmentHolder.expired {
+    justify-content: center;
+    padding: 3.5rem;
+
+    flex-direction: row;
+}
+
+.attachmentHolder.expired p {
+    text-align: center;
+    color: var(--primary-02);
+
+    white-space: pre-line;
+    font-weight: 700;
+}
+
+.attachmentHolder.expired p:nth-child(2) {
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: var(--primary-03);
+}
+
+.attachmentHolder.expired .icon {
+    color: var(--primary-02);
+    font-size: 8rem;
+}
+
 .picker {
     position: absolute;
     top: 0;
@@ -140,6 +166,8 @@
     width: 100%;
 
     z-index: 6;
+
+    /* flex-wrap: wrap; */
 
     position: absolute;
     left: 0;

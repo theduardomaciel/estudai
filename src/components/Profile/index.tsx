@@ -1,9 +1,16 @@
 import Image from 'next/image'
-import { useState } from 'react'
-import { User } from '../../types/User';
+
+// Imports
+import placeholder from '/public/images/user_placeholder.jpg';
+
+// Stylesheet
+import styles from './profile.module.css'
+
+// Components
 import Button from '../Button'
 
-import styles from './profile.module.css'
+// Types
+import { User } from '../../types/User';
 
 interface Props {
     onClick?: () => void;
@@ -30,9 +37,13 @@ export default function Profile(props: Props) {
     return (
         <div className={styles.holder}>
             <div className={styles.profile}>
-                {/* <div > */}
-                <img className={styles.image} src={props.user?.image_url} />
-                {/* </div> */}
+                <div className={styles.image}>
+                    <Image
+                        src={props.user?.image_url || placeholder}
+                        width={42}
+                        height={42}
+                    />
+                </div>
 
                 <div className={styles.text}>
                     <p>{getGreetings()}</p>

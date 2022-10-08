@@ -9,6 +9,7 @@
     cursor: grab;
 
     z-index: 3;
+    min-width: fit-content;
 
     color: var(--light);
     background: var(--primary-02);

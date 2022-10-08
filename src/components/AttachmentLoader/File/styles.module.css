@@ -49,6 +49,34 @@
     animation: pulseAnimation 1s infinite;
 }
 
+.progressBar {
+    position: relative;
+    height: 1rem;
+    width: 100%;
+}
+
+.progressBar div:nth-child(1) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    width: 0%;
+    height: 100%;
+
+    border-radius: 2.5rem;
+    background-color: var(--primary-03);
+}
+
+.progressBar div:nth-child(2) {
+    width: 100%;
+    height: 100%;
+
+    z-index: 0;
+    border-radius: 2.5rem;
+    background-color: var(--light-gray);
+}
+
 @keyframes pulseAnimation {
     0% {
         outline: 1px dashed var(--primary-04);

@@ -1,5 +1,6 @@
+import { AxiosError } from "axios";
 import { parseCookies } from "nookies";
-import React, { Dispatch, SetStateAction, useEffect } from "react"
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react"
 
 // Drag 'n drop
 import { useMultiDrop } from 'react-dnd-multi-backend'
@@ -40,25 +41,32 @@ export async function uploadFile(fileData: File) {
     };
 
     const fileChunks = divideFileInChunks(fileData); // divide the file into chunks
-    console.warn(fileChunks)
 
     async function uploadChunks(googleSessionUrl: string, length: string) {
         for (let i = 0; i < fileChunks.length; i += 1) {
             const formData = new FormData();
 
-            formData.append('blob', fileChunks[i].blob, 'blobChunk');
+            formData.append('blob', fileChunks[i].blob/* , 'blobChunk' */);
             formData.append('start', fileChunks[i].start.toString());
             formData.append('end', fileChunks[i].end.toString());
-            /* formData.append('sessionUrl', googleSessionUrl);
-            formData.append('length', length); */
+            formData.append('sessionUrl', googleSessionUrl);
+            formData.append('length', length);
 
             console.log("Enviando chunk...", formData)
 
-            const chunkUpload = await api.post(`/upload/sendChunksToDrive`, formData)
+            const chunkUpload = await api.post(`/upload/sendChunksToDrive`, formData, {
+                headers: {
+                    'Content-type': 'multipart/form-data; boundary=XXX'
+                }
+            })
 
-            console.log(`${i + 1} Chunk Uploaded of ${fileChunks.length}`);
+            if (chunkUpload.status === 200) {
+                console.log(`${i + 1} Chunk Uploaded of ${fileChunks.length}`);
+            } else if (chunkUpload.status === 201) {
+                console.log("Upload concluído.")
+                return chunkUpload.data;
+            }
         }
-        return Promise.resolve('File Uploaded Successfully');
     }
 
     try {
@@ -69,11 +77,17 @@ export async function uploadFile(fileData: File) {
         })
         console.log("Google Session Data URL: ", response.data)
         if (response.data) {
-            await uploadChunks(response.data, fileData.size.toString())
+            const result = await uploadChunks(response.data, fileData.size.toString())
+            console.warn(result, "Arquivo enviado para o Drive com sucesso!")
         }
-    } catch (error) {
+    } catch (err: any) {
+        const error = err as AxiosError;
         console.log(error)
-        return false;
+        if (error.response?.status === 401) {
+            return "google_error";
+        } else {
+            return "server_error"
+        }
     }
 }
 
@@ -125,6 +139,8 @@ export default function File({ attachment, attachments, setAttachments, index, .
         console.log("Tag removida com sucesso!")
     }
 
+    const [progress, setProgress] = useState(0)
+
     return (
         <li
             key={index}
@@ -140,17 +156,20 @@ export default function File({ attachment, attachments, setAttachments, index, .
                 <span className={`material-symbols-rounded ${styles.close}`} onClick={() => {
                     let array = [...attachments]; // make a separate copy of the array
                     const arrayIndex = index;
-                    console.log(arrayIndex, index, array)
                     if (arrayIndex !== -1) {
                         array.splice(arrayIndex, 1);
                         setAttachments(array)
-                        console.log("Anexo removido com sucesso!")
+                        console.log(`Anexo ${index} removido com sucesso.`)
                     }
                 }}>
                     close
                 </span>
             </div>
             <p className={styles.fileName}>{attachment.name}</p>
+            <div className={styles.progressBar}>
+                <div style={{ width: `${progress}%` }} />
+                <div />
+            </div>
             <div className={styles.classes}>
                 <ul key={'tagsList'}>
                     {

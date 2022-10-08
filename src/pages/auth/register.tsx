@@ -250,7 +250,9 @@ const Register: NextPage = () => {
         </div>
         <div ref={progressBar} className={styles.progressBar} />
         <Link href={"/auth/login"}>
-            <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
+            <a href="">
+                <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
+            </a>
         </Link>
     </motion.div>
 
@@ -295,10 +297,12 @@ const Register: NextPage = () => {
                 Nunca mais uma matéria ficará atrasada.</p>
         </header>
         <Link href={"/home"}>
-            <Button
-                style={{ padding: "1rem 1.5rem", width: "100%" }}
-                title='Entrar na plataforma'
-            />
+            <a href="">
+                <Button
+                    style={{ padding: "1rem 1.5rem", width: "100%" }}
+                    title='Entrar na plataforma'
+                />
+            </a>
         </Link>
         <Separator style={separator} orientation='horizontal' />
     </motion.div>
@@ -324,7 +328,7 @@ const Register: NextPage = () => {
             console.log(errorResponse)
             setLoading(false)
         },
-        scope: "https://www.googleapis.com/auth/drive", //https://www.googleapis.com/auth/drive.file
+        scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata", //https://www.googleapis.com/auth/drive.file
         flow: 'auth-code',
     });
 

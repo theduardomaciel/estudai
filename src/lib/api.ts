@@ -1,7 +1,7 @@
 import axios from "axios";
 import { parseCookies } from "nookies";
 
-export function getAPIClient(ctx?: any) {
+export function getAPIClient(ctx?: any, preToken?: string) {
     const { 'auth.token': token } = parseCookies(ctx)
 
     const api = axios.create({
@@ -13,7 +13,9 @@ export function getAPIClient(ctx?: any) {
         return config;
     })
 
-    if (token) {
+    if (preToken) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${preToken}`;
+    } else if (token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
 
