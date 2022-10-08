@@ -1,4 +1,5 @@
 import React from "react";
+import Spinner from "../Spinner";
 
 import styles from "./button.module.css"
 
@@ -24,10 +25,7 @@ const Button = React.forwardRef(function Button({ title, classes, isSelected, is
     >
         {
             isLoading ?
-                <div className={styles.loader}>
-                    <div style={{ borderColor: `${iconColor ? iconColor : "var(--light)"} transparent transparent transparent` }} />
-                    <div style={{ borderColor: `${iconColor ? iconColor : "var(--light)"} transparent transparent transparent` }} />
-                </div>
+                <Spinner color={iconColor as string} />
                 :
                 <>
                     {

@@ -13,38 +13,18 @@ export type NextApiRequestWithBodyData = NextApiRequest & { file: any };
 
 const router = createRouter<NextApiRequestWithBodyData, NextApiResponse>();
 
-// start = starting index of the chunk | end = end index of the chunk
-// length = length of the entire file | sessionUrl = google resumable session URL
-
 // File upload
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
 const uploadMiddleware = upload.single('blob');
 
-/* 
-[Object: null prototype] {
-  start: '0',
-  end: '2621440',
-  sessionUrl: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&upload_id=ADPycdsDnV1aP9BWWooLR5c6nH8M6Se6mfogYavkDdDfjirJU1nmTbNUjzmbQCSVmK911nGKijEi1xb2weKCeGpgCZrvaw',
-  length: '22478171'
-}
-{
-  fieldname: 'blob',
-  originalname: 'blob',
-  encoding: '7bit',
-  mimetype: 'application/octet-stream',
-  buffer: <Buffer 25 50 44 46 2d 31 2e 34 0d 25 e2 e3 cf d3 0d 0a 31 37 32 39 20 30 20 6f 62 6a 0d 3c 3c 2f 4c 69 6e 65 61 72 69 7a 65 64 20 31 2f 4c 20 32 32 34 37 38 ... 2621390 more bytes>,
-  size: 2621440
-} 
-*/
-
 router
     //.use(isAuthenticated)
     .use(expressWrapper(cors()))
     .use(expressWrapper(uploadMiddleware) as any) // express middleware are supported if you wrap it with expressWrapper
     .post(async (req, res) => {
-        const { start, end, sessionUrl, length } = req.body;
+        const { start, end, sessionUrl, length } = req.body; // start = starting index of the chunk | end = end index of the chunk | length = length of the entire file | sessionUrl = google resumable session URL
         const token = req.cookies['auth.googleAccessToken'];
 
         const headers = {
@@ -57,7 +37,29 @@ router
             const response = await axios.put(sessionUrl, req.file.buffer, { headers: headers })
             console.log(response.data, "Dados retornados.")
 
-            res.status(201).json(response.data)
+            try {
+                const createPermission = await axios.post(`https://www.googleapis.com/drive/v3/files/${response.data.id}/permissions`, {
+                    role: "commenter",
+                    type: "anyone"
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                if (createPermission.data) {
+                    const fileLink = await axios.get(`https://www.googleapis.com/drive/v3/files/${response.data.id}?fields=webContentLink,webViewLink`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                    console.log(fileLink.data)
+                    res.status(201).json({ id: response.data.id, downloadLink: fileLink.data.webContentLink, viewLink: fileLink.data.webViewLink })
+                }
+            } catch (error: any) {
+                console.log(error.response.statusCode)
+                res.status(201).json(response.data)
+            }
         } catch (err: any) {
             const error = err as AxiosError;
             if (error.response) {
@@ -71,7 +73,7 @@ router
                         res.status(500).json({ error: "The chunk wasn't split correctly" });
                     }
                 } else if (error.response.status === 404) {
-                    res.status(500).json({ error: "the upload session has expired and the upload must be restarted from the beginning." })
+                    res.status(500).json({ error: "The upload session has expired and the upload must be restarted from the beginning." })
                 }
             }
         }

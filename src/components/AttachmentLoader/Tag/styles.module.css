@@ -8,7 +8,7 @@
 
     cursor: grab;
 
-    z-index: 3;
+    z-index: 7;
     min-width: fit-content;
 
     color: var(--light);

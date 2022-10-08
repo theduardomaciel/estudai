@@ -149,7 +149,7 @@
     display: none;
 } */
 
-.searchFile {
+.beforeHover .searchFile {
     background-color: var(--light);
     padding: 0.3rem 1.2rem 0.3rem 1.2rem;
     color: var(--primary-03);
@@ -166,6 +166,8 @@
     width: 100%;
 
     z-index: 6;
+    overflow-x: none;
+    overflow-y: scroll;
 
     /* flex-wrap: wrap; */
 
@@ -175,6 +177,10 @@
 
     background: var(--primary-04);
     border-radius: 0px 0px 0.5rem 0.5rem;
+}
+
+.tagsHolder::-webkit-scrollbar {
+    display: none;
 }
 
 .tagsHolder div:nth-child(1) {

@@ -32,7 +32,6 @@ export function AuthProvider({ children }: ContextProviderProps) {
 
             if (response.status === 200) {
                 const { appToken, google_access_token, google_refresh_token } = response.data;
-                console.log(google_access_token)
 
                 setCookie(undefined, 'auth.token', appToken as string, {
                     maxAge: 60 * 60 * 24 // 1 day (60 seconds * 60 minutes * 24 hours)

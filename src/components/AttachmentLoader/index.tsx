@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
+import React, { Dispatch, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react"
 
 // Stylesheets
 import createTaskStyles from "../../styles/CreateTask.module.css"
@@ -8,26 +8,24 @@ import buttonStyles from '../Button/button.module.css';
 // Components
 import Button from "../Button"
 import Section from "../Section"
-import File, { uploadFile } from "./File";
+import File from "./File";
+import AttachmentTag from "./Tag";
 
-// Icons
-import DocAttachment from "/public/icons/attachment/doc.svg";
-import PDFAttachment from "/public/icons/attachment/pdf.svg";
-
+// Types
 import { Attachment } from "../../types/Attachment";
-import AttachmentTag, { TagProps } from "./Tag";
-import { useMultiDrop } from "react-dnd-multi-backend";
+import { useAppContext } from "../../contexts/AppContext";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
     attachments: Attachment[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
+    /* attachments: MutableRefObject<Attachment[]>; */
 };
 
 export default function AttachmentsLoader({ attachments, setAttachments, ...rest }: Props) {
     const dragFrame = useRef<HTMLDivElement | null>(null);
 
     const counter = useRef<number>(0);
-    const [errorMessage, setErrorMessage] = useState("")
+    const { hasGoogleAuthentication } = useAppContext();
 
     const removeDragStyle = () => {
         if (dragFrame.current) {
@@ -36,14 +34,19 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
     }
 
     function formatNewFile(file: File) {
-        const newAttachment = {
+        const preAttachment = {
             name: file.name,
             type: file.type,
-            link: file.toString(),
-            tags: []
-        } as Attachment;
-        return newAttachment
+            tags: [],
+            link: file,
+        }
+        setAttachments(attachments.concat(preAttachment))
     }
+
+    const hasFiles = attachments.length !== 0;
+    const listItems = attachments.map((attach, index) => {
+        return <File key={`card_${index}`} attachmentIndex={index} attachments={attachments} setAttachments={setAttachments} />
+    });
 
     async function processFile(type: 'input' | 'drag', triggerEvent: any) {
         if (type === "drag") {
@@ -51,47 +54,29 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             if (event.dataTransfer.items) {
                 // Use DataTransferItemList interface to access the file(s)
                 const items = Array.from(event.dataTransfer.items) as Array<DataTransferItem>;
-                items.forEach((item, i) => {
+                items.forEach(async (item, i) => {
                     // If dropped items aren't files, reject them
                     if (item.kind === 'file') {
                         const file = item.getAsFile() as File;
-                        console.log(file);
-                        const newAttachment = formatNewFile(file)
-                        // [...previousState.myArray, 'new value']
-                        setAttachments(attachments.concat(newAttachment))
+
+                        if (file) {
+                            console.log(file, 'Iniciando processo de upload do arquivo.')
+                            formatNewFile(file)
+                        }
                     }
                 });
-            } /* else {
-                const items = Array.from(event.dataTransfer.items)
-                // Use DataTransfer interface to access the file(s)
-                items.forEach((items, i) => {
-                    const file = items as File;
-                    console.log(`… file[${i}].name = ${file.name}`);
-                });
-            } */
+            }
         } else if (type === "input") {
             const event = triggerEvent as React.ChangeEvent<HTMLInputElement>;
             const files = event.currentTarget.files as FileList;
             const file = files[0] as File;
 
             if (file) {
-                const newAttachment = formatNewFile(file)
-                // [...previousState.myArray, 'new value']
-                setAttachments(attachments.concat(newAttachment))
-
                 console.log(file, 'Iniciando processo de upload do arquivo.')
-                const errorMessage = await uploadFile(file)
-                if (errorMessage) {
-                    setErrorMessage(errorMessage)
-                }
+                formatNewFile(file)
             }
         }
     }
-
-    const hasFiles = attachments.length !== 0;
-    const listItems = attachments.map((file, index) =>
-        <File key={index} id={`card_${index}`} index={index} attachment={file} attachments={attachments} setAttachments={setAttachments} />
-    );
 
     return <div className={createTaskStyles.column} {...rest}>
         <div className='header'>
@@ -103,7 +88,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             />
         </div>
         {
-            errorMessage === "" ?
+            hasGoogleAuthentication ?
                 <div
                     ref={dragFrame}
                     className={styles.attachmentHolder}
@@ -111,16 +96,12 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                         event.preventDefault();
                         counter.current++;
 
-                        if (dragFrame.current) {
-                            dragFrame.current.classList.add(styles.dragEnter)
-                        }
+                        if (dragFrame.current) { dragFrame.current.classList.add(styles.dragEnter) }
                     }}
                     onDragLeave={() => {
                         counter.current--;
 
-                        if (counter.current === 0) {
-                            removeDragStyle()
-                        }
+                        if (counter.current === 0) { removeDragStyle() }
                     }}
                     onDragOver={(event) => {
                         //console.log('File(s) in drop zone');
@@ -189,7 +170,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                     </span>
                     <div className="">
                         {
-                            errorMessage === "google_error" ?
+                            !hasGoogleAuthentication ?
                                 <>
                                     <p>{`Eita!\nParece que o nosso acesso a sua conta Google expirou :(`}</p>
                                     <p>Para anexar arquivos novamente, entre novamente na plataforma para revalidar seus dados.</p>

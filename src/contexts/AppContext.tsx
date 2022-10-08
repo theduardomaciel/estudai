@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 
 type ContextTypes = {
     viewMode: string;
     changeViewMode: (newViewMode: "card" | "list") => void;
+    hasGoogleAuthentication: boolean;
+    setGoogleAuthentication: Dispatch<SetStateAction<boolean>>;
 }
 
 type ContextProviderProps = {
@@ -26,9 +28,13 @@ export function AppContextProvider({ children }: ContextProviderProps) {
         localStorageViewMode && setViewMode(localStorageViewMode)
     }, [])
 
+    const [hasGoogleAuthentication, setGoogleAuthentication] = useState(true)
+
     const sharedState = {
         changeViewMode,
-        viewMode
+        viewMode,
+        hasGoogleAuthentication,
+        setGoogleAuthentication
     };
 
     return (

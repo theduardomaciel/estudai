@@ -64,6 +64,8 @@
     width: 0%;
     height: 100%;
 
+    transition: 0.35s;
+
     border-radius: 2.5rem;
     background-color: var(--primary-03);
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Head from 'next/head';
 import type { NextPage } from 'next'
@@ -241,10 +241,15 @@ const CreateTask: NextPage = () => {
     const [storage, setStorage] = useState("account");
 
     // { name: "testando", type: "doc", tags: [] }
-    const [files, setFiles] = useState<Array<Attachment>>([])
+    /* const attachments = useRef<Array<Attachment>>([]) */
+    const [attachments, setAttachments] = useState<Array<Attachment>>([])
 
     const [modalVisible, setModalVisible] = useState(false);
     const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        console.log(attachments)
+    }, [attachments])
 
     return (
         <form className={styles.holder} onSubmit={(event) => {
@@ -291,28 +296,29 @@ const CreateTask: NextPage = () => {
                         </div>
                     </div>
                 </div>
-                <AttachmentsLoader setAttachments={setFiles} attachments={files} style={{ paddingBottom: "3.5rem" }} />
+                <AttachmentsLoader attachments={attachments} setAttachments={setAttachments} style={{ paddingBottom: "3.5rem" }} />
             </div>
             <Menu flex isOpened={true}>
-                <div className={styles.section}>
-                    <div className='row'>
-                        <h3>Escolha o dia da tarefa</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+                    <div className={styles.section}>
+                        <div className='row'>
+                            <h3>Escolha o dia da tarefa</h3>
+                        </div>
+                        <Calendar setDate={setDate} hasMonthSelector />
                     </div>
-                    <Calendar setDate={setDate} hasMonthSelector />
-                </div>
 
-                <div className={styles.section}>
-                    <div className='row'>
-                        <h3>Selecione onde irá adicionar</h3>
-                    </div>
-                    <Button
-                        icon={'person'}
-                        title='Minha Conta'
-                        onClick={() => setStorage('account')}
-                        style={{ width: "100%", borderRadius: "0.7rem", justifyContent: "flex-start", paddingLeft: "2rem" }}
-                        isSelected={storage === "account"}
-                    />
-                    {/* <div className={styles.section} style={{ gap: "0.5rem" }}>
+                    <div className={styles.section}>
+                        <div className='row'>
+                            <h3>Selecione onde irá adicionar</h3>
+                        </div>
+                        <Button
+                            icon={'person'}
+                            title='Minha Conta'
+                            onClick={() => setStorage('account')}
+                            style={{ width: "100%", borderRadius: "0.7rem", justifyContent: "flex-start", paddingLeft: "2rem" }}
+                            isSelected={storage === "account"}
+                        />
+                        {/* <div className={styles.section} style={{ gap: "0.5rem" }}>
                         <h6>Grupos</h6>
                         <div className={styles.groups}>
                             <div className={`${styles.group} ${storage === "group" ? 'buttonSelected' : ""} click`} onClick={() => setStorage('group')}>
@@ -345,8 +351,9 @@ const CreateTask: NextPage = () => {
                             <span className={`material-symbols-rounded`}>chevron_right</span>
                         </div>
                     </div> */}
+                    </div>
                 </div>
-                <Button icon={"send"} title={'Enviar Atividade'} preset="sendForm" />
+                <Button icon={"send"} title={'Enviar Atividade'} preset="sendForm" style={{ width: "100%" }} />
             </Menu>
             <div className={`${styles.darkFrame} ${uploading ? styles.uploading : ""}`}></div>
             <DashboardModal

@@ -33,6 +33,7 @@ router
     .post(async (req, res) => {
         const { registerData, code } = req.body;
         const { tokens } = await oAuth2Client.getToken(code);
+        console.log(tokens)
 
         console.log("Iniciando processo de autenticação.")
 
@@ -104,6 +105,8 @@ router
                     // No futuro, criar sistema de refresh token
 
                     appToken = user?.account?.access_token as string;
+
+                    console.log(user.account)
 
                     console.log(user, "😊 Usuário obtido com sucesso!")
                     res.status(200).json({ appToken, google_access_token, google_refresh_token });

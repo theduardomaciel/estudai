@@ -1,14 +1,16 @@
 import { AxiosError } from "axios";
 import { parseCookies } from "nookies";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react"
+import React, { Dispatch, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react"
 
 // Drag 'n drop
 import { useMultiDrop } from 'react-dnd-multi-backend'
+import { useAppContext } from "../../../contexts/AppContext";
 import { useScreenSize } from "../../../hooks/useScreenSize";
 import { api } from "../../../lib/api";
 
 // Types
 import { Attachment } from "../../../types/Attachment";
+import Spinner from "../../Spinner";
 import { Tag, TagProps } from "../Tag";
 
 // Stylesheets
@@ -34,13 +36,17 @@ function divideFileInChunks(fileData: File) {
     return fileChunks;
 }
 
-export async function uploadFile(fileData: File) {
+async function uploadFile(fileData: File, setGoogleAuthentication: Dispatch<SetStateAction<boolean>>, setProgress: Dispatch<SetStateAction<number>>) {
     const meta = {
         name: fileData.name,
         mimeType: fileData.type,
+        /* parents: ['appDataFolder'], */
+        copyRequiresWriterPermission: false
     };
 
     const fileChunks = divideFileInChunks(fileData); // divide the file into chunks
+
+    const percentageIncrement = 100 / fileChunks.length;
 
     async function uploadChunks(googleSessionUrl: string, length: string) {
         for (let i = 0; i < fileChunks.length; i += 1) {
@@ -59,6 +65,8 @@ export async function uploadFile(fileData: File) {
                     'Content-type': 'multipart/form-data; boundary=XXX'
                 }
             })
+
+            setProgress(percentageIncrement * i)
 
             if (chunkUpload.status === 200) {
                 console.log(`${i + 1} Chunk Uploaded of ${fileChunks.length}`);
@@ -79,37 +87,44 @@ export async function uploadFile(fileData: File) {
         if (response.data) {
             const result = await uploadChunks(response.data, fileData.size.toString())
             console.warn(result, "Arquivo enviado para o Drive com sucesso!")
+            return result;
         }
     } catch (err: any) {
         const error = err as AxiosError;
         console.log(error)
         if (error.response?.status === 401) {
-            return "google_error";
+            setGoogleAuthentication(false);
+            return false;
         } else {
-            return "server_error"
+            return false
+            /* return "server_error" */
         }
     }
 }
 
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
+    attachmentIndex: number;
     attachments: Attachment[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
-    attachment: Attachment;
-    index: number;
+    /* attachments: MutableRefObject<Attachment[]>; */
 };
 
-export default function File({ attachment, attachments, setAttachments, index, ...rest }: Props) {
+type FileInfo = File & {
+    fileId: number;
+}
+
+export default function File({ attachmentIndex, attachments, setAttachments, ...rest }: Props) {
     const [[dropProps], { html5: [html5DropProps, html5Drop], touch: [touchDropProps, touchDrop] }] = useMultiDrop({
         accept: 'card',
         drop: (item: TagProps) => {
-            const alreadyHasTag = attachments[index].tags.filter((value, index) => { return value === item.tagId }).length > 0
+            const alreadyHasTag = attachments[attachmentIndex].tags.filter((value, index) => { return value === item.tagId }).length > 0
             console.log(alreadyHasTag)
             if (!alreadyHasTag) {
                 console.log(item)
                 let array = [...attachments];
-                const oldTags = array[index].tags;
+                const oldTags = array[attachmentIndex].tags;
 
-                array[index].tags = oldTags.concat(item.tagId)
+                array[attachmentIndex].tags = oldTags.concat(item.tagId)
 
                 setAttachments(array)
                 console.log("Tag adicionada com sucesso!")
@@ -130,58 +145,119 @@ export default function File({ attachment, attachments, setAttachments, index, .
 
     const onTagClick = (event: React.MouseEvent<HTMLLIElement, MouseEvent>, tagIndex: number) => {
         let array = [...attachments];
-        array[index].tags.splice(tagIndex, 1);
+        array[attachmentIndex].tags.splice(tagIndex, 1);
         setAttachments(array)
-
-        console.log(event.currentTarget)
-        /* event.currentTarget.remove() */
 
         console.log("Tag removida com sucesso!")
     }
 
+    const { setGoogleAuthentication } = useAppContext();
     const [progress, setProgress] = useState(0)
 
+    const fileInfo = useRef(attachments[attachmentIndex].link as FileInfo); // precisa ser fixo pois será trocado pelo id do objeto após o envio para o Google Drive
+    const tags = attachments[attachmentIndex].tags;
+
+    const uploadedFileInfo = useRef<{ id: string, downloadLink: string, viewLink: string } | null>(null);
+
+    async function removeAttachment() {
+        const fileId = uploadedFileInfo.current?.id;
+        if (fileId) {
+            setProgress(-5)
+            const deleteResponse = await api.delete(`/upload/${fileId}`)
+
+            if (deleteResponse.status === 200) {
+                let array = [...attachments];
+                array.splice(attachmentIndex, 1);
+                setAttachments(array)
+                console.log(`Anexo ${attachmentIndex} removido com sucesso.`)
+            } else {
+                console.log("Não foi possível deletar o arquivo.")
+                setProgress(-2)
+            }
+        } else {
+            console.log("O arquivo ainda não foi enviado, por isso, é impossível excluí-lo.")
+        }
+    }
+
+    const calledUpload = useRef(false);
+    useEffect(() => {
+        async function upload() {
+            const uploadedFile = await uploadFile(fileInfo.current, setGoogleAuthentication, setProgress);
+            if (uploadedFile) {
+                uploadedFileInfo.current = uploadedFile;
+                console.log(uploadedFile)
+
+                let array = [...attachments];
+                array[attachmentIndex].link = uploadedFile.id;
+                // adicionar o link de download e visualização - id já foi
+
+                setAttachments(array)
+                console.log("Id do arquivo alterado nos attachments com sucesso!")
+
+                setProgress(100)
+            } else {
+                setProgress(-1)
+            }
+        }
+        if (calledUpload.current === false) {
+            calledUpload.current = true
+            console.log("Enviando")
+            upload()
+        }
+    }, [])
+
     return (
-        <li
-            key={index}
-            className={`${styles.attachment} ${isHovered ? styles.hovered : ""}`} ref={isScreenWide ? html5Drop : touchDrop}
+        <li key={attachmentIndex}
+            className={`${styles.attachment} ${isHovered ? styles.hovered : ""}`}
+            ref={isScreenWide ? html5Drop : touchDrop}
         >
             <div className={styles.header}>
                 {
-                    attachment.type === "doc" ?
-                        <DocAttachment className={styles.icon} />
-                        :
+                    fileInfo.current.type === "application/pdf" ?
                         <PDFAttachment className={styles.icon} />
+                        :
+                        <DocAttachment className={styles.icon} />
                 }
-                <span className={`material-symbols-rounded ${styles.close}`} onClick={() => {
-                    let array = [...attachments]; // make a separate copy of the array
-                    const arrayIndex = index;
-                    if (arrayIndex !== -1) {
-                        array.splice(arrayIndex, 1);
-                        setAttachments(array)
-                        console.log(`Anexo ${index} removido com sucesso.`)
-                    }
-                }}>
-                    close
-                </span>
+                {
+                    progress === -5 ?
+                        <Spinner color="var(--primary-02)" />
+                        :
+                        <span className={`material-symbols-rounded ${styles.close}`} onClick={removeAttachment}>
+                            close
+                        </span>
+                }
             </div>
-            <p className={styles.fileName}>{attachment.name}</p>
-            <div className={styles.progressBar}>
-                <div style={{ width: `${progress}%` }} />
-                <div />
-            </div>
+            <p className={styles.fileName}>{fileInfo.current.name}</p>
+            {
+                progress >= 0 && progress !== 100 ?
+                    <div className={styles.progressBar}>
+                        <div style={{ width: `${progress}%` }} />
+                        <div />
+                    </div>
+                    :
+                    progress === 100 ?
+                        <p className={styles.fileName} style={{ color: "var(--primary-04)" }}>arquivo enviado</p>
+                        :
+                        progress === -5 ?
+                            <p className={styles.fileName} style={{ color: "var(--red-01)" }}>excluindo arquivo...</p>
+                            :
+                            progress === -2 ?
+                                <p className={styles.fileName} style={{ color: "var(--red-01)" }}>erro ao deletar</p>
+                                :
+                                <p className={styles.fileName} style={{ color: "var(--red-01)" }}>erro no upload</p>
+            }
             <div className={styles.classes}>
                 <ul key={'tagsList'}>
                     {
-                        attachments[index].tags && attachments[index].tags.length > 0 &&
-                        attachments[index].tags.map((tag, tagIndex) => {
+                        tags.length > 0 &&
+                        tags.map((tag, tagIndex) => {
                             //console.log(tag, attachments[index].tags)
                             return <Tag key={tagIndex} tagId={tag} index={tagIndex} style={{ cursor: "pointer" }} tagType={"placed_card"} onClick={(event) => onTagClick(event, tagIndex)} />
                         })
                     }
                     {
                         isHovered &&
-                        <Tag index={index} tagId={tagObject.tagId} style={{ opacity: 0.25 }} />
+                        <Tag index={"hover_preview_tag"} tagId={tagObject.tagId} style={{ opacity: 0.25 }} />
                     }
                 </ul>
             </div>
