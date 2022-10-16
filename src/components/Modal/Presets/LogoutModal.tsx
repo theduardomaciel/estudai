@@ -20,7 +20,7 @@ export default function LogoutModalPreset() {
             isVisible={isModalVisible}
             setIsVisible={setModalVisible}
             color={`var(--primary-02)`}
-            Icon={'exit_to_app'}
+            icon={'exit_to_app'}
             title={"Tem certeza que deseja sair?"}
             description={"Será necessário entrar com sua conta novamente para poder acessar a plataforma."}
             buttonText="LOG-OUT"

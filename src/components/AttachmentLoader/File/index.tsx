@@ -1,17 +1,23 @@
 import { AxiosError } from "axios";
-import { parseCookies } from "nookies";
-import React, { Dispatch, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react"
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 
 // Drag 'n drop
 import { useMultiDrop } from 'react-dnd-multi-backend'
-import { useAppContext } from "../../../contexts/AppContext";
-import { useScreenSize } from "../../../hooks/useScreenSize";
+
+// API
 import { api } from "../../../lib/api";
+
+// Hooks
+import { useAppContext } from "../../../contexts/AppContext";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useScreenSize } from "../../../hooks/useScreenSize";
+
+// Components
+import { Tag, TagProps } from "../Tag";
+import Spinner from "../../Spinner";
 
 // Types
 import { Attachment } from "../../../types/Attachment";
-import Spinner from "../../Spinner";
-import { Tag, TagProps } from "../Tag";
 
 // Stylesheets
 import styles from "./styles.module.css";
@@ -36,7 +42,7 @@ function divideFileInChunks(fileData: File) {
     return fileChunks;
 }
 
-async function uploadFile(fileData: File, setGoogleAuthentication: Dispatch<SetStateAction<boolean>>, setProgress: Dispatch<SetStateAction<number>>) {
+async function uploadFile(fileData: File, userId: number, setGoogleAuthentication: Dispatch<SetStateAction<boolean>>, setProgress: Dispatch<SetStateAction<number>>) {
     const meta = {
         name: fileData.name,
         mimeType: fileData.type,
@@ -78,7 +84,7 @@ async function uploadFile(fileData: File, setGoogleAuthentication: Dispatch<SetS
     }
 
     try {
-        const response = await api.post(`/upload/getGoogleSessionUrl`, JSON.stringify({ meta }), {
+        const response = await api.post(`/upload/getGoogleSessionUrl`, JSON.stringify({ meta, userId }), {
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -103,17 +109,14 @@ async function uploadFile(fileData: File, setGoogleAuthentication: Dispatch<SetS
 }
 
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
+    userId: number;
     attachmentIndex: number;
     attachments: Attachment[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
     /* attachments: MutableRefObject<Attachment[]>; */
 };
 
-type FileInfo = File & {
-    fileId: number;
-}
-
-export default function File({ attachmentIndex, attachments, setAttachments, ...rest }: Props) {
+export default function File({ userId, attachmentIndex, attachments, setAttachments, ...rest }: Props) {
     const [[dropProps], { html5: [html5DropProps, html5Drop], touch: [touchDropProps, touchDrop] }] = useMultiDrop({
         accept: 'card',
         drop: (item: TagProps) => {
@@ -151,17 +154,15 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
         console.log("Tag removida com sucesso!")
     }
 
-    const { setGoogleAuthentication } = useAppContext();
-    const [progress, setProgress] = useState(0)
+    const { setGoogleAuthentication, setUploading } = useAppContext();
+    const [progress, setProgress] = useState(99.9)
 
-    const fileInfo = useRef(attachments[attachmentIndex].link as FileInfo); // precisa ser fixo pois será trocado pelo id do objeto após o envio para o Google Drive
+    const fileInfo = useRef(attachments[attachmentIndex].fileId as File); // precisa ser fixo pois será trocado pelo id do objeto após o envio para o Google Drive
     const tags = attachments[attachmentIndex].tags;
 
-    const uploadedFileInfo = useRef<{ id: string, downloadLink: string, viewLink: string } | null>(null);
-
     async function removeAttachment() {
-        const fileId = uploadedFileInfo.current?.id;
-        if (fileId) {
+        const fileId = attachments[attachmentIndex].fileId;
+        if (typeof fileId === "string") {
             setProgress(-5)
             const deleteResponse = await api.delete(`/upload/${fileId}`)
 
@@ -182,14 +183,13 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
     const calledUpload = useRef(false);
     useEffect(() => {
         async function upload() {
-            const uploadedFile = await uploadFile(fileInfo.current, setGoogleAuthentication, setProgress);
+            setUploading(true)
+            const uploadedFile = await uploadFile(fileInfo.current, userId, setGoogleAuthentication, setProgress);
             if (uploadedFile) {
-                uploadedFileInfo.current = uploadedFile;
-                console.log(uploadedFile)
-
                 let array = [...attachments];
-                array[attachmentIndex].link = uploadedFile.id;
-                // adicionar o link de download e visualização - id já foi
+                array[attachmentIndex].fileId = uploadedFile.id;
+                array[attachmentIndex].downloadLink = uploadedFile.downloadLink;
+                array[attachmentIndex].viewLink = uploadedFile.viewLink;
 
                 setAttachments(array)
                 console.log("Id do arquivo alterado nos attachments com sucesso!")
@@ -198,6 +198,7 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
             } else {
                 setProgress(-1)
             }
+            setUploading(false)
         }
         if (calledUpload.current === false) {
             calledUpload.current = true

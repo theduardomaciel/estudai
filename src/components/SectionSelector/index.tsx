@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { SetStateAction, useState } from "react";
 
 import styles from "./sectionSelector.module.css"
 
 interface SectionSelectorProps {
     sections: Array<string>;
+    actualSection: string;
+    setSection: (state: string) => SetStateAction<void>
 }
 
-export default function SectionSelector(props: SectionSelectorProps) {
-    const [selected, setSelected] = useState(0)
-
+export default function SectionSelector({ sections, actualSection, setSection }: SectionSelectorProps) {
     return <ul className={styles.selector}>
         {
-            props.sections.map((section, index) => <li key={index}>
-                <div onClick={() => setSelected(index)} className={`${styles.section} ${selected === index ? styles.selected : ""}`}>
-                    <p>{section}</p>
+            sections.map((sectionName, index) => <li key={index}>
+                <div onClick={() => setSection(sectionName)} className={`${styles.section} ${actualSection === sectionName ? styles.selected : ""}`}>
+                    <p>{sectionName}</p>
                     <div />
                 </div>
             </li>

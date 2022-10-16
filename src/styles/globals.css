@@ -52,6 +52,7 @@
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 html {
@@ -82,9 +83,10 @@ a:link {
 }
 
 a:visited {
-    text-decoration: inherit;
     color: inherit;
-    cursor: auto;
+    /* text-decoration: inherit;
+    color: inherit;
+    cursor: auto; */
 }
 
 body {
@@ -103,6 +105,7 @@ main {
 
 input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: textfield;
 }
 
 textarea {
@@ -178,10 +181,8 @@ textarea {
     border: none;
 }
 
-.buttonSelected {
-    background-color: var(--primary-02) !important;
-    border: 1px solid var(--primary-04) !important;
-    outline: 2px solid var(--primary-04) !important;
+.underline {
+    text-decoration: underline;
 }
 
 input[type='file'],
@@ -193,6 +194,14 @@ input[type='submit'] {
     .title {
         width: fit-content;
     }
+}
+
+.instantFilled {
+    animation: fill 0s ease-in-out forwards;
+}
+
+.instantOutlined {
+    animation: outline 0s ease-in-out forwards;
 }
 
 .filled {

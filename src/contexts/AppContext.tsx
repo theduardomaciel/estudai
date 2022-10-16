@@ -5,6 +5,8 @@ type ContextTypes = {
     changeViewMode: (newViewMode: "card" | "list") => void;
     hasGoogleAuthentication: boolean;
     setGoogleAuthentication: Dispatch<SetStateAction<boolean>>;
+    isUploading: boolean;
+    setUploading: Dispatch<SetStateAction<boolean>>;
 }
 
 type ContextProviderProps = {
@@ -30,11 +32,15 @@ export function AppContextProvider({ children }: ContextProviderProps) {
 
     const [hasGoogleAuthentication, setGoogleAuthentication] = useState(true)
 
+    const [isUploading, setUploading] = useState(false)
+
     const sharedState = {
         changeViewMode,
         viewMode,
         hasGoogleAuthentication,
-        setGoogleAuthentication
+        setGoogleAuthentication,
+        isUploading,
+        setUploading
     };
 
     return (

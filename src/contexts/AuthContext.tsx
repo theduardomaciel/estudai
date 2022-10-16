@@ -1,10 +1,13 @@
 import axios from 'axios';
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
 
 import { api } from '../lib/api';
 import { useRouter } from 'next/router';
 import removeCookies from '../services/removeCookies';
+
+// Types
+import { User } from '../types/User';
 
 type AuthContextType = {
     token: string | null;
@@ -31,18 +34,21 @@ export function AuthProvider({ children }: ContextProviderProps) {
             const response = await api.post('/auth/google', { registerData, code });
 
             if (response.status === 200) {
-                const { appToken, google_access_token, google_refresh_token } = response.data;
+                const { userId, appToken, google_access_token, google_refresh_token } = response.data;
 
                 setCookie(undefined, 'auth.token', appToken as string, {
-                    maxAge: 60 * 60 * 24 // 1 day (60 seconds * 60 minutes * 24 hours)
+                    maxAge: 60 * 60 * 24 * 30 // 30 days (60 seconds * 60 minutes * 24 hours * 30 days)
                 })
 
+                console.log(userId)
+                setCookie(undefined, 'app.userId', userId)
+
                 setCookie(undefined, 'auth.googleAccessToken', google_access_token, {
-                    maxAge: 60 * 60 * 24 // 1 day (60 seconds * 60 minutes * 24 hours)
+                    maxAge: 60 * 60 * 24 * 30 * 60
                 })
 
                 setCookie(undefined, 'auth.googleRefreshToken', google_refresh_token, {
-                    maxAge: 60 * 60 * 24 * 30, // 1 month (60 seconds * 60 minutes * 24 hours * 30 days)
+                    maxAge: 60 * 60 * 24 * 30 * 12 * 180,
                 })
 
                 //googleApi.defaults.headers.common['Authorization'] = `Bearer ${google_access_token}`;
@@ -64,12 +70,10 @@ export function AuthProvider({ children }: ContextProviderProps) {
     }
 
     async function signOut() {
-        await removeCookies();
-
-        setToken(null)
-
         console.log("Retornando usuário para a tela inicial após des-logar.")
-        router.push(`/`)
+        await removeCookies();
+        setToken(null)
+        router.push("/")
     }
 
     return (

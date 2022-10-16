@@ -6,10 +6,13 @@ export default async function getUser(id: number) {
         const user = await prisma.user.findUnique({
             where: {
                 id: id,
+            },
+            include: {
+                tasks: true
             }
         })
         if (user && user !== null) {
-            console.log(user, "🐶 Usuário obtido com sucesso!")
+            console.log('user', "🐶 Usuário obtido com sucesso!")
             return user;
         } else {
             console.log("❌ Não foi possível obter o usuário.")

@@ -1,6 +1,6 @@
 import type { GetServerSideProps, GetServerSidePropsContext, InferGetStaticPropsType, NextPage } from 'next'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { parseCookies } from 'nookies';
 
 import Head from 'next/head';
@@ -28,10 +28,12 @@ import { useAppContext } from '../contexts/AppContext';
 import getUser from '../services/getUser';
 import getUserIdByToken from '../services/getUserIdByToken';
 import removeCookies from '../services/removeCookies';
+import { User } from '../types/User';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
 
+    console.log(token)
     const userId = await getUserIdByToken(token);
 
     if (userId === null) {
@@ -44,7 +46,13 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 
-    const user = await getUser(userId as number);
+    let user = await getUser(userId as number) as unknown as User;
+
+    user.tasks.map((task, index) => {
+        const date = new Date(task.date);
+        task.date = Math.floor(date.getTime());
+        return task;
+    })
 
     return {
         props: {
@@ -53,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
 }
 
-const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
+const Home = ({ user }: { user: User }) => {
     const [menuOpened, setMenuOpened] = useState(false);
 
     function toggleMenu() {
@@ -70,10 +78,35 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
         });
     }
 
+    useEffect(() => {
+        const scroll = document.getElementById('topicsScroll') as HTMLDivElement;
+        scroll.addEventListener("wheel", function (event) {
+            if (event.deltaY > 0) {
+                scroll.scrollTo({
+                    top: 0,
+                    left: scroll.scrollLeft + 100,
+                    behavior: 'smooth'
+                });
+                event.preventDefault();
+                // preventDefault() will help avoid worrisome 
+                // inclusion of vertical scroll 
+            } else {
+                scroll.scrollTo({
+                    top: 0,
+                    left: scroll.scrollLeft - 100,
+                    behavior: "smooth"
+                });
+                event.preventDefault();
+            }
+        });
+    }, [])
+
     const [focusMinutes, setFocusMinutes] = useState(60);
     const focusPauses = focusMinutes ? Math.max(1, Math.floor(focusMinutes / 25)) : 0;
 
     const { changeViewMode, viewMode } = useAppContext();
+
+    const [actualSection, setActualSection] = useState('Pendente');
 
     return (
         <main>
@@ -84,13 +117,20 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
             <div className={styles.container}>
                 <Profile onClick={toggleMenu} user={user} />
                 <div className={"header"}>
-                    <h3 className={"title"}>Tarefas pendentes</h3>
+                    <h3 className={"title"}>Minhas tarefas</h3>
                     <div className={styles.actionButtons}>
                         <div className={styles.viewType}>
-                            <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded click ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
-                            <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded click ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
+                            <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
+                            <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
                         </div>
-                        <Link href={`/task/new`}>
+                        <Link
+                            href={{
+                                pathname: '/task/new',
+                                query: { userId: user.id },
+                            }}
+                            replace
+                            as={`/task/new`}
+                        >
                             <a href="">
                                 <Button
                                     classes={styles.addButton}
@@ -103,7 +143,7 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                     </div>
                 </div>
                 <div className={styles.subheader}>
-                    <SectionSelector sections={["Bimestre atual", "Completado"]} />
+                    <SectionSelector sections={["Pendente", "Completado"]} actualSection={actualSection} setSection={setActualSection} />
                     <Button
                         style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }}
                         icon={'filter_alt'}
@@ -112,10 +152,9 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                     />
                 </div>
                 <div className={`${styles.tasks} ${viewMode === "card" ? styles.cardView : ""}`}>
-                    <TaskView />
-                    <TaskView />
-                    <TaskView />
-                    <TaskView />
+                    {
+                        user.tasks.map((task, index) => <TaskView key={index} task={task} />)
+                    }
                 </div>
             </div>
             <Menu isOpened={menuOpened}>
@@ -124,10 +163,12 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                         <h3>Agenda</h3>
                         <Button classes={styles.closeButton} icon={'close'} onClick={toggleMenu} style={{ padding: "0.25rem" }} />
                     </div>
-                    <Calendar linkToCreate />
+                    <Calendar userId={user.id} linkToCreate />
                     <div className={styles.eventHolder} >
                         <h6>Próximo evento importante</h6>
                         <div className={styles.card}>
+                        </div>
+                        {/* <div className={styles.card}>
                             <div className={styles.cardColumn}>
                                 <p style={{ textTransform: "uppercase" }}>AV1 | 3º BIMESTRE</p>
                                 <h5>Matemática e Natureza</h5>
@@ -139,7 +180,7 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                                 </div>
                                 <p style={{ textAlign: "end" }}>90 questões</p>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -147,9 +188,9 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                     <div className={`row`}>
                         <h3>Foco</h3>
                     </div>
-                    <TextInput label='Nome da tarefa' placeholder='Insira o nome da tarefa aqui' />
+                    <TextInput label='Nome da tarefa' placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} />
                     <div className={'row'} style={{ gap: "1.5rem" }}>
-                        <span className={`material-symbols-rounded click`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
+                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
                         <TopicsGroup topics={[
                             {
                                 icon: '📒',
@@ -172,12 +213,13 @@ const Home = ({ user }: InferGetStaticPropsType<typeof getServerSideProps>) => {
                                 title: 'Revisão'
                             }
                         ]} />
-                        <span className={`material-symbols-rounded click`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
+                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
                     </div>
                     <TextInput
                         onChange={(event) => setFocusMinutes(parseInt(event.target.value))}
                         label='Tempo de atividade'
                         placeholder='60'
+                        height={'3.85rem'}
                         fixedUnit='minutos'
                     />
                     <div /* style={{ gap: "2.5rem" }} */ className="row">

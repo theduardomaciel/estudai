@@ -14,18 +14,40 @@ import AttachmentTag from "./Tag";
 // Types
 import { Attachment } from "../../types/Attachment";
 import { useAppContext } from "../../contexts/AppContext";
+import LinkAttachment from "./Link";
+import Modal from "../Modal";
+import Input from "../Input";
+import { link } from "fs/promises";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
+    userId: number;
     attachments: Attachment[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
+    links: string[];
+    setLinks: Dispatch<SetStateAction<string[]>>;
     /* attachments: MutableRefObject<Attachment[]>; */
 };
 
-export default function AttachmentsLoader({ attachments, setAttachments, ...rest }: Props) {
+function isValidUrl(str: string) {
+    const pattern = new RegExp(
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', // fragment locator
+        'i'
+    );
+    return pattern.test(str);
+}
+
+export default function AttachmentsLoader({ userId, attachments, setAttachments, links, setLinks, ...rest }: Props) {
     const dragFrame = useRef<HTMLDivElement | null>(null);
 
     const counter = useRef<number>(0);
     const { hasGoogleAuthentication } = useAppContext();
+
+    const [isLinksModalVisible, setLinksModalVisible] = useState(false);
+    const linkInputValue = useRef("");
 
     const removeDragStyle = () => {
         if (dragFrame.current) {
@@ -38,15 +60,21 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
             name: file.name,
             type: file.type,
             tags: [],
-            link: file,
-        }
+            fileId: file,
+        } as Attachment;
         setAttachments(attachments.concat(preAttachment))
     }
 
+    const linksItems = links.map((link, index) => {
+        return <LinkAttachment key={index} link={link} index={index} links={links} setLinks={setLinks} />
+    })
+
     const hasFiles = attachments.length !== 0;
+    const hasLinks = links.length !== 0;
+
     const listItems = attachments.map((attach, index) => {
-        return <File key={`card_${index}`} attachmentIndex={index} attachments={attachments} setAttachments={setAttachments} />
-    });
+        return <File key={`card_${index}`} userId={userId} attachmentIndex={index} attachments={attachments} setAttachments={setAttachments} />
+    }).concat(linksItems);
 
     async function processFile(type: 'input' | 'drag', triggerEvent: any) {
         if (type === "drag") {
@@ -85,6 +113,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                 style={{ backgroundColor: "var(--primary-02)", padding: "0.5rem 1rem", border: "1px solid var(--primary-04)" }}
                 icon={"link"}
                 title='Adicionar link'
+                onClick={() => setLinksModalVisible(true)}
             />
         </div>
         {
@@ -125,7 +154,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                     }}
                 >
                     {
-                        !hasFiles &&
+                        !hasFiles && !hasLinks &&
                         <div className={styles.guide} style={{ width: hasFiles ? "100%" : "fit-content" }}>
                             <div className={styles.beforeHover}>
                                 {
@@ -184,5 +213,27 @@ export default function AttachmentsLoader({ attachments, setAttachments, ...rest
                     </div>
                 </div>
         }
+        <Modal
+            isVisible={isLinksModalVisible}
+            color={`var(--primary-02)`}
+            icon={'link'}
+            setVisibleFunction={() => setLinksModalVisible(!isLinksModalVisible)}
+            title={"Insira o link abaixo:"}
+            buttonText={"ADICIONAR"}
+            actionFunction={() => {
+                if (linkInputValue.current.length > 10 && isValidUrl(linkInputValue.current)) {
+                    setLinks(links.concat(linkInputValue.current))
+                    linkInputValue.current = ""
+                    setLinksModalVisible(false)
+                }
+            }}
+        >
+            <Input
+                onChange={(event) => linkInputValue.current = event.currentTarget.value}
+                type={"url"}
+                width={"100%"}
+                height={"5rem"}
+            />
+        </Modal>
     </div>
 }

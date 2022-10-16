@@ -16,7 +16,7 @@
 
     background-color: var(--primary-03);
 
-    z-index: 4;
+    z-index: 10;
 }
 
 .sectionBar {
@@ -42,6 +42,7 @@
 
         justify-content: flex-start;
         flex-direction: column;
+        z-index: 4;
 
         padding: 5rem 3.5rem;
     }

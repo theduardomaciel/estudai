@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
-
-// Components
-import Button from '../Button'
+import { useEffect, useRef, useState } from 'react'
 
 import styles from './calendar.module.css'
 import Link from 'next/link';
 
 interface Props {
+    userId?: number;
+    initialDate?: string;
     hasMonthSelector?: boolean;
     setDate?: any;
     linkToCreate?: boolean;
@@ -27,84 +25,102 @@ function getLastDateOfMonth(year: number, month: number) {
     return new Date(year, month + 1, 0).getDate();
 }
 
-/* // 👇️ Other Months
-const daysInJanuary = getDaysInMonth(2025, 1);
-console.log(daysInJanuary); // 👉️ 31 */
-
 const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-
 
 export default function Calendar(props: Props) {
 
+    // Dates
     const date = new Date();
+    const initialDate = props.initialDate ? new Date(props.initialDate) : null;
+
+    // Specific Dates
     const currentYear = date.getFullYear();
-    const [currentMonth, setCurrentMonth] = useState(date.getMonth());
+    const currentMonth = useRef(initialDate ? initialDate.getMonth() : date.getMonth());
+    const initialFirstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth.current)
 
-    // Dias no mês atual
-    const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
-    //console.log("mês atual:", months[currentMonth])
-
-    const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth)
-    //console.log("primeiro dia do mês atual :", firstDayOfMonth)
-
-    const lastDateOfMonth = getLastDateOfMonth(currentYear, currentMonth);
-    const lastDateOfLastMonth = getLastDateOfMonth(currentYear, currentMonth - 1)
-    //console.log("último dia do mês passado: ", lastDateOfLastMonth)
-
-    const calendarLength = firstDayOfMonth > 4 ? 42 : 35;
+    // Calendar
+    const calendarLength = initialFirstDayOfMonth > 4 ? 42 : 35;
     const [calendar, setCalendar] = useState(new Array(calendarLength).fill('default'))
 
-    const isBeforeMonth = (day: number) => day < firstDayOfMonth;
-    const isAfterMonth = (day: number) => day > lastDateOfMonth + firstDayOfMonth
+    // Date Selection
+    const initialMonthDay = initialDate?.getDate() as number;
+    const [selected, setSelected] = useState<number | undefined>(initialMonthDay + initialFirstDayOfMonth);
 
-    const getDay = (index: number) => isBeforeMonth(index) ?
-        lastDateOfLastMonth - (firstDayOfMonth - 1) + index
-        :
-        isAfterMonth(index + 1) ?
-            (index - firstDayOfMonth) - lastDateOfMonth + 1
+    // Functions
+    const isBeforeMonth = (day: number) => {
+        const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth.current)
+
+        return day < firstDayOfMonth
+    };
+
+    const isAfterMonth = (day: number) => {
+        const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth.current)
+        const lastDateOfMonth = getLastDateOfMonth(currentYear, currentMonth.current);
+
+        return day > lastDateOfMonth + firstDayOfMonth
+    };
+
+    const getDay = (index: number) => {
+        const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth.current)
+        const lastDateOfMonth = getLastDateOfMonth(currentYear, currentMonth.current);
+        const lastDateOfLastMonth = getLastDateOfMonth(currentYear, currentMonth.current - 1)
+
+        return isBeforeMonth(index) ?
+            lastDateOfLastMonth - (firstDayOfMonth - 1) + index
             :
-            index - firstDayOfMonth + 1;
+            isAfterMonth(index + 1) ?
+                (index - firstDayOfMonth) - lastDateOfMonth + 1
+                :
+                index - firstDayOfMonth + 1;
+    }
 
-    useEffect(() => {
-        let newCalendar = calendar;
-        for (let index = 0; index < calendarLength; index++) {
+    function updateCalendar() {
+        console.log("Atualizando calendário", currentMonth.current)
+        let newCalendar = [...calendar];
+
+        calendar.forEach((string, index) => {
             const beforeMonth = isBeforeMonth(index);
             const afterMonth = isAfterMonth(index + 1);
 
             if (beforeMonth || afterMonth) {
+                console.log('fora')
                 newCalendar[index] = "outsideRange"
+            } else if (currentMonth.current === date.getMonth() && getDay(index) === date.getDate()) {
+                newCalendar[index] = 'today'
             } else {
                 newCalendar[index] = 'default'
             }
-
-            if (currentMonth === date.getMonth() && getDay(index) === date.getDate()) {
-                newCalendar[index] = 'today'
-            }
-        }
+        })
         setCalendar(newCalendar)
-    }, [currentMonth])
+    }
+
+    useEffect(() => {
+        updateCalendar()
+    }, [])
 
     function decreaseMonth() {
-        if (currentMonth > 0) {
-            setCurrentMonth(currentMonth - 1)
+        if (currentMonth.current > 0) {
+            currentMonth.current -= 1;
+
             setSelected(undefined)
+            updateCalendar()
         }
     }
 
     function increaseMonth() {
-        if (currentMonth < 11) {
-            setCurrentMonth(currentMonth + 1)
+        if (currentMonth.current < 11) {
+            currentMonth.current += 1;
+
             setSelected(undefined)
+            updateCalendar()
         }
     }
-
-    const [selected, setSelected] = useState<number | undefined>(undefined);
 
     function setDate(index: number, day: number, month: number) {
         console.log("Dia: ", day, "Mês: ", month)
         setSelected(index)
         if (props.setDate) {
-            props.setDate(`${day}/${month}/${currentYear}`)
+            props.setDate(`${currentYear}-${month}-${day}`)
         }
     }
 
@@ -114,48 +130,59 @@ export default function Calendar(props: Props) {
                 props.hasMonthSelector &&
                 <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>
                     {
-                        currentMonth !== 0 ?
+                        currentMonth.current !== 0 ?
                             <span className={`material-symbols-rounded click static`} onClick={decreaseMonth}>chevron_left</span>
                             : <div style={{ width: 24 }}></div>
                     }
-                    <p>{months[currentMonth]}</p>
+                    <p>{months[currentMonth.current]}</p>
                     {
-                        currentMonth !== 11 ?
+                        currentMonth.current !== 11 ?
                             <span className={`material-symbols-rounded click static `} onClick={increaseMonth}>chevron_right</span>
                             : <div style={{ width: 24 }}></div>
                     }
                 </div>
             }
-            <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>
-                <p>D</p>
-                <p>S</p>
-                <p>T</p>
-                <p>Q</p>
-                <p>Q</p>
-                <p>S</p>
-                <p>S</p>
-            </div>
+            {
+                /* calendarLength <= 35 && */
+                <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>
+                    <p>D</p>
+                    <p>S</p>
+                    <p>T</p>
+                    <p>Q</p>
+                    <p>Q</p>
+                    <p>S</p>
+                    <p>S</p>
+                </div>
+            }
             <ul className={styles.calendar}>
                 {
                     calendar.map((dayStatus, index) => {
                         const day = getDay(index)
-                        const calendarMonth = isBeforeMonth(index) ? currentMonth : isAfterMonth(index + 1) ? currentMonth + 2 : currentMonth + 1;
+                        const calendarMonth = isBeforeMonth(index) ? currentMonth.current : isAfterMonth(index + 1) ? currentMonth.current + 2 : currentMonth.current + 1;
 
-                        return <Link
-                            href={props.linkToCreate ? `/task/create?date=${`${day}/${calendarMonth}/${currentYear}`}` : ""}
-                            key={index.toString()}
-                        >
-                            <a>
-                                <li
-                                    onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
-                                    onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
-                                    className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
-                                    onClick={() => setDate(index, day, calendarMonth)}
-                                >
-                                    {day}
-                                </li>
-                            </a>
-                        </Link>
+                        return props.linkToCreate ?
+                            <Link href={`/task/new?userId=${props.userId}&date=${`${currentYear}-${calendarMonth}-${day}`}`} key={index.toString()}>
+                                <a>
+                                    <li
+                                        onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
+                                        onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
+                                        className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
+                                        onClick={() => setDate(index, day, calendarMonth)}
+                                    >
+                                        {day}
+                                    </li>
+                                </a>
+                            </Link>
+                            :
+                            <li
+                                key={index.toString()}
+                                onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
+                                onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
+                                className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
+                                onClick={() => setDate(index, day, calendarMonth)}
+                            >
+                                {day}
+                            </li>
                     })
                 }
             </ul>

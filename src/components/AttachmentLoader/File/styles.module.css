@@ -41,6 +41,9 @@
     font-size: 1.2rem;
     line-height: 1.2rem;
 
+    max-width: 100%;
+    word-break: break-all;
+
     color: var(--primary-02);
 }
 
@@ -68,6 +71,15 @@
 
     border-radius: 2.5rem;
     background-color: var(--primary-03);
+
+    background-image: repeating-linear-gradient(45deg,
+            transparent,
+            transparent 15px,
+            var(--primary-04) 15px,
+            var(--primary-04) 35px);
+
+    animation: slide 4s linear infinite;
+    will-change: background-position;
 }
 
 .progressBar div:nth-child(2) {
@@ -77,6 +89,16 @@
     z-index: 0;
     border-radius: 2.5rem;
     background-color: var(--light-gray);
+}
+
+@keyframes slide {
+    from {
+        background-position-x: 0;
+    }
+
+    to {
+        background-position-x: 200px;
+    }
 }
 
 @keyframes pulseAnimation {

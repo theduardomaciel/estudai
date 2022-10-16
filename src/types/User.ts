@@ -1,3 +1,5 @@
+import { Task } from "./Task";
+
 export type User = {
     id: number;
     firstName: string;
@@ -9,5 +11,6 @@ export type User = {
     course: null | number,
     timeMeasure: null | number,
     defaultColor: null | string;
-    language: null
+    language: null;
+    tasks: Array<Task>;
 }

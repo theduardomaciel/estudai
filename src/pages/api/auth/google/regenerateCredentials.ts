@@ -9,7 +9,7 @@ router
     .post(async (req, res) => {
         try {
             const { refreshToken } = req.body;
-
+            console.log(refreshToken)
             const user = new UserRefreshClient(
                 process.env.NEXT_PUBLIC_GOOGLE_ID,
                 process.env.GOOGLE_SECRET,

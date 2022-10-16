@@ -8,6 +8,7 @@ import { getAPIClient } from '../../../lib/api';
 // Types
 import { Credentials } from 'google-auth-library';
 import prisma from '../../../lib/prisma';
+import { setCookie } from 'nookies';
 
 // DB
 
@@ -70,13 +71,20 @@ router
 
                             // Atualizamos o token Google na função
                             googleToken = newCredentials.access_token as string;
+                            console.log(newCredentials.access_token, "token novo")
+
+                            setCookie({ res }, 'auth.googleAccessToken', newCredentials.access_token as string, {
+                                maxAge: 60 * 60 * 24 * 30 * 12 * 180,
+                            })
 
                             await returnURL();
                         } else {
+                            console.log(error)
                             res.status(401).send({ error: 'Google refresh and access token expired.' })
                         }
-                    } catch (error) {
-                        res.status(401).send({ error: 'Google refresh and access token expired.' })
+                    } catch (error: any) {
+                        console.log(error)
+                        res.status(401).send({ error: error.response.statusCode })
                     }
                 }
             }
@@ -87,6 +95,7 @@ router
 
 export default router.handler({
     onError: (err: any, req, res) => {
+        console.log(err)
         console.error(err.stack);
         res.status(500).end("Something broke!");
     },

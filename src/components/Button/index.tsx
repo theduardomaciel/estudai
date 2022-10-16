@@ -6,33 +6,37 @@ import styles from "./button.module.css"
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     title?: string;
     classes?: string;
-    isSelected?: boolean;
     isLoading?: boolean;
     icon?: React.ReactElement | string;
-    iconSize?: string | number;
-    iconFill?: number;
-    iconColor?: string;
+    iconProps?: {
+        size?: string,
+        filled?: boolean,
+        color?: string,
+    }
+    isSelected?: boolean;
     preset?: 'sendForm' | 'fillHover'
-    isInput?: boolean;
 }
 
-const Button = React.forwardRef(function Button({ title, classes, isSelected, isLoading, icon, iconSize, iconFill, iconColor, preset, children, isInput, ...rest }: ButtonProps, ref) {
+const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, iconProps, isSelected, preset, children, ...rest }: ButtonProps, ref) {
     return <button
         type={preset === "sendForm" ? "submit" : "button"}
-        className={`${classes} ${styles.button} ${isSelected ? 'buttonSelected' : ""}  ${preset ? styles[preset] : ""}  ${isLoading ? styles.loading : ""} `}
+        className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading ? styles.loading : ""} ${isSelected ? 'selected' : ""}`}
         disabled={isLoading}
         {...rest}
     >
         {
             isLoading ?
-                <Spinner color={iconColor as string} />
+                <Spinner
+                    size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.1}
+                    color={isSelected ? iconProps?.color as string : "var(--light)"}
+                />
                 :
                 <>
                     {
                         icon && typeof icon === "string" ?
                             <span
-                                style={{ fontSize: iconSize, color: iconColor }}
-                                className={`material-symbols-rounded ${iconFill === 1 ? "filled" : "outlined"}`}
+                                style={{ fontSize: iconProps?.size ? iconProps.size : "2.4rem",/*  color: iconProps?.color ? iconProps.color : "var(--light)" */ }}
+                                className={`material-symbols-rounded ${iconProps?.filled ? "instantFilled" : "instantOutlined"}`}
                             >
                                 {icon}
                             </span> :
@@ -45,26 +49,19 @@ const Button = React.forwardRef(function Button({ title, classes, isSelected, is
                     {children}
                 </>
         }
+        <style jsx>{`
+            .button.${styles[preset as string]}:not(.selected):hover,
+            .button.selected {
+                background-color: ${iconProps?.color};
+                color: ${iconProps?.color ? "var(--light)" : iconProps?.color}
+            }
+
+            .button.${styles[preset as string]}.selected:hover {
+                background-color: transparent;
+                color: ${iconProps?.color ? iconProps?.color : "var(--light)"}
+            }
+      `}</style>
     </button>
 })
 
 export default Button;
-
-{/* <style jsx>{`
-            button {
-                border: ${borderWidth ? borderWidth : "1px"} solid ${color ? color : `var(--light-gray)`};
-                background: ${backgroundColorStyle};
-                color: ${colorStyle};
-                padding: ${padding ? padding : `0.75rem 1.5rem`};
-            }
-
-            button span {
-                color: ${contentColor ? contentColor : color ? color : `var(--light-gray)`}
-            }
-
-            button:hover {
-                background-color: ${color ? color : `var(--light-gray)`};
-                color: var(--background-02);
-            }
-
-            `}</style> */}

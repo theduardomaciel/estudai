@@ -41,6 +41,8 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
             }
         }
     } */
+
+    console.log(token)
     if (token) {
         return {
             redirect: {

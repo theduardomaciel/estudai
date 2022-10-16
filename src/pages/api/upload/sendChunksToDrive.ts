@@ -33,6 +33,8 @@ router
             'Authorization': `Bearer ${token}`
         };
 
+        console.log(token, "token novo pra verificar")
+
         try {
             const response = await axios.put(sessionUrl, req.file.buffer, { headers: headers })
             console.log(response.data, "Dados retornados.")
@@ -46,6 +48,7 @@ router
                         'Authorization': `Bearer ${token}`
                     }
                 })
+                console.log(createPermission.data)
 
                 if (createPermission.data) {
                     const fileLink = await axios.get(`https://www.googleapis.com/drive/v3/files/${response.data.id}?fields=webContentLink,webViewLink`, {

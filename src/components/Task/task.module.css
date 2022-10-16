@@ -3,9 +3,9 @@
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: flex-start;
-    padding: 1.5rem;
+    padding: 1.75rem;
     gap: 2.25rem;
 
     width: 100%;
@@ -51,6 +51,9 @@
     justify-content: center;
     padding: 1rem;
 
+    min-width: 5rem;
+    min-height: 5rem;
+
     max-width: 5rem;
     max-height: 5rem;
 
@@ -63,9 +66,9 @@
 }
 
 .description h4 {
-    font-family: 'Inter';
+    font-family: 'Raleway';
     font-style: normal;
-    font-weight: 900;
+    font-weight: 800;
     font-size: 1.6rem;
 
     color: var(--primary-02);
@@ -84,6 +87,8 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+
+    width: 100%;
 }
 
 .description .info {
@@ -143,8 +148,26 @@
 }
 
 .column.two {
-    align-items: flex-start;
+    /* align-items: flex-start; */
     gap: 0.5rem;
+}
+
+.usersHolder {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+
+    height: 100%;
+
+    margin: 0;
+    gap: 0.5rem;
+}
+
+/* placeholder enquanto o problema não é resolvido */
+.content {
+    color: transparent;
+    margin-block: -2rem;
 }
 
 @media (min-width: 768px) and (max-width: 1365px) {
@@ -157,7 +180,6 @@
     }
 
     .usersHolder {
-        display: flex;
         flex-direction: row;
         align-items: center;
         gap: 1.5rem;
@@ -176,7 +198,6 @@
 
     .column.two {
         flex-direction: column;
-        width: 100%;
     }
 
     .column.two .usersHolder {
@@ -192,16 +213,17 @@
     }
 
     .container.card .usersAmount {
-        margin-left: 2rem;
         text-align: right;
     }
 
     .container:not(.card) .column.two {
         align-items: flex-end;
         text-align: right;
-        min-width: 20%;
+        margin-left: 4rem;
 
-        justify-content: space-evenly;
+        align-self: center;
+        gap: 1.5rem;
+        justify-content: space-between;
 
         height: 100%;
     }

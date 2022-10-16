@@ -3,16 +3,22 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+
+    width: fit-content;
 }
 
 .image {
     display: flex;
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 2.2rem;
+    height: 2.2rem;
 
-    margin-right: -0.5rem;
+    margin-right: -0.25rem;
 
     border-radius: 50%;
+}
+
+.image:last-child {
+    margin-right: 0;
 }
 
 @media (min-width: 1024px) {
