@@ -18,7 +18,7 @@ export default function LogoutModalPreset() {
     return {
         LogoutModal: <Modal
             isVisible={isModalVisible}
-            setIsVisible={setModalVisible}
+            toggleVisibility={() => setModalVisible(!isModalVisible)}
             color={`var(--primary-02)`}
             icon={'exit_to_app'}
             title={"Tem certeza que deseja sair?"}
@@ -26,7 +26,6 @@ export default function LogoutModalPreset() {
             buttonText="LOG-OUT"
             actionFunction={logout}
             isLoading={isLoading}
-            zIndex={25}
         />,
         setLogoutModalVisible: setModalVisible
     }

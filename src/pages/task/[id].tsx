@@ -163,14 +163,15 @@ const Task = ({ task }: { task: Task }) => {
                 console.warn("Removeu a marcação.");
                 let copy = [...attachmentsInteracted];
                 const index = copy.indexOf(id)
-                copy.splice(index, 1)
-                setAttachmentsInteracted(copy)
+                if (index) {
+                    copy.splice(index, 1)
+                    await setAttachmentsInteracted(copy)
+                }
             } else if (response.data.added) {
                 console.warn("Adicionou a marcação.");
                 let copy = [...attachmentsInteracted];
                 copy.push(id)
-                setAttachmentsInteracted(copy)
-                console.log(copy)
+                await setAttachmentsInteracted(copy)
             }
         } catch (error) {
             console.log(error)
@@ -190,7 +191,7 @@ const Task = ({ task }: { task: Task }) => {
                     <span className={`material-symbols-rounded`}>{icon}</span>
                     <p>{name}</p>
                 </div>
-                <ul>
+                <ul className={styles.attachmentsContainer}>
                     {
                         attachmentsOfSection &&
                         attachmentsOfSection.map((attachment, index) => {
@@ -420,10 +421,9 @@ const Task = ({ task }: { task: Task }) => {
                 <Modal
                     icon={'apps'}
                     isVisible={isContentsModalVisible}
-                    setIsVisible={setContentsModalVisible}
+                    toggleVisibility={() => setContentsModalVisible(!isContentsModalVisible)}
                     color={"var(--primary-02)"}
-                    iconPosition={"flex-start"}
-                    iconSize={"3.2rem"}
+                    iconProps={{ position: "flex-start", size: "3.2rem" }}
                 >
                     <div className={styles.contentsHolder}>
                         {

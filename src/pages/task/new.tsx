@@ -542,9 +542,7 @@ export default function NewTask() {
                 isVisible={modalVisible === 'upload' || typeof modalVisible === "number"}
                 color={`var(--primary-02)`}
                 icon={'cloud_upload'}
-                setVisibleFunction={() => {
-                    modalVisible === "upload" ? setModalVisible('') : "upload"
-                }}
+                toggleVisibility={() => { modalVisible === "upload" ? setModalVisible('') : "upload" }}
                 suppressReturnButton
                 buttonText='ABRIR'
                 isLoading={creatingTask}
@@ -556,9 +554,7 @@ export default function NewTask() {
                 isVisible={modalVisible === 'error'}
                 color={`var(--primary-02)`}
                 icon={'gpp_bad'}
-                setVisibleFunction={() => {
-                    modalVisible === "error" ? setModalVisible('') : "error"
-                }}
+                toggleVisibility={() => { modalVisible === "error" ? setModalVisible('') : "error" }}
                 title={"Ops... Não foi possível criar sua tarefa"}
                 description={"Por favor, pedimos que tente novamente. Caso o problema persista, entre em contato conosco."}
             >
@@ -567,9 +563,7 @@ export default function NewTask() {
                 isVisible={modalVisible === 'subjects'}
                 color={`var(--primary-02)`}
                 icon={'subject'}
-                setVisibleFunction={() => {
-                    modalVisible === "subjects" ? setModalVisible('') : "subjects"
-                }}
+                toggleVisibility={() => { modalVisible === "subjects" ? setModalVisible('') : "subjects" }}
                 title={"Selecione as matérias da tarefa abaixo:"}
             >
                 {subjectsList}

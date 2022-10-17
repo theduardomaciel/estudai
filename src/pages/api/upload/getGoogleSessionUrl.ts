@@ -21,6 +21,8 @@ router
     .post(async (req, res) => {
         const { meta, userId } = req.body;
 
+        console.log(req.cookies);
+
         let googleToken = req.cookies['auth.googleAccessToken'];
         const googleRefreshToken = req.cookies['auth.googleRefreshToken'];
         const appToken = req.cookies['auth.token'];

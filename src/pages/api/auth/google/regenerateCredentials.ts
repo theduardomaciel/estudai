@@ -10,17 +10,21 @@ router
         try {
             const { refreshToken } = req.body;
             console.log(refreshToken)
-            const user = new UserRefreshClient(
-                process.env.NEXT_PUBLIC_GOOGLE_ID,
-                process.env.GOOGLE_SECRET,
-                refreshToken as string,
-            );
+            if (refreshToken) {
+                const user = new UserRefreshClient(
+                    process.env.NEXT_PUBLIC_GOOGLE_ID,
+                    process.env.GOOGLE_SECRET,
+                    refreshToken as string,
+                );
 
-            const { credentials } = await user.refreshAccessToken(); // obtain new tokens
+                const { credentials } = await user.refreshAccessToken(); // obtain new tokens
 
-            res.status(200).json(credentials);
+                res.status(200).json(credentials);
+            } else {
+                res.status(400).json({ error: 'No valid refresh token was provided.' });
+            }
         } catch (error: any) {
-            console.log(error.response.data)
+            console.log(error)
             res.status(400).json({ error: error.response.data });
         }
     })

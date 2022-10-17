@@ -217,7 +217,7 @@ export default function AttachmentsLoader({ userId, attachments, setAttachments,
             isVisible={isLinksModalVisible}
             color={`var(--primary-02)`}
             icon={'link'}
-            setVisibleFunction={() => setLinksModalVisible(!isLinksModalVisible)}
+            toggleVisibility={() => setLinksModalVisible(!isLinksModalVisible)}
             title={"Insira o link abaixo:"}
             buttonText={"ADICIONAR"}
             actionFunction={() => {

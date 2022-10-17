@@ -82,7 +82,7 @@ router
                     const userId = user.id;
 
                     console.log(user, "🏃‍♂️ Usuário criado com sucesso!")
-                    res.status(200).json({ userId, appToken, google_access_token, google_refresh_token });
+                    res.status(200).json({ userId, appToken, tokens });
                 } else {
                     const user = await prisma.user.update({
                         where: {
@@ -111,7 +111,7 @@ router
                     const userId = user.id;
 
                     console.log(user, "😊 Usuário obtido com sucesso!")
-                    res.status(200).json({ userId, appToken, google_access_token, google_refresh_token });
+                    res.status(200).json({ userId, appToken, tokens });
                 }
             }
         } catch (error) {

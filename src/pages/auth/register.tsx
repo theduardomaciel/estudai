@@ -22,7 +22,7 @@ import { Separator } from '../../components/Separator';
 import Device from '../../components/Landing/Device';
 
 // Authentication
-import { GoogleButton } from './login';
+import { GoogleButton, ScopeMissing } from './login';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -197,9 +197,8 @@ const Register: NextPage = () => {
         <div className={styles.cardsHolder}>
             <Button
                 icon={'backpack'}
-                iconFill={1}
+                iconProps={{ size: "4.2rem", filled: true }}
                 classes={selected === 0 ? styles.current : ""}
-                iconSize={"4.2rem"}
                 style={selected === 0 ? selectedStyle : unselectedStyle}
                 onClick={(event) => changeSection(0)}
             >
@@ -214,9 +213,8 @@ const Register: NextPage = () => {
             </Button>
             <Button
                 icon={'book'}
-                iconFill={1}
+                iconProps={{ size: "4.2rem", filled: true }}
                 classes={selected === 1 ? styles.current : ""}
-                iconSize={"4.2rem"}
                 style={selected === 1 ? selectedStyle : unselectedStyle}
                 onClick={(event) => changeSection(1)}
             >
@@ -231,9 +229,8 @@ const Register: NextPage = () => {
             </Button>
             <Button
                 icon={<HoodIcon className={`${styles.icon} ${selected === 2 ? styles.selected : ""}`} />}
-                iconFill={1}
+                iconProps={{ size: "4.2rem", filled: true }}
                 classes={selected === 2 ? styles.current : ""}
-                iconSize={"4.2rem"}
                 style={selected === 2 ? selectedStyle : unselectedStyle}
                 onClick={(event) => changeSection(2)}
             >
@@ -297,7 +294,7 @@ const Register: NextPage = () => {
                 Nunca mais uma matéria ficará atrasada.</p>
         </header>
         <Link href={"/home"}>
-            <a href="">
+            <a href="" style={{ width: "100%" }}>
                 <Button
                     style={{ padding: "1rem 1.5rem", width: "100%" }}
                     title='Entrar na plataforma'
@@ -313,22 +310,41 @@ const Register: NextPage = () => {
         </p>
     </div>
 
-    const sections = [Error, Section1, Section2, Section3]
+    const MissingScope = <motion.div
+        className={styles.section}
+        key={section}
+        custom={direction}
+        variants={variants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={transition}
+    >
+        <ScopeMissing setSection={() => setSection([1, -1])} />
+    </motion.div>
+
+    const sections = [Error, Section1, Section2, Section3, MissingScope]
 
     /*  */
 
     const googleLogin = useGoogleLogin({
         onSuccess: async ({ code }) => {
             const response = await signIn(code, { course: selected as number })
-            if (response) {
+            if (response === 'success') {
                 setSection([3, 1])
+            } else if (response === 'scopeMissing') {
+                setSection([4, 1])
+                setLoading(false)
+                setSelected(null)
+            } else {
+                setSection([0, 1])
             }
         },
         onError(errorResponse) {
             console.log(errorResponse)
             setLoading(false)
         },
-        scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata", //https://www.googleapis.com/auth/drive.file
+        scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata",
         flow: 'auth-code',
     });
 

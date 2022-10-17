@@ -28,7 +28,7 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
             isLoading ?
                 <Spinner
                     size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.1}
-                    color={isSelected ? iconProps?.color as string : "var(--light)"}
+                    color={preset === "fillHover" && isSelected || preset !== "fillHover" ? iconProps?.color as string : "var(--light)"}
                 />
                 :
                 <>

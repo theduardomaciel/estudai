@@ -22,15 +22,17 @@ router
 
         try {
             if (id) {
-                const attachmentThatHasInteracted = await prisma.user.findFirst({
+                const userHasInteractedWithAttachment = await prisma.user.findFirst({
                     where: {
                         markedAttachments: {
-                            id: id as string,
+                            some: {
+                                id: id as string
+                            }
                         }
                     }
                 })
 
-                if (attachmentThatHasInteracted !== null) {
+                if (userHasInteractedWithAttachment !== null) {
                     try {
                         await prisma.attachment.update({
                             where: {
@@ -38,7 +40,7 @@ router
                             },
                             data: {
                                 markedBy: {
-                                    connect: { id: parsedUserId }
+                                    disconnect: { id: parsedUserId }
                                 }
                             }
                         })
@@ -66,16 +68,6 @@ router
                                 markedBy: true
                             }
                         })
-
-                        const teste = await prisma.user.findFirst({
-                            where: {
-                                id: parsedUserId
-                            },
-                            include: {
-                                markedAttachments: true
-                            }
-                        })
-                        console.log(teste?.markedAttachments)
 
                         const message = `😊 Marked attachment with ID ${id} from user with ID ${userId}.`
                         console.log(message)

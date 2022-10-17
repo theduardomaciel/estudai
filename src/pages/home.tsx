@@ -33,6 +33,8 @@ import { User } from '../types/User';
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
 
+    console.log(context.req.cookies);
+
     console.log(token)
     const userId = await getUserIdByToken(token);
 
@@ -108,6 +110,12 @@ const Home = ({ user }: { user: User }) => {
 
     const [actualSection, setActualSection] = useState('Pendente');
 
+    const emptyTasks = <div className={styles.emptyTasks}>
+        <span className={`material-symbols-rounded static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
+        <p><strong>Um pouco vazio aqui, né?</strong> </p>
+        <p>Adicione uma nova tarefa com o botão acima para que ela apareça aqui!</p>
+    </div>
+
     return (
         <main>
             <Head>
@@ -147,13 +155,16 @@ const Home = ({ user }: { user: User }) => {
                     <Button
                         style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }}
                         icon={'filter_alt'}
-                        iconSize={"2.2rem"}
+                        iconProps={{ size: "2.2rem" }}
                         title='Filtrar'
                     />
                 </div>
                 <div className={`${styles.tasks} ${viewMode === "card" ? styles.cardView : ""}`}>
                     {
-                        user.tasks.map((task, index) => <TaskView key={index} task={task} />)
+                        user.tasks.length > 0 ?
+                            user.tasks.map((task, index) => <TaskView key={index} task={task} />)
+                            :
+                            emptyTasks
                     }
                 </div>
             </div>

@@ -45,7 +45,16 @@ router
                         links: links,
                         attachments: hasAttachments ?
                             {
-                                create: attachments
+                                create: attachments.map((attachment: any, index: number) => {
+                                    return {
+                                        uploadedBy: {
+                                            connect: {
+                                                id: userId
+                                            }
+                                        },
+                                        ...attachment
+                                    }
+                                })
                             }
                             :
                             {}
@@ -72,7 +81,16 @@ router
                         links: links,
                         attachments: hasAttachments ?
                             {
-                                create: attachments
+                                create: attachments.map((attachment: any, index: number) => {
+                                    return {
+                                        uploadedBy: {
+                                            connect: {
+                                                id: userId
+                                            }
+                                        },
+                                        ...attachment
+                                    }
+                                })
                             }
                             :
                             {}
@@ -98,7 +116,16 @@ router
                         links: links,
                         attachments: hasAttachments ?
                             {
-                                create: attachments
+                                create: attachments.map((attachment: any, index: number) => {
+                                    return {
+                                        uploadedBy: {
+                                            connect: {
+                                                id: userId
+                                            }
+                                        },
+                                        ...attachment
+                                    }
+                                })
                             }
                             :
                             {}

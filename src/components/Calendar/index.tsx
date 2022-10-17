@@ -75,7 +75,6 @@ export default function Calendar(props: Props) {
     }
 
     function updateCalendar() {
-        console.log("Atualizando calendário", currentMonth.current)
         let newCalendar = [...calendar];
 
         calendar.forEach((string, index) => {
@@ -83,7 +82,6 @@ export default function Calendar(props: Props) {
             const afterMonth = isAfterMonth(index + 1);
 
             if (beforeMonth || afterMonth) {
-                console.log('fora')
                 newCalendar[index] = "outsideRange"
             } else if (currentMonth.current === date.getMonth() && getDay(index) === date.getDate()) {
                 newCalendar[index] = 'today'
@@ -161,7 +159,7 @@ export default function Calendar(props: Props) {
                         const calendarMonth = isBeforeMonth(index) ? currentMonth.current : isAfterMonth(index + 1) ? currentMonth.current + 2 : currentMonth.current + 1;
 
                         return props.linkToCreate ?
-                            <Link href={`/task/new?userId=${props.userId}&date=${`${currentYear}-${calendarMonth}-${day}`}`} key={index.toString()}>
+                            <Link href={`/task/new?userId=${props.userId}&date=${`${currentYear}-${calendarMonth}-${day}`}`} key={index.toString()} as={`/task/new`}>
                                 <a>
                                     <li
                                         onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}

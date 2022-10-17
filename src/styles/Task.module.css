@@ -313,6 +313,13 @@
     border-radius: 0.5rem;
 }
 
+.attachmentsContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
 @media (min-width: 1024px) {
 
     .container {

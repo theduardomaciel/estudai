@@ -49,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 export const GoogleButton = (props: any) => <Button
     icon={<GoogleLogo />}
     title={"Entrar com Google"}
-    iconColor={'var(--primary-02)'}
+    iconProps={{ color: 'var(--primary-02)' }}
     style={{
         padding: "1.2rem",
         gap: "3rem",
@@ -66,28 +66,43 @@ export const GoogleButton = (props: any) => <Button
     {...props}
 />
 
+export const ScopeMissing = ({ setSection }: { setSection: () => void }) => <div className={styles.section}>
+    <header>
+        <h1>Eita!</h1>
+        <p><strong>Parece que você não nos deu acesso ao Drive :(</strong> <br /> <br />
+            Para poder logar ou criar uma conta é necessário permitir o acesso a todos os escopos solicitados para que você possa enviar anexos em suas tarefas.
+        </p>
+    </header>
+    <Button
+        style={{ padding: "1rem 1.5rem", width: "100%" }}
+        title='Voltar ao início'
+        onClick={setSection}
+    />
+    <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
+</div>
+
 const Login: NextPage = () => {
     const { signIn } = useAuth();
     const router = useRouter();
 
     const [isLoading, setLoading] = useState(false);
-    const [section, setSection] = useState<'notAccount' | null>(null)
+    const [section, setSection] = useState<string | null>(null)
 
     const googleLogin = useGoogleLogin({
         onSuccess: async ({ code }) => {
-            const success = await signIn(code)
+            const response = await signIn(code) // success | noAccount | scopeMissing
 
-            if (success) {
+            if (response === 'success') {
                 router.push(`/home`)
             } else {
-                setSection('notAccount')
+                setSection(response)
             }
         },
         onError(errorResponse) {
             console.log(errorResponse)
             setLoading(false)
         },
-        scope: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata", //https://www.googleapis.com/auth/drive.file
+        scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata",
         flow: 'auth-code',
         /* ux_mode: "redirect",
         redirect_uri: "http://localhost:3000/auth/login" */
@@ -98,7 +113,7 @@ const Login: NextPage = () => {
             <Head>
                 <title>Login</title>
             </Head>
-            <div className={`${styles.container} ${section === 'notAccount' ? styles.fullScreen : ""}`}>
+            <div className={`${styles.container} ${section !== null ? styles.fullScreen : ""}`}>
                 <Logo width={121.19} height={58.72} />
                 {
                     section === null ?
@@ -121,23 +136,26 @@ const Login: NextPage = () => {
                             </Link>
                         </>
                         :
-                        <>
-                            <header>
-                                <h1>Eita!</h1>
-                                <p>Parece que você ainda não criou sua conta na plataforma. <br />
-                                    Crie sua conta agora para aproveitar todas as funcionalidades de sua conta Estudaí.
-                                </p>
-                            </header>
-                            <Link href={"/auth/register"}>
-                                <a href="">
-                                    <Button
-                                        style={{ padding: "1rem 1.5rem", width: "100%" }}
-                                        title='Criar uma conta'
-                                    />
-                                </a>
-                            </Link>
-                            <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
-                        </>
+                        section === 'noAccount' ?
+                            <div className={styles.section}>
+                                <header>
+                                    <h1>Eita!</h1>
+                                    <p>Parece que você ainda não criou sua conta na plataforma. <br />
+                                        Crie sua conta agora para aproveitar todas as funcionalidades de sua conta Estudaí.
+                                    </p>
+                                </header>
+                                <Link href={"/auth/register"}>
+                                    <a href="" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+                                        <Button
+                                            style={{ padding: "1rem 1.5rem", width: "100%" }}
+                                            title='Criar uma conta'
+                                        />
+                                    </a>
+                                </Link>
+                                <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
+                            </div>
+                            :
+                            <ScopeMissing setSection={() => setSection(null)} />
                 }
             </div>
             <Device additionalClass={styles.device} />

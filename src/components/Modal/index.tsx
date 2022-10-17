@@ -1,42 +1,45 @@
 import styles from './modal.module.css';
 import React, { SetStateAction } from 'react';
 
+import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion"
 
-type Props = {
+// Components
+import Button from '../Button';
+
+const backdropVariants = {
+    open: {
+        opacity: 1,
+        transition: { ease: "easeOut", duration: 0.25 }
+    },
+    closed: {
+        opacity: 0,
+        transition: { ease: "easeOut", duration: 0.25 }
+    }
+};
+
+type Props = React.HTMLAttributes<HTMLDivElement> & {
     isVisible: boolean;
-    setIsVisible?: (state: boolean) => SetStateAction<void>;
-    setVisibleFunction?: () => void;
+    toggleVisibility: () => void;
     actionFunction?: () => void;
+
     color: string;
-    icon: string;
-    iconSize?: string;
-    iconPosition?: 'flex-start' | 'center' | 'flex-end';
     title?: string;
     description?: React.ReactNode;
+
+    icon: string;
+    iconProps?: {
+        size?: string,
+        position?: 'flex-start' | 'center' | 'flex-end',
+    }
+
     buttonText?: string;
     actionEnabled?: boolean;
     isLoading?: boolean;
     suppressReturnButton?: boolean;
-    zIndex?: number;
-    children?: React.ReactNode
 }
 
-import { AnimatePresence } from "framer-motion";
-import Button from '../Button';
-
-export default function Modal({ isVisible, setIsVisible, setVisibleFunction, actionFunction, actionEnabled = true, color, isLoading, icon, title, description, buttonText, suppressReturnButton, zIndex, iconSize, iconPosition, children }: Props) {
-    const backdropVariants = {
-        open: {
-            opacity: 1,
-            transition: { ease: "easeOut", duration: 0.25 }
-        },
-        closed: {
-            opacity: 0,
-            transition: { ease: "easeOut", duration: 0.25 }
-        }
-    };
-
+export default function Modal({ isVisible, toggleVisibility, actionFunction, actionEnabled = true, color, isLoading, icon, title, description, buttonText, suppressReturnButton, iconProps, children, ...rest }: Props) {
     return (
         <AnimatePresence /* exitBeforeEnter */>
             {
@@ -48,11 +51,16 @@ export default function Modal({ isVisible, setIsVisible, setVisibleFunction, act
                         animate={isVisible ? "open" : "closed"}
                         exit={"closed"}
                         variants={backdropVariants}
-                        style={{ zIndex: zIndex }}
                     >
-                        <div className={styles.container}>
-                            <div style={{ backgroundColor: color, alignSelf: iconPosition ? iconPosition : "center" }} className={styles.iconHolder}>
-                                <span className={'material-symbols-rounded static'} style={{ color: "var(--light", fontSize: iconSize ? iconSize : "4.8rem" }}>{icon}</span>
+                        <div className={styles.container} {...rest}>
+                            <div
+                                style={{ backgroundColor: color, alignSelf: iconProps?.position ? iconProps?.position : "center" }}
+                                className={styles.iconHolder}>
+                                <span
+                                    className={'material-symbols-rounded static'}
+                                    style={{ color: "var(--light", fontSize: iconProps?.size ? iconProps?.size : "4.8rem" }}>
+                                    {icon}
+                                </span>
                             </div>
 
                             {
@@ -70,13 +78,7 @@ export default function Modal({ isVisible, setIsVisible, setVisibleFunction, act
                                 {
                                     !suppressReturnButton && !isLoading &&
                                     <Button
-                                        onClick={() => {
-                                            if (setIsVisible) {
-                                                setIsVisible(!isVisible)
-                                            } else if (setVisibleFunction) {
-                                                setVisibleFunction()
-                                            }
-                                        }}
+                                        onClick={toggleVisibility}
                                         title={actionFunction ? `CANCELAR` : "RETORNAR"}
                                         icon={actionFunction ? 'close' : 'arrow_back'}
                                         style={{
@@ -93,7 +95,7 @@ export default function Modal({ isVisible, setIsVisible, setVisibleFunction, act
                                         disabled={!actionEnabled}
                                         isLoading={isLoading}
                                         icon={icon}
-                                        iconColor={'var(--light)'}
+                                        iconProps={{ color: 'var(--light)' }}
                                         style={{
                                             background: actionEnabled ? color : "var(--light-gray)",
                                             cursor: actionEnabled ? "pointer" : "not-allowed",
