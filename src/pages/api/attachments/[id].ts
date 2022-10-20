@@ -59,14 +59,9 @@ router
                             },
                             data: {
                                 markedBy: {
-                                    connect: {
-                                        id: parsedUserId
-                                    }
+                                    connect: { id: parsedUserId }
                                 }
                             },
-                            include: {
-                                markedBy: true
-                            }
                         })
 
                         const message = `😊 Marked attachment with ID ${id} from user with ID ${userId}.`

@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useMemo, useState } from 'react';
+import React, { SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import Head from 'next/head';
 import type { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next'
@@ -83,6 +83,10 @@ import { parseCookies } from 'nookies';
 import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 
+type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
+    attachment: Attachment;
+}
+
 const Task = ({ task }: { task: Task }) => {
     const { signOut } = useAuth();
     const { 'app.userId': userId } = parseCookies()
@@ -90,13 +94,19 @@ const Task = ({ task }: { task: Task }) => {
     const [isActivity, isTest] = taskGroupType(task.type);
     const titleType = isActivity ? "Atividade" : isTest ? "Avaliação" : "Evento"
 
-    const [attachmentsInteracted, setAttachmentsInteracted] = useState<Array<string>>([])
-
-    const Tag = ({ attachment, index }: { attachment: Attachment, index: number }) => {
+    function Tag({ attachment, ...rest }: TagComponentProps) {
         const [isAttachmentLoading, setAttachmentLoading] = useState(false);
-        const hasInteracted = attachmentsInteracted.indexOf(attachment.id) !== -1;
+        const [attachmentInteracted, setAttachmentInteracted] = useState<boolean | null>(null)
 
-        return <li key={index} className={fileStyles.attachment} style={{ maxWidth: "fit-content" }} >
+        useEffect(() => {
+            setAttachmentInteracted(attachment.markedBy.find((user, index) => {
+                return user.id = parseInt(userId)
+            }) ? true : false)
+        }, [])
+
+        console.log(attachment.type)
+
+        return <li className={fileStyles.attachment} style={{ maxWidth: "fit-content" }} {...rest} >
             <div className={fileStyles.header}>
                 {
                     attachment.type == "application/pdf" ?
@@ -131,25 +141,25 @@ const Task = ({ task }: { task: Task }) => {
                 </a>
             </div>
             <Button
-                title={hasInteracted ? 'Desmarcar' : "Marcar como concluído"}
-                icon={hasInteracted ? 'remove' : 'check'}
+                title={attachmentInteracted ? 'Desmarcar' : "Marcar como concluído"}
+                icon={attachmentInteracted ? 'remove' : 'check'}
                 iconProps={{ size: "1.6rem", color: "var(--primary-02)" }}
                 classes={`${styles.attachmentButton} ${styles.use}`}
-                isSelected={hasInteracted === false}
+                isSelected={attachmentInteracted === false}
                 style={{
-                    backgroundColor: hasInteracted ? "var(--primary-02)" : "transparent",
+                    backgroundColor: attachmentInteracted ? "var(--primary-02)" : "transparent",
                     width: "100%",
                     padding: "0.65rem 1.5rem",
-                    color: hasInteracted ? "var(--light)" : "var(--primary-02)",
+                    color: attachmentInteracted ? "var(--light)" : "var(--primary-02)",
                     fontWeight: 500
                 }}
-                isLoading={isAttachmentLoading || hasInteracted === null}
-                onClick={() => toggleAttachmentInteraction(attachment.id, setAttachmentLoading, attachment.id)}
+                isLoading={isAttachmentLoading || attachmentInteracted === null}
+                onClick={() => toggleAttachmentInteraction(attachment.id, setAttachmentLoading, setAttachmentInteracted)}
             />
         </li>
     }
 
-    async function toggleAttachmentInteraction(attachmentId: string, setAttachmentLoading: (state: boolean) => SetStateAction<void>, id: string) {
+    async function toggleAttachmentInteraction(attachmentId: string, setAttachmentLoading: (state: boolean) => SetStateAction<void>, setAttachmentInteracted: (state: boolean) => SetStateAction<void>) {
         setAttachmentLoading(true)
 
         if (!userId) {
@@ -161,17 +171,10 @@ const Task = ({ task }: { task: Task }) => {
 
             if (response.data.removed) {
                 console.warn("Removeu a marcação.");
-                let copy = [...attachmentsInteracted];
-                const index = copy.indexOf(id)
-                if (index) {
-                    copy.splice(index, 1)
-                    await setAttachmentsInteracted(copy)
-                }
+                setAttachmentInteracted(false)
             } else if (response.data.added) {
                 console.warn("Adicionou a marcação.");
-                let copy = [...attachmentsInteracted];
-                copy.push(id)
-                await setAttachmentsInteracted(copy)
+                setAttachmentInteracted(true)
             }
         } catch (error) {
             console.log(error)
@@ -180,10 +183,18 @@ const Task = ({ task }: { task: Task }) => {
         setAttachmentLoading(false)
     }
 
+    const tagsCount = (tagId: number) => task.attachments.filter((attachment, index) => attachment.tags.includes(tagId)).length;
+
+    const attachmentsWithoutTag = task.attachments?.filter((attachment, index) => { return attachment.tags.length === 0 })
+    const attachmentsWithoutTagList = attachmentsWithoutTag.map((attachment, index) => <Tag key={index} attachment={attachment} />)
+
+    const attachmentsWithTag = task.attachments.filter((attachment, index) => { return attachment.tags.length > 0 })
+    const attachmentsViewList = attachmentsWithTag.map((attachment, index) => <Tag key={index} attachment={attachment} />)
+
     const AttachmentsSection = ({ tagsSectionId }: SectionProps) => {
         const [name, icon] = getTagInfo(tagsSectionId)
 
-        const attachmentsOfSection = task.attachments?.filter((attachment, index) => { return attachment.tags.includes(tagsSectionId) })
+        const attachmentsOfSection = attachmentsViewList.filter((attachment, index) => { return attachment.props.attachment.tags.includes(tagsSectionId) })
 
         return (
             <div className={styles.attachmentsSection}>
@@ -192,12 +203,7 @@ const Task = ({ task }: { task: Task }) => {
                     <p>{name}</p>
                 </div>
                 <ul className={styles.attachmentsContainer}>
-                    {
-                        attachmentsOfSection &&
-                        attachmentsOfSection.map((attachment, index) => {
-                            return <Tag key={index} index={index} attachment={attachment} />
-                        })
-                    }
+                    {attachmentsOfSection}
                 </ul>
             </div>
         )
@@ -205,19 +211,7 @@ const Task = ({ task }: { task: Task }) => {
 
     const [section, setSection] = useState('Anexos')
 
-    const tagsCount = (tagId: number) => {
-        const filteredTags = task.attachments.filter((attachment, index) => attachment.tags.includes(tagId));
-        return filteredTags.length
-    }
-
-    const attachmentsWithoutTag = task.attachments?.filter((attachment, index) => { return attachment.tags.length === 0 })
-
-    const attachmentsWithoutTagList = attachmentsWithoutTag.map((attachment, index) => {
-        console.log(index, '215')
-        return <Tag key={index} index={index} attachment={attachment} />
-    })
-
-    const attachments = <>
+    const attachmentsContainer = <>
         <div className='header'>
             <SectionSelector sections={["Anexos", "Links"]} actualSection={section} setSection={setSection} />
             <div className={`row ${styles.headerButtons}`}>
@@ -238,7 +232,7 @@ const Task = ({ task }: { task: Task }) => {
                 </>
                 :
                 task.links.map((link, index) => {
-                    return <LinkAttachment key={index} link={link} index={index} />
+                    return <LinkAttachment link={link} index={index} />
                 })
         }
     </>
@@ -249,19 +243,6 @@ const Task = ({ task }: { task: Task }) => {
         setInteracted(task.interactedBy.find((user, index) => {
             return user.id = parseInt(userId)
         }) ? true : false)
-
-        let attachmentsInteract: Array<string> = [];
-        task.attachments.forEach((attachment, index) => {
-            const hasMarked = attachment.markedBy.find((user, index) => {
-                console.log(user)
-                return user.id = parseInt(userId)
-            })
-            if (hasMarked) {
-                attachmentsInteract.push(attachment.id)
-            }
-        })
-        console.log(attachmentsInteract)
-        setAttachmentsInteracted(attachmentsInteract)
     }, [])
 
     const [isLoading, setLoading] = useState(false);
@@ -360,13 +341,14 @@ const Task = ({ task }: { task: Task }) => {
                         </div>
                         <p>para entregar essa atividade.</p>
                     </div>
-                    {attachments}
+                    {attachmentsContainer}
                 </div>
             </main>
         )
     } else if (isTest) {
         const title = `Avaliação ${task.type === "av1" ? 'Mensal' : "Bimestral"} ${`(${task.type.toUpperCase()})`}`;
         const [isContentsModalVisible, setContentsModalVisible] = useState(false);
+
         const subjectsText = useMemo(() => subjectsString(task.subjects), [])
 
         return (
@@ -416,14 +398,14 @@ const Task = ({ task }: { task: Task }) => {
                             </div>
                         </div>
                     </div>
-                    {attachments}
+                    {attachmentsContainer}
                 </div>
                 <Modal
                     icon={'apps'}
                     isVisible={isContentsModalVisible}
                     toggleVisibility={() => setContentsModalVisible(!isContentsModalVisible)}
                     color={"var(--primary-02)"}
-                    iconProps={{ position: "flex-start", size: "3.2rem" }}
+                    iconProps={{ position: "flex-start", size: '3.2rem' }}
                 >
                     <div className={styles.contentsHolder}>
                         {
@@ -508,7 +490,7 @@ const Task = ({ task }: { task: Task }) => {
                         iconProps={{ size: "1.8rem" }}
                         classes={styles.defaultButton}
                     />
-                    {attachments}
+                    {attachmentsContainer}
                 </div>
             </main>
         )
