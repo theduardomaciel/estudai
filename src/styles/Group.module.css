@@ -1,0 +1,179 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    position: initial;
+
+    width: 100%;
+    height: 100%;
+
+    overflow-y: scroll;
+
+    padding: 3.5rem 3.5rem calc(3.5rem + var(--sidebar-height)) 3.5rem;
+    gap: 2.5rem;
+
+    transition: 1s;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2.5rem 3.5rem;
+    gap: 1.5rem;
+
+    width: 100%;
+
+    background: var(--light);
+
+    border: 1px solid var(--light-gray);
+    border-radius: 0.5rem;
+}
+
+.header h1 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 900;
+    font-size: 7.2rem;
+    line-height: 8.5rem;
+
+    display: flex;
+    align-items: center;
+
+    color: var(--primary-02);
+}
+
+
+.header .details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.header .details h4 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.4rem;
+
+    margin-bottom: 0.5rem;
+
+    color: var(--font-light);
+}
+
+.header .info {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--light-gray);
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header .info p {
+    font-family: 'Inter';
+    font-style: normal;
+}
+
+.header .info span {
+    font-size: 1.6rem;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 2.5rem;
+
+    width: 100%;
+    height: 100%;
+}
+
+.tasks {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 2.5rem;
+}
+
+.pinnedMessageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem;
+    gap: 1rem;
+
+    width: 100%;
+
+    background: var(--light);
+
+    border: 1px solid var(--primary-03);
+    border-radius: 0.5rem;
+}
+
+.pinnedMessageContainer header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 1rem;
+}
+
+.pinnedMessageContainer header {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 1.5rem;
+    /* primary-02 */
+
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+
+    color: var(--primary-02);
+}
+
+.pinnedMessageContainer p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+    text-align: left;
+    color: var(--primary-03);
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 35rem;
+
+    align-items: center;
+    justify-content: flex-start;
+
+}
+
+@media (min-width: 1024px) {
+
+    .container {
+        position: absolute;
+        top: 0;
+        left: var(--sidebar-width);
+        flex: 1;
+        width: calc(100vw - var(--sidebar-width));
+        margin-left: auto;
+
+        transition: 0s;
+    }
+}

@@ -12,6 +12,7 @@
 
     background-color: rgba(0, 0, 0, 0.75);
 
+    transition: 0.5s;
     z-index: 15;
 }
 
@@ -76,6 +77,25 @@
 
     align-items: center;
     justify-content: center;
+}
+
+.headerContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+    align-items: center;
+
+    transition: 0.5s;
+
+    width: 100%;
+}
+
+.headerContainer h2 {
+    font-size: 3.8rem;
+    font-family: 'Raleway';
+    font-weight: 700;
+    color: var(--primary-02);
+    text-transform: none;
 }
 
 @media (min-width: 1024px) {

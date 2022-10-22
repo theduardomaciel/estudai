@@ -31,6 +31,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
     iconProps?: {
         size?: string,
         position?: 'flex-start' | 'center' | 'flex-end',
+        builtWithTitle?: boolean,
     }
 
     buttonText?: string;
@@ -53,18 +54,21 @@ export default function Modal({ isVisible, toggleVisibility, actionFunction, act
                         variants={backdropVariants}
                     >
                         <div className={styles.container} {...rest}>
-                            <div
-                                style={{ backgroundColor: color, alignSelf: iconProps?.position ? iconProps?.position : "center" }}
-                                className={styles.iconHolder}>
-                                <span
-                                    className={'material-symbols-rounded static'}
-                                    style={{ color: "var(--light", fontSize: iconProps?.size ? iconProps?.size : "4.8rem" }}>
-                                    {icon}
-                                </span>
+                            <div className={styles.headerContainer} style={{ justifyContent: iconProps?.position ? iconProps?.position : "center" }}>
+                                <div style={{ backgroundColor: color }} className={styles.iconHolder}>
+                                    <span
+                                        className={'material-symbols-rounded static'}
+                                        style={{ color: "var(--light", fontSize: iconProps?.size ? iconProps?.size : "4.8rem" }}>
+                                        {icon}
+                                    </span>
+                                </div>
+                                {
+                                    iconProps?.builtWithTitle && <h2>{title}</h2>
+                                }
                             </div>
 
                             {
-                                title &&
+                                title && !iconProps?.builtWithTitle &&
                                 <h2>{title}</h2>
                             }
                             {
@@ -99,7 +103,8 @@ export default function Modal({ isVisible, toggleVisibility, actionFunction, act
                                         style={{
                                             background: actionEnabled ? color : "var(--light-gray)",
                                             cursor: actionEnabled ? "pointer" : "not-allowed",
-                                            padding: `0.7rem 1.5rem`
+                                            padding: `0.7rem 1.5rem`,
+                                            textTransform: "uppercase"
                                         }}
                                     />
                                 }

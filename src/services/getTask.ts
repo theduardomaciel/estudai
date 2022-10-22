@@ -20,7 +20,7 @@ export default async function getTask(id: number) {
             console.log("🏃‍♂️ A tarefa foi encontrada com sucesso!")
             return task;
         } else {
-            console.log("❌ Não foi possível retornar as tarefa.")
+            console.log("❌ Não foi possível retornar a tarefa.")
         }
     } catch (error) {
         console.log(error)

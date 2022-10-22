@@ -63,6 +63,16 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
 }
 
+interface EmptyTasks {
+    description?: string;
+}
+
+export const EmptyTasksMessage = ({ description }: EmptyTasks) => <div className={styles.emptyTasks}>
+    <span className={`material-symbols-rounded static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
+    <p><strong>Um pouco vazio aqui, né?</strong> </p>
+    <p>{description ? description : "Adicione uma nova tarefa com o botão acima para que ela apareça aqui!"}</p>
+</div>
+
 const Home = ({ user }: { user: User }) => {
     const [menuOpened, setMenuOpened] = useState(false);
 
@@ -109,12 +119,6 @@ const Home = ({ user }: { user: User }) => {
     const { changeViewMode, viewMode } = useAppContext();
 
     const [actualSection, setActualSection] = useState('Pendente');
-
-    const emptyTasks = <div className={styles.emptyTasks}>
-        <span className={`material-symbols-rounded static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
-        <p><strong>Um pouco vazio aqui, né?</strong> </p>
-        <p>Adicione uma nova tarefa com o botão acima para que ela apareça aqui!</p>
-    </div>
 
     return (
         <main>
@@ -164,7 +168,7 @@ const Home = ({ user }: { user: User }) => {
                         user.tasks.length > 0 ?
                             user.tasks.map((task, index) => <TaskView key={index} task={task} />)
                             :
-                            emptyTasks
+                            <EmptyTasksMessage description='Adicione uma nova tarefa a este grupo para que ela apareça aqui!' />
                     }
                 </div>
             </div>
@@ -227,9 +231,15 @@ const Home = ({ user }: { user: User }) => {
                         <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
                     </div>
                     <TextInput
-                        onChange={(event) => setFocusMinutes(parseInt(event.target.value))}
+                        onChange={(event) => {
+                            if (event.currentTarget.value.length < 5) {
+                                setFocusMinutes(parseInt(event.target.value))
+                            }
+                        }}
+                        value={focusMinutes}
                         label='Tempo de atividade'
                         placeholder='60'
+                        type={'number'}
                         height={'3.85rem'}
                         fixedUnit='minutos'
                     />

@@ -40,9 +40,13 @@ export const subjectsString = (subjects: number[]) => subjects.map((subjectId, i
     }
 })
 
+export const UsersPortraitsFromTask = ({ concludedUsersAmount, images, groupName }: { concludedUsersAmount: number, images: Array<string>, groupName?: string }) => <div className={styles.usersHolder}>
+    <UsersPortraits imagesUrls={images.slice(0, 5)} />
+    <p className={styles.usersAmount}>{`+ de ${concludedUsersAmount} membros de ${groupName ? groupName : "placeholder"} já concluíram a atividade`}</p>
+</div>;
+
 export default function TaskView({ task }: TaskProps) {
     const { viewMode } = useAppContext();
-    const concludedBySomeone = true //task.concludedBy && task.concludedBy?.length > 0;
 
     const description = task.description && task.description as string;
 
@@ -53,6 +57,11 @@ export default function TaskView({ task }: TaskProps) {
         />
         :
         <p>{`[nenhuma descrição fornecida]`}</p>
+
+    // Ícones dos usuários e informação de usuários que concluíram
+    const concludedUsersAmount = task.interactedBy ? task.interactedBy.length : 0;
+    console.log(concludedUsersAmount, task.interactedBy)
+    const images = task.interactedBy ? task.interactedBy.map((user, index) => user.image_url) : 0;
 
     if (isActivity(task.type)) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
@@ -80,10 +89,7 @@ export default function TaskView({ task }: TaskProps) {
                     </div>
                     <div className={`${styles.column} ${styles.two}`}>
                         {
-                            concludedBySomeone && <div className={styles.usersHolder}>
-                                <UsersPortraits imagesUrls={["https://picsum.photos/id/25/24/24", "https://picsum.photos/id/21/24/24", "https://picsum.photos/id/421/24/24", "https://picsum.photos/id/123/24/24"]} />
-                                <p className={styles.usersAmount} style={{ maxWidth: "75%" }}>+ de 10 membros de <strong>Terceirão</strong> já concluíram a atividade</p>
-                            </div>
+                            concludedUsersAmount > 1 && <UsersPortraitsFromTask concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
                         }
                         <div className={styles.deadline}>
                             <>
@@ -145,10 +151,7 @@ export default function TaskView({ task }: TaskProps) {
                     </div>
                     <div className={`${styles.column} ${styles.two}`}>
                         {
-                            concludedBySomeone && <div className={styles.usersHolder}>
-                                <UsersPortraits imagesUrls={["https://picsum.photos/id/25/24/24", "https://picsum.photos/id/21/24/24", "https://picsum.photos/id/421/24/24", "https://picsum.photos/id/123/24/24"]} />
-                                <p className={styles.usersAmount}>+ de 10 membros de <strong>Terceirão</strong> já confirmaram presença</p>
-                            </div>
+                            concludedUsersAmount > 1 && <UsersPortraitsFromTask concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
                         }
                         <div className={styles.deadline}>
                             <span className={`material-symbols-rounded`}>calendar_today</span>

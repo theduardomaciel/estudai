@@ -1,3 +1,4 @@
+import { Group } from "@prisma/client";
 import { Attachment } from "./Attachment";
 import { User } from "./User";
 
@@ -15,6 +16,8 @@ export type Task = {
 
     questionsAmount?: number;
     contents?: Array<string>;
+
+    group: Group;
 
     title?: string;
     address?: string;

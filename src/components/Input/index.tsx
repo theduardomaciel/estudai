@@ -83,7 +83,7 @@ const Input = ({ label, fixedUnit, height, numberControl, ...rest }: Props) => {
                     </div>
                 </div>
                 :
-                <input style={{ height: height ? height : "4.2rem", }} className={styles.input} type="text" id="taskName" {...rest} />
+                <input style={{ height: height ? height : "4.2rem", }} className={styles.input} id="taskName" {...rest} />
         }
 
     </div>

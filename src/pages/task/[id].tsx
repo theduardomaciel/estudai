@@ -31,6 +31,7 @@ import getSubjectInfo from '../../utils/getSubjectInfo';
 // Imports
 import DocAttachment from "/public/icons/attachment/doc.svg";
 import PDFAttachment from "/public/icons/attachment/pdf.svg";
+import ImgAttachment from "/public/icons/attachment/img.svg";
 
 import placeholder from '/public/images/user_placeholder.jpg';
 
@@ -85,6 +86,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
+    index: number;
 }
 
 const Task = ({ task }: { task: Task }) => {
@@ -94,25 +96,22 @@ const Task = ({ task }: { task: Task }) => {
     const [isActivity, isTest] = taskGroupType(task.type);
     const titleType = isActivity ? "Atividade" : isTest ? "Avaliação" : "Evento"
 
-    function Tag({ attachment, ...rest }: TagComponentProps) {
-        const [isAttachmentLoading, setAttachmentLoading] = useState(false);
-        const [attachmentInteracted, setAttachmentInteracted] = useState<boolean | null>(null)
+    const [attachmentsInteracted, setAttachmentsInteracted] = useState<Array<boolean | string>>(['loading'])
 
-        useEffect(() => {
-            setAttachmentInteracted(attachment.markedBy.find((user, index) => {
-                return user.id = parseInt(userId)
-            }) ? true : false)
-        }, [])
+    function Tag({ attachment, index, ...rest }: TagComponentProps) {
+        const [isAttachmentLoading, setAttachmentLoading] = useState(attachmentsInteracted[0] === 'loading');
+        const attachmentInteracted = attachmentsInteracted[index] === true;
 
-        console.log(attachment.type)
-
-        return <li className={fileStyles.attachment} style={{ maxWidth: "fit-content" }} {...rest} >
+        return <li key={index} className={fileStyles.attachment} style={{ maxWidth: "fit-content" }} {...rest} >
             <div className={fileStyles.header}>
                 {
                     attachment.type == "application/pdf" ?
                         <PDFAttachment className={fileStyles.icon} />
                         :
-                        <DocAttachment className={fileStyles.icon} />
+                        attachment.type === 'image/jpeg' ?
+                            <ImgAttachment className={fileStyles.icon} />
+                            :
+                            <DocAttachment className={fileStyles.icon} />
                 }
                 {/* {
                 attachment.createdBy?.id === 123 &&
@@ -154,12 +153,12 @@ const Task = ({ task }: { task: Task }) => {
                     fontWeight: 500
                 }}
                 isLoading={isAttachmentLoading || attachmentInteracted === null}
-                onClick={() => toggleAttachmentInteraction(attachment.id, setAttachmentLoading, setAttachmentInteracted)}
+                onClick={() => toggleAttachmentInteraction(attachment.id, index, setAttachmentLoading)}
             />
         </li>
     }
 
-    async function toggleAttachmentInteraction(attachmentId: string, setAttachmentLoading: (state: boolean) => SetStateAction<void>, setAttachmentInteracted: (state: boolean) => SetStateAction<void>) {
+    async function toggleAttachmentInteraction(attachmentId: string, attachmentIndex: number, setAttachmentLoading: (state: boolean) => SetStateAction<void>) {
         setAttachmentLoading(true)
 
         if (!userId) {
@@ -168,13 +167,17 @@ const Task = ({ task }: { task: Task }) => {
 
         try {
             const response = await api.patch(`/attachments/${attachmentId}`, { userId: userId })
-
+            console.log(response)
             if (response.data.removed) {
                 console.warn("Removeu a marcação.");
-                setAttachmentInteracted(false)
+                let copy = [...attachmentsInteracted]
+                copy[attachmentIndex] = false;
+                setAttachmentsInteracted(copy)
             } else if (response.data.added) {
                 console.warn("Adicionou a marcação.");
-                setAttachmentInteracted(true)
+                let copy = [...attachmentsInteracted]
+                copy[attachmentIndex] = true;
+                setAttachmentsInteracted(copy)
             }
         } catch (error) {
             console.log(error)
@@ -186,10 +189,10 @@ const Task = ({ task }: { task: Task }) => {
     const tagsCount = (tagId: number) => task.attachments.filter((attachment, index) => attachment.tags.includes(tagId)).length;
 
     const attachmentsWithoutTag = task.attachments?.filter((attachment, index) => { return attachment.tags.length === 0 })
-    const attachmentsWithoutTagList = attachmentsWithoutTag.map((attachment, index) => <Tag key={index} attachment={attachment} />)
+    const attachmentsWithoutTagList = attachmentsWithoutTag.map((attachment, index) => <Tag index={index} attachment={attachment} />)
 
     const attachmentsWithTag = task.attachments.filter((attachment, index) => { return attachment.tags.length > 0 })
-    const attachmentsViewList = attachmentsWithTag.map((attachment, index) => <Tag key={index} attachment={attachment} />)
+    const attachmentsViewList = attachmentsWithTag.map((attachment, index) => <Tag index={index} attachment={attachment} />)
 
     const AttachmentsSection = ({ tagsSectionId }: SectionProps) => {
         const [name, icon] = getTagInfo(tagsSectionId)
@@ -221,7 +224,7 @@ const Task = ({ task }: { task: Task }) => {
         </div>
         {
             section === "Anexos" ?
-                <>
+                <div className={styles.attachmentsParentHolder}>
                     {attachmentsWithoutTagList}
                     {
                         tagsNames.map((tagName, index) => {
@@ -229,10 +232,10 @@ const Task = ({ task }: { task: Task }) => {
                             return count > 0 && <AttachmentsSection key={index} tagsSectionId={index} />
                         })
                     }
-                </>
+                </div>
                 :
                 task.links.map((link, index) => {
-                    return <LinkAttachment link={link} index={index} />
+                    return <LinkAttachment key={index} link={link} index={index} />
                 })
         }
     </>
@@ -240,9 +243,15 @@ const Task = ({ task }: { task: Task }) => {
     const [hasInteracted, setInteracted] = useState<boolean | null>(null)
 
     useEffect(() => {
+        // Carregamento da interação geral com a tarefa
         setInteracted(task.interactedBy.find((user, index) => {
             return user.id = parseInt(userId)
         }) ? true : false)
+
+        // Carregamento da interação com um attachment
+        const attachmentsThatUserHasInteracted = task.attachments.map((attachment, index) => attachment.markedBy.find(user => user.id === parseInt(userId)) ? true : false)
+        console.warn(attachmentsThatUserHasInteracted)
+        setAttachmentsInteracted(attachmentsThatUserHasInteracted)
     }, [])
 
     const [isLoading, setLoading] = useState(false);
@@ -384,7 +393,7 @@ const Task = ({ task }: { task: Task }) => {
                             <Button
                                 title='VER CONTEÚDOS'
                                 icon={'apps'}
-                                iconProps={{ size: "1.8rem" }}
+                                iconProps={{ size: "1.8rem", color: "var(--primary-02)" }}
                                 classes={styles.defaultButton}
                                 preset={"fillHover"}
                                 onClick={() => setContentsModalVisible(true)}

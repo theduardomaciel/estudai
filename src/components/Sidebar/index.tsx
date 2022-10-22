@@ -77,11 +77,11 @@ export default function Sidebar() {
                 </a>
             </Link>
 
-            <Link href={"/settings"}>
+            {/* <Link href={"/settings"}>
                 <a href="">
                     <span ref={settingsButton} className={`material-symbols-rounded ${section === "settings" ? "filled" : "outlined"}`}>settings</span>
                 </a>
-            </Link>
+            </Link> */}
             <span onClick={() => setLogoutModalVisible(true)} className={`material-symbols-rounded`}>exit_to_app</span>
             <div ref={sectionBar} className={styles.sectionBar} />
         </nav>

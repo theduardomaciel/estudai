@@ -21,6 +21,6 @@ export default function Note({ tag, description, showOnlyInDesktop, showOnlyInMo
         <div className={styles.tagHolder}>
             <p className={styles.tag}>{tag}</p>
         </div>
-        <p>{isScreenWide ? ALPHA_MESSAGE : REDUCED_ALPHA_MESSAGE}</p>
+        <p>{description ? description : isScreenWide ? ALPHA_MESSAGE : REDUCED_ALPHA_MESSAGE}</p>
     </div>
 }

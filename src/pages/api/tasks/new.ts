@@ -99,7 +99,7 @@ router
 
                 res.status(200).json(task)
             } else {
-                const subjects = req.body.subjects;
+                const subjects = req.body.subjects.map((subject: string, index: number) => parseInt(subject));
                 const maxScore = parseInt(req.body.maxScore) ? parseInt(req.body.maxScore) : 0;
 
                 const task = await prisma.task.create({

@@ -71,7 +71,7 @@ model Group {
 
     subgroups     Subgroup[]
     pinnedMessage String?
-    shareLink     String?    @unique
+    shareLink     String     @unique @default(cuid())
     private       Boolean    @default(false)
 
     createdAt DateTime @default(now())

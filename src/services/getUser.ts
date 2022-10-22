@@ -8,7 +8,11 @@ export default async function getUser(id: number) {
                 id: id,
             },
             include: {
-                tasks: true
+                tasks: {
+                    include: {
+                        interactedBy: true
+                    }
+                }
             }
         })
         if (user && user !== null) {

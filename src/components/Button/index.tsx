@@ -12,6 +12,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
         size?: string,
         filled?: boolean,
         color?: string,
+        position?: 'left' | 'right'
     }
     isSelected?: boolean;
     preset?: 'sendForm' | 'fillHover'
@@ -28,20 +29,28 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
             isLoading ?
                 <Spinner
                     size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.1}
-                    color={preset === "fillHover" && isSelected || preset !== "fillHover" ? iconProps?.color as string : "var(--light)"}
+                    color={isSelected ? iconProps?.color as string : "var(--light)"}
                 />
                 :
                 <>
                     {
                         icon && typeof icon === "string" ?
                             <span
-                                style={{ fontSize: iconProps?.size ? iconProps.size : "2.4rem",/*  color: iconProps?.color ? iconProps.color : "var(--light)" */ }}
+                                style={{
+                                    fontSize: iconProps?.size ? iconProps.size : "2.4rem",
+                                    flexDirection: iconProps?.position && iconProps?.position === 'right' ? "row-reverse" : "row"
+                                    /*  color: iconProps?.color ? iconProps.color : "var(--light)" */
+                                }}
                                 className={`material-symbols-rounded ${iconProps?.filled ? "instantFilled" : "instantOutlined"}`}
                             >
                                 {icon}
                             </span> :
                             icon &&
-                            <div>
+                            <div style={{
+                                fontSize: iconProps?.size ? iconProps.size : "2.4rem",
+                                flexDirection: iconProps?.position === 'left' ? "row-reverse" : "row"
+                                /*  color: iconProps?.color ? iconProps.color : "var(--light)" */
+                            }}>
                                 {icon}
                             </div>
                     }
