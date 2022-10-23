@@ -27,6 +27,11 @@ import inputStyles from "../../components/Input/label.module.css";
 import { Group } from '../../types/Group';
 import { User } from '../../types/User';
 
+// Icons
+import PlaneIcon from '/public/landing/paper_plane.svg';
+import Link from 'next/link';
+import UsersPortraits from '../../components/UsersPortraits';
+
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
 
@@ -45,12 +50,23 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 
-    let user = await getUser(userId as number) as unknown as User;
+    let user = await getUser(userId as number, 'full') as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
         task.date = Math.floor(date.getTime());
         return task;
+    })
+
+    user.groups.map((group, index) => {
+        const date = new Date(group.createdAt);
+        group.createdAt = Math.floor(date.getTime());
+        group.tasks.map((task, index) => {
+            const date = new Date(task.date);
+            task.date = Math.floor(date.getTime());
+            return task;
+        })
+        return group;
     })
 
     return {
@@ -74,7 +90,6 @@ const Groups = ({ user }: { user: User }) => {
     async function createGroup() {
         console.log(groupName)
         setLoading(true)
-
 
         try {
             const response = await api.post('/groups/new', { userId: user.id, name: groupName.current, isPrivate: isGroupPrivate })
@@ -119,11 +134,53 @@ const Groups = ({ user }: { user: User }) => {
                     <h3 className={"title"}>Meus Grupos</h3>
                     <Button
                         classes={styles.addButton}
-                        style={{ backgroundColor: "var(--primary-02)", padding: "0.75rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
+                        style={{ backgroundColor: "var(--primary-02)", padding: "0.75rem 3rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
                         icon={"group_add"}
                         title='Criar um grupo'
                         onClick={() => setCreateGroupModalVisible('default')}
                     />
+                </div>
+                <div className={styles.content}>
+                    {
+                        user.groups.length > 0 ?
+                            user.groups.map((group, index) => {
+                                const tasksLength = group.tasks.length;
+                                const completedTasksLength = group.tasks.filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? true : false).length;
+
+                                return <Link key={index} href={`/groups/${group.id}`}>
+                                    <div className={styles.groupCard}>
+                                        <header>
+                                            <h3>{group.name}</h3>
+                                            <div className={styles.iconContainer}>
+                                                <span className={'material-symbols-rounded static'}>notifications_active</span>
+                                                <p>{completedTasksLength} atividade{completedTasksLength !== 1 && "s"} pendentes</p>
+                                            </div>
+                                        </header>
+                                        <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma mensagem fixada]"}</p>
+                                        <div className={styles.usersInfoContainer}>
+                                            <UsersPortraits imagesUrls={group.users.map((user, i) => user.image_url)} />
+                                            <div className={styles.iconContainer}>
+                                                <span className={'material-symbols-rounded static'}>person</span>
+                                                <p>{group.users.length} participante{group.users.length !== 1 && "s"}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            })
+                            :
+                            <div className={styles.emptyGroups}>
+                                <PlaneIcon className={styles.icon} />
+                                <h2>Parece que por aqui está vazio, né?</h2>
+                                <p>Para entrar em um grupo, acesse o link de convite enviado por algum integrante do grupo desejado.</p>
+                                {/* <svg width="500px" height="200px">
+                            <defs>
+                                <filter id="blur">
+                                    <feGaussianBlur stdDeviation="0" />
+                                </filter>
+                            </defs>
+                        </svg> */}
+                            </div>
+                    }
                 </div>
             </div>
             <Modal
@@ -155,6 +212,8 @@ const Groups = ({ user }: { user: User }) => {
                             <Input
                                 label='Nome do Grupo'
                                 placeholder='Insira o nome do grupo'
+                                maxLength={15}
+                                type="text"
                                 onChange={(event) => groupName.current = event.currentTarget.value}
                             />
                             <div className={styles.toggleContainer}>
@@ -167,7 +226,7 @@ const Groups = ({ user }: { user: User }) => {
                         : isCreateGroupModalVisible === "success" ?
                             <>
                                 <p>Acesse agora seu grupo recém-criado e compartilhe o link de acesso com outros!</p>
-                                <div className={`${inputStyles.input} ${styles.hoverLink}`} onClick={onLinkClick}>
+                                <div className={`${inputStyles.input} hoverLink`} onClick={onLinkClick}>
                                     <p ref={linkTextRef}>{`https://estudai.vercel.app/groups/${createdGroup.current?.shareLink}`}</p>
                                     <span className='material-symbols-rounded'>content_copy</span>
                                 </div>

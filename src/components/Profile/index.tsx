@@ -15,6 +15,7 @@ import { User } from '../../types/User';
 interface Props {
     onClick?: () => void;
     user?: User;
+    showMenu?: boolean;
 }
 
 export default function Profile(props: Props) {
@@ -62,7 +63,7 @@ export default function Profile(props: Props) {
                         </div>
                     </div>
                 </div>
-                <Button classes={styles.openMenu} onClick={props.onClick} icon={"menu"} />
+                {props.showMenu && <Button classes={styles.openMenu} onClick={props.onClick} icon={"menu"} />}
             </div>
         </div>
     )

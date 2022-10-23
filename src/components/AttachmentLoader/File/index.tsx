@@ -184,6 +184,7 @@ export default function File({ userId, attachmentIndex, attachments, setAttachme
     useEffect(() => {
         async function upload() {
             setUploading(true)
+
             const uploadedFile = await uploadFile(fileInfo.current, userId, setGoogleAuthentication, setProgress);
             if (uploadedFile) {
                 let array = [...attachments];

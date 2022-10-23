@@ -43,6 +43,7 @@ import getSubjectInfo, { subjectsData } from '../../utils/getSubjectInfo';
 import { api } from '../../lib/api';
 import { isActivity, isTest } from '../../components/Task';
 import formatDate from '../../utils/formatDate';
+import { Group } from '../../types/Group';
 
 interface TaskData {
     type: string;
@@ -70,6 +71,7 @@ export function toggleSubject(subjectId: number, subjects: Array<number>, setSub
 export default function NewTask() {
     const router = useRouter();
 
+    const groups = router.query.groups ? JSON.parse(router.query.groups as string) as Group[] : null;
     const userId = parseInt(router.query.userId as string) as number | string;
 
     useEffect(() => {
@@ -326,23 +328,32 @@ export default function NewTask() {
         <div className={styles.column}>
             <Section title='Detalhes Iniciais' />
             {ActivityType}
-            <Input
-                height={"4.2rem"}
-                type="number"
-                numberControl
-                name='maxScore'
-                label='Qual a pontuação máxima que pode ser adquirida?'
-                placeholder='10'
-                fixedUnit='pontos'
-            />
-            <Input
-                height={"4.2rem"}
-                type="number"
-                name='questionsAmount'
-                label='Quantas questões haverão no dia?'
-                placeholder='90'
-                fixedUnit='questões'
-            />
+            <div style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "2.5rem",
+                alignItems: "flex-end",
+                justifyContent: "space-between",
+                width: "100%"
+            }}>
+                <Input
+                    height={"4.2rem"}
+                    type="number"
+                    numberControl
+                    name='maxScore'
+                    label='Qual pontuação máxima pode ser atingida?'
+                    placeholder='10'
+                    fixedUnit='pontos'
+                />
+                <Input
+                    height={"4.2rem"}
+                    type="number"
+                    name='questionsAmount'
+                    label='Quantas questões terá a avaliação?'
+                    placeholder='90'
+                    fixedUnit='questões'
+                />
+            </div>
             <SubjectsSelector openModal={() => setModalVisible('subjects')} subjects={subjects} setSubjects={setSubjects} />
         </div>
         <div className={styles.column}>
@@ -354,7 +365,7 @@ export default function NewTask() {
                         :
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center", width: "85%", textAlign: "center", fontSize: "1.4rem" }}>
                             <span className={`material-symbols-rounded static`} style={{ fontSize: "4.2rem" }}>hourglass_empty</span>
-                            <p>Adicione matérias nesta avaliação para inserir o conteúdo delas aqui!</p>
+                            <p className='static'>Adicione matérias nesta avaliação para inserir o conteúdo delas aqui!</p>
                         </div>
                 }
             </div>
@@ -418,6 +429,7 @@ export default function NewTask() {
                     type: type,
                     date: date,
                     mode: mode,
+                    storage: storage,
                     contents: contents.current,
                     description: editorContent && editorContent.length > 7 ? editorContent : "",
                     title: title,
@@ -448,6 +460,20 @@ export default function NewTask() {
     }
 
     const title = `Adicionar ${isActivity(type) ? 'atividade' : isTest(type) ? 'avaliação' : 'evento'}`
+
+    const [groupVisible, setGroupVisible] = useState(0);
+
+    const groupElement = groups !== null && <li
+        key={groupVisible}
+        className={`${styles.group} click ${storage === groups[groupVisible].id.toString() ? styles.selected : ''}`}
+        onClick={() => setStorage(groups[groupVisible].id.toString())}
+    >
+        <div className={'header'}>
+            <h3 style={{ color: "var(--light)" }}>{groups[groupVisible].name}</h3>
+            <UsersPortraits imagesUrls={groups[groupVisible].users.map((user, i) => user.image_url)} />
+            {storage === groups[groupVisible].id.toString() && <span className={`${styles.checkCircle} material-symbols-rounded`}>check_circle</span>}
+        </div>
+    </li>
 
     return (
         <form className={styles.holder} onSubmit={createTask} /* onChange={(event) => {
@@ -497,42 +523,60 @@ export default function NewTask() {
                             icon={'person'}
                             title='Minha Conta'
                             onClick={() => setStorage('account')}
-                            style={{ width: "100%", borderRadius: "0.7rem", justifyContent: "flex-start", paddingLeft: "2rem" }}
+                            style={{
+                                width: "100%",
+                                borderRadius: "0.7rem",
+                                justifyContent: "flex-start",
+                                paddingLeft: "2rem",
+                                backgroundColor: storage === 'account' ? "var(--primary-02)" : "var(--primary-03)",
+                                outline: storage === 'account' ? "2px solid var(--primary-03)" : "none"
+                            }}
                             isSelected={storage === "account"}
-                        />
-                        {/* <div className={styles.section} style={{ gap: "0.5rem" }}>
-                        <h6>Grupos</h6>
-                        <div className={styles.groups}>
-                            <div className={`${styles.group} ${storage === "group" ? 'buttonSelected' : ""} click`} onClick={() => setStorage('group')}>
-                                <div className={'header'}>
-                                    <h3 style={{ color: "var(--light)" }}>Terceirão</h3>
-                                    <UsersPortraits imagesUrls={["https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png"]} />
-                                </div>
-                                <p>Subgrupos</p>
-                                <ul style={{ width: "100%" }}>
-                                    <Button
-                                        icon={'groups_2'}
-                                        title='Oficina de Redação'
-                                        style={{
-                                            width: "100%",
-                                            padding: "0.5rem 1.5rem",
-                                            borderRadius: "0.5rem",
-                                            border: "0.5px solid #FFFFFF",
-                                            fontFamily: "Raleway"
-                                        }}
-                                    />
-                                </ul>
-                            </div>
+                        >
+                            {
+                                storage === 'account' && <span className={`${styles.checkCircle} material-symbols-rounded`}>check_circle</span>
+                            }
+                        </Button>
+                        <div className={styles.section} style={{ gap: "0.5rem" }}>
+                            {
+                                groups ?
+                                    <>
+                                        <h6>Grupos</h6>
+                                        {
+                                            groups.length === 0 ?
+                                                <div className={styles.noGroupWarning}>
+                                                    <p>Você ainda não participa de nenhum grupo!</p>
+                                                </div> :
+                                                <>
+                                                    <div className={styles.groups}>
+                                                        {groupElement}
+                                                        {
+                                                            groups.length > 1 &&
+                                                            <div className={`${styles.groupsIndicator} row`}>
+                                                                <span onClick={() => {
+                                                                    if (groupVisible > 0) {
+                                                                        setGroupVisible(groupVisible - 1)
+                                                                    }
+                                                                }} className={`material-symbols-rounded`}>chevron_left</span>
+                                                                <div className={styles.dots}>
+                                                                    {
+                                                                        groups.map((group, i) => <div />)
+                                                                    }
+                                                                </div>
+                                                                <span onClick={() => {
+                                                                    if (groupVisible < groups.length - 1) {
+                                                                        setGroupVisible(groupVisible + 1)
+                                                                    }
+                                                                }} className={`material-symbols-rounded`}>chevron_right</span>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </>
+                                        }
+                                    </>
+                                    : null
+                            }
                         </div>
-                        <div className={`${styles.groupsIndicator} row`}>
-                            <span className={`material-symbols-rounded`}>chevron_left</span>
-                            <div className={styles.dots}>
-                                <div />
-                                <div />
-                            </div>
-                            <span className={`material-symbols-rounded`}>chevron_right</span>
-                        </div>
-                    </div> */}
                     </div>
                 </div>
                 <Button icon={"send"} title={'Enviar Atividade'} preset="sendForm" style={{ width: "100%" }} />
@@ -571,3 +615,18 @@ export default function NewTask() {
         </form>
     )
 }
+
+{/* <p>Subgrupos</p>
+                                    <ul style={{ width: "100%" }}>
+                                        <Button
+                                            icon={'groups_2'}
+                                            title='Oficina de Redação'
+                                            style={{
+                                                width: "100%",
+                                                padding: "0.5rem 1.5rem",
+                                                borderRadius: "0.5rem",
+                                                border: "0.5px solid #FFFFFF",
+                                                fontFamily: "Raleway"
+                                            }}
+                                        />
+                                    </ul> */}

@@ -12,9 +12,9 @@ export default function UsersPortraits(props: Props) {
 
     return <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
         {
-            props.imagesUrls.map((url, index) =>
-                <img key={index} className={styles.image} src={url} alt="imagem de usuário" />
-            )
+            props.imagesUrls.slice(1, 5).map((url, index) => {
+                return < img key={index} className={styles.image} src={url.replace('"', '')} alt="imagem de usuário" />
+            })
         }
     </div>
 }

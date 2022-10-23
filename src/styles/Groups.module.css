@@ -10,10 +10,20 @@
 
     overflow-y: scroll;
 
-    padding: 3.5rem;
+    padding: 3.5rem 3.5rem calc(3.5rem + var(--sidebar-height)) 3.5rem;
     gap: 2.5rem;
 
     transition: 1s;
+}
+
+.content {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    gap: 2.5rem;
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
 }
 
 .container .title {
@@ -23,6 +33,10 @@
     font-weight: 700;
     font-size: 2.4rem;
 
+    width: 100%;
+}
+
+.addButton {
     width: 100%;
 }
 
@@ -57,28 +71,126 @@
     justify-content: space-between;
 }
 
-.hoverLink {
+.emptyGroups {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    gap: 1.5rem;
+
+    color: var(--primary-02);
+}
+
+.emptyGroups h2 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.8rem;
+}
+
+.emptyGroups .icon {
+    filter: url(#blur);
+}
+
+.emptyGroups p {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--primary-03);
+    width: 50%;
+    text-align: center;
+}
+
+.groupCard {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 2.5rem;
+    gap: 2rem;
+    width: 100%;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    background: linear-gradient(var(--primary-02), var(--primary-01));
+
+    border: 1px solid var(--primary-03);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.25);
+    border-radius: 1rem;
+
+    transition: 0.35s;
+
     cursor: pointer;
 }
 
-.hoverLink:hover p {
-    text-decoration: underline;
+.groupCard h3 {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 2.8rem;
+
+    color: var(--light);
 }
 
-.hoverLink:hover span {
-    transform: scale(1.05);
+.groupCard p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.5rem;
+    display: flex;
+    align-items: center;
+
+    /* background-01 */
+
+    color: var(--background-01);
 }
 
-.hoverLink span {
-    transform: scale(1);
-    font-size: 1.8rem;
+.groupCard .iconContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
 
-    transition: 0.3s;
+    align-items: center;
+    justify-content: flex-start;
+
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--background-02);
 }
 
+.groupCard header,
+.groupCard .usersInfoContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+
+    flex-wrap: wrap;
+
+    gap: 1.5rem;
+
+    color: var(--light);
+}
+
+.groupCard:hover {
+    box-shadow: 0px 4px 2.5rem rgba(99, 55, 171, 0.65);
+}
+
+.groupCard header p {
+    font-weight: 700;
+}
+
+.groupCard .usersInfoContainer p {
+    font-weight: 300;
+    gap: 0.5rem;
+}
 
 @media (min-width: 1024px) {
-
     .container {
         position: absolute;
         top: 0;
@@ -92,25 +204,24 @@
         transition: 0s;
     }
 
-    .menuHeader .closeButton {
-        display: none;
-    }
-
-    .actionButtons {
-        width: 100%;
-    }
-
-    .container .title {
-        width: fit-content;
-    }
-
-    .actionButtons,
     .addButton {
-        min-width: fit-content;
-        height: initial;
+        width: initial;
     }
 
-    .actionButtons .viewType {
+    .content {
         display: flex;
+        flex-wrap: wrap;
+    }
+
+    .groupCard {
+        width: initial;
+        min-width: 35rem;
+        min-height: 15rem;
+    }
+
+    .groupCard header,
+    .groupCard .usersInfoContainer {
+        font-weight: 300;
+        gap: 5rem;
     }
 }

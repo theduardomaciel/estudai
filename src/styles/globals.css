@@ -241,6 +241,26 @@ input[type='submit'] {
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
+    appearance: none;
+}
+
+.hoverLink {
+    cursor: pointer;
+}
+
+.hoverLink:hover p {
+    text-decoration: underline;
+}
+
+.hoverLink:hover span {
+    transform: scale(1.05);
+}
+
+.hoverLink span {
+    transform: scale(1);
+    font-size: 1.8rem;
+
+    transition: 0.3s;
 }
 
 /* @media (prefers-color-scheme: dark) {

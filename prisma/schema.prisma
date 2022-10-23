@@ -33,9 +33,13 @@ model User {
     groups Group[]
 
     markedAttachments Attachment[] @relation(name: "marked")
+    groupsInteracted  Group[]      @relation(name: "group_interaction")
 
     tasksInteracted Task? @relation(fields: [taskId], references: [id], name: "interacted")
     taskId          Int?
+
+    subgroups  Subgroup? @relation(fields: [subgroupId], references: [id])
+    subgroupId String?
 
     @@map("users")
 }
@@ -62,23 +66,28 @@ model Subgroup {
     group   Group @relation(fields: [groupId], references: [id])
     groupId Int
 
+    users User[]
     tasks Task[]
 }
 
 model Group {
-    name String
-    id   Int    @id @unique @default(autoincrement())
-
-    subgroups     Subgroup[]
-    pinnedMessage String?
-    shareLink     String     @unique @default(cuid())
-    private       Boolean    @default(false)
-
+    id        Int      @id @unique @default(autoincrement())
     createdAt DateTime @default(now())
-    tasks     Task[]
 
-    users  User[]
-    admins Int[] // lista contendo o id dos usuários
+    name      String
+    image_url String?
+
+    pinnedMessage String?
+    shareLink     String  @unique @default(cuid())
+    private       Boolean @default(false)
+
+    tasks Task[]
+
+    users               User[]
+    usersThatInteracted User[] @relation(name: "group_interaction")
+
+    subgroups Subgroup[]
+    admins    Int[] // lista contendo o id dos usuários
 
     @@map("groups")
 }

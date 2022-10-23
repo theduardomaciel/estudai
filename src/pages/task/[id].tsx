@@ -144,14 +144,13 @@ const Task = ({ task }: { task: Task }) => {
                 icon={attachmentInteracted ? 'remove' : 'check'}
                 iconProps={{ size: "1.6rem", color: "var(--primary-02)" }}
                 classes={`${styles.attachmentButton} ${styles.use}`}
-                isSelected={attachmentInteracted === false}
+                isSelected={attachmentInteracted}
                 style={{
-                    backgroundColor: attachmentInteracted ? "var(--primary-02)" : "transparent",
                     width: "100%",
                     padding: "0.65rem 1.5rem",
-                    color: attachmentInteracted ? "var(--light)" : "var(--primary-02)",
                     fontWeight: 500
                 }}
+                preset={"fillHover"}
                 isLoading={isAttachmentLoading || attachmentInteracted === null}
                 onClick={() => toggleAttachmentInteraction(attachment.id, index, setAttachmentLoading)}
             />
@@ -472,7 +471,7 @@ const Task = ({ task }: { task: Task }) => {
                         <div className={styles.column}>
                             <Button
                                 title={hasInteracted ? 'REMOVER PRESENÇA' : 'CONFIRMAR PRESENÇA'}
-                                icon={'co_present'}
+                                icon={hasInteracted ? 'remove' : 'co_present'}
                                 iconProps={{ size: "1.8rem", color: `var(--primary-02)` }}
                                 classes={styles.defaultButton}
                                 isLoading={isLoading || hasInteracted === null}

@@ -10,10 +10,7 @@ import { Task } from "../../types/Task";
 import getSubjectInfo from "../../utils/getSubjectInfo";
 import formatDate from "../../utils/formatDate";
 
-interface TaskProps {
-    task: Task;
-}
-
+// Data
 export const isActivity = (type: string) => type === 'obligatory' || type === "elective";;
 export const isTest = (type: string) => type === 'av1' || type === "av2" || type === "recuperation";
 export const taskGroupType = (type: string) => { return [isActivity(type), isTest(type)] };
@@ -28,24 +25,27 @@ export const subjectsString = (subjects: number[]) => subjects.map((subjectId, i
     const [name, icon] = getSubjectInfo(subjectId)
     if (name.length > 0) {
         if (index + 1 === subjects.length) {
-            console.log("Adicionando e")
             return "e " + name
         } else if (subjects.length !== 2) {
-            console.log("Adicionando com vírgula")
             return name + ", "
         } else {
-            console.log("Adicionando sem nada")
             return name + " "
         }
     }
 })
 
 export const UsersPortraitsFromTask = ({ concludedUsersAmount, images, groupName }: { concludedUsersAmount: number, images: Array<string>, groupName?: string }) => <div className={styles.usersHolder}>
-    <UsersPortraits imagesUrls={images.slice(0, 5)} />
+    <UsersPortraits imagesUrls={images} />
     <p className={styles.usersAmount}>{`+ de ${concludedUsersAmount} membros de ${groupName ? groupName : "placeholder"} já concluíram a atividade`}</p>
 </div>;
 
-export default function TaskView({ task }: TaskProps) {
+// Types
+interface TaskProps {
+    task: Task;
+    status: 'concluded' | 'expired' | 'pending'
+}
+
+export default function TaskView({ task, status }: TaskProps) {
     const { viewMode } = useAppContext();
 
     const description = task.description && task.description as string;
@@ -60,8 +60,14 @@ export default function TaskView({ task }: TaskProps) {
 
     // Ícones dos usuários e informação de usuários que concluíram
     const concludedUsersAmount = task.interactedBy ? task.interactedBy.length : 0;
-    console.log(concludedUsersAmount, task.interactedBy)
     const images = task.interactedBy ? task.interactedBy.map((user, index) => user.image_url) : 0;
+
+    const Status = ({ icon, text, color }: { icon: string, text: string, color: string }) => <div className={styles.deadline} style={{ color: color }}>
+        <>
+            <span className={`material-symbols-rounded`}>{icon}</span>
+            {`${text} ${formatDate(task.date, true)}`}
+        </>
+    </div>
 
     if (isActivity(task.type)) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
@@ -91,12 +97,11 @@ export default function TaskView({ task }: TaskProps) {
                         {
                             concludedUsersAmount > 1 && <UsersPortraitsFromTask concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
                         }
-                        <div className={styles.deadline}>
-                            <>
-                                <span className={`material-symbols-rounded`}>schedule</span>
-                                entrega até {formatDate(task.date, true)}
-                            </>
-                        </div>
+                        {
+                            status === 'concluded' ? <Status icon="schedule" text="entrega até" color="var(--primary-02)" /> :
+                                status === "expired" ? <Status icon="schedule" text="entrega até" color="var(--primary-02)" /> :
+                                    <Status icon="schedule" text="entrega até" color="var(--primary-02)" />
+                        }
                     </div>
                 </div>
             </a>

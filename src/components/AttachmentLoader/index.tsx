@@ -21,7 +21,7 @@ import { link } from "fs/promises";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
     userId: number;
-    attachments: Attachment[];
+    attachments: any[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
     links: string[];
     setLinks: Dispatch<SetStateAction<string[]>>;
@@ -61,7 +61,7 @@ export default function AttachmentsLoader({ userId, attachments, setAttachments,
             type: file.type,
             tags: [],
             fileId: file,
-        } as Attachment;
+        };
         setAttachments(attachments.concat(preAttachment))
     }
 

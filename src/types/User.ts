@@ -1,3 +1,4 @@
+import { Group } from "./Group";
 import { Task } from "./Task";
 
 export type User = {
@@ -13,4 +14,6 @@ export type User = {
     defaultColor: null | string;
     language: null;
     tasks: Array<Task>;
+
+    groups: Array<Group>;
 }

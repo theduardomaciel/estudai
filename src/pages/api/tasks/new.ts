@@ -12,25 +12,31 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 router
     //.use(isAuthenticated)
     .post(async (req, res) => {
+        const userId = parseInt(req.body.userId);
+        console.log(userId)
+
+        if (!userId || typeof userId === "string") {
+            console.log('O ID do usuário não foi informado corretamente.')
+            res.status(400).json({ error: "UserId missing." })
+        }
+
+        const hasAttachments = req.body.attachments && req.body.attachments.length > 0
+        const attachments = hasAttachments ? req.body.attachments : []
+
+        const links = req.body.links && req.body.links.length > 0 ? req.body.links : []
+        const date = new Date(req.body.date).toISOString();
+
         console.log(req.body)
-        try {
-            const userId = parseInt(req.body.userId);
-            console.log(userId)
 
-            if (!userId || typeof userId === "string") {
-                console.log('O ID do usuário não foi informado corretamente.')
-                res.status(400).json({ error: "UserId missing." })
+        const { type, storage } = req.body;
+
+        const storageConnection = storage !== 'account' ? {
+            connect: {
+                id: parseInt(storage)
             }
+        } : {}
 
-            const hasAttachments = req.body.attachments && req.body.attachments.length > 0
-            const attachments = hasAttachments ? req.body.attachments : []
-
-            const links = req.body.links && req.body.links.length > 0 ? req.body.links : []
-            const date = new Date(req.body.date).toISOString();
-
-            console.log(req.body)
-
-            const { type } = req.body;
+        try {
             if (type === "event") {
                 const task = await prisma.task.create({
                     data: {
@@ -43,6 +49,7 @@ router
                         title: req.body.title,
                         address: req.body.address,
                         links: links,
+                        group: storageConnection,
                         attachments: hasAttachments ?
                             {
                                 create: attachments.map((attachment: any, index: number) => {
@@ -79,6 +86,7 @@ router
                         questionsAmount: maxScore,
                         contents: contents,
                         links: links,
+                        group: storageConnection,
                         attachments: hasAttachments ?
                             {
                                 create: attachments.map((attachment: any, index: number) => {
@@ -114,6 +122,7 @@ router
                         mode: req.body.mode,
                         maxScore: maxScore,
                         links: links,
+                        group: storageConnection,
                         attachments: hasAttachments ?
                             {
                                 create: attachments.map((attachment: any, index: number) => {

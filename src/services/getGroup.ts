@@ -7,7 +7,8 @@ export default async function getGroup(id: number) {
                 id: id
             },
             include: {
-                users: true
+                users: true,
+                tasks: true
             }
         })
         if (group) {

@@ -7,17 +7,6 @@ import { motion } from "framer-motion"
 // Components
 import Button from '../Button';
 
-const backdropVariants = {
-    open: {
-        opacity: 1,
-        transition: { ease: "easeOut", duration: 0.25 }
-    },
-    closed: {
-        opacity: 0,
-        transition: { ease: "easeOut", duration: 0.25 }
-    }
-};
-
 type Props = React.HTMLAttributes<HTMLDivElement> & {
     isVisible: boolean;
     toggleVisibility: () => void;
@@ -42,18 +31,24 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
 
 export default function Modal({ isVisible, toggleVisibility, actionFunction, actionEnabled = true, color, isLoading, icon, title, description, buttonText, suppressReturnButton, iconProps, children, ...rest }: Props) {
     return (
-        <AnimatePresence /* exitBeforeEnter */>
+        <AnimatePresence mode='wait'>
             {
                 isVisible && (
                     <motion.div
                         className={styles.background}
                         key="modal"
-                        initial={"closed"}
-                        animate={isVisible ? "open" : "closed"}
-                        exit={"closed"}
-                        variants={backdropVariants}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                     >
-                        <div className={styles.container} {...rest}>
+                        <motion.div
+                            className={styles.container}
+                            key="modalContent"
+                            initial={{ x: 300, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -300, opacity: 0 }}
+                            transition={{ ease: "easeInOut", duration: 0.65 }}
+                        >
                             <div className={styles.headerContainer} style={{ justifyContent: iconProps?.position ? iconProps?.position : "center" }}>
                                 <div style={{ backgroundColor: color }} className={styles.iconHolder}>
                                     <span
@@ -109,7 +104,7 @@ export default function Modal({ isVisible, toggleVisibility, actionFunction, act
                                     />
                                 }
                             </div>
-                        </div>
+                        </motion.div>
                     </motion.div>
                 )
             }

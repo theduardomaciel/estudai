@@ -28,7 +28,8 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
         {
             isLoading ?
                 <Spinner
-                    size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.1}
+                    classes={styles.hovered}
+                    size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.125}
                     color={isSelected ? iconProps?.color as string : "var(--light)"}
                 />
                 :
@@ -59,15 +60,20 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
                 </>
         }
         <style jsx>{`
-            .button.${styles[preset as string]}:not(.selected):hover,
-            .button.selected {
-                background-color: ${iconProps?.color};
-                color: ${iconProps?.color ? "var(--light)" : iconProps?.color}
+            .button {
+                background-color: ${preset === 'fillHover' ? 'transparent' : iconProps?.color};
+                color: ${preset === 'fillHover' ? iconProps?.color : "var(--light)"};
+                border: ${preset === 'fillHover' ? `1px solid ${iconProps?.color}` : "none"};
             }
 
-            .button.${styles[preset as string]}.selected:hover {
-                background-color: transparent;
-                color: ${iconProps?.color ? iconProps?.color : "var(--light)"}
+            .button.${styles.fillHover}:not(.selected):hover,
+            .button.selected {
+                background-color: ${iconProps?.color};
+                color: ${iconProps?.color ? "var(--light)" : iconProps?.color};
+            }
+
+            .button.${styles.fillHover}.selected:hover {
+                filter: brightness(1.1);
             }
       `}</style>
     </button>

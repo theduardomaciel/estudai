@@ -73,7 +73,7 @@ const Input = ({ label, fixedUnit, height, numberControl, ...rest }: Props) => {
                     }
                     <input
                         name='maxScore'
-                        style={{ height: height ? height : "4.2rem", textAlign: numberControl ? "end" : "start", paddingRight: input.current ? `${Math.max(input.current.placeholder.length * 4.5, 7.5)}rem` : "7.5rem" }}
+                        style={{ height: height ? height : "3.8rem", textAlign: numberControl ? "end" : "start", paddingRight: input.current ? `${Math.max(input.current.placeholder.length * 4.5, 7.5)}rem` : "7.5rem" }}
                         className={styles.input}
                         ref={input}
                         {...rest}
@@ -83,7 +83,7 @@ const Input = ({ label, fixedUnit, height, numberControl, ...rest }: Props) => {
                     </div>
                 </div>
                 :
-                <input style={{ height: height ? height : "4.2rem", }} className={styles.input} id="taskName" {...rest} />
+                <input style={{ height: height ? height : "3.8rem", }} className={styles.input} id="taskName" {...rest} />
         }
 
     </div>
