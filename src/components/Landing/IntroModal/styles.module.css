@@ -36,6 +36,8 @@
     align-items: center;
     justify-content: center;
 
+    overflow: visible;
+
     width: 40rem;
     height: 18rem;
 }

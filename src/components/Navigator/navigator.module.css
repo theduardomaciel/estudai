@@ -25,6 +25,7 @@
 .container h3 span {
     font-weight: 700;
     font-size: 1.8rem;
+    margin-right: 0.5rem;
     color: var(--primary-04);
 }
 
@@ -33,7 +34,8 @@
     margin-right: 0.5rem;
 }
 
-.container:hover h3 {
+.container h3 span:nth-child(1):hover,
+.container:hover h3:not(.parentDirectory) {
     text-decoration: underline;
 }
 

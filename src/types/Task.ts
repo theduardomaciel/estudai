@@ -1,5 +1,5 @@
-import { Group } from "@prisma/client";
 import { Attachment } from "./Attachment";
+import { Group } from "./Group";
 import { User } from "./User";
 
 export type Task = {

@@ -131,7 +131,15 @@
     width: 0.8rem;
     height: 0.8rem;
 
+    transform: translateY(0);
+
+    transition: 0.25s;
     border-radius: 50%;
+}
+
+.groupsIndicator .dots div.selected {
+    transform: translateY(-0.2rem);
+    background-color: var(--primary-01);
 }
 
 .descriptionHeader {

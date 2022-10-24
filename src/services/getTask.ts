@@ -13,6 +13,7 @@ export default async function getTask(id: number) {
                         markedBy: true
                     },
                 },
+                group: true,
                 interactedBy: true,
             }
         })

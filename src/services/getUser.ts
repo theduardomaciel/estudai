@@ -21,6 +21,7 @@ export default async function getUser(id: number, includeGroups?: 'basic' | 'ful
                 tasks: {
                     include: {
                         interactedBy: true,
+                        group: true
                     }
                 },
                 groups: includeGroups === 'full' ? fullGroupsQuery : includeGroups === 'basic' ? true : false

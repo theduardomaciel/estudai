@@ -3,6 +3,7 @@ import React, { SetStateAction, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import type { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next'
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 // Stylesheets
 import styles from "../../styles/Task.module.css"
@@ -64,6 +65,10 @@ export async function getStaticProps(context: GetStaticPropsContext) {
         return task;
     })
 
+    if (task.group) {
+        task.group.createdAt = Math.floor(date.getTime());
+    }
+
     return {
         // Passed to the page component as props
         props: { task, },
@@ -90,6 +95,7 @@ type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
 }
 
 const Task = ({ task }: { task: Task }) => {
+    const router = useRouter();
     const { signOut } = useAuth();
     const { 'app.userId': userId } = parseCookies()
 
@@ -279,12 +285,22 @@ const Task = ({ task }: { task: Task }) => {
         setLoading(false)
     }
 
+    function goToTaskGroup() {
+        console.log(task.group, 'teste')
+        if (task.group) {
+            router.push(`/groups/${task.group.id}`)
+        }
+    }
+
     if (isActivity) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
         const title = `${titleType} de ${name}`
 
         const description = task.description as string;
         const hasText = description.length > 7
+
+        const daysToRed = 2 * 24 * 60 * 60 * 1000; // 2 dias e mili segundos
+        const daysToExpire = task.date - new Date().getTime();
 
         return (
             <main className={styles.holder}>
@@ -294,7 +310,7 @@ const Task = ({ task }: { task: Task }) => {
                 <Sidebar />
                 <div className={styles.container}>
                     <div className='header'>
-                        <Navigator directory={title} /* parentDirectory='Terceirão' */ />
+                        <Navigator directory={title} parentDirectory={task.group ? task.group.name : undefined} onClick={goToTaskGroup} />
                         {/* <div className={styles.usersInfo}>
                         <UsersPortraits imagesUrls={["https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png"]} />
                         <p>+de <span>10 membros</span> já concluíram a atividade</p>
@@ -341,8 +357,14 @@ const Task = ({ task }: { task: Task }) => {
                             </div>
                         </div>
                     </div>
-                    <div className={styles.deadline}>
-                        <p><span className='bold'>ATENÇÃO!</span> Você tem até o dia </p>
+                    <div className={styles.deadline} style={{ backgroundColor: daysToExpire < daysToRed ? 'var(--red-01)' : 'var(--primary-02)' }}>
+                        <p>
+                            {
+                                daysToExpire < -1 ?
+                                    <><span className='bold'>EITA!</span> O prazo dessa atividade já expirou. Você tinha até o dia</>
+                                    : <><span className='bold'>ATENÇÃO!</span> Você tem até o dia</>
+                            }
+                        </p>
                         <div>
                             <span className={`material-symbols-rounded static`}>calendar_today</span>
                             <span>{formatDate(task.date)}</span>
@@ -367,7 +389,7 @@ const Task = ({ task }: { task: Task }) => {
                 <Sidebar />
                 <div className={styles.container}>
                     <div className='header'>
-                        <Navigator directory={title} /* parentDirectory='Terceirão' */ />
+                        <Navigator directory={title} parentDirectory={task.group ? task.group.name : undefined} onClick={goToTaskGroup} />
                         {/* <div className={styles.usersInfo}>
                         <UsersPortraits imagesUrls={["https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png"]} />
                         <p>+de <span>10 membros</span> já concluíram a atividade</p>
@@ -446,7 +468,7 @@ const Task = ({ task }: { task: Task }) => {
                 <Sidebar />
                 <div className={styles.container}>
                     <div className='header'>
-                        <Navigator directory={task.title as string} /* parentDirectory='Terceirão' */ />
+                        <Navigator directory={task.title} parentDirectory={task.group ? task.group.name : undefined} onClick={goToTaskGroup} />
                     </div>
                     <div className={styles.info}>
                         <div className={styles.column} style={{ justifyContent: "space-between" }}>

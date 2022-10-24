@@ -1,6 +1,6 @@
-import type { GetServerSideProps, GetServerSidePropsContext, InferGetStaticPropsType, NextPage } from 'next'
+import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { parseCookies } from 'nookies';
 
 import Head from 'next/head';
@@ -12,11 +12,10 @@ import Button from '../components/Button'
 import Menu from '../components/Menu';
 import SectionSelector from '../components/SectionSelector';
 import Calendar from '../components/Calendar';
-import TopicsGroup from '../components/Topic/TopicsGroup';
 import TaskView from '../components/Task';
 import Sidebar from '../components/Sidebar';
-import TextInput from '../components/Input';
-import { Separator } from '../components/Separator';
+import LandingIntroModal from '../components/Landing/IntroModal';
+import Focus from '../components/Focus';
 
 // Intro Modal Images
 import Modal1Image from "/public/landing/introModal/modal_1.png";
@@ -24,7 +23,6 @@ import Modal2Image from "/public/landing/introModal/modal_2.png";
 import Modal3Image from "/public/landing/introModal/modal_3.png";
 import Modal4Image from "/public/landing/introModal/modal_4.png";
 import Modal5Image from "/public/landing/introModal/modal_5.png";
-
 
 // Stylesheets
 import styles from '../styles/Home.module.css'
@@ -37,15 +35,16 @@ import getUser from '../services/getUser';
 import getUserIdByToken from '../services/getUserIdByToken';
 import removeCookies from '../services/removeCookies';
 import { User } from '../types/User';
-import LandingIntroModal from '../components/Landing/IntroModal';
+import { Task } from '../types/Task';
+
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
 
-    console.log(token)
-    const userId = await getUserIdByToken(token);
+    console.warn(token, context.req.cookies)
+    const userId = await getUserIdByToken(token as string);
 
-    if (userId === null) {
+    if (!userId) {
         await removeCookies(context);
         return {
             redirect: {
@@ -55,23 +54,32 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 
-    let user = await getUser(userId as number, 'basic') as unknown as User;
+    let user = await getUser(userId as number, 'full') as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
         task.date = Math.floor(date.getTime());
+        if (task.group) {
+            const groupCreatedAtDate = new Date(task.group.createdAt);
+            task.group.createdAt = Math.floor(groupCreatedAtDate.getTime());
+        }
         return task;
     })
 
     user.groups.map((group, index) => {
         const date = new Date(group.createdAt);
         group.createdAt = Math.floor(date.getTime());
+        group.tasks.map((task, i) => {
+            const taskDate = new Date(task.date);
+            task.date = Math.floor(taskDate.getTime());
+            return task;
+        })
         return group;
     })
 
     return {
         props: {
-            user
+            user,
         }
     }
 }
@@ -113,46 +121,34 @@ const Home = ({ user }: { user: User }) => {
         setMenuOpened(!menuOpened)
     }
 
-    function moveScroll(amount: number) {
-        const scroll = document.getElementById('topicsScroll') as HTMLDivElement;
-        /* scroll.scrollLeft -= 20; */
-        scroll.scrollTo({
-            top: 0,
-            left: scroll.scrollLeft + amount,
-            behavior: 'smooth'
-        });
-    }
-
-    useEffect(() => {
-        const scroll = document.getElementById('topicsScroll') as HTMLDivElement;
-        scroll.addEventListener("wheel", function (event) {
-            if (event.deltaY > 0) {
-                scroll.scrollTo({
-                    top: 0,
-                    left: scroll.scrollLeft + 100,
-                    behavior: 'smooth'
-                });
-                event.preventDefault();
-                // preventDefault() will help avoid worrisome 
-                // inclusion of vertical scroll 
-            } else {
-                scroll.scrollTo({
-                    top: 0,
-                    left: scroll.scrollLeft - 100,
-                    behavior: "smooth"
-                });
-                event.preventDefault();
-            }
-        });
-    }, [])
-
-    const [focusMinutes, setFocusMinutes] = useState(60);
-    const focusPauses = focusMinutes ? Math.max(1, Math.floor(focusMinutes / 25)) : 0;
-
     const { changeViewMode, viewMode } = useAppContext();
 
     const [actualSection, setActualSection] = useState('Pendente');
-    const now = new Date().getTime();
+
+    const actualDate = new Date();
+    const now = actualDate.getTime();
+
+    const monthTasks = user.tasks
+        .filter((task, i) => {
+            const taskDate = new Date(task.date);
+            if (task.date > now && taskDate.getMonth() === actualDate.getMonth()) {
+                return true
+            } else {
+                return false
+            }
+        })
+        .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
+
+    const otherMonthsTasks = user.tasks
+        .filter((task, i) => {
+            const taskDate = new Date(task.date);
+            if (task.date > now && taskDate.getFullYear() === actualDate.getFullYear() && taskDate.getMonth() !== actualDate.getMonth()) {
+                return true
+            } else {
+                return false
+            }
+        })
+        .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
     return (
         <main>
@@ -184,12 +180,38 @@ const Home = ({ user }: { user: User }) => {
                 <div className={`${styles.tasks} ${viewMode === "card" ? styles.cardView : ""}`}>
                     {
                         user.tasks.length > 0 ?
-                            actualSection === 'Pendente' ? user.tasks
-                                .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id == user.id) ? false : true && task.date > now)
-                                .map((task, index) => <TaskView key={index} task={task} status={"pending"} />) :
-                                user.tasks
-                                    .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) || task.date <= now)
-                                    .map((task, index) => <TaskView key={index} task={task} />)
+                            actualSection === 'Pendente' ?
+                                <>
+                                    {
+                                        monthTasks.length > 0 &&
+                                        <>
+                                            {viewMode === 'list' && <h5>Este mês</h5>}
+                                            {monthTasks}
+                                        </>
+                                    }
+                                    {
+                                        otherMonthsTasks.length > 0 &&
+                                        <>
+                                            {viewMode === 'list' && <h5>Próximos meses</h5>}
+                                            {otherMonthsTasks}
+                                        </>
+                                    }
+                                </>
+                                :
+                                <>
+                                    {viewMode === 'list' && <h5>Expirado</h5>}
+                                    {
+                                        user.tasks
+                                            .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now)
+                                            .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                    }
+                                    {viewMode === 'list' && <h5>Concluído</h5>}
+                                    {
+                                        user.tasks
+                                            .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
+                                            .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
+                                    }
+                                </>
                             :
                             <EmptyTasksMessage description='Adicione uma nova tarefa a este grupo para que ela apareça aqui!' />
                     }
@@ -222,57 +244,7 @@ const Home = ({ user }: { user: User }) => {
                     </div> */}
                 </div>
 
-                <div className={styles.focus}>
-                    <div className={`row`}>
-                        <h3>Foco</h3>
-                    </div>
-                    <TextInput label='Nome da tarefa' placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} />
-                    <div className={'row'} style={{ gap: "1.5rem" }}>
-                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
-                        <TopicsGroup topics={[
-                            {
-                                icon: '📒',
-                                title: 'Resumo'
-                            },
-                            {
-                                icon: '📚',
-                                title: 'Leitura do Livro'
-                            },
-                            {
-                                icon: '📖',
-                                title: 'Leitura'
-                            },
-                            {
-                                icon: '📝',
-                                title: 'Atividade'
-                            },
-                            {
-                                icon: '📌',
-                                title: 'Revisão'
-                            }
-                        ]} />
-                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
-                    </div>
-                    <TextInput
-                        onChange={(event) => {
-                            if (event.currentTarget.value.length < 5) {
-                                setFocusMinutes(parseInt(event.target.value))
-                            }
-                        }}
-                        value={focusMinutes}
-                        label='Tempo de atividade'
-                        placeholder='60'
-                        type={'number'}
-                        height={'3.85rem'}
-                        fixedUnit='minutos'
-                    />
-                    <div /* style={{ gap: "2.5rem" }} */ className="row">
-                        <Button icon={'av_timer'} title={'Iniciar Foco'} preset="sendForm" />
-                        <Separator decorative orientation="vertical" />
-                        <p className={styles.intervalCount}>Você terá <br />
-                            <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
-                    </div>
-                </div>
+                <Focus />
             </Menu>
             <LandingIntroModal sections={[
                 {
@@ -303,6 +275,7 @@ const Home = ({ user }: { user: User }) => {
                     title: 'Desbrave e aproveite',
                     description: "O estudaí é todo seu.\nAproveite todas as funcionalidades preparadas com carinho para você e bom aprendizado!\nfeito com ❤️ por @theduardomaciel",
                     image_path: Modal5Image,
+                    marginTop: "3.5rem",
                     imageSize: { height: 350, width: 400 }
                 }
             ]} />

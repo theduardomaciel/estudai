@@ -102,6 +102,13 @@
     height: 100%;
     width: 100%;
     gap: 2.5rem;
+
+    /* overflow-y: scroll;
+    padding-bottom: 3.5rem; */
+}
+
+.tasks::-webkit-scrollbar {
+    display: none;
 }
 
 .sidebar .sidebarContainer {

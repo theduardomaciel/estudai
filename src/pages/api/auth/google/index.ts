@@ -103,11 +103,6 @@ router
                         }
                     })
 
-                    // Usando o método acima, o usuário teria que re-logar toda vez que trocasse de dispositivo.
-                    // No futuro, criar sistema de refresh token
-
-                    appToken = user?.account?.access_token as string;
-
                     const userId = user.id;
 
                     console.log(user, "😊 Usuário obtido com sucesso!")

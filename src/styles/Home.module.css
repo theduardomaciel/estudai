@@ -61,29 +61,6 @@
     width: 100%;
 }
 
-.focus {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-}
-
-.intervalCount {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--primary-04);
-    min-width: fit-content;
-
-    text-align: center;
-}
-
-.intervalCount span {
-    font-size: 1.4rem;
-    color: var(--primary-03);
-}
-
 .eventHolder {
     display: flex;
     flex-direction: column;
@@ -158,6 +135,14 @@
     width: 100%;
 
     gap: 1.5rem;
+}
+
+.tasks h5 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.8rem;
+    color: var(--primary-03);
 }
 
 .icon {

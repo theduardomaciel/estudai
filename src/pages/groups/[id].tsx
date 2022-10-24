@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         })
     }
 
-    let user = await getUser(userId as number, 'basic') as unknown as User;
+    let user = await getUser(userId as number, 'full') as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
@@ -72,6 +72,11 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     user.groups.map((group, index) => {
         const date = new Date(group.createdAt);
         group.createdAt = Math.floor(date.getTime());
+        group.tasks.map((task, index) => {
+            const date = new Date(task.date);
+            task.date = Math.floor(date.getTime());
+            return task;
+        })
         return group;
     })
 
@@ -157,7 +162,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         <div className={`${homeStyles.tasks}`}>
                             {
                                 group.tasks?.length > 0 ?
-                                    group.tasks.map((task, index) => <TaskView key={index} task={task} />)
+                                    group.tasks.map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
                                     :
                                     <EmptyTasksMessage description='Adicione uma nova tarefa a este grupo para que ela apareça aqui!' />
                             }

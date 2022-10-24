@@ -34,9 +34,15 @@ export const subjectsString = (subjects: number[]) => subjects.map((subjectId, i
     }
 })
 
-export const UsersPortraitsFromTask = ({ concludedUsersAmount, images, groupName }: { concludedUsersAmount: number, images: Array<string>, groupName?: string }) => <div className={styles.usersHolder}>
-    <UsersPortraits imagesUrls={images} />
-    <p className={styles.usersAmount}>{`+ de ${concludedUsersAmount} membros de ${groupName ? groupName : "placeholder"} já concluíram a atividade`}</p>
+export const UsersPortraitsFromTask = ({ concludedUsersAmount, images, groupName, message }: { concludedUsersAmount: number, images: Array<string>, groupName: string, message: string }) => <div className={styles.usersHolder}>
+    {
+        concludedUsersAmount > 0 && <UsersPortraits imagesUrls={images} />
+    }
+    {
+        concludedUsersAmount > 0 ?
+            <p className={styles.usersAmount}>{`+ de ${concludedUsersAmount} membros de ${groupName ? groupName : "placeholder"} ${message}`}</p> :
+            <p className={styles.usersAmount}>{`nenhum membro de `} <strong>{groupName}</strong> {` concluiu essa atividade ainda!`}</p>
+    }
 </div>;
 
 // Types
@@ -95,11 +101,11 @@ export default function TaskView({ task, status }: TaskProps) {
                     </div>
                     <div className={`${styles.column} ${styles.two}`}>
                         {
-                            concludedUsersAmount > 1 && <UsersPortraitsFromTask concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+                            task.group && <UsersPortraitsFromTask message="já concluíram a atividade" groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
                         }
                         {
-                            status === 'concluded' ? <Status icon="schedule" text="entrega até" color="var(--primary-02)" /> :
-                                status === "expired" ? <Status icon="schedule" text="entrega até" color="var(--primary-02)" /> :
+                            status === 'concluded' ? <Status icon="schedule" text="concluída no dia" color="var(--green-01)" /> :
+                                status === "expired" ? <Status icon="schedule" text="expirou no dia" color="var(--red-01)" /> :
                                     <Status icon="schedule" text="entrega até" color="var(--primary-02)" />
                         }
                     </div>
@@ -155,13 +161,12 @@ export default function TaskView({ task, status }: TaskProps) {
                         </div>
                     </div>
                     <div className={`${styles.column} ${styles.two}`}>
+                        {task.group && <UsersPortraitsFromTask message={'já marcaram presença'} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />}
                         {
-                            concludedUsersAmount > 1 && <UsersPortraitsFromTask concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+                            status === 'concluded' ? <Status icon="schedule" text="Concluído" color="var(--green-01)" /> :
+                                status === "expired" ? <Status icon="schedule" text="evento no dia" color="var(--red-01)" /> :
+                                    <Status icon="schedule" text="evento no dia" color="var(--primary-02)" />
                         }
-                        <div className={styles.deadline}>
-                            <span className={`material-symbols-rounded`}>calendar_today</span>
-                            {`evento no dia ` + formatDate(task.date, true)}
-                        </div>
                     </div>
                 </div>
             </a>

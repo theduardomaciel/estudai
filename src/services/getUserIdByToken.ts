@@ -1,13 +1,13 @@
 import prisma from '../lib/prisma';
 
 export default async function getUserIdByToken(token: string) {
-    if (token === null) {
+    if (!token) {
         return null
     }
     try {
         const account = await prisma.account.findFirst({
             where: {
-                access_token: token !== null ? token : undefined
+                access_token: token
             },
             include: {
                 user: true

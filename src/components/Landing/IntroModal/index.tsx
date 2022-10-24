@@ -17,7 +17,8 @@ interface Section {
     imageSize: {
         width: number,
         height: number
-    }
+    },
+    marginTop?: string,
 }
 
 interface Props {
@@ -62,13 +63,14 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
     const [[actualSection, direction], setActualSection] = useState([0, 1]);
 
     function hideModal() {
-        const modal = document.getElementById("introModal");
+        /* const modal = document.getElementById("introModal");
         if (modal) {
             modal.style.opacity = "0";
             setTimeout(() => {
                 modal?.remove();
             }, 500);
-        }
+        } */
+        setActualSection([-1, 0])
     }
 
     function changeSection(factor?: number, directNumber?: number) {
@@ -109,7 +111,7 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
                 exit="exit"
                 transition={transition}
             >
-                <div className={styles.imageHolder}>
+                <div className={styles.imageHolder} style={{ marginTop: section.marginTop ? section.marginTop : 0 }}>
                     <Image src={section.image_path} height={section.imageSize.height} width={section.imageSize.width} priority />
                 </div>
                 <div className={styles.headerContainer}>
@@ -157,7 +159,7 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
 
     return (
         <AnimatePresence mode='sync'>
-            {sectionsModals[actualSection]}
+            {actualSection !== -1 && sectionsModals[actualSection]}
         </AnimatePresence>
     );
 }

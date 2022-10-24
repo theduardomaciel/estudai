@@ -15,7 +15,7 @@ interface TopicsGroupProps {
 export default function TopicsGroup(props: TopicsGroupProps) {
     const [selected, setSelected] = useState<number | null>(null);
 
-    return <ul id="topicsScroll" className={`row ${styles.topics}`} style={{ overflow: "scroll" }}>
+    return <ul id="topicsScroll" className={`row ${styles.topics} static`} style={{ overflow: "scroll" }}>
         {
             props.topics.map((topic: Topic, index) =>
                 <li style={{ minWidth: "fit-content" }} key={index}>
@@ -23,7 +23,7 @@ export default function TopicsGroup(props: TopicsGroupProps) {
                         icon={topic.icon}
                         title={topic.title}
                         onClick={() => {
-                            /* selected === index ? setSelected(null) : setSelected(index) */ // dá a possibilidade de remover uma opção escolhida
+                            selected === index ? setSelected(null) : setSelected(index) // dá a possibilidade de remover uma opção escolhida
                             setSelected(index)
                         }}
                         state={selected === index ? "selected" : "unselected"}

@@ -30,7 +30,7 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
                 <Spinner
                     classes={styles.hovered}
                     size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.125}
-                    color={isSelected ? iconProps?.color as string : "var(--light)"}
+                    color={preset === "fillHover" && isSelected ? iconProps?.color as string : iconProps?.color ? iconProps.color : "var(--light)"}
                 />
                 :
                 <>

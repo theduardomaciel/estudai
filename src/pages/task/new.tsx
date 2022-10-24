@@ -560,7 +560,10 @@ export default function NewTask() {
                                                                 }} className={`material-symbols-rounded`}>chevron_left</span>
                                                                 <div className={styles.dots}>
                                                                     {
-                                                                        groups.map((group, i) => <div />)
+                                                                        groups.map((group, i) => <div
+                                                                            className={groupVisible === i ? styles.selected : ""}
+                                                                            onClick={() => setGroupVisible(i)}
+                                                                        />)
                                                                     }
                                                                 </div>
                                                                 <span onClick={() => {

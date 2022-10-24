@@ -155,7 +155,10 @@ const Login: NextPage = () => {
                                 <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                             </div>
                             :
-                            <ScopeMissing setSection={() => setSection(null)} />
+                            <ScopeMissing setSection={() => {
+                                setSection(null)
+                                setLoading(false)
+                            }} />
                 }
             </div>
             <Device additionalClass={styles.device} />

@@ -65,7 +65,7 @@ const Landing: NextPage = () => {
             </Head>
             <LandingHeader />
             <div className={styles.container}>
-                <Note showOnlyInMobile tag='ALPHA' description='Este projeto ainda está em andamento.' />
+                <Note showOnlyInMobile tag='ALPHA' />
                 <div className={styles.title}>
                     <h1>Organize seus estudos.</h1>
                     <p>Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.</p>

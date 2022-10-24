@@ -44,9 +44,9 @@ export default function Modal({ isVisible, toggleVisibility, actionFunction, act
                         <motion.div
                             className={styles.container}
                             key="modalContent"
-                            initial={{ x: 300, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -300, opacity: 0 }}
+                            initial={{ y: 300, x: 0, opacity: 0 }}
+                            animate={{ y: 0, x: 0, opacity: 1 }}
+                            exit={{ y: 300, x: 0, opacity: 0 }}
                             transition={{ ease: "easeInOut", duration: 0.65 }}
                         >
                             <div className={styles.headerContainer} style={{ justifyContent: iconProps?.position ? iconProps?.position : "center" }}>
@@ -97,7 +97,6 @@ export default function Modal({ isVisible, toggleVisibility, actionFunction, act
                                         iconProps={{ color: 'var(--light)' }}
                                         style={{
                                             background: actionEnabled ? color : "var(--light-gray)",
-                                            cursor: actionEnabled ? "pointer" : "not-allowed",
                                             padding: `0.7rem 1.5rem`,
                                             textTransform: "uppercase"
                                         }}

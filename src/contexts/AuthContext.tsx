@@ -45,6 +45,7 @@ export function AuthProvider({ children }: ContextProviderProps) {
                 if (hasAccess) {
                     console.log('Atualizando cookies com os tokens de autenticação.')
 
+                    console.log(appToken)
                     setCookie(undefined, 'auth.token', appToken as string, {
                         maxAge: 60 * 60 * 24 * 30 * 12 // 1 year (60 seconds * 60 minutes * 24 hours * 30 days * 12 months)/
                     })
