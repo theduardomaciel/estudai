@@ -10,6 +10,7 @@ interface Topic {
 
 interface TopicsGroupProps {
     topics: Array<Topic>;
+    topicIdRef: React.MutableRefObject<number>;
 }
 
 export default function TopicsGroup(props: TopicsGroupProps) {
@@ -25,6 +26,7 @@ export default function TopicsGroup(props: TopicsGroupProps) {
                         onClick={() => {
                             selected === index ? setSelected(null) : setSelected(index) // dá a possibilidade de remover uma opção escolhida
                             setSelected(index)
+                            props.topicIdRef.current = index;
                         }}
                         state={selected === index ? "selected" : "unselected"}
                     />

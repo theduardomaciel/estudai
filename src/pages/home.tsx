@@ -246,7 +246,7 @@ const Home = ({ user }: { user: User }) => {
 
                 <Focus />
             </Menu>
-            <LandingIntroModal sections={[
+            {/* <LandingIntroModal sections={[
                 {
                     title: 'Bem-vindo ao estudaí',
                     description: "Estamos felizes em ter você por aqui.\n Acompanhe algumas dicas rápidas pra te fazer aproveitar todas as funcionalidades.",
@@ -278,7 +278,7 @@ const Home = ({ user }: { user: User }) => {
                     marginTop: "3.5rem",
                     imageSize: { height: 350, width: 400 }
                 }
-            ]} />
+            ]} /> */}
         </main>
     )
 }

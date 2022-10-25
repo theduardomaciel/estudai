@@ -66,6 +66,9 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
         task.date = Math.floor(date.getTime());
+        if (task.group) {
+            task.group.createdAt = Math.floor(date.getTime());
+        }
         return task;
     })
 
@@ -124,8 +127,6 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         setLoading(false)
     }
 
-    console.log(group)
-
     return (
         <main className={styles.holder}>
             <Head>
@@ -159,7 +160,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                 title='Filtrar'
                             />
                         </div>
-                        <div className={`${homeStyles.tasks}`}>
+                        <div className={`${styles.tasks}`}>
                             {
                                 group.tasks?.length > 0 ?
                                     group.tasks.map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
@@ -169,41 +170,43 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         </div>
                     </div>
                     <aside className={styles.sidebar}>
-                        <AddTaskButton width='100%' query={{ userId: user.id, groups: JSON.stringify(user.groups) }} />
-                        <div className={`${styles.pinnedMessageContainer} ${styles.sidebarContainer}`}>
-                            <header>
-                                <span className={'material-symbols-rounded'}>push_pin</span>
-                                Mensagem Fixada
-                            </header>
-                            <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma]"}</p>
-                        </div>
-                        <div className={`${styles.tasksInfoContainer} ${styles.sidebarContainer}`}>
-                            <div>
-                                <p>Atividades pendentes</p>
-                                <h6>3</h6>
+                        <div className={styles.sidebarContent}>
+                            <AddTaskButton width='100%' query={{ userId: user.id, groups: JSON.stringify(user.groups) }} />
+                            <div className={`${styles.pinnedMessageContainer} ${styles.sidebarContainer}`}>
+                                <header>
+                                    <span className={'material-symbols-rounded'}>push_pin</span>
+                                    Mensagem Fixada
+                                </header>
+                                <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma]"}</p>
                             </div>
-                            <Separator orientation='horizontal' />
-                            <div>
-                                <p>Atividades concluídas</p>
-                                <h6>16</h6>
+                            <div className={`${styles.tasksInfoContainer} ${styles.sidebarContainer}`}>
+                                <div>
+                                    <p>Atividades pendentes</p>
+                                    <h6>3</h6>
+                                </div>
+                                <Separator orientation='horizontal' />
+                                <div>
+                                    <p>Atividades concluídas</p>
+                                    <h6>16</h6>
+                                </div>
                             </div>
-                        </div>
-                        <div className={`${styles.sidebarContainer}`}>
-                            <Button
-                                title='CONVIDAR USUÁRIOS'
-                                onClick={() => setShareModalVisible(true)}
-                                icon={'share'}
-                                iconProps={{ size: "1.8rem" }}
-                                style={{ width: "100%", padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)" }}
-                            />
-                            <Button
-                                title='SAIR DO GRUPO'
-                                onClick={() => setExitModalVisible('default')}
-                                icon={'exit_to_app'}
-                                iconProps={{ color: "var(--red-01)" }}
-                                preset={"fillHover"}
-                                style={{ width: "100%", padding: "0.5rem 1.5rem" }}
-                            />
+                            <div className={`${styles.sidebarContainer}`}>
+                                <Button
+                                    title='CONVIDAR USUÁRIOS'
+                                    onClick={() => setShareModalVisible(true)}
+                                    icon={'share'}
+                                    iconProps={{ size: "1.8rem" }}
+                                    style={{ width: "100%", padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)" }}
+                                />
+                                <Button
+                                    title='SAIR DO GRUPO'
+                                    onClick={() => setExitModalVisible('default')}
+                                    icon={'exit_to_app'}
+                                    iconProps={{ color: "var(--red-01)" }}
+                                    preset={"fillHover"}
+                                    style={{ width: "100%", padding: "0.5rem 1.5rem" }}
+                                />
+                            </div>
                         </div>
                     </aside>
                 </div>

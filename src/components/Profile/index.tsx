@@ -14,11 +14,11 @@ import { User } from '../../types/User';
 
 interface Props {
     onClick?: () => void;
-    user?: User;
+    user: User;
     showMenu?: boolean;
 }
 
-export default function Profile(props: Props) {
+export default function Profile({ user, onClick, showMenu }: Props) {
 
     function getGreetings() {
         const now = new Date();
@@ -35,12 +35,40 @@ export default function Profile(props: Props) {
         }
     }
 
+    const actualDate = new Date();
+    const now = actualDate.getTime();
+
+    const pendingTasksLength = user?.tasks
+        .filter((task, index) => {
+            const notInteracted = task.interactedBy.find((taskUser, i) => taskUser.id === user?.id) ? false : true;
+            if (task.date > now && notInteracted) {
+                return true
+            } else {
+                return false
+            }
+        })
+        .length;
+
+    const completedTasksLength = user?.tasks
+        .filter((task, index) => {
+            const hasInteracted = task.interactedBy.find((taskUser, i) => taskUser.id === user?.id) ? true : false;
+            if (task.date > now && hasInteracted) {
+                return true
+            } else {
+                return false
+            }
+        })
+        .length;
+
+    console.log(completedTasksLength, pendingTasksLength)
+    const completedPercentage = (completedTasksLength * 100) / (pendingTasksLength + completedTasksLength);
+
     return (
         <div className={styles.holder}>
             <div className={styles.profile}>
                 <div className={styles.image}>
                     <Image
-                        src={props.user?.image_url || placeholder}
+                        src={user?.image_url || placeholder}
                         width={42}
                         height={42}
                     />
@@ -48,22 +76,22 @@ export default function Profile(props: Props) {
 
                 <div className={styles.text}>
                     <p>{getGreetings()}</p>
-                    <p>{`${props.user?.firstName} ${props.user?.lastName}`}</p>
+                    <p>{`${user?.firstName} ${user?.lastName}`}</p>
                 </div>
             </div>
             <div className={styles.row2}>
                 <div className={styles.pendingReminder}>
                     <span className="material-symbols-rounded">notifications_active</span>
-                    <p>Você tem <span> 6 atividades </span> pendentes.</p>
+                    <p>Você tem <span>{`${pendingTasksLength} atividade${pendingTasksLength !== 1 ? "s" : ""}`}</span> pendente{pendingTasksLength !== 1 ? "s" : ""} (de {pendingTasksLength + completedTasksLength})</p>
                     <div className={styles.progressHolder}>
-                        <p>61%</p>
+                        <p>{completedPercentage}%</p>
                         <div className={styles.progressBar}>
-                            <div />
+                            <div style={{ width: `${completedPercentage}%` }} />
                             <div />
                         </div>
                     </div>
                 </div>
-                {props.showMenu && <Button classes={styles.openMenu} onClick={props.onClick} icon={"menu"} />}
+                {showMenu && <Button classes={styles.openMenu} onClick={onClick} icon={"menu"} />}
             </div>
         </div>
     )

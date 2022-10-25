@@ -200,8 +200,8 @@
         flex-direction: column;
     }
 
-    .column.two .usersHolder {
-        width: 100%;
+    .container:not(.card) .column.two .usersHolder {
+        max-width: 65%;
     }
 
     .container.card .usersHolder {
