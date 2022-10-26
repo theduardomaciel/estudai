@@ -1,3 +1,4 @@
+import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../../contexts/AppContext";
 import useCountdown from "../../hooks/useCountdown";
@@ -21,6 +22,14 @@ export interface Focus {
     topicId: number;
     totalTime: number; // em mili segundos
 }
+
+const focusData = [
+    { icon: '📒', title: 'Resumo' },
+    { icon: '📚', title: 'Leitura do Livro' },
+    { icon: '📖', title: 'Leitura' },
+    { icon: '📝', title: 'Atividade' },
+    { icon: '📌', title: 'Revisão' }
+];
 
 const getCountdownTimes = (countdownSeconds: number) => {
     const hours = Math.floor(countdownSeconds / 3600)
@@ -81,8 +90,7 @@ export default function Focus({ }: Props) {
 
     const [focusMinutes, setFocusMinutes] = useState<number | "">("");
     const focusPauses = focusMinutes ? Math.max(1, Math.floor(focusMinutes / 25)) : 0;
-
-    const focusFrameSize = "22.5rem"
+    const pauseInterval = (focusMinutes as number * 60) / (focusPauses + 1)
 
     const { currentFocus, startNewFocus, removeFocus } = useAppContext();
 
@@ -90,23 +98,17 @@ export default function Focus({ }: Props) {
         const formData = new FormData(event.currentTarget);
         const data = Object.fromEntries(formData.entries()) as unknown as { focusName: string };
 
-        if (data.focusName && focusMinutes) {
+        if (data.focusName && focusMinutes && topicIdRef.current !== -1) {
             console.warn("Criando novo foco.")
             startNewFocus(data.focusName, topicIdRef.current, focusMinutes * 60)
         }
     }
 
     const Focus1 = <div className={styles.column} style={{ gap: "1rem", /* justifyContent: "space-between", height: focusFrameSize */ }}>
-        <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} />
+        <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
         <div className={'row'} style={{ gap: "1.5rem" }}>
             <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
-            <TopicsGroup topics={[
-                { icon: '📒', title: 'Resumo' },
-                { icon: '📚', title: 'Leitura do Livro' },
-                { icon: '📖', title: 'Leitura' },
-                { icon: '📝', title: 'Atividade' },
-                { icon: '📌', title: 'Revisão' }
-            ]} topicIdRef={topicIdRef} />
+            <TopicsGroup topics={focusData} topicIdRef={topicIdRef} />
             <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
         </div>
         <Input
@@ -120,7 +122,7 @@ export default function Focus({ }: Props) {
             }}
             value={focusMinutes}
             label='Tempo de atividade'
-            placeholder='60'
+            /* placeholder='escolha um tempo confortável <3' */
             maxLength={5}
             type={'text'}
             height={'3.85rem'}
@@ -134,57 +136,114 @@ export default function Focus({ }: Props) {
         </div>
     </div>
 
+    const intervalTime = 1 * 15;
+
     const Focus2 = ({ focus }: { focus: Focus }) => {
-        const [counter, resetCounter, stopCounter, pauseCounter, resumeCounter, isPaused] = useCountdown({ initialCounter: focus.totalTime })
+        const { actualCounter, status, isPaused, pauseCounter, resumeCounter, stopCounter } = useCountdown({ initialCounter: focus.totalTime, initialIntervalCounter: intervalTime, pauseInterval: pauseInterval })
 
-        const actualTime = counter as number;
-        const timeString = getCountdownTimes(actualTime);
-        const timePerSection = Math.floor((focus.totalTime / 60) / (focusPauses === 1 ? focusPauses + 1 : focusPauses));
+        const timeString = getCountdownTimes(actualCounter);
+        const timePerSection = (focus.totalTime / 60) / (focusPauses === 1 ? focusPauses + 1 : focusPauses);
 
-        if (actualTime === 0) {
-            removeFocus();
-        }
+        const isVisiblyPaused = isPaused && status !== 'interval';
+        const actualSection = Math.floor((timePerSection * 60) / actualCounter) + 1;
 
-        return <div className={styles.ongoingFocusContainer} /* style={{ height: focusFrameSize }} */>
+        return <div className={styles.ongoingFocusContainer}>
             <header>
-                <div className={styles.column}>
-                    <h5>{focus.name}</h5>
-                    <div className={styles.iconHolder}>
-                        <span className="material-symbols-rounded static">nest_clock_farsight_analog</span>
-                        <p>{`${focus.totalTime / 60} minuto${(focus.totalTime / 60) !== 1 ? 's' : ''}`}</p>
-                    </div>
-                </div>
-                <div className={styles.info}>
-                    <div className={styles.column} style={{ alignItems: "flex-end" }}>
-                        <h6>1/{focusPauses}</h6>
-                        {focusPauses > 1 && <p>{timePerSection} minuto{timePerSection !== 1 ? 's' : ""}</p>}
-                    </div>
-                    <span style={{ fontSize: "2.8rem" }} className="material-symbols-rounded click static">pause_circle</span>
-                </div>
+                {
+                    status === "interval" ?
+                        <>
+                            <div className={styles.column}>
+                                <h5>Hora da pausa!</h5>
+                                <div className={styles.iconHolder}>
+                                    <p>Ninguém é feito de aço, então levanta essa bunda da cadeira e vai beber uma aguinha :)</p>
+                                </div>
+                            </div>
+                        </>
+                        : status === 'inactive' ?
+                            <>
+                                <div className={styles.column}>
+                                    <h5>E chegamos ao fim!</h5>
+                                    <div className={styles.iconHolder}>
+                                        <p>Parabéns por ter mantido o foco até aqui.</p>
+                                    </div>
+                                </div>
+                            </>
+                            :
+                            <>
+                                <div className={styles.column} style={{ width: "100%" }}>
+                                    <h5>{focus.name}</h5>
+                                    <div className={styles.iconHolder}>
+                                        <span className="material-symbols-rounded static">nest_clock_farsight_analog</span>
+                                        <p>{`${focus.totalTime / 60} minuto${(focus.totalTime / 60) !== 1 ? 's' : ''}`}</p>
+                                    </div>
+                                </div>
+                                <div className={styles.info}>
+                                    <div className={styles.column} style={{ alignItems: "flex-end" }}>
+                                        <h6>{actualSection}/{focusPauses + 1}</h6>
+                                        {focusPauses + 1 > 1 && <p>{timePerSection} minuto{Math.floor(timePerSection) !== 1 ? 's' : ""}</p>}
+                                    </div>
+                                    {
+                                        status as 'interval' | 'active' | 'inactive' !== "interval" && <span
+                                            style={{ fontSize: "2rem" }}
+                                            className="material-symbols-rounded click static"
+                                            onClick={() => {
+                                                if (isPaused) {
+                                                    resumeCounter()
+                                                } else {
+                                                    pauseCounter()
+                                                }
+                                            }}
+                                        >
+                                            {isVisiblyPaused ? 'play_circle' : 'pause_circle'}
+                                        </span>
+                                    }
+                                </div>
+                            </>
+                }
             </header>
-            <div className={styles.clockHolder}>
-                <div className={styles.clock}>
-                    <div
-                        className={styles.radialProgressIndicator}
-                        style={{ color: "red", background: `conic-gradient(var(--primary-01) ${((actualTime * 360) / focus.totalTime)}deg, var(--primary-03) 90deg, var(--primary-02) 180deg, var(--primary-02) 270deg)` }}
+            {
+                status !== "inactive" ?
+                    <div className={styles.clockHolder}>
+                        <div className={styles.clock}>
+                            <div
+                                className={styles.radialProgressIndicator}
+                                style={{ color: "red", background: `conic-gradient(var(--primary-01) ${((actualCounter * 360) / (status === "interval" ? intervalTime : focus.totalTime))}deg, var(--primary-03) 90deg, var(--primary-02) 180deg, var(--primary-02) 270deg)` }}
+                            />
+                            <h3 style={{ fontSize: timeString.length > 5 ? "2rem" : "2.4rem", opacity: isVisiblyPaused ? 0.25 : 1 }}>{timeString}</h3>
+                            {isVisiblyPaused && <span onClick={() => stopCounter()} className={`${styles.pauseIcon} material-symbols-rounded static click instantFilled`}>stop</span>}
+                        </div>
+                    </div>
+                    :
+                    <Button
+                        icon={'keyboard_return'}
+                        title="Voltar"
+                        style={{ width: "100%" }}
+                        onClick={() => removeFocus()}
                     />
-                    <h3 style={{ fontSize: timeString.length > 5 ? "2rem" : "2.4rem" }}>{timeString}</h3>
-                </div>
-            </div>
+            }
         </div>
     }
 
-    return <form className={styles.focus} onSubmit={(event) => {
-        event.preventDefault();
-        StartFocus(event)
-    }}>
-        <div className={`row`}>
-            <h3>Foco</h3>
-        </div>
-        {
-            currentFocus !== null ?
-                <Focus2 focus={currentFocus} />
-                : Focus1
-        }
-    </form>
+    return <AnimatePresence mode='sync'>
+        <form className={styles.focus} onSubmit={(event) => {
+            event.preventDefault();
+            StartFocus(event)
+        }}>
+            <div className={`row`}>
+                <h3>Foco</h3>
+                {
+                    currentFocus &&
+                    <div className={styles.focusInfo}>
+                        <p className={styles.emoji}>{focusData[currentFocus.topicId].icon}</p>
+                        <p>{focusData[currentFocus.topicId].title}</p>
+                    </div>
+                }
+            </div>
+            {
+                currentFocus !== null ?
+                    <Focus2 focus={currentFocus} />
+                    : Focus1
+            }
+        </form>
+    </AnimatePresence>
 }

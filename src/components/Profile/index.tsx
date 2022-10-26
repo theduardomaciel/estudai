@@ -60,7 +60,6 @@ export default function Profile({ user, onClick, showMenu }: Props) {
         })
         .length;
 
-    console.log(completedTasksLength, pendingTasksLength)
     const completedPercentage = (completedTasksLength * 100) / (pendingTasksLength + completedTasksLength);
 
     return (

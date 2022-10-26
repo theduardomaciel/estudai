@@ -131,7 +131,8 @@ const Home = ({ user }: { user: User }) => {
     const monthTasks = user.tasks
         .filter((task, i) => {
             const taskDate = new Date(task.date);
-            if (task.date > now && taskDate.getMonth() === actualDate.getMonth()) {
+            const notInteracted = task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true;
+            if (task.date > now && taskDate.getMonth() === actualDate.getMonth() && notInteracted) {
                 return true
             } else {
                 return false
@@ -142,7 +143,10 @@ const Home = ({ user }: { user: User }) => {
     const otherMonthsTasks = user.tasks
         .filter((task, i) => {
             const taskDate = new Date(task.date);
-            if (task.date > now && taskDate.getFullYear() === actualDate.getFullYear() && taskDate.getMonth() !== actualDate.getMonth()) {
+            const notInteracted = task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true;
+            if (task.date > now &&
+                taskDate.getFullYear() === actualDate.getFullYear() &&
+                taskDate.getMonth() !== actualDate.getMonth() && notInteracted) {
                 return true
             } else {
                 return false
@@ -199,17 +203,23 @@ const Home = ({ user }: { user: User }) => {
                                 </>
                                 :
                                 <>
-                                    {viewMode === 'list' && <h5>Expirado</h5>}
-                                    {
-                                        user.tasks
-                                            .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now)
-                                            .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                    }
                                     {viewMode === 'list' && <h5>Concluído</h5>}
                                     {
                                         user.tasks
                                             .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
                                             .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
+                                    }
+                                    {viewMode === 'list' && <h5>Expirado</h5>}
+                                    {
+                                        user.tasks
+                                            .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+                                            .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                    }
+                                    {viewMode === 'list' && <h5>Arquivado</h5>}
+                                    {
+                                        user.tasks
+                                            .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
+                                            .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
                                     }
                                 </>
                             :

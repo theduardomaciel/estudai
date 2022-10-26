@@ -40,7 +40,7 @@ export const UsersPortraitsFromTask = ({ concludedUsersAmount, images, groupName
     }
     {
         concludedUsersAmount > 0 ?
-            <p className={styles.usersAmount}>{`+ de ${concludedUsersAmount} membros de ${groupName ? groupName : "placeholder"} ${message}`}</p> :
+            <p className={styles.usersAmount}>{`+ de ${concludedUsersAmount} membro de ${groupName ? groupName : "placeholder"} ${message}`}</p> :
             <p className={styles.usersAmount}>{`nenhum membro de `} <strong>{groupName}</strong> {` concluiu essa atividade ainda!`}</p>
     }
 </div>;
@@ -75,12 +75,14 @@ export default function TaskView({ task, status }: TaskProps) {
         </>
     </div>
 
+    const borderStyle = `1px dashed ${status === 'concluded' ? 'var(--green-01)' : status === 'expired' ? 'var(--red-01)' : 'var(--primary-04)'}`;
+
     if (isActivity(task.type)) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
 
         return <Link href={`/task/${task.id}`}>
             <a href="">
-                <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
+                <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
                     <div className={styles.column}>
                         <div className={styles.icon}>
                             <span className={`material-symbols-rounded`}>{icon} </span>
@@ -135,10 +137,10 @@ export default function TaskView({ task, status }: TaskProps) {
                         </div>
                     </div>
                     <div className={`${styles.column} ${styles.two}`}>
-                        <div className={styles.deadline}>
-                            <span className={`material-symbols-rounded`}>calendar_today</span>
-                            {formatDate(task.date, true)}
-                        </div>
+                        {
+                            status === "expired" ? <Status icon="archive" text="arquivada no dia" color="var(--primary-02)" /> :
+                                <Status icon="calendar_today" text="" color="var(--primary-02)" />
+                        }
                     </div>
                 </div>
             </a>
@@ -146,7 +148,7 @@ export default function TaskView({ task, status }: TaskProps) {
     } else {
         return <Link href={`/task/${task.id}`}>
             <a href="">
-                <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
+                <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
                     <div className={styles.column}>
                         <div className={styles.icon}>
                             <span className={`material-symbols-rounded`}>local_activity</span>

@@ -70,6 +70,13 @@
     color: var(--light);
 }
 
+.ongoingFocusContainer h5 {
+    word-break: break-all;
+    overflow-wrap: break-word;
+    height: fit-content;
+    display: flex;
+}
+
 .ongoingFocusContainer h6 {
     font-family: 'Inter';
 }
@@ -163,4 +170,37 @@
 
     border-radius: 50%;
     background-color: var(--light);
+}
+
+.pauseIcon {
+    font-size: 6.2rem;
+    color: var(--primary-01);
+    z-index: 3;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.focusInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    gap: 0.5rem;
+
+    background: var(--primary-02);
+    border-radius: 0.5rem;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    color: var(--light);
+    font-size: 1.2rem;
+}
+
+.focusInfo .emoji {
+    font-size: 1.8rem;
 }
