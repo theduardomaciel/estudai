@@ -130,9 +130,7 @@ const Login: NextPage = () => {
                                 }} />
                             <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                             <Link href={"/auth/register"}>
-                                <a href="">
-                                    <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>
-                                </a>
+                                <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>
                             </Link>
                         </>
                         :
@@ -145,12 +143,10 @@ const Login: NextPage = () => {
                                     </p>
                                 </header>
                                 <Link href={"/auth/register"}>
-                                    <a href="" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-                                        <Button
-                                            style={{ padding: "1rem 1.5rem", width: "100%" }}
-                                            title='Criar uma conta'
-                                        />
-                                    </a>
+                                    <Button
+                                        style={{ padding: "1rem 1.5rem", width: "100%" }}
+                                        title='Criar uma conta'
+                                    />
                                 </Link>
                                 <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                             </div>

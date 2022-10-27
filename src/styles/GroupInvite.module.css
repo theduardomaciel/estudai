@@ -1,0 +1,123 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 5rem;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: linear-gradient(-45deg, var(--primary-01), var(--primary-02), var(--primary-03), var(--primary-04));
+    background-size: 200% 200%;
+    animation: gradient 3.5s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.mainIcon {
+    font-size: 6.4rem;
+}
+
+.infoHolder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+
+    background-color: var(--background-03);
+    border: 1px solid var(--background-01);
+
+    margin-bottom: 3.5rem;
+    min-width: 35vw;
+
+    color: var(--primary-04);
+
+    padding: 3.5rem 5rem;
+    border-radius: 0.5rem;
+}
+
+.infoHolder h1 {
+    font-family: 'Raleway';
+    font-size: 4.2rem;
+
+    color: var(--primary-01);
+    background: linear-gradient(to right, rgba(118, 66, 203, 0.5), rgb(93, 38, 183), rgba(118, 66, 203, 0.5));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation: shine 5s linear infinite;
+    user-select: none;
+
+    background-size: 200% auto;
+}
+
+.infoHolder.loading {
+    padding: 3.5rem;
+}
+
+.infoHolder.loading div {
+    display: flex;
+    height: 4.5rem;
+    background-color: var(--background-02);
+    width: 100%;
+    min-width: 50rem;
+
+    overflow: hidden;
+    position: relative;
+
+    border-radius: 0.5rem;
+}
+
+.infoHolder.loading div::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgb(215, 194, 250) 35%, rgb(207, 182, 247) 65%, rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.85s infinite;
+
+    z-index: 5;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.iconHolder {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+
+    user-select: none;
+
+    align-items: center;
+    justify-content: center;
+}

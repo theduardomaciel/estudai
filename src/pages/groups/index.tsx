@@ -55,6 +55,9 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
         task.date = Math.floor(date.getTime());
+        if (task.group) {
+            task.group.createdAt = Math.floor(task.group.createdAt as number);
+        }
         return task;
     })
 
@@ -153,7 +156,7 @@ const Groups = ({ user }: { user: User }) => {
                                             <h3>{group.name}</h3>
                                             <div className={styles.iconContainer}>
                                                 <span className={'material-symbols-rounded static'}>notifications_active</span>
-                                                <p>{completedTasksLength} atividade{completedTasksLength !== 1 && "s"} pendentes</p>
+                                                <p>{completedTasksLength} atividade{completedTasksLength !== 1 && "s"} pendente{completedTasksLength !== 1 && "s"}</p>
                                             </div>
                                         </header>
                                         <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma mensagem fixada]"}</p>

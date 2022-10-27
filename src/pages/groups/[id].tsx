@@ -49,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     const groupId = parseInt(context.query.id as string);
     console.log(groupId);
 
-    let group = await getGroup(groupId) as unknown as Group;
+    let group = await getGroup(groupId) as unknown as Group | null;
 
     if (group) {
         const date = group.createdAt as Date;
@@ -59,6 +59,8 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
             task.date = Math.floor(date.getTime());
             return task;
         })
+    } else {
+        group = null
     }
 
     let user = await getUser(userId as number, 'full') as unknown as User;
@@ -98,7 +100,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
     const [isShareModalVisible, setShareModalVisible] = useState(false);
     const linkTextRef = useRef<HTMLParagraphElement>(null);
 
-    const url = `https://estudai.vercel.app/groups/${group.shareLink}`
+    const url = `https://estudai.vercel.app/groups/invite/${group.shareLink}`
     function onLinkClick() {
         navigator.clipboard.writeText(url)
         if (linkTextRef.current) {
@@ -127,6 +129,20 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         setLoading(false)
     }
 
+    const actualDate = new Date();
+    const now = actualDate.getTime();
+
+    const pendingTasks = user.tasks
+        .filter((task, i) => {
+            const notInteracted = task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true;
+            if (task.date > now && notInteracted) {
+                return true
+            } else {
+                return false
+            }
+        })
+        .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
+
     return (
         <main className={styles.holder}>
             <Head>
@@ -152,7 +168,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 <div className={styles.content}>
                     <div className={styles.tasks}>
                         <div className={homeStyles.subheader}>
-                            <SectionSelector sections={["Pendente", "Completado"]} actualSection={actualSection} setSection={setActualSection} />
+                            <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
                             <Button
                                 style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }}
                                 icon={'filter_alt'}
@@ -160,10 +176,33 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                 title='Filtrar'
                             />
                         </div>
-                        <div className={`${styles.tasks}`}>
+                        <div className={`${homeStyles.tasks}`}>
                             {
                                 group.tasks?.length > 0 ?
-                                    group.tasks.map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
+                                    /* group.tasks.map((task, index) => <TaskView key={index} task={task} status={"pending"} />) */
+                                    actualSection === 'Pendente' ?
+                                        pendingTasks
+                                        :
+                                        <>
+                                            <h5>Concluído</h5>
+                                            {
+                                                user.tasks
+                                                    .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
+                                                    .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
+                                            }
+                                            <h5>Expirado</h5>
+                                            {
+                                                user.tasks
+                                                    .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+                                                    .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                            }
+                                            <h5>Arquivado</h5>
+                                            {
+                                                user.tasks
+                                                    .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
+                                                    .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                            }
+                                        </>
                                     :
                                     <EmptyTasksMessage description='Adicione uma nova tarefa a este grupo para que ela apareça aqui!' />
                             }

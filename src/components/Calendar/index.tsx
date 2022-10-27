@@ -160,16 +160,14 @@ export default function Calendar(props: Props) {
 
                         return props.linkToCreate ?
                             <Link href={`/task/new?userId=${props.userId}&date=${`${currentYear}-${calendarMonth}-${day}`}`} key={index.toString()} as={`/task/new`}>
-                                <a>
-                                    <li
-                                        onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
-                                        onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
-                                        className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
-                                        onClick={() => setDate(index, day, calendarMonth)}
-                                    >
-                                        {day}
-                                    </li>
-                                </a>
+                                <li
+                                    onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
+                                    onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}
+                                    className={`${styles.day} ${styles[dayStatus]} ${index === selected ? styles.selected : ""}`}
+                                    onClick={() => setDate(index, day, calendarMonth)}
+                                >
+                                    {day}
+                                </li>
                             </Link>
                             :
                             <li

@@ -6,11 +6,24 @@ import { isAuthenticated } from '../../../middlewares/apiAuthentication';
 
 // API
 import prisma from '../../../lib/prisma';
+import getGroup from '../../../services/getGroup';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router
     //.use(isAuthenticated)
+    .get(async (req, res) => {
+        const { id } = req.query;
+        try {
+            console.log(id)
+            const group = await getGroup(undefined, id as string)
+            console.log(group, "🐶 Grupo obtido com sucesso!")
+            res.status(200).json(group);
+        } catch (error) {
+            console.log(error)
+            res.status(500).send({ error: error })
+        }
+    })
     .patch(async (req, res) => {
         const groupId = parseInt(req.query.id as string);
         const userId = parseInt(req.body.userId);
@@ -20,24 +33,56 @@ router
             res.status(400).json({ error: "User id was not given correctly." })
         }
 
-        if (userId) {
-            try {
-                await prisma.group.update({
-                    where: {
-                        id: groupId
-                    },
-                    data: {
-                        users: {
-                            disconnect: {
-                                id: userId
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            include: {
+                groups: true
+            }
+        })
+
+        if (user) {
+            const userIsInGroup = user.groups.find((group, i) => group.id === groupId) ? true : false;
+
+            if (userIsInGroup) {
+                try {
+                    await prisma.group.update({
+                        where: {
+                            id: groupId
+                        },
+                        data: {
+                            users: {
+                                disconnect: {
+                                    id: userId
+                                }
                             }
-                        }
-                    },
-                })
-                res.status(200).json({ success: "User was removed from group with success!" })
-            } catch (err: any) {
-                console.log(err)
-                res.status(400).json({ error: "One or more body elements were incorrectly written.", serverError: err })
+                        },
+                    })
+                    res.status(200).json({ success: "User was removed from group with success!" })
+                } catch (err: any) {
+                    console.log(err)
+                    res.status(400).json({ error: "There was not possible to remove user from group.", serverError: err })
+                }
+            } else {
+                try {
+                    await prisma.group.update({
+                        where: {
+                            id: groupId
+                        },
+                        data: {
+                            users: {
+                                connect: {
+                                    id: userId
+                                }
+                            }
+                        },
+                    })
+                    res.status(200).json({ success: "User was added to group with success!" })
+                } catch (err: any) {
+                    console.log(err)
+                    res.status(400).json({ error: "There was not possible to add user to group.", serverError: err })
+                }
             }
         } else {
             try {

@@ -1,8 +1,6 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import React, { CSSProperties } from 'react'
 
-import type { AppProps } from 'next/app'
-
 // Contexts
 import { AppContextProvider } from '../contexts/AppContext'
 
@@ -26,6 +24,8 @@ const ComponentPreview = (): JSX.Element => {
 import '../styles/globals.css'
 import { Tag, TagProps } from '../components/AttachmentLoader/Tag';
 import { getTagInfo } from '../utils/getTagInfo';
+
+import { AppProps } from 'next/dist/shared/lib/router/router';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return <React.Fragment>

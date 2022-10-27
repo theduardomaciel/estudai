@@ -247,9 +247,7 @@ const Register: NextPage = () => {
         </div>
         <div ref={progressBar} className={styles.progressBar} />
         <Link href={"/auth/login"}>
-            <a href="">
-                <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
-            </a>
+            <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
         </Link>
     </motion.div>
 
@@ -294,12 +292,10 @@ const Register: NextPage = () => {
                 Nunca mais uma matéria ficará atrasada.</p>
         </header>
         <Link href={"/home"}>
-            <a href="" style={{ width: "100%" }}>
-                <Button
-                    style={{ padding: "1rem 1.5rem", width: "100%" }}
-                    title='Entrar na plataforma'
-                />
-            </a>
+            <Button
+                style={{ padding: "1rem 1.5rem", width: "100%" }}
+                title='Entrar na plataforma'
+            />
         </Link>
         <Separator style={separator} orientation='horizontal' />
     </motion.div>

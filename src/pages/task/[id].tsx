@@ -517,7 +517,8 @@ const Task = ({ task }: { task: Task }) => {
                     <Button
                         title='ARQUIVAR'
                         icon={'archive'}
-                        iconProps={{ size: "1.8rem" }}
+                        iconProps={{ size: "1.8rem", color: `var(--primary-02)` }}
+                        preset={'fillHover'}
                         classes={styles.defaultButton}
                     />
                     {attachmentsContainer}

@@ -70,13 +70,11 @@ const Landing: NextPage = () => {
                     <h1>Organize seus estudos.</h1>
                     <p>Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.</p>
                     <Link href={"/auth/register"}>
-                        <a href="">
-                            <Button
-                                icon={'arrow_right_alt'}
-                                title={"Criar uma conta"}
-                                style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse" }}
-                            />
-                        </a>
+                        <Button
+                            icon={'arrow_right_alt'}
+                            title={"Criar uma conta"}
+                            style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse" }}
+                        />
                     </Link>
                 </div>
                 <Device />

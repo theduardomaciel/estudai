@@ -75,103 +75,97 @@ export default function TaskView({ task, status }: TaskProps) {
         </>
     </div>
 
-    const borderStyle = `1px dashed ${status === 'concluded' ? 'var(--green-01)' : status === 'expired' ? 'var(--red-01)' : 'var(--primary-04)'}`;
+    const borderStyle = `1px ${status !== "pending" ? 'dashed' : 'solid'} ${status === 'concluded' ? 'var(--green-01)' : status === 'expired' ? 'var(--red-01)' : 'var(--primary-04)'}`;
 
     if (isActivity(task.type)) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
 
         return <Link href={`/task/${task.id}`}>
-            <a href="">
-                <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
-                    <div className={styles.column}>
-                        <div className={styles.icon}>
-                            <span className={`material-symbols-rounded`}>{icon} </span>
-                        </div>
-                        <div className={styles.description}>
-                            <h4>{name}</h4>
-                            <div className={styles.info}>
-                                <>
-                                    {taskType(task.type)}
-                                    <div className={styles.circle} />
-                                    {taskMode(task.mode)}
-                                    <div className={styles.circle} />
-                                    {taskMaxScore(task.maxScore)}
-                                </>
-                            </div>
-                            <Content />
-                        </div>
+            <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
+                <div className={styles.column}>
+                    <div className={styles.icon}>
+                        <span className={`material-symbols-rounded`}>{icon} </span>
                     </div>
-                    <div className={`${styles.column} ${styles.two}`}>
-                        {
-                            task.group && <UsersPortraitsFromTask message="já concluíram a atividade" groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
-                        }
-                        {
-                            status === 'concluded' ? <Status icon="schedule" text="concluída no dia" color="var(--green-01)" /> :
-                                status === "expired" ? <Status icon="schedule" text="expirou no dia" color="var(--red-01)" /> :
-                                    <Status icon="schedule" text="entrega até" color="var(--primary-02)" />
-                        }
+                    <div className={styles.description}>
+                        <h4>{name}</h4>
+                        <div className={styles.info}>
+                            <>
+                                {taskType(task.type)}
+                                <div className={styles.circle} />
+                                {taskMode(task.mode)}
+                                <div className={styles.circle} />
+                                {taskMaxScore(task.maxScore)}
+                            </>
+                        </div>
+                        <Content />
                     </div>
                 </div>
-            </a>
+                <div className={`${styles.column} ${styles.two}`}>
+                    {
+                        task.group && <UsersPortraitsFromTask message="já concluíram a atividade" groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+                    }
+                    {
+                        status === 'concluded' ? <Status icon="schedule" text="concluída no dia" color="var(--green-01)" /> :
+                            status === "expired" ? <Status icon="schedule" text="expirou no dia" color="var(--red-01)" /> :
+                                <Status icon="schedule" text="entrega até" color="var(--primary-02)" />
+                    }
+                </div>
+            </div>
         </Link>
     } else if (isTest(task.type)) {
         return <Link href={`/task/${task.id}`}>
-            <a href="">
-                <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
-                    <div className={styles.column}>
-                        <div className={styles.icon}>
-                            <span className={`material-symbols-rounded`}>glyphs</span>
-                        </div>
-                        <div className={styles.description}>
-                            <h4>{task.type === "av1" ? "Avaliação Mensal (AV1)" : "Avaliação Bimestral (AV2)"}</h4>
-                            <div className={styles.info}>
-                                <>
-                                    {taskType(task.type)}
-                                    <div className={styles.circle} />
-                                    {task.questionsAmount + " questões"}
-                                    <div className={styles.circle} />
-                                    {perQuestion(task.questionsAmount as number) + " por questão"}
-                                </>
-                            </div>
-                            <p>{subjectsString(task.subjects)}</p>
-                        </div>
+            <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
+                <div className={styles.column}>
+                    <div className={styles.icon}>
+                        <span className={`material-symbols-rounded`}>glyphs</span>
                     </div>
-                    <div className={`${styles.column} ${styles.two}`}>
-                        {
-                            status === "expired" ? <Status icon="archive" text="arquivada no dia" color="var(--primary-02)" /> :
-                                <Status icon="calendar_today" text="" color="var(--primary-02)" />
-                        }
+                    <div className={styles.description}>
+                        <h4>{task.type === "av1" ? "Avaliação Mensal (AV1)" : "Avaliação Bimestral (AV2)"}</h4>
+                        <div className={styles.info}>
+                            <>
+                                {taskType(task.type)}
+                                <div className={styles.circle} />
+                                {task.questionsAmount + " questões"}
+                                <div className={styles.circle} />
+                                {perQuestion(task.questionsAmount as number) + " por questão"}
+                            </>
+                        </div>
+                        <p>{subjectsString(task.subjects)}</p>
                     </div>
                 </div>
-            </a>
+                <div className={`${styles.column} ${styles.two}`}>
+                    {
+                        status === "expired" ? <Status icon="archive" text="arquivada no dia" color="var(--primary-02)" /> :
+                            <Status icon="calendar_today" text="" color="var(--primary-02)" />
+                    }
+                </div>
+            </div>
         </Link>
     } else {
         return <Link href={`/task/${task.id}`}>
-            <a href="">
-                <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
-                    <div className={styles.column}>
-                        <div className={styles.icon}>
-                            <span className={`material-symbols-rounded`}>local_activity</span>
-                        </div>
-                        <div className={styles.description}>
-                            <h4>{task.title}</h4>
-                            <Content />
-                            <div className={styles.info}>
-                                <span style={{ fontSize: "1.6rem" }} className={`material-symbols-rounded`}>location_on</span>
-                                <p>{task.address}</p>
-                            </div>
-                        </div>
+            <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
+                <div className={styles.column}>
+                    <div className={styles.icon}>
+                        <span className={`material-symbols-rounded`}>local_activity</span>
                     </div>
-                    <div className={`${styles.column} ${styles.two}`}>
-                        {task.group && <UsersPortraitsFromTask message={'já marcaram presença'} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />}
-                        {
-                            status === 'concluded' ? <Status icon="schedule" text="Concluído" color="var(--green-01)" /> :
-                                status === "expired" ? <Status icon="schedule" text="evento no dia" color="var(--red-01)" /> :
-                                    <Status icon="schedule" text="evento no dia" color="var(--primary-02)" />
-                        }
+                    <div className={styles.description}>
+                        <h4>{task.title}</h4>
+                        <Content />
+                        <div className={styles.info}>
+                            <span style={{ fontSize: "1.6rem" }} className={`material-symbols-rounded`}>location_on</span>
+                            <p>{task.address}</p>
+                        </div>
                     </div>
                 </div>
-            </a>
+                <div className={`${styles.column} ${styles.two}`}>
+                    {task.group && <UsersPortraitsFromTask message={'já marcaram presença'} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />}
+                    {
+                        status === 'concluded' ? <Status icon="schedule" text="Concluído" color="var(--green-01)" /> :
+                            status === "expired" ? <Status icon="schedule" text="evento no dia" color="var(--red-01)" /> :
+                                <Status icon="schedule" text="evento no dia" color="var(--primary-02)" />
+                    }
+                </div>
+            </div>
         </Link>
     }
 }

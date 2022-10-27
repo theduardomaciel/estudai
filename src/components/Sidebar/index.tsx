@@ -66,15 +66,11 @@ export default function Sidebar() {
     return <>
         <nav className={`${styles.container} pulse`}>
             <Link href={`/home`}>
-                <a href="">
-                    <span ref={dashboardButton} className={`material-symbols-rounded ${section === "home" ? "filled" : "outlined"}`}>space_dashboard</span>
-                </a>
+                <span ref={dashboardButton} className={`material-symbols-rounded ${section === "home" ? "filled" : "outlined"}`}>space_dashboard</span>
             </Link>
 
             <Link href={"/groups"}>
-                <a href="">
-                    <span ref={groupsButton} className={`material-symbols-rounded ${section === "groups" ? "filled" : "outlined"}`}>group</span>
-                </a>
+                <span ref={groupsButton} className={`material-symbols-rounded ${section === "groups" ? "filled" : "outlined"}`}>group</span>
             </Link>
 
             {/* <Link href={"/settings"}>

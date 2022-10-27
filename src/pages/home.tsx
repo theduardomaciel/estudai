@@ -95,6 +95,7 @@ export const EmptyTasksMessage = ({ description }: EmptyTasks) => <div className
 </div>
 
 export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) => <Link
+    legacyBehavior
     href={{
         pathname: '/task/new',
         query: query,
@@ -102,7 +103,7 @@ export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) 
     replace
     as={`/task/new`}
 >
-    <a href="" style={{ width: "100%" }}>
+    <a style={{ width: "100%" }} href="">
         <Button
             classes={styles.addButton}
             style={width ? { backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)", width: width } :

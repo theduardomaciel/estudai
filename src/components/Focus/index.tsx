@@ -1,7 +1,10 @@
-import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
+
 import { useAppContext } from "../../contexts/AppContext";
 import useCountdown from "../../hooks/useCountdown";
+
+import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion"
 
 // Components
 import Button from "../Button";
@@ -48,6 +51,30 @@ const getCountdownTimes = (countdownSeconds: number) => {
         .join(":")
 
 };
+
+const variants = {
+    enter: () => {
+        return {
+            x: 1000,
+            opacity: 0
+        };
+    },
+    center: {
+        x: 0,
+        opacity: 1
+    },
+    exit: () => {
+        return {
+            x: -1000,
+            opacity: 0,
+        };
+    }
+};
+
+const transition = {
+    x: { type: "spring", stiffness: 100, damping: 30, mass: 2, duration: 0.8 },
+    opacity: { duration: 0.75 },
+}
 
 export default function Focus({ }: Props) {
 
@@ -147,7 +174,14 @@ export default function Focus({ }: Props) {
         const isVisiblyPaused = isPaused && status !== 'interval';
         const actualSection = Math.floor((timePerSection * 60) / actualCounter) + 1;
 
-        return <div className={styles.ongoingFocusContainer}>
+        return <motion.div
+            className={styles.ongoingFocusContainer}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={transition}
+        >
             <header>
                 {
                     status === "interval" ?
@@ -221,7 +255,7 @@ export default function Focus({ }: Props) {
                         onClick={() => removeFocus()}
                     />
             }
-        </div>
+        </motion.div>
     }
 
     return <AnimatePresence mode='sync'>
@@ -233,10 +267,17 @@ export default function Focus({ }: Props) {
                 <h3>Foco</h3>
                 {
                     currentFocus &&
-                    <div className={styles.focusInfo}>
+                    <motion.div
+                        className={styles.focusInfo}
+                        variants={variants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={transition}
+                    >
                         <p className={styles.emoji}>{focusData[currentFocus.topicId].icon}</p>
                         <p>{focusData[currentFocus.topicId].title}</p>
-                    </div>
+                    </motion.div>
                 }
             </div>
             {
