@@ -112,7 +112,7 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
                 transition={transition}
             >
                 <div className={styles.imageHolder} style={{ marginTop: section.marginTop ? section.marginTop : 0 }}>
-                    <Image src={section.image_path} height={section.imageSize.height} width={section.imageSize.width} priority />
+                    <Image src={section.image_path} height={section.imageSize.height} width={section.imageSize.width} priority alt='Imagem ilustrativa do modal' />
                 </div>
                 <div className={styles.headerContainer}>
                     <h3>{section.title}</h3>

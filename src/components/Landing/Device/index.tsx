@@ -20,6 +20,7 @@ export default function Device(props: Props) {
         <div id={props.additionalClass} className={`${styles.container} ${props.additionalClass}`}>
             <div className={styles.imageHolder}>
                 <Image
+                    alt='Screenshot do app'
                     className={styles.image}
                     src={isScreenWide ? DesktopScreenshot : MobileScreenshot}
                 />

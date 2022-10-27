@@ -70,6 +70,7 @@ export default function Profile({ user, onClick, showMenu }: Props) {
                         src={user?.image_url || placeholder}
                         width={42}
                         height={42}
+                        alt='Avatar do usuário'
                     />
                 </div>
 
