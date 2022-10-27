@@ -31,7 +31,7 @@
         "axios": "^0.27.2",
         "cors": "^2.8.5",
         "dnd-multi-backend": "^7.1.0",
-        "framer-motion": "6.3.4",
+        "framer-motion": "^7.6.1",
         "google-auth-library": "^8.5.2",
         "multer": "1.4.5-lts.1",
         "next": "13.0.0",
