@@ -27,7 +27,7 @@ export default function SettingCard(props: Props) {
                     title={props.footerButtonText ? props.footerButtonText : "Salvar"}
                     icon={props.buttonIcon ? props.buttonIcon : 'save'}
                     preset={"fillHover"}
-                    iconFill={1}
+                    iconProps={{ filled: true }}
                 />
             </div>
         </div>
