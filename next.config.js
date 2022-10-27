@@ -4,6 +4,9 @@ const withTM = require('next-transpile-modules')([/* 'react-dnd' */]) // or what
 module.exports = withTM({
     reactStrictMode: true,
     swcMinify: true,
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
 
     webpack(config) {
         config.module.rules.push({
