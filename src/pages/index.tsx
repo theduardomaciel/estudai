@@ -61,6 +61,7 @@ const Landing: NextPage = () => {
     return (
         <main className={styles.holder}>
             <Head>
+                <meta name="google-site-verification" content="G9W38esL-KS54yNvXPERwXXO8mwCwXb1ko3_ls6rm_o" />
                 <title>estudaí</title>
             </Head>
             <LandingHeader />

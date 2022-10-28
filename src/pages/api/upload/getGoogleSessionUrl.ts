@@ -1,4 +1,4 @@
-import { createRouter } from 'next-connect';
+import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 // API
@@ -10,14 +10,15 @@ import { Credentials } from 'google-auth-library';
 import prisma from '../../../lib/prisma';
 import { setCookie } from 'nookies';
 
-// DB
-
+// Middlewares
+import cors from "cors";
 
 const url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router
+    .use(expressWrapper(cors()))
     .post(async (req, res) => {
         const { meta, userId } = req.body;
 

@@ -14,6 +14,7 @@ import TopicsGroup from "../Topic/TopicsGroup";
 
 // Stylesheets
 import styles from "./focus.module.css"
+import Modal from "../Modal";
 
 // Types
 interface Props {
@@ -121,9 +122,18 @@ export default function Focus({ }: Props) {
 
     const { currentFocus, startNewFocus, removeFocus } = useAppContext();
 
+    const [errorMessage, setErrorMessage] = useState("");
     function StartFocus(event: React.FormEvent<HTMLFormElement>) {
         const formData = new FormData(event.currentTarget);
         const data = Object.fromEntries(formData.entries()) as unknown as { focusName: string };
+
+        if (!data.focusName) {
+            return setErrorMessage("Você esqueceu de dar um título ao foco!")
+        }
+
+        if (topicIdRef.current === -1) {
+            return setErrorMessage("Você esqueceu de escolher uma categoria para o foco!")
+        }
 
         if (data.focusName && focusMinutes && topicIdRef.current !== -1) {
             console.warn("Criando novo foco.")
@@ -131,36 +141,65 @@ export default function Focus({ }: Props) {
         }
     }
 
-    const Focus1 = () => <div className={styles.column} style={{ gap: "1rem", /* justifyContent: "space-between", height: focusFrameSize */ }}>
-        <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
-        <div className={'row'} style={{ gap: "1.5rem" }}>
-            <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
-            <TopicsGroup topics={focusData} topicIdRef={topicIdRef} />
-            <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
-        </div>
-        <Input
-            onChange={(event) => {
-                const parsed = parseInt(event.target.value);
-                if (parsed) {
-                    setFocusMinutes(parsed)
-                } else {
-                    setFocusMinutes("")
-                }
-            }}
-            value={focusMinutes}
-            label='Tempo de atividade'
-            /* placeholder='escolha um tempo confortável <3' */
-            maxLength={5}
-            type={'text'}
-            height={'3.85rem'}
-            fixedUnit='minutos'
-        />
-        <div /* style={{ gap: "2.5rem" }} */ className="row">
-            <Button icon={'av_timer'} title={'Iniciar Foco'} preset="sendForm" />
-            <Separator decorative orientation="vertical" />
-            <p className={styles.intervalCount}>Você terá <br />
-                <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
-        </div>
+    const Focus1 = <div className={styles.column} style={{ gap: "1rem", /* justifyContent: "space-between", height: focusFrameSize */ }}>
+        {
+            errorMessage !== "" ?
+                <motion.div
+                    className={styles.ongoingFocusContainer}
+                    variants={variants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={transition}
+                >
+                    <header>
+                        <div className={styles.column}>
+                            <h5>Epa, epa, epa!</h5>
+                            <div className={styles.iconHolder}>
+                                <p>{errorMessage}</p>
+                            </div>
+                        </div>
+                    </header>
+                    <Button
+                        icon={'keyboard_return'}
+                        title="Voltar"
+                        style={{ width: "100%" }}
+                        onClick={() => setErrorMessage("")}
+                    />
+                </motion.div>
+                :
+                <>
+                    <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
+                    <div className={'row'} style={{ gap: "1.5rem" }}>
+                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
+                        <TopicsGroup topics={focusData} topicIdRef={topicIdRef} />
+                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
+                    </div>
+                    <Input
+                        onChange={(event) => {
+                            const parsed = parseInt(event.target.value);
+                            if (parsed) {
+                                setFocusMinutes(parsed)
+                            } else {
+                                setFocusMinutes("")
+                            }
+                        }}
+                        value={focusMinutes}
+                        label='Tempo de atividade'
+                        /* placeholder='escolha um tempo confortável <3' */
+                        maxLength={5}
+                        type={'text'}
+                        height={'3.85rem'}
+                        fixedUnit='minutos'
+                    />
+                    <div /* style={{ gap: "2.5rem" }} */ className="row">
+                        <Button icon={'av_timer'} title={'Iniciar Foco'} preset="sendForm" />
+                        <Separator decorative orientation="vertical" />
+                        <p className={styles.intervalCount}>Você terá <br />
+                            <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
+                    </div>
+                </>
+        }
     </div>
 
     const intervalTime = 1 * 15;
@@ -285,7 +324,7 @@ export default function Focus({ }: Props) {
             {
                 currentFocus !== null ?
                     <Focus2 focus={currentFocus} />
-                    : <Focus1 />
+                    : Focus1 // não pode ser um componente <Focus /> por conta da atualização do state que tira o foco do input
             }
         </form>
     </AnimatePresence>

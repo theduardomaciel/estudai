@@ -4,6 +4,7 @@ export default function Document() {
     return (
         <Html>
             <Head>
+                <meta name="google-site-verification" content="G9W38esL-KS54yNvXPERwXXO8mwCwXb1ko3_ls6rm_o" />
                 <link
                     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Karla:ital,wght@0,300;0,400;0,700;0,800;1,300;1,400;1,700;1,800&family=Raleway:wght@500;700;800;900&family=Trirong:wght@700;900&display=swap"
                     rel="stylesheet"

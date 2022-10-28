@@ -1,7 +1,10 @@
-import { createRouter } from 'next-connect';
+import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import jwt, { decode } from 'jsonwebtoken';
+
+// Middlewares
+import cors from "cors";
 
 // Authentication
 import { oAuth2Client } from '../../../../lib/oAuth2Client';
@@ -30,6 +33,7 @@ function getAppAuthenticationToken(user_email: string) {
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router
+    .use(expressWrapper(cors()))
     .post(async (req, res) => {
         const { registerData, code } = req.body;
         const { tokens } = await oAuth2Client.getToken(code);

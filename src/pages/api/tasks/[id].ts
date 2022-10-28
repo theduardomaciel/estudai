@@ -1,8 +1,10 @@
-import { createRouter } from 'next-connect';
+import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 // Middlewares
 import { isAuthenticated } from '../../../middlewares/apiAuthentication';
+import cors from "cors";
+
 import prisma from '../../../lib/prisma';
 import { AxiosError } from 'axios';
 
@@ -14,6 +16,7 @@ const router = createRouter<NextApiRequestWithBodyData, NextApiResponse>();
 
 router
     //.use(isAuthenticated)
+    .use(expressWrapper(cors()))
     .patch(async (req, res) => {
         const { id } = req.query;
         const { userId } = req.body;

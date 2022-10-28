@@ -1,8 +1,9 @@
-import { createRouter } from 'next-connect';
+import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 // Middlewares
 import { isAuthenticated } from '../../../middlewares/apiAuthentication';
+import cors from "cors";
 
 // API
 import prisma from '../../../lib/prisma';
@@ -11,6 +12,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router
     //.use(isAuthenticated)
+    .use(expressWrapper(cors()))
     .post(async (req, res) => {
         console.log(req.body)
         try {

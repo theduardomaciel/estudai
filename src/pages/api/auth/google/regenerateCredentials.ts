@@ -1,11 +1,14 @@
-import { createRouter } from 'next-connect';
+import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+import cors from "cors";
 
 import { UserRefreshClient } from "google-auth-library";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router
+    .use(expressWrapper(cors()))
     .post(async (req, res) => {
         try {
             const { refreshToken } = req.body;

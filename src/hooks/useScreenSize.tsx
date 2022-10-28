@@ -17,10 +17,8 @@ export const useScreenSize = () => {
         const windowHeight = window.innerHeight;
 
         if (windowWidth >= WIDE_SIZE && !isScreenWide) {
-            console.log("Tela agora é larga.");
             setIsScreenWide(true);
         } else if (windowWidth < WIDE_SIZE && isScreenWide) {
-            console.log("Tela agora é pequena.");
             setIsScreenWide(false);
         }
         setScreenSize({

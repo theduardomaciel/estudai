@@ -15,7 +15,7 @@
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
 
     padding: 5rem 3.5rem;
@@ -24,6 +24,7 @@
     min-height: fit-content;
 
     overflow-y: scroll;
+    height: 100%;
 
     max-width: 50rem;
     background-color: var(--light);

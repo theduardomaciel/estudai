@@ -1,5 +1,8 @@
-import { createRouter } from 'next-connect';
+import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+// Middlewares
+import cors from "cors";
 
 // Services
 import getUser from '../../../services/getUser';
@@ -7,6 +10,7 @@ import getUser from '../../../services/getUser';
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router
+    .use(expressWrapper(cors()))
     .get(async (req, res) => {
         const { id } = req.query;
         try {

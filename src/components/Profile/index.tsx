@@ -82,7 +82,7 @@ export default function Profile({ user, onClick, showMenu }: Props) {
             <div className={styles.row2}>
                 <div className={styles.pendingReminder}>
                     <span className="material-symbols-rounded">notifications_active</span>
-                    <p>Você tem <span>{`${pendingTasksLength} atividade${pendingTasksLength !== 1 ? "s" : ""}`}</span> pendente{pendingTasksLength !== 1 ? "s" : ""} (de {pendingTasksLength + completedTasksLength})</p>
+                    <p>Você tem <span>{`${pendingTasksLength} atividade${pendingTasksLength !== 1 ? "s" : ""}`}</span> pendente{pendingTasksLength !== 1 ? "s" : ""}</p>
                     <div className={styles.progressHolder}>
                         <p>{completedPercentage}%</p>
                         <div className={styles.progressBar}>

@@ -17,8 +17,6 @@ const REDUCED_ALPHA_MESSAGE = "Este projeto ainda está em andamento."
 export default function Note({ tag, description, showOnlyInDesktop, showOnlyInMobile, ...rest }: Props) {
     const { isScreenWide } = useScreenSize();
 
-    console.log(description ? description : isScreenWide ? ALPHA_MESSAGE : REDUCED_ALPHA_MESSAGE)
-
     return <div className={`${styles.container} ${showOnlyInMobile ? styles.mobile : showOnlyInDesktop ? styles.desktop : ""}`} {...rest}>
         <div className={styles.tagHolder}>
             <p className={styles.tag}>{tag}</p>
