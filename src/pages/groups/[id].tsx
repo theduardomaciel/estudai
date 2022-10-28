@@ -27,6 +27,8 @@ import { api } from '../../lib/api';
 import { useRouter } from 'next/router';
 import getUser from '../../services/getUser';
 import { User } from '../../types/User';
+import Input, { InputLabel } from '../../components/Input';
+import Image from 'next/image';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
@@ -125,14 +127,14 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
             router.push(`/groups`)
         } catch (error) {
             setExitModalVisible('error')
+            setLoading(false)
         }
-        setLoading(false)
     }
 
     const actualDate = new Date();
     const now = actualDate.getTime();
 
-    const pendingTasks = user.tasks
+    const pendingTasks = group.tasks
         .filter((task, i) => {
             const notInteracted = task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true;
             if (task.date > now && notInteracted) {
@@ -142,6 +144,12 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
             }
         })
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
+
+    const concludedTasks = user.tasks
+        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
+        .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
+
+    const [isConfigModalVisible, setConfigModalVisible] = useState(false);
 
     return (
         <main className={styles.holder}>
@@ -178,33 +186,28 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         </div>
                         <div className={`${homeStyles.tasks}`}>
                             {
-                                group.tasks?.length > 0 ?
-                                    /* group.tasks.map((task, index) => <TaskView key={index} task={task} status={"pending"} />) */
-                                    actualSection === 'Pendente' ?
+                                actualSection === 'Pendente' ?
+                                    pendingTasks.length > 0 ?
                                         pendingTasks
                                         :
-                                        <>
-                                            <h5>Concluído</h5>
-                                            {
-                                                user.tasks
-                                                    .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
-                                                    .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
-                                            }
-                                            <h5>Expirado</h5>
-                                            {
-                                                user.tasks
-                                                    .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
-                                                    .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                            }
-                                            <h5>Arquivado</h5>
-                                            {
-                                                user.tasks
-                                                    .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
-                                                    .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                            }
-                                        </>
+                                        <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente neste grupo pra você :)`} />
                                     :
-                                    <EmptyTasksMessage description='Adicione uma nova tarefa a este grupo para que ela apareça aqui!' />
+                                    <>
+                                        <h5>Concluído</h5>
+                                        {concludedTasks}
+                                        <h5>Expirado</h5>
+                                        {
+                                            group.tasks
+                                                .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+                                                .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                        }
+                                        <h5>Arquivado</h5>
+                                        {
+                                            group.tasks
+                                                .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
+                                                .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                        }
+                                    </>
                             }
                         </div>
                     </div>
@@ -221,12 +224,12 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                             <div className={`${styles.tasksInfoContainer} ${styles.sidebarContainer}`}>
                                 <div>
                                     <p>Atividades pendentes</p>
-                                    <h6>3</h6>
+                                    <h6>{pendingTasks.length}</h6>
                                 </div>
                                 <Separator orientation='horizontal' />
                                 <div>
                                     <p>Atividades concluídas</p>
-                                    <h6>16</h6>
+                                    <h6>{concludedTasks.length}</h6>
                                 </div>
                             </div>
                             <div className={`${styles.sidebarContainer}`}>
@@ -236,6 +239,14 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                     icon={'share'}
                                     iconProps={{ size: "1.8rem" }}
                                     style={{ width: "100%", padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)" }}
+                                />
+                                <Button
+                                    title='CONFIGURAÇÕES'
+                                    onClick={() => setConfigModalVisible(true)}
+                                    icon={'tune'}
+                                    iconProps={{ size: "1.8rem", color: "var(--font-light)" }}
+                                    preset={"fillHover"}
+                                    style={{ width: "100%", padding: "1rem 1.5rem" }}
                                 />
                                 <Button
                                     title='SAIR DO GRUPO'
@@ -258,7 +269,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 color={`var(--primary-02)`}
                 title={'Olha aqui o link ó:'}
             >
-                <p>Compartilhe-o com outros usuários da plataforma para que ele possam entrar no grupo e participar de sua comunidade!
+                <p>Compartilhe-o com outros usuários da plataforma para que eles possam entrar no grupo e participar de sua comunidade!
                     <br />Tarefas enviadas em um grupo serão visíveis para todos que estiverem nele!
                 </p>
                 <div className={`${inputStyles.input} hoverLink`} onClick={onLinkClick}>
@@ -272,12 +283,61 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 icon={'exit_to_app'}
                 color={`var(--primary-02)`}
                 title={isExitModalVisible === 'default' ? 'Tem certeza que deseja sair do grupo?' : "Epa. Algo deu ruim."}
-                buttonText={"SAIR DO GRUPO"}
+                actionProps={{
+                    buttonText: "SAIR DO GRUPO",
+                    disabled: isExitModalVisible !== 'default',
+                    function: exitGroup
+                }}
                 suppressReturnButton={isExitModalVisible !== 'default'}
                 isLoading={isLoading}
-                actionFunction={isExitModalVisible === 'default' ? exitGroup : undefined}
                 description={isExitModalVisible === 'default' ? "Para voltar a participar do grupo será necessário ser convidado por um integrante ou administrador novamente." : "Por favor, tente novamente mais tarde. Caso o problema persista, nos avise :)"}
             >
+            </Modal>
+            <Modal
+                isVisible={isConfigModalVisible}
+                toggleVisibility={() => setConfigModalVisible(!isConfigModalVisible)}
+                icon={'tune'}
+                iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
+                color={`var(--primary-02)`}
+                actionProps={{
+                    buttonText: "SALVAR",
+                    buttonIcon: 'save',
+                    function: () => setConfigModalVisible(false)
+                }}
+            >
+                <Input label='Nome do Grupo' placeholder={group.name} />
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
+                    <InputLabel label='Mensagem Fixada' />
+                    <textarea className={inputStyles.input} style={{ height: "7.5rem" }} placeholder={group.pinnedMessage} />
+                </div>
+                <InputLabel label='Participantes' />
+                <div className={styles.membersContainer}>
+                    {
+                        group.users.map((user, index) => <li key={index} className={styles.groupMember}>
+                            <div className={'iconHolder'} style={{ gap: "1rem" }}>
+                                <Image src={user.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
+                                <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
+                            </div>
+
+                            <Button
+                                title='REMOVER PARTICIPANTE'
+                                iconProps={{ filled: true, size: '1.8rem' }}
+                                icon={'person_remove'}
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    padding: "0.5rem 1.25rem",
+                                    gap: "1.5rem",
+                                    backgroundColor: "var(--red-01)",
+                                    border: "none",
+                                    outline: "none"
+                                }}
+                                preset={"fillHover"}
+                            />
+                        </li>)
+                    }
+                </div>
             </Modal>
         </main>
     )

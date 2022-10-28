@@ -356,7 +356,7 @@ const Register: NextPage = () => {
                 <title>Criar uma conta</title>
             </Head>
             <div className={`${loginStyles.container} ${section === 3 ? loginStyles.fullScreen : ""}`} style={{ gap: "3.5rem" }}>
-                <Logo width={121.19} height={58.72} style={{ minHeight: 58 }} />
+                <Logo width={121.19} height={58.72} style={{ minHeight: 58 }} fill={`var(--primary-02)`} />
                 <AnimatePresence initial={false} custom={direction} mode="wait">
                     {sections[section]}
                 </AnimatePresence>

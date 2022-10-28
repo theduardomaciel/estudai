@@ -9,6 +9,10 @@ import styles from "./sidebar.module.css";
 // Authentication
 import { useAuth } from "../../contexts/AuthContext";
 
+// Icons
+import ClubIcon from "/public/icons/club.svg";
+import ClubOutlinedIcon from "/public/icons/club_outlined.svg";
+
 import LogoutModalPreset from "../Modal/Presets/LogoutModal";
 
 const sections = ["home", "groups", "settings"]
@@ -23,6 +27,7 @@ export default function Sidebar() {
 
     const dashboardButton = useRef<HTMLSpanElement | null>(null);
     const groupsButton = useRef<HTMLSpanElement | null>(null);
+    const clubButton = useRef<any | null>(null);
     const settingsButton = useRef<HTMLSpanElement | null>(null);
 
     function moveSectionBar(toSection: string) {
@@ -72,6 +77,19 @@ export default function Sidebar() {
             <Link href={"/groups"}>
                 <span ref={groupsButton} className={`material-symbols-rounded ${section === "groups" ? "filled" : "outlined"}`}>group</span>
             </Link>
+
+            {/* <Link href={"/club"}>
+                {
+                    section === "club" ?
+                        <div ref={clubButton}>
+                            <ClubIcon className={'click'} />
+                        </div>
+                        :
+                        <div ref={clubButton}>
+                            <ClubOutlinedIcon className={'click'} />
+                        </div>
+                }
+            </Link> */}
 
             {/* <Link href={"/settings"}>
                 <a href="">

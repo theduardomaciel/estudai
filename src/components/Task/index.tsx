@@ -75,7 +75,7 @@ export default function TaskView({ task, status }: TaskProps) {
         </>
     </div>
 
-    const borderStyle = `1px ${status !== "pending" ? 'dashed' : 'solid'} ${status === 'concluded' ? 'var(--green-01)' : status === 'expired' ? 'var(--red-01)' : 'var(--primary-04)'}`;
+    const borderStyle = `1px ${status !== "pending" ? 'double' : 'solid'} ${status === 'concluded' ? 'var(--green-01)' : status === 'expired' ? 'var(--red-01)' : 'var(--primary-04)'}`;
 
     if (isActivity(task.type)) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
@@ -102,7 +102,7 @@ export default function TaskView({ task, status }: TaskProps) {
                 </div>
                 <div className={`${styles.column} ${styles.two}`}>
                     {
-                        task.group && <UsersPortraitsFromTask message="já concluíram a atividade" groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+                        task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'concluíram' : 'concluiu'} a atividade`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
                     }
                     {
                         status === 'concluded' ? <Status icon="schedule" text="concluída no dia" color="var(--green-01)" /> :
@@ -158,7 +158,7 @@ export default function TaskView({ task, status }: TaskProps) {
                     </div>
                 </div>
                 <div className={`${styles.column} ${styles.two}`}>
-                    {task.group && <UsersPortraitsFromTask message={'já marcaram presença'} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />}
+                    {task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'marcaram' : 'marcou'} presença`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />}
                     {
                         status === 'concluded' ? <Status icon="schedule" text="Concluído" color="var(--green-01)" /> :
                             status === "expired" ? <Status icon="schedule" text="evento no dia" color="var(--red-01)" /> :

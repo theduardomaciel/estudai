@@ -196,13 +196,15 @@ const Groups = ({ user }: { user: User }) => {
                 iconProps={{ position: "flex-start", builtWithTitle: true, size: "3.8rem" }}
                 color={`var(--primary-02)`}
                 isLoading={isLoading}
-                buttonText={isCreateGroupModalVisible === 'default' ? 'Criar grupo' : "Entrar no grupo"}
-                actionFunction={isCreateGroupModalVisible === "default" ?
-                    () => createGroup() :
-                    isCreateGroupModalVisible === "success" ?
-                        () => router.push(`/groups/${createdGroup.current?.id}`) :
-                        undefined
-                }
+                actionProps={{
+                    buttonText: isCreateGroupModalVisible === 'default' ? 'Criar grupo' : "Entrar no grupo",
+                    function: isCreateGroupModalVisible === "default" ?
+                        () => createGroup() :
+                        isCreateGroupModalVisible === "success" ?
+                            () => router.push(`/groups/${createdGroup.current?.id}`) :
+                            undefined
+
+                }}
                 suppressReturnButton={isCreateGroupModalVisible === 'success'}
                 title={isCreateGroupModalVisible === 'default' ? "Criar grupo" :
                     isCreateGroupModalVisible === 'success' ? 'Eba! Deu tudo certo.' :

@@ -4,9 +4,6 @@ const withTM = require('next-transpile-modules')([/* 'react-dnd' */]) // or what
 module.exports = withTM({
     reactStrictMode: true,
     swcMinify: true,
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
 
     webpack(config) {
         config.module.rules.push({
@@ -24,6 +21,6 @@ module.exports = withTM({
         return config;
     },
     images: {
-        domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
+        domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com', 'github.com'],
     },
 })

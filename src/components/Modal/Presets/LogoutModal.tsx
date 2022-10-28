@@ -23,8 +23,10 @@ export default function LogoutModalPreset() {
             icon={'exit_to_app'}
             title={"Tem certeza que deseja sair?"}
             description={"Será necessário entrar com sua conta novamente para poder acessar a plataforma."}
-            buttonText="LOG-OUT"
-            actionFunction={logout}
+            actionProps={{
+                buttonText: "LOG-OUT",
+                function: logout
+            }}
             isLoading={isLoading}
         />,
         setLogoutModalVisible: setModalVisible

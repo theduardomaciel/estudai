@@ -265,6 +265,14 @@ input[type=number]::-webkit-outer-spin-button {
     transition: 0.3s;
 }
 
+.iconHolder {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+}
+
 /* @media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;

@@ -11,7 +11,11 @@ export default async function getGroup(id?: number, inviteLink?: string) {
                 },
                 include: {
                     users: true,
-                    tasks: true
+                    tasks: {
+                        include: {
+                            interactedBy: true
+                        }
+                    }
                 }
             })
         } else if (inviteLink) {

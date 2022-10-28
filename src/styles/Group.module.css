@@ -112,6 +112,8 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
+
+    padding-bottom: 3.5rem;
 }
 
 .sidebar .sidebarContent {
@@ -209,6 +211,39 @@
     font-style: normal;
     font-weight: 700;
     font-size: 3.6rem;
+}
+
+.membersContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    width: 100%;
+
+    max-height: 10rem;
+    overflow-y: scroll;
+}
+
+.membersContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.groupMember {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.groupMember p {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.4rem;
+
+    display: flex;
+    align-items: center;
+
+    color: var(--primary-04);
 }
 
 @media (min-width: 1024px) {

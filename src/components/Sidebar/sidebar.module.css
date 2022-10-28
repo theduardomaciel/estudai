@@ -32,6 +32,14 @@
     cursor: pointer;
 }
 
+.clubOutlined path {
+    fill: none;
+    stroke: white;
+    stroke-miterlimit: 5;
+    stroke-linejoin: round;
+    stroke-width: 3px;
+}
+
 @media (min-width: 1024px) {
     .container {
         position: fixed;

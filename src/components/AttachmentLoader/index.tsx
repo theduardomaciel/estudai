@@ -219,12 +219,14 @@ export default function AttachmentsLoader({ userId, attachments, setAttachments,
             icon={'link'}
             toggleVisibility={() => setLinksModalVisible(!isLinksModalVisible)}
             title={"Insira o link abaixo:"}
-            buttonText={"ADICIONAR"}
-            actionFunction={() => {
-                if (linkInputValue.current.length > 10 && isValidUrl(linkInputValue.current)) {
-                    setLinks(links.concat(linkInputValue.current))
-                    linkInputValue.current = ""
-                    setLinksModalVisible(false)
+            actionProps={{
+                buttonText: "ADICIONAR",
+                function: () => {
+                    if (linkInputValue.current.length > 10 && isValidUrl(linkInputValue.current)) {
+                        setLinks(links.concat(linkInputValue.current))
+                        linkInputValue.current = ""
+                        setLinksModalVisible(false)
+                    }
                 }
             }}
         >

@@ -131,7 +131,7 @@ export default function Focus({ }: Props) {
         }
     }
 
-    const Focus1 = <div className={styles.column} style={{ gap: "1rem", /* justifyContent: "space-between", height: focusFrameSize */ }}>
+    const Focus1 = () => <div className={styles.column} style={{ gap: "1rem", /* justifyContent: "space-between", height: focusFrameSize */ }}>
         <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
         <div className={'row'} style={{ gap: "1.5rem" }}>
             <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
@@ -214,7 +214,7 @@ export default function Focus({ }: Props) {
                                 <div className={styles.info}>
                                     <div className={styles.column} style={{ alignItems: "flex-end" }}>
                                         <h6>{actualSection}/{focusPauses + 1}</h6>
-                                        {focusPauses + 1 > 1 && <p>{timePerSection} minuto{Math.floor(timePerSection) !== 1 ? 's' : ""}</p>}
+                                        {focusPauses + 1 > 1 && <p>{Math.floor(timePerSection)} minuto{Math.floor(timePerSection) !== 1 ? 's' : ""}</p>}
                                     </div>
                                     {
                                         status as 'interval' | 'active' | 'inactive' !== "interval" && <span
@@ -258,32 +258,34 @@ export default function Focus({ }: Props) {
         </motion.div>
     }
 
-    return <AnimatePresence mode='sync'>
-        <form className={styles.focus} onSubmit={(event) => {
-            event.preventDefault();
-            StartFocus(event)
-        }}>
-            <div className={`row`}>
+    return <AnimatePresence mode='sync' initial={false}>
+        <form
+            className={styles.focus}
+            onSubmit={(event) => {
+                event.preventDefault();
+                StartFocus(event)
+            }}>
+            <motion.div
+                className={`row`}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={transition}
+            >
                 <h3>Foco</h3>
                 {
                     currentFocus &&
-                    <motion.div
-                        className={styles.focusInfo}
-                        variants={variants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={transition}
-                    >
+                    <div className={styles.focusInfo} >
                         <p className={styles.emoji}>{focusData[currentFocus.topicId].icon}</p>
                         <p>{focusData[currentFocus.topicId].title}</p>
-                    </motion.div>
+                    </div>
                 }
-            </div>
+            </motion.div>
             {
                 currentFocus !== null ?
                     <Focus2 focus={currentFocus} />
-                    : Focus1
+                    : <Focus1 />
             }
         </form>
     </AnimatePresence>

@@ -114,7 +114,7 @@ const Login: NextPage = () => {
                 <title>Login</title>
             </Head>
             <div className={`${styles.container} ${section !== null ? styles.fullScreen : ""}`}>
-                <Logo width={121.19} height={58.72} />
+                <Logo width={121.19} height={58.72} fill={`var(--primary-02)`} />
                 {
                     section === null ?
                         <>

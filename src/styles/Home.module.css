@@ -196,6 +196,8 @@
     font-style: normal;
     font-weight: 500;
 
+    white-space: pre-line;
+
     width: 50%;
 }
 

@@ -31,6 +31,7 @@ export default function LinkAttachment({ link, index, links, setLinks }: Props) 
             <a
                 href={link}
                 target={"_blank"}
+                rel="noreferrer"
                 className={`${fileStyles.fileName}`}
                 style={{ textDecoration: "underline", cursor: "pointer" }}
             >

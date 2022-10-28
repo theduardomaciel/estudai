@@ -60,7 +60,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 
     task.attachments?.map((attachment, index) => {
         const attachmentDate = new Date(attachment.createdAt as string);
-        console.log(attachmentDate)
         task.attachments[index].createdAt = Math.floor(attachmentDate.getTime()) as number;
         return task;
     })
@@ -88,6 +87,7 @@ import Modal from '../../components/Modal';
 import { parseCookies } from 'nookies';
 import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { group } from 'console';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
@@ -128,7 +128,7 @@ const Task = ({ task }: { task: Task }) => {
             </div>
             <p className={fileStyles.fileName}>{attachment.name}</p>
             <div className={styles.attachmentButtonsHolder}>
-                <a href={attachment.viewLink} target={"_blank"}>
+                <a href={attachment.viewLink} target={"_blank"} rel="noreferrer">
                     <Button
                         title='Visualizar'
                         icon={'visibility'}
@@ -194,10 +194,10 @@ const Task = ({ task }: { task: Task }) => {
     const tagsCount = (tagId: number) => task.attachments.filter((attachment, index) => attachment.tags.includes(tagId)).length;
 
     const attachmentsWithoutTag = task.attachments?.filter((attachment, index) => { return attachment.tags.length === 0 })
-    const attachmentsWithoutTagList = attachmentsWithoutTag.map((attachment, index) => <Tag index={index} attachment={attachment} />)
+    const attachmentsWithoutTagList = attachmentsWithoutTag.map((attachment, index) => <Tag key={index} index={index} attachment={attachment} />)
 
     const attachmentsWithTag = task.attachments.filter((attachment, index) => { return attachment.tags.length > 0 })
-    const attachmentsViewList = attachmentsWithTag.map((attachment, index) => <Tag index={index} attachment={attachment} />)
+    const attachmentsViewList = attachmentsWithTag.map((attachment, index) => <Tag key={index} index={index} attachment={attachment} />)
 
     const AttachmentsSection = ({ tagsSectionId }: SectionProps) => {
         const [name, icon] = getTagInfo(tagsSectionId)
@@ -255,7 +255,6 @@ const Task = ({ task }: { task: Task }) => {
 
         // Carregamento da interação com um attachment
         const attachmentsThatUserHasInteracted = task.attachments.map((attachment, index) => attachment.markedBy.find(user => user.id === parseInt(userId)) ? true : false)
-        console.warn(attachmentsThatUserHasInteracted)
         setAttachmentsInteracted(attachmentsThatUserHasInteracted)
     }, [])
 
@@ -292,6 +291,44 @@ const Task = ({ task }: { task: Task }) => {
         }
     }
 
+    // Test Type
+    const [isContentsModalVisible, setContentsModalVisible] = useState(false);
+    const subjectsText = useMemo(() => subjectsString(task.subjects), [])
+
+    // Activity and Event Type
+    const [isUsersModalVisible, setUsersModalVisible] = useState(false);
+
+    const usersModal = <Modal
+        isVisible={isUsersModalVisible}
+        toggleVisibility={() => setUsersModalVisible(!isUsersModalVisible)}
+        icon={'check'}
+        iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
+        color={`var(--primary-02)`}
+    >
+        <div className={styles.usersContainer}>
+            <header>
+                <div className={'iconHolder'}>
+                    <span className="material-symbols-rounded static">person</span>
+                    <p>Usuário</p>
+                </div>
+                <div className={'iconHolder'}>
+                    <span className="material-symbols-rounded static">calendar_today</span>
+                    <p>Data</p>
+                </div>
+            </header>
+            {
+                task.interactedBy.map((user, index) => <li key={index} className={styles.user}>
+                    <div className={'iconHolder'} style={{ gap: "1rem" }}>
+                        <Image src={user.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
+                        <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
+                    </div>
+
+                    <p>---</p>
+                </li>)
+            }
+        </div>
+    </Modal>
+
     if (isActivity) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
         const title = `${titleType} de ${name}`
@@ -311,10 +348,13 @@ const Task = ({ task }: { task: Task }) => {
                 <div className={styles.container}>
                     <div className='header'>
                         <Navigator directory={title} parentDirectory={task.group ? task.group.name : undefined} onClick={goToTaskGroup} />
-                        {/* <div className={styles.usersInfo}>
-                        <UsersPortraits imagesUrls={["https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png"]} />
-                        <p>+de <span>10 membros</span> já concluíram a atividade</p>
-                    </div> */}
+                        {
+                            task.interactedBy.length > 0 &&
+                            <div className={styles.usersInfo}>
+                                <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} position={'flex-end'} />
+                                <p>+ de <span onClick={() => setUsersModalVisible(true)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'concluíram' : 'concluiu'} a atividade</p>
+                            </div>
+                        }
                     </div>
                     <div className={styles.info}>
                         <div className={styles.column} style={{ justifyContent: "space-between" }}>
@@ -373,13 +413,11 @@ const Task = ({ task }: { task: Task }) => {
                     </div>
                     {attachmentsContainer}
                 </div>
+                {usersModal}
             </main>
         )
     } else if (isTest) {
         const title = `Avaliação ${task.type === "av1" ? 'Mensal' : "Bimestral"} ${`(${task.type.toUpperCase()})`}`;
-        const [isContentsModalVisible, setContentsModalVisible] = useState(false);
-
-        const subjectsText = useMemo(() => subjectsString(task.subjects), [])
 
         return (
             <main className={styles.holder}>
@@ -469,6 +507,13 @@ const Task = ({ task }: { task: Task }) => {
                 <div className={styles.container}>
                     <div className='header'>
                         <Navigator directory={task.title} parentDirectory={task.group ? task.group.name : undefined} onClick={goToTaskGroup} />
+                        {
+                            task.interactedBy.length > 0 &&
+                            <div className={styles.usersInfo}>
+                                <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} position={'flex-end'} />
+                                <p>+ de <span onClick={() => setUsersModalVisible(true)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'marcaram' : 'marcou'} presença</p>
+                            </div>
+                        }
                     </div>
                     <div className={styles.info}>
                         <div className={styles.column} style={{ justifyContent: "space-between" }}>
@@ -523,6 +568,7 @@ const Task = ({ task }: { task: Task }) => {
                     />
                     {attachmentsContainer}
                 </div>
+                {usersModal}
             </main>
         )
     } else {

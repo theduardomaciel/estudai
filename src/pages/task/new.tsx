@@ -561,6 +561,7 @@ export default function NewTask() {
                                                                 <div className={styles.dots}>
                                                                     {
                                                                         groups.map((group, i) => <div
+                                                                            key={i}
                                                                             className={groupVisible === i ? styles.selected : ""}
                                                                             onClick={() => setGroupVisible(i)}
                                                                         />)
@@ -591,11 +592,13 @@ export default function NewTask() {
                 icon={'cloud_upload'}
                 toggleVisibility={() => { modalVisible === "upload" ? setModalVisible('') : "upload" }}
                 suppressReturnButton
-                buttonText='ABRIR'
+                actionProps={{
+                    buttonText: "ABRIR",
+                    function: () => router.push(`/task/${modalVisible}`)
+                }}
                 isLoading={creatingTask}
                 title={creatingTask ? "Quase lá!" : "Estamos prontos!"}
                 description={creatingTask ? `Estamos apertando uns botões e enviando alguns dados para criar sua nova tarefa.\nEspera um pouco!` : "Pronto! A atividade foi criada :)"}
-                actionFunction={() => router.push(`/task/${modalVisible}`)}
             />
             <Modal
                 isVisible={modalVisible === 'error'}
