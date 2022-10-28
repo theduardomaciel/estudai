@@ -23,7 +23,8 @@
     padding: 4.5rem;
     gap: 2.5rem;
 
-    width: 50rem;
+    width: fit-content;
+    max-width: 90vw;
 
     text-align: center;
 
@@ -38,7 +39,7 @@
 
     overflow: visible;
 
-    width: 40rem;
+    max-width: 40rem;
     height: 18rem;
 }
 
@@ -95,4 +96,14 @@
     cursor: pointer;
     background-color: var(--light-gray);
     border-radius: 50%;
+}
+
+@media (min-width: 1024px) {
+    .container {
+        width: 50rem;
+    }
+
+    .imageHolder {
+        width: 40rem;
+    }
 }

@@ -88,6 +88,7 @@ import { parseCookies } from 'nookies';
 import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { group } from 'console';
+import { EmptyTasksMessage } from '../home';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
@@ -229,19 +230,25 @@ const Task = ({ task }: { task: Task }) => {
         </div>
         {
             section === "Anexos" ?
-                <div className={styles.attachmentsParentHolder}>
-                    {attachmentsWithoutTagList}
-                    {
-                        tagsNames.map((tagName, index) => {
-                            const count = tagsCount(index)
-                            return count > 0 && <AttachmentsSection key={index} tagsSectionId={index} />
-                        })
-                    }
-                </div>
+                attachmentsWithTag.length > 0 || attachmentsWithoutTag.length > 0 ?
+                    <div className={styles.attachmentsParentHolder}>
+                        {attachmentsWithoutTagList}
+                        {
+                            tagsNames.map((tagName, index) => {
+                                const count = tagsCount(index)
+                                return count > 0 && <AttachmentsSection key={index} tagsSectionId={index} />
+                            })
+                        }
+                    </div>
+                    :
+                    <EmptyTasksMessage description='Essa atividade ainda não possui anexos.' />
                 :
-                task.links.map((link, index) => {
-                    return <LinkAttachment key={index} link={link} index={index} />
-                })
+                task.links.length > 0 ?
+                    task.links.map((link, index) => {
+                        return <LinkAttachment key={index} link={link} index={index} />
+                    })
+                    :
+                    <EmptyTasksMessage description='Essa atividade ainda não possui links.' />
         }
     </>
 
@@ -311,10 +318,10 @@ const Task = ({ task }: { task: Task }) => {
                     <span className="material-symbols-rounded static">person</span>
                     <p>Usuário</p>
                 </div>
-                <div className={'iconHolder'}>
+                {/* <div className={'iconHolder'}>
                     <span className="material-symbols-rounded static">calendar_today</span>
                     <p>Data</p>
-                </div>
+                </div> */}
             </header>
             {
                 task.interactedBy.map((user, index) => <li key={index} className={styles.user}>
@@ -323,7 +330,7 @@ const Task = ({ task }: { task: Task }) => {
                         <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
                     </div>
 
-                    <p>---</p>
+                    {/* <p>---</p> */}
                 </li>)
             }
         </div>
@@ -351,7 +358,7 @@ const Task = ({ task }: { task: Task }) => {
                         {
                             task.interactedBy.length > 0 &&
                             <div className={styles.usersInfo}>
-                                <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} position={'flex-end'} />
+                                <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} />
                                 <p>+ de <span onClick={() => setUsersModalVisible(true)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'concluíram' : 'concluiu'} a atividade</p>
                             </div>
                         }
@@ -397,7 +404,7 @@ const Task = ({ task }: { task: Task }) => {
                             </div>
                         </div>
                     </div>
-                    <div className={styles.deadline} style={{ backgroundColor: daysToExpire < daysToRed ? 'var(--red-01)' : 'var(--primary-02)' }}>
+                    <div className={styles.deadline} style={{ backgroundColor: daysToExpire < daysToRed && daysToExpire > 0 ? 'var(--yellow-01)' : daysToExpire < 0 ? 'var(--red-01)' : 'var(--primary-02)' }}>
                         <p>
                             {
                                 daysToExpire < -1 ?
@@ -428,10 +435,6 @@ const Task = ({ task }: { task: Task }) => {
                 <div className={styles.container}>
                     <div className='header'>
                         <Navigator directory={title} parentDirectory={task.group ? task.group.name : undefined} onClick={goToTaskGroup} />
-                        {/* <div className={styles.usersInfo}>
-                        <UsersPortraits imagesUrls={["https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png", "https://github.com/theduardomaciel.png"]} />
-                        <p>+de <span>10 membros</span> já concluíram a atividade</p>
-                    </div> */}
                     </div>
                     <div className={styles.info}>
                         <div className={styles.column} style={{ justifyContent: "space-between" }}>
@@ -510,7 +513,7 @@ const Task = ({ task }: { task: Task }) => {
                         {
                             task.interactedBy.length > 0 &&
                             <div className={styles.usersInfo}>
-                                <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} position={'flex-end'} />
+                                <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} />
                                 <p>+ de <span onClick={() => setUsersModalVisible(true)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'marcaram' : 'marcou'} presença</p>
                             </div>
                         }

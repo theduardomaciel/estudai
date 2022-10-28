@@ -13,7 +13,7 @@
     --menu-width: 40rem;
 
     --sidebar-width: 10rem;
-    --sidebar-height: 10rem;
+    --sidebar-height: 7.5rem;
 
     --primary-01: #6628ca;
     --primary-02: #7642CB;
@@ -32,6 +32,8 @@
 
     --red-01: #FF0331;
     --red-02: #FE2950;
+
+    --yellow-01: #FFC803;
 
     --green-01: #6FCE5F;
 

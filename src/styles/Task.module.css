@@ -28,6 +28,10 @@
     /* Firefox */
 }
 
+/* .usersInfo {
+    width: 100%;
+} */
+
 .usersInfo p {
     font-family: 'Inter';
     font-style: normal;
@@ -150,6 +154,8 @@
     align-items: center;
     padding: 1.5rem 3.5rem;
     gap: 1rem;
+
+    text-align: center;
 
     width: 100%;
     flex-direction: row;

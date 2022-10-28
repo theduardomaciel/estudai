@@ -1,7 +1,7 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 
-import { useState } from 'react';
-import { parseCookies } from 'nookies';
+import { useState, useMemo } from 'react';
+import { parseCookies, setCookie } from 'nookies';
 
 import Head from 'next/head';
 import Link from 'next/link';
@@ -39,7 +39,7 @@ import { Task } from '../types/Task';
 
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
+    const { ['auth.token']: token, ['shown.modal']: shownModal } = parseCookies(context)
 
     console.warn(token, context.req.cookies)
     const userId = await getUserIdByToken(token as string);
@@ -53,6 +53,8 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
             },
         }
     }
+
+    setCookie(context, 'shown.modal', "true")
 
     let user = await getUser(userId as number, 'full') as unknown as User;
 
@@ -77,9 +79,12 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         return group;
     })
 
+    const alreadyShownIntroModal = shownModal === 'true' ? true : false;
+
     return {
         props: {
             user,
+            alreadyShownIntroModal
         }
     }
 }
@@ -115,7 +120,7 @@ export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) 
     </a>
 </Link>
 
-const Home = ({ user }: { user: User }) => {
+const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroModal: boolean }) => {
     const [menuOpened, setMenuOpened] = useState(false);
 
     function toggleMenu() {
@@ -154,6 +159,8 @@ const Home = ({ user }: { user: User }) => {
             }
         })
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
+
+    const focus = useMemo(() => <Focus />, [])
 
     return (
         <main>
@@ -232,7 +239,7 @@ const Home = ({ user }: { user: User }) => {
                 <div className={styles.menuHeader}>
                     <div className='row'>
                         <h3>Agenda</h3>
-                        <Button classes={styles.closeButton} icon={'close'} onClick={toggleMenu} style={{ padding: "0.25rem" }} />
+                        <Button classes={styles.closeButton} icon={'close'} onClick={toggleMenu} style={{ height: "3rem", width: "3rem", padding: 0 }} />
                     </div>
                     <Calendar userId={user.id} linkToCreate />
                     {/* <div className={styles.eventHolder} >
@@ -255,41 +262,44 @@ const Home = ({ user }: { user: User }) => {
                     </div> */}
                 </div>
 
-                <Focus />
+                {focus}
             </Menu>
-            {/* <LandingIntroModal sections={[
-                {
-                    title: 'Bem-vindo ao estudaí',
-                    description: "Estamos felizes em ter você por aqui.\n Acompanhe algumas dicas rápidas pra te fazer aproveitar todas as funcionalidades.",
-                    image_path: Modal1Image,
-                    imageSize: { height: 225, width: 400 }
-                },
-                {
-                    title: 'Organize seus estudos',
-                    description: "Salve atividades, avaliações e eventos na plataforma para evitar aquela correria momentos antes da data de entrega.",
-                    image_path: Modal2Image,
-                    imageSize: { height: 100, width: 400 }
-                },
-                {
-                    title: 'Mantenha-se em dia com seus compromissos',
-                    description: "Participe e crie grupos comunitários para unir aquela galera que tem os mesmos objetivos que você.",
-                    image_path: Modal3Image,
-                    imageSize: { height: 180, width: 400 }
-                },
-                {
-                    title: 'Acompanhe o progresso de suas tarefas',
-                    description: "Marque anexos e links enviados por outros usuários em tarefas e tenha o controle de quais materiais você já utilizou.",
-                    image_path: Modal4Image,
-                    imageSize: { height: 180, width: 400 }
-                },
-                {
-                    title: 'Desbrave e aproveite',
-                    description: "O estudaí é todo seu.\nAproveite todas as funcionalidades preparadas com carinho para você e bom aprendizado!\nfeito com ❤️ por @theduardomaciel",
-                    image_path: Modal5Image,
-                    marginTop: "3.5rem",
-                    imageSize: { height: 350, width: 400 }
-                }
-            ]} /> */}
+            {
+                !alreadyShownIntroModal &&
+                <LandingIntroModal sections={[
+                    {
+                        title: 'Bem-vindo ao estudaí',
+                        description: "Estamos felizes em ter você por aqui.\n Acompanhe algumas dicas rápidas pra te fazer aproveitar todas as funcionalidades.",
+                        image_path: Modal1Image,
+                        imageSize: { height: 225, width: 400 }
+                    },
+                    {
+                        title: 'Organize seus estudos',
+                        description: "Salve atividades, avaliações e eventos na plataforma para evitar aquela correria momentos antes da data de entrega.",
+                        image_path: Modal2Image,
+                        imageSize: { height: 100, width: 400 }
+                    },
+                    {
+                        title: 'Mantenha-se em dia com seus compromissos',
+                        description: "Participe e crie grupos comunitários para unir aquela galera que tem os mesmos objetivos que você.",
+                        image_path: Modal3Image,
+                        imageSize: { height: 180, width: 400 }
+                    },
+                    {
+                        title: 'Acompanhe o progresso de suas tarefas',
+                        description: "Marque anexos e links enviados por outros usuários em tarefas e tenha o controle de quais materiais você já utilizou.",
+                        image_path: Modal4Image,
+                        imageSize: { height: 180, width: 400 }
+                    },
+                    {
+                        title: 'Desbrave e aproveite',
+                        description: "O estudaí é todo seu.\nAproveite todas as funcionalidades preparadas com carinho para você e bom aprendizado!\nfeito com ❤️ por @theduardomaciel",
+                        image_path: Modal5Image,
+                        marginTop: "3.5rem",
+                        imageSize: { height: 350, width: 400 }
+                    }
+                ]} />
+            }
         </main>
     )
 }

@@ -155,7 +155,7 @@
 .usersHolder {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    /* align-items: flex-end; */
     justify-content: center;
 
     height: 100%;

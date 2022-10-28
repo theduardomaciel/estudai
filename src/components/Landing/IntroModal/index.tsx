@@ -63,13 +63,6 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
     const [[actualSection, direction], setActualSection] = useState([0, 1]);
 
     function hideModal() {
-        /* const modal = document.getElementById("introModal");
-        if (modal) {
-            modal.style.opacity = "0";
-            setTimeout(() => {
-                modal?.remove();
-            }, 500);
-        } */
         setActualSection([-1, 0])
     }
 
@@ -112,7 +105,13 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
                 transition={transition}
             >
                 <div className={styles.imageHolder} style={{ marginTop: section.marginTop ? section.marginTop : 0 }}>
-                    <Image src={section.image_path} height={section.imageSize.height} width={section.imageSize.width} priority alt='Imagem ilustrativa do modal' />
+                    <Image
+                        src={section.image_path}
+                        height={document.body.clientWidth && document.body.clientWidth < 576 ? section.imageSize.height / 1.25 : section.imageSize.height}
+                        width={document.body.clientWidth && document.body.clientWidth < 576 ? section.imageSize.width / 1.25 : section.imageSize.width}
+                        priority
+                        alt='Imagem ilustrativa do modal'
+                    />
                 </div>
                 <div className={styles.headerContainer}>
                     <h3>{section.title}</h3>

@@ -34,11 +34,6 @@ export function AppContextProvider({ children }: ContextProviderProps) {
         console.log("Modo de exibição alterado para: ", newViewMode)
     }
 
-    useEffect(() => {
-        const localStorageViewMode = window.localStorage.getItem('viewMode') as string;
-        localStorageViewMode && setViewMode(localStorageViewMode)
-    }, [])
-
     const [hasGoogleAuthentication, setGoogleAuthentication] = useState(true)
 
     const [isUploading, setUploading] = useState(false)

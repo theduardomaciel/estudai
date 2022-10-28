@@ -187,6 +187,7 @@ export default function Focus({ }: Props) {
                         value={focusMinutes}
                         label='Tempo de atividade'
                         /* placeholder='escolha um tempo confortável <3' */
+                        placeholder="60"
                         maxLength={5}
                         type={'text'}
                         height={'3.85rem'}
@@ -202,7 +203,7 @@ export default function Focus({ }: Props) {
         }
     </div>
 
-    const intervalTime = 1 * 15;
+    const intervalTime = 60 * 15;
 
     const Focus2 = ({ focus }: { focus: Focus }) => {
         const { actualCounter, status, isPaused, pauseCounter, resumeCounter, stopCounter } = useCountdown({ initialCounter: focus.totalTime, initialIntervalCounter: intervalTime, pauseInterval: pauseInterval })

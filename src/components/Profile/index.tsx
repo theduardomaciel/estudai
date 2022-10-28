@@ -84,7 +84,7 @@ export default function Profile({ user, onClick, showMenu }: Props) {
                     <span className="material-symbols-rounded">notifications_active</span>
                     <p>Você tem <span>{`${pendingTasksLength} atividade${pendingTasksLength !== 1 ? "s" : ""}`}</span> pendente{pendingTasksLength !== 1 ? "s" : ""}</p>
                     <div className={styles.progressHolder}>
-                        <p>{completedPercentage}%</p>
+                        <p>{Math.floor(completedPercentage)}%</p>
                         <div className={styles.progressBar}>
                             <div style={{ width: `${completedPercentage}%` }} />
                             <div />

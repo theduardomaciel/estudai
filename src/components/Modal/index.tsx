@@ -74,7 +74,7 @@ export default function Modal({ isVisible, toggleVisibility, color, isLoading, i
                                         </span>
                                     </div>
                                     {
-                                        iconProps?.builtWithTitle && <h2>{title}</h2>
+                                        iconProps?.builtWithTitle && <h2 style={{ textAlign: "left" }}>{title}</h2>
                                     }
                                 </div>
                                 {

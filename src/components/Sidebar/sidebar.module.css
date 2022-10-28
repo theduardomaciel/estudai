@@ -8,7 +8,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 3.5rem;
+    /* padding: 3.5rem; */
+    padding-inline: 4rem;
 
     border-right: 1px solid var(--background-02);
 
@@ -26,9 +27,6 @@
 .container span {
     font-size: 3.2rem;
     user-select: none;
-
-    margin-block-start: auto;
-
     cursor: pointer;
 }
 
@@ -53,6 +51,10 @@
         z-index: 4;
 
         padding: 5rem 3.5rem;
+    }
+
+    .container span {
+        margin-block-start: auto;
     }
 
     .container span:nth-child(2) {

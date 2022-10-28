@@ -33,9 +33,6 @@ import Image from 'next/image';
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
 
-    console.log(context.req.cookies);
-
-    console.log(token)
     const userId = await getUserIdByToken(token);
 
     if (userId === null) {
@@ -272,7 +269,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 <p>Compartilhe-o com outros usuários da plataforma para que eles possam entrar no grupo e participar de sua comunidade!
                     <br />Tarefas enviadas em um grupo serão visíveis para todos que estiverem nele!
                 </p>
-                <div className={`${inputStyles.input} hoverLink`} onClick={onLinkClick}>
+                <div className={`${inputStyles.input} hoverLink`} style={{ overflowX: "hidden" }} onClick={onLinkClick}>
                     <p ref={linkTextRef}>{url}</p>
                     <span className='material-symbols-rounded'>content_copy</span>
                 </div>
