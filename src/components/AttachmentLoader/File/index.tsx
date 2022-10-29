@@ -160,7 +160,7 @@ export default function File({ userId, attachmentIndex, attachments, setAttachme
     const fileInfo = useRef(attachments[attachmentIndex].fileId as File); // precisa ser fixo pois será trocado pelo id do objeto após o envio para o Google Drive
     const tags = attachments[attachmentIndex].tags;
 
-    async function removeAttachment() {
+    async function deleteFile() {
         const fileId = attachments[attachmentIndex].fileId;
         if (typeof fileId === "string") {
             setProgress(-5)
@@ -224,7 +224,7 @@ export default function File({ userId, attachmentIndex, attachments, setAttachme
                     progress === -5 ?
                         <Spinner color="var(--primary-02)" />
                         :
-                        <span className={`material-symbols-rounded ${styles.close}`} onClick={removeAttachment}>
+                        <span className={`material-symbols-rounded ${styles.close}`} onClick={deleteFile}>
                             close
                         </span>
                 }

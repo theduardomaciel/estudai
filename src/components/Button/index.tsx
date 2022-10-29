@@ -14,14 +14,15 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
         color?: string,
         position?: 'left' | 'right'
     }
+    disableHoverEffect?: boolean;
     isSelected?: boolean;
     preset?: 'sendForm' | 'fillHover'
 }
 
-const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, iconProps, isSelected, preset, children, ...rest }: ButtonProps, ref) {
+const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, iconProps, isSelected, preset, children, disableHoverEffect, ...rest }: ButtonProps, ref) {
     return <button
         type={preset === "sendForm" ? "submit" : "button"}
-        className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading ? styles.loading : ""} ${isSelected ? 'selected' : ""}`}
+        className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading ? styles.loading : ""} ${isSelected ? 'selected' : ""} ${disableHoverEffect ? styles.disableHoverEffect : ""}`}
         disabled={isLoading}
         {...rest}
     >

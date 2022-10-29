@@ -9,6 +9,7 @@ import styles from './styles.module.css';
 // Components
 import Button from '../../Button';
 import Image, { StaticImageData } from 'next/image';
+import { useScreenSize } from '../../../hooks/useScreenSize';
 
 interface Section {
     title: string;
@@ -60,6 +61,7 @@ const transition = {
 }
 
 export default function LandingIntroModal({ /* actualSection, setActualSection, */ sections }: Props) {
+    const { width } = useScreenSize();
     const [[actualSection, direction], setActualSection] = useState([0, 1]);
 
     function hideModal() {
@@ -107,8 +109,8 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
                 <div className={styles.imageHolder} style={{ marginTop: section.marginTop ? section.marginTop : 0 }}>
                     <Image
                         src={section.image_path}
-                        height={document.body.clientWidth && document.body.clientWidth < 576 ? section.imageSize.height / 1.25 : section.imageSize.height}
-                        width={document.body.clientWidth && document.body.clientWidth < 576 ? section.imageSize.width / 1.25 : section.imageSize.width}
+                        height={width < 576 ? section.imageSize.height / 1.25 : section.imageSize.height}
+                        width={width < 576 ? section.imageSize.width / 1.25 : section.imageSize.width}
                         priority
                         alt='Imagem ilustrativa do modal'
                     />

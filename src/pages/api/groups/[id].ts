@@ -30,6 +30,8 @@ router
         const groupId = parseInt(req.query.id as string);
         const userId = parseInt(req.body.userId);
 
+        const { name, pinnedMessage } = req.body;
+
         if (!userId || typeof userId === "string") {
             console.log('O ID do usuário não foi informado corretamente.')
             res.status(400).json({ error: "User id was not given correctly." })
@@ -44,74 +46,107 @@ router
             }
         })
 
-        if (user) {
-            const userIsInGroup = user.groups.find((group, i) => group.id === groupId) ? true : false;
+        const group = await prisma.group.findUnique({
+            where: {
+                id: groupId
+            }
+        })
 
-            if (userIsInGroup) {
-                try {
+        if (name || pinnedMessage) {
+            try {
+                if (pinnedMessage) {
                     await prisma.group.update({
                         where: {
                             id: groupId
                         },
                         data: {
-                            users: {
-                                disconnect: {
-                                    id: userId
-                                }
-                            }
+                            pinnedMessage: pinnedMessage
                         },
                     })
-                    res.status(200).json({ success: "User was removed from group with success!" })
-                } catch (err: any) {
-                    console.log(err)
-                    res.status(400).json({ error: "There was not possible to remove user from group.", serverError: err })
+                    console.log("Mensagem fixada atualizada.")
+                }
+                if (name) {
+                    await prisma.group.update({
+                        where: {
+                            id: groupId
+                        },
+                        data: {
+                            name: name
+                        },
+                    })
+                    console.log("Nome do grupo atualizado.")
+                }
+                res.status(200).json({ success: "Group info updated successfully!" })
+            } catch (err: any) {
+                console.log(err)
+                res.status(400).json({ error: "There was not possible to remove user from group.", serverError: err })
+            }
+        } else {
+            if (user) {
+                const userIsInGroup = user.groups.find((group, i) => group.id === groupId) ? true : false;
+
+                if (userIsInGroup) {
+                    try {
+                        await prisma.group.update({
+                            where: {
+                                id: groupId
+                            },
+                            data: {
+                                users: {
+                                    disconnect: {
+                                        id: userId
+                                    }
+                                }
+                            },
+                        })
+                        res.status(200).json({ success: "User was removed from group with success!" })
+                    } catch (err: any) {
+                        console.log(err)
+                        res.status(400).json({ error: "There was not possible to remove user from group.", serverError: err })
+                    }
+                } else {
+                    try {
+                        await prisma.group.update({
+                            where: {
+                                id: groupId
+                            },
+                            data: {
+                                users: {
+                                    connect: {
+                                        id: userId
+                                    }
+                                }
+                            },
+                        })
+                        res.status(200).json({ success: "User was added to group with success!" })
+                    } catch (err: any) {
+                        console.log(err)
+                        res.status(400).json({ error: "There was not possible to add user to group.", serverError: err })
+                    }
                 }
             } else {
                 try {
-                    await prisma.group.update({
+
+
+                    if (group?.admins.indexOf(userId) === -1) {
+                        res.status(400).json({ error: "You have not enough permissions for updating group info." })
+                    }
+
+                    const { name, isPrivate } = req.body;
+
+                    const task = await prisma.group.update({
                         where: {
                             id: groupId
                         },
                         data: {
-                            users: {
-                                connect: {
-                                    id: userId
-                                }
-                            }
+                            pinnedMessage: req.body.pinnedMessage
                         },
                     })
-                    res.status(200).json({ success: "User was added to group with success!" })
+                    res.status(200).json(task)
                 } catch (err: any) {
                     console.log(err)
-                    res.status(400).json({ error: "There was not possible to add user to group.", serverError: err })
+                    res.status(400).json({ error: "One or more body elements were incorrectly written.", serverError: err })
                 }
-            }
-        } else {
-            try {
-                const group = await prisma.group.findUnique({
-                    where: {
-                        id: groupId
-                    }
-                })
-
-                if (group?.admins.indexOf(userId) === -1) {
-                    res.status(400).json({ error: "You have not enough permissions for updating group info." })
-                }
-
-                const { name, isPrivate } = req.body;
-
-                const task = await prisma.group.update({
-                    where: {
-                        id: groupId
-                    },
-                    data: {
-                        pinnedMessage: req.body.pinnedMessage
-                    },
-                })
-                res.status(200).json(task)
-            } catch (err: any) {
-                console.log(err)
-                res.status(400).json({ error: "One or more body elements were incorrectly written.", serverError: err })
             }
         }
     })

@@ -12,6 +12,7 @@ import { setCookie } from 'nookies';
 
 // Middlewares
 import cors from "cors";
+import refreshToken from '../../../services/refreshToken';
 
 const url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable';
 
@@ -24,17 +25,16 @@ router
 
         console.log(req.cookies);
 
-        let googleToken = req.cookies['auth.googleAccessToken'];
         const googleRefreshToken = req.cookies['auth.googleRefreshToken'];
         const appToken = req.cookies['auth.token'];
 
         const api = getAPIClient(undefined, appToken)
 
-        async function returnURL() {
+        async function returnURL(token: string) {
             const body = JSON.stringify(meta);
             const response = await axios.post(url, body, {
                 headers: {
-                    'Authorization': `Bearer ${googleToken}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json; charset=UTF-8'
                 }
             })
@@ -45,49 +45,16 @@ router
 
         if (meta) {
             try {
-                await returnURL()
+                const googleToken = req.cookies['auth.googleAccessToken'] as string;
+                await returnURL(googleToken)
             } catch (err: any) {
                 const error = err as AxiosError;
                 if (error.response?.status == 401) {
-                    console.log("O token de acesso ao Google do usuário expirou, obtendo um novo...")
-
-                    try {
-                        const response = await api.post(`/auth/google/regenerateCredentials`, { refreshToken: googleRefreshToken })
-                        if (response.status === 200) {
-                            console.log(`Novas credenciais obtidas com sucesso. Aplicando-as...`)
-
-                            // Obtemos as novas credenciais
-                            const newCredentials = response.data as Credentials;
-                            console.log(newCredentials, "Novas credenciais.")
-
-                            // Atualizamos o token Google na conta do usuário
-                            await prisma.account.update({
-                                where: {
-                                    userId: parseInt(userId)
-                                },
-                                data: {
-                                    google_access_token: newCredentials.access_token,
-                                    google_refresh_token: newCredentials.refresh_token,
-                                    expires_at: newCredentials.expiry_date
-                                }
-                            })
-
-                            // Atualizamos o token Google na função
-                            googleToken = newCredentials.access_token as string;
-                            console.log(newCredentials.access_token, "token novo")
-
-                            setCookie({ res }, 'auth.googleAccessToken', newCredentials.access_token as string, {
-                                maxAge: 60 * 60 * 24 * 30 * 12 * 180,
-                            })
-
-                            await returnURL();
-                        } else {
-                            console.log(error)
-                            res.status(401).send({ error: 'Google refresh and access token expired.' })
-                        }
-                    } catch (error: any) {
-                        console.log(error)
-                        res.status(401).send({ error: error.response.statusCode })
+                    const newAccessToken = await refreshToken(res, userId, googleRefreshToken as string)
+                    if (newAccessToken) {
+                        await returnURL(newAccessToken);
+                    } else {
+                        res.status(401).send({ error: 'Google refresh and access token expired.' })
                     }
                 }
             }

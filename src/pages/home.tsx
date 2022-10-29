@@ -41,6 +41,11 @@ import { Task } from '../types/Task';
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token, ['shown.modal']: shownModal } = parseCookies(context)
 
+    context.res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=60, stale-while-revalidate=59'
+    )
+
     console.warn(token, context.req.cookies)
     const userId = await getUserIdByToken(token as string);
 
@@ -183,8 +188,9 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                 <div className={styles.subheader}>
                     <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
                     <Button
-                        style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }}
+                        style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
                         icon={'filter_alt'}
+                        disableHoverEffect={true}
                         iconProps={{ size: "2.2rem" }}
                         title='Filtrar'
                     />

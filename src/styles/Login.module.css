@@ -15,10 +15,10 @@
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 
-    padding: 5rem 3.5rem;
+    padding: 8.5rem 3.5rem;
     /* gap: 3.5rem; */
     gap: 5rem;
     min-height: fit-content;

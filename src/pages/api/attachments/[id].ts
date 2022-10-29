@@ -6,7 +6,8 @@ import { isAuthenticated } from '../../../middlewares/apiAuthentication';
 import cors from "cors";
 
 import prisma from '../../../lib/prisma';
-import { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import refreshToken from '../../../services/refreshToken';
 
 // API
 
@@ -83,6 +84,56 @@ router
             if (error.response) {
                 res.status(500).json({ error: error.response.statusText })
             }
+        }
+    })
+    .delete(async (req, res) => {
+        const { id } = req.query;
+
+        const attachment = await prisma.attachment.findUnique({
+            where: {
+                id: id as string
+            }
+        })
+
+        async function deleteAttachment(token: string) {
+            const headers = {
+                'Authorization': `Bearer ${token}`
+            };
+
+            const response = await axios.delete(`https://www.googleapis.com/drive/v3/files/${attachment?.fileId}`, { headers: headers }) as AxiosResponse;
+            console.log(`Arquivo de id ${attachment?.fileId} removido com sucesso!`)
+
+            if (response) {
+                try {
+                    await prisma.attachment.delete({
+                        where: {
+                            id: id as string,
+                        },
+                    })
+                    res.status(200).json({ success: "Attachment removed successfully." })
+                } catch (error) {
+                    console.log(error)
+                    res.status(500).json({ error: 'We could delete the file, but was not possible to delete the attachment.' })
+                }
+            } else {
+                res.status(500).json({ error: 'There was not possible to delete the attachment file.' })
+            }
+        }
+
+        const googleRefreshToken = req.cookies['auth.googleRefreshToken'];
+        const userId = parseInt(req.cookies['app.userId'] as string);
+
+        try {
+            const token = req.cookies['auth.googleAccessToken'] as string;
+            await deleteAttachment(token)
+        } catch (error) {
+            const newAccessToken = await refreshToken(res, userId, googleRefreshToken as string)
+            if (newAccessToken) {
+                await deleteAttachment(newAccessToken)
+            } else {
+                res.status(401).send({ error: 'Google refresh and access token expired.' })
+            }
+
         }
     })
 

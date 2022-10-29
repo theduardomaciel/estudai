@@ -29,11 +29,11 @@
     cursor: not-allowed;
 }
 
-.button:not(.sendForm):not(.fillHover):not(.loading):hover {
+.button:not(.sendForm):not(.fillHover):not(.loading):not(.disableHoverEffect):hover {
     outline: 2px solid var(--primary-04);
 }
 
-.button:not(.sendForm):not(.fillHover):not(.loading):active {
+.button:not(.sendForm):not(.fillHover):not(.loading):not(.disableHoverEffect):active {
     outline: 2px solid var(--light);
     transition: 0.1s;
 }

@@ -10,7 +10,8 @@ export default async function getTask(id: number) {
                 createdBy: true,
                 attachments: {
                     include: {
-                        markedBy: true
+                        uploadedBy: true,
+                        markedBy: true,
                     },
                 },
                 group: true,

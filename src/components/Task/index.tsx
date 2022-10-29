@@ -15,7 +15,7 @@ export const isActivity = (type: string) => type === 'obligatory' || type === "e
 export const isTest = (type: string) => type === 'av1' || type === "av2" || type === "recuperation";
 export const taskGroupType = (type: string) => { return [isActivity(type), isTest(type)] };
 
-export const taskType = (type: string | undefined) => type === "obligatory" ? 'AV3' : 'Eletiva'
+export const taskType = (type: string | undefined) => type === "obligatory" ? 'AV3' : type === "elective" ? 'Eletiva' : type === "av1" ? 'AV1' : type === 'av2' ? 'AV2' : "AV"
 export const taskMode = (mode: string | undefined) => mode === "written" ? "Escrita" : mode === "typed" ? "Digitada" : mode === "both" ? "Escrito ou Digitado" : "Livre"
 export const taskMaxScore = (score: number | undefined) => `${score}${score?.toString().length === 1 ? ",0" : ""} pontos`
 

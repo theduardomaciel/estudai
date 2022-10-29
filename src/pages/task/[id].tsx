@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useMemo, useState } from 'react';
+import React, { SetStateAction, useEffect, useMemo, useState, Dispatch } from 'react';
 
 import Head from 'next/head';
 import type { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next'
@@ -82,13 +82,13 @@ import fileStyles from "../../components/AttachmentLoader/File/styles.module.css
 import LinkAttachment from '../../components/AttachmentLoader/Link';
 import { Attachment } from '../../types/Attachment';
 import Modal from '../../components/Modal';
+import { EmptyTasksMessage } from '../home';
 
 // Authentication
 import { parseCookies } from 'nookies';
 import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { group } from 'console';
-import { EmptyTasksMessage } from '../home';
+import Spinner from '../../components/Spinner';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
@@ -103,11 +103,38 @@ const Task = ({ task }: { task: Task }) => {
     const [isActivity, isTest] = taskGroupType(task.type);
     const titleType = isActivity ? "Atividade" : isTest ? "Avaliação" : "Evento"
 
+    const [attachments, setAttachments] = useState(task.attachments);
     const [attachmentsInteracted, setAttachmentsInteracted] = useState<Array<boolean | string>>(['loading'])
+
+    const [attachmentFromDetailsModal, setAttachmentFromDetailsModal] = useState<null | Attachment>(null);
+
+    async function removeAttachment(attachment: Attachment, attachmentIndex: number, setAttachmentLoading: Dispatch<SetStateAction<boolean>>) {
+        setAttachmentLoading(true)
+        const deleteResponse = await api.delete(`/attachments/${attachment.id}`)
+
+        try {
+            if (deleteResponse.status === 200) {
+                let array = [...attachments];
+                array.splice(attachmentIndex, 1);
+                setAttachments(array)
+                console.log(`Anexo ${attachmentIndex} removido com sucesso.`)
+            } else {
+                console.log("Não foi possível remover o anexo")
+            }
+            setAttachmentLoading(false)
+        } catch (error) {
+            console.log(error)
+            setAttachmentLoading(false)
+        }
+    }
 
     function Tag({ attachment, index, ...rest }: TagComponentProps) {
         const [isAttachmentLoading, setAttachmentLoading] = useState(attachmentsInteracted[0] === 'loading');
         const attachmentInteracted = attachmentsInteracted[index] === true;
+
+        const [isAttachmentOwner, setIsAttachmentOwner] = useState(false);
+
+        useEffect(() => setIsAttachmentOwner(attachment.uploadedBy.id === parseInt(userId)))
 
         return <li key={index} className={fileStyles.attachment} style={{ maxWidth: "fit-content" }} {...rest} >
             <div className={fileStyles.header}>
@@ -115,17 +142,29 @@ const Task = ({ task }: { task: Task }) => {
                     attachment.type == "application/pdf" ?
                         <PDFAttachment className={fileStyles.icon} />
                         :
-                        attachment.type === 'image/jpeg' ?
+                        attachment.type === 'image/jpeg' || attachment.type === "image/png" ?
                             <ImgAttachment className={fileStyles.icon} />
                             :
                             <DocAttachment className={fileStyles.icon} />
                 }
-                {/* {
-                attachment.createdBy?.id === 123 &&
-                <span className={`material-symbols-rounded ${fileStyles.close}`} onClick={removeAttachment}>
-                    close
-                </span>
-            } */}
+                <div style={{ display: "flex", flexDirection: "row", gap: "1rem", alignItems: "center", justifyContent: "center" }}>
+                    <span
+                        className={`material-symbols-rounded ${fileStyles.close}`}
+                        onClick={() => setAttachmentFromDetailsModal(attachment)}
+                        style={{ fontSize: "1.8rem" }}
+                    >
+                        info
+                    </span>
+                    {
+                        isAttachmentOwner &&
+                            isAttachmentLoading ?
+                            <Spinner color='var(--primary-02)' size={1.5} />
+                            :
+                            <span className={`material-symbols-rounded ${fileStyles.close}`} onClick={() => removeAttachment(attachment, index, setAttachmentLoading)} style={{ fontSize: "2rem" }}>
+                                close
+                            </span>
+                    }
+                </div>
             </div>
             <p className={fileStyles.fileName}>{attachment.name}</p>
             <div className={styles.attachmentButtonsHolder}>
@@ -161,6 +200,10 @@ const Task = ({ task }: { task: Task }) => {
                 isLoading={isAttachmentLoading || attachmentInteracted === null}
                 onClick={() => toggleAttachmentInteraction(attachment.id, index, setAttachmentLoading)}
             />
+            <div className={'iconHolder'} style={{ fontSize: "1.4rem", color: "var(--primary-02)", fontWeight: 600, fontFamily: "Inter" }}>
+                <span style={{ fontSize: "1.6rem" }} className="material-symbols-rounded static">check_circle</span>
+                <p style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => setUsersModalVisible(attachment)}>{attachment.markedBy.length}</p>
+            </div>
         </li>
     }
 
@@ -192,12 +235,12 @@ const Task = ({ task }: { task: Task }) => {
         setAttachmentLoading(false)
     }
 
-    const tagsCount = (tagId: number) => task.attachments.filter((attachment, index) => attachment.tags.includes(tagId)).length;
+    const tagsCount = (tagId: number) => attachments.filter((attachment, index) => attachment.tags.includes(tagId)).length;
 
-    const attachmentsWithoutTag = task.attachments?.filter((attachment, index) => { return attachment.tags.length === 0 })
+    const attachmentsWithoutTag = attachments.filter((attachment, index) => { return attachment.tags.length === 0 })
     const attachmentsWithoutTagList = attachmentsWithoutTag.map((attachment, index) => <Tag key={index} index={index} attachment={attachment} />)
 
-    const attachmentsWithTag = task.attachments.filter((attachment, index) => { return attachment.tags.length > 0 })
+    const attachmentsWithTag = attachments.filter((attachment, index) => { return attachment.tags.length > 0 })
     const attachmentsViewList = attachmentsWithTag.map((attachment, index) => <Tag key={index} index={index} attachment={attachment} />)
 
     const AttachmentsSection = ({ tagsSectionId }: SectionProps) => {
@@ -261,7 +304,7 @@ const Task = ({ task }: { task: Task }) => {
         }) ? true : false)
 
         // Carregamento da interação com um attachment
-        const attachmentsThatUserHasInteracted = task.attachments.map((attachment, index) => attachment.markedBy.find(user => user.id === parseInt(userId)) ? true : false)
+        const attachmentsThatUserHasInteracted = attachments.map((attachment, index) => attachment.markedBy.find(user => user.id === parseInt(userId)) ? true : false)
         setAttachmentsInteracted(attachmentsThatUserHasInteracted)
     }, [])
 
@@ -303,11 +346,11 @@ const Task = ({ task }: { task: Task }) => {
     const subjectsText = useMemo(() => subjectsString(task.subjects), [])
 
     // Activity and Event Type
-    const [isUsersModalVisible, setUsersModalVisible] = useState(false);
+    const [isUsersModalVisible, setUsersModalVisible] = useState<boolean | Attachment>(false);
 
     const usersModal = <Modal
-        isVisible={isUsersModalVisible}
-        toggleVisibility={() => setUsersModalVisible(!isUsersModalVisible)}
+        isVisible={isUsersModalVisible !== false}
+        toggleVisibility={() => setUsersModalVisible(false)}
         icon={'check'}
         iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
         color={`var(--primary-02)`}
@@ -324,7 +367,7 @@ const Task = ({ task }: { task: Task }) => {
                 </div> */}
             </header>
             {
-                task.interactedBy.map((user, index) => <li key={index} className={styles.user}>
+                typeof isUsersModalVisible !== "boolean" ? isUsersModalVisible.markedBy.map((user, index) => <li key={index} className={styles.user}>
                     <div className={'iconHolder'} style={{ gap: "1rem" }}>
                         <Image src={user.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
                         <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
@@ -332,9 +375,52 @@ const Task = ({ task }: { task: Task }) => {
 
                     {/* <p>---</p> */}
                 </li>)
+                    :
+                    task.interactedBy.map((user, index) => <li key={index} className={styles.user}>
+                        <div className={'iconHolder'} style={{ gap: "1rem" }}>
+                            <Image src={user.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
+                            <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
+                        </div>
+
+                        {/* <p>---</p> */}
+                    </li>)
             }
         </div>
     </Modal>
+
+    const attachmentInfoModal = <Modal
+        isVisible={attachmentFromDetailsModal !== null}
+        toggleVisibility={() => setAttachmentFromDetailsModal(null)}
+        icon={'add_to_drive'}
+        iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
+        color={`var(--primary-02)`}
+    >
+        {
+            attachmentFromDetailsModal &&
+            <div className={styles.usersContainer}>
+                <header>
+                    <div className={'iconHolder'}>
+                        <span className="material-symbols-rounded static">person</span>
+                        <p>enviado por</p>
+                    </div>
+                    <div className={'iconHolder'}>
+                        <span className="material-symbols-rounded static">calendar_today</span>
+                        <p>Data</p>
+                    </div>
+                </header>
+                <div className={styles.user}>
+                    <div className={'iconHolder'} style={{ gap: "1rem" }}>
+                        <Image src={attachmentFromDetailsModal.uploadedBy.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
+                        <p style={{ width: "fit-content" }}>{`${attachmentFromDetailsModal.uploadedBy.firstName} ${attachmentFromDetailsModal.uploadedBy.lastName}`}</p>
+                    </div>
+
+                    <p>{formatDate(attachmentFromDetailsModal.createdAt as number)}</p>
+                </div>
+            </div>
+        }
+    </Modal>
+
+    const [isEditModalVisible, setEditModalVisible] = useState(false);
 
     if (isActivity) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
@@ -421,6 +507,7 @@ const Task = ({ task }: { task: Task }) => {
                     {attachmentsContainer}
                 </div>
                 {usersModal}
+                {attachmentInfoModal}
             </main>
         )
     } else if (isTest) {
@@ -461,7 +548,10 @@ const Task = ({ task }: { task: Task }) => {
                                 onClick={() => setContentsModalVisible(true)}
                             />
                             <div className={styles.taskInfo}>
-                                <p>{taskType(task.type)}</p>
+                                <div className={'iconHolder'} >
+                                    <span className="material-symbols-rounded static" style={{ color: "var(--primary-02)", fontSize: "1.6rem" }}>calendar_today</span>
+                                    <p>{formatDate(task.date)}</p>
+                                </div>
                                 <Separator orientation='vertical' />
                                 <p>{task.questionsAmount + " questões"}</p>
                                 <Separator orientation='vertical' />
@@ -495,6 +585,25 @@ const Task = ({ task }: { task: Task }) => {
                         }
                     </div>
                 </Modal>
+                {/* <Modal
+                    icon={'apps'}
+                    isVisible={isEditModalVisible}
+                    toggleVisibility={() => setEditModalVisible(!isEditModalVisible)}
+                    color={"var(--primary-02)"}
+                    iconProps={{ position: "flex-start", size: '3.2rem' }}
+                >
+                    <div className={styles.contentsHolder}>
+                        <Button
+                            title='EXCLUIR AVALIAÇÃO'
+                            style={{
+                                width: "100%",
+                                backgroundColor: "var(--red-01)",
+                                padding: "1rem 2.5rem"
+                            }}
+                        />
+                    </div>
+                </Modal> */}
+                {attachmentInfoModal}
             </main>
         )
     } else if (task.title) {
@@ -572,6 +681,7 @@ const Task = ({ task }: { task: Task }) => {
                     {attachmentsContainer}
                 </div>
                 {usersModal}
+                {attachmentInfoModal}
             </main>
         )
     } else {

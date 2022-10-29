@@ -12,5 +12,5 @@ export type Attachment = {
 
     markedBy: Array<User>;
     createdAt: Date | string | number;
-    createdBy?: User;
+    uploadedBy: User;
 }

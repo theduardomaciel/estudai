@@ -147,6 +147,27 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
 
     const [isConfigModalVisible, setConfigModalVisible] = useState(false);
+    const [newPinnedMessage, setNewPinnedMessage] = useState(group.pinnedMessage);
+    const [newGroupName, setNewGroupName] = useState(group.name);
+
+    const hasDeviantInfo = newPinnedMessage !== group.pinnedMessage || newGroupName !== group.name
+
+    async function updateGroup() {
+        setLoading(true)
+
+        try {
+            const response = await api.patch(`/groups/${group.id}`, { userId: user.id, name: newGroupName, pinnedMessage: newPinnedMessage })
+            if (response) {
+                router.push(`/groups/${group.id}`)
+            } else {
+                setConfigModalVisible(false)
+            }
+            setLoading(false)
+        } catch (error) {
+            setExitModalVisible('error')
+            setLoading(false)
+        }
+    }
 
     return (
         <main className={styles.holder}>
@@ -175,8 +196,9 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         <div className={homeStyles.subheader}>
                             <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
                             <Button
-                                style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem" }}
+                                style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
                                 icon={'filter_alt'}
+                                disableHoverEffect
                                 iconProps={{ size: "2.2rem" }}
                                 title='Filtrar'
                             />
@@ -294,18 +316,40 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 isVisible={isConfigModalVisible}
                 toggleVisibility={() => setConfigModalVisible(!isConfigModalVisible)}
                 icon={'tune'}
+                isLoading={isLoading}
                 iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
                 color={`var(--primary-02)`}
                 actionProps={{
                     buttonText: "SALVAR",
                     buttonIcon: 'save',
-                    function: () => setConfigModalVisible(false)
+                    disabled: !hasDeviantInfo,
+                    function: updateGroup
                 }}
             >
-                <Input label='Nome do Grupo' placeholder={group.name} />
+                <Input label='Nome do Grupo' placeholder={group.name}
+                    onChange={(event) => {
+                        if (event.currentTarget.value.length === 0) {
+                            setNewGroupName(group.name)
+                        } else {
+                            setNewGroupName(event.currentTarget.value)
+                        }
+                    }}
+                />
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
                     <InputLabel label='Mensagem Fixada' />
-                    <textarea className={inputStyles.input} style={{ height: "7.5rem" }} placeholder={group.pinnedMessage} />
+                    <textarea
+                        className={inputStyles.input}
+                        style={{ height: "7.5rem" }}
+                        maxLength={250}
+                        defaultValue={group.pinnedMessage}
+                        onChange={(event) => {
+                            if (event.currentTarget.value.length === 0) {
+                                setNewPinnedMessage(group.pinnedMessage)
+                            } else {
+                                setNewPinnedMessage(event.currentTarget.value)
+                            }
+                        }}
+                    />
                 </div>
                 <InputLabel label='Participantes' />
                 <div className={styles.membersContainer}>
@@ -316,22 +360,25 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                 <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
                             </div>
 
-                            <Button
-                                title='REMOVER PARTICIPANTE'
-                                iconProps={{ filled: true, size: '1.8rem' }}
-                                icon={'person_remove'}
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    padding: "0.5rem 1.25rem",
-                                    gap: "1.5rem",
-                                    backgroundColor: "var(--red-01)",
-                                    border: "none",
-                                    outline: "none"
-                                }}
-                                preset={"fillHover"}
-                            />
+                            {
+                                !group.admins.find((userId, i) => userId === user.id) &&
+                                <Button
+                                    title='REMOVER PARTICIPANTE'
+                                    iconProps={{ filled: true, size: '1.8rem' }}
+                                    icon={'person_remove'}
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        padding: "0.5rem 1.25rem",
+                                        gap: "1.5rem",
+                                        backgroundColor: "var(--red-01)",
+                                        border: "none",
+                                        outline: "none"
+                                    }}
+                                    preset={"fillHover"}
+                                />
+                            }
                         </li>)
                     }
                 </div>

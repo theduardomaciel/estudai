@@ -66,6 +66,12 @@ const Landing: NextPage = () => {
                 <title>estudaí</title>
             </Head>
             <LandingHeader />
+            <StarIcon className={styles.star} />
+            <PiIcon className={styles.pi} />
+            <EnergyIcon className={styles.energy} />
+            <PaperPlaneIcon className={styles.paperPlane} />
+            <BaskharaIcon className={styles.baskhara} />
+            <StarIcon className={styles.star2} />
             <div className={styles.container}>
                 <Note showOnlyInMobile tag='ALPHA' />
                 <div className={styles.title}>
@@ -76,18 +82,12 @@ const Landing: NextPage = () => {
                         icon={'arrow_right_alt'}
                         title={"Criar uma conta"}
                         onClick={() => router.push(`/auth/register`)}
-                        style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse" }}
+                        style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse", zIndex: 5 }}
                     />
                     {/* </Link> */}
                 </div>
                 <Device />
             </div>
-            <StarIcon className={styles.star} />
-            <PiIcon className={styles.pi} />
-            <EnergyIcon className={styles.energy} />
-            <PaperPlaneIcon className={styles.paperPlane} />
-            <BaskharaIcon className={styles.baskhara} />
-            <StarIcon className={styles.star2} />
         </main>
     )
 }

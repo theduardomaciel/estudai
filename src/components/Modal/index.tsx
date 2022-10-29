@@ -124,10 +124,12 @@ export default function Modal({ isVisible, toggleVisibility, color, isLoading, i
                                         isLoading={isLoading}
                                         icon={actionProps.buttonIcon ? actionProps.buttonIcon : icon}
                                         iconProps={{ color: 'var(--light)', filled: true }}
+                                        disableHoverEffect={actionProps?.disabled}
                                         style={{
                                             background: !actionProps?.disabled ? color : "var(--light-gray)",
                                             padding: `0.7rem 1.5rem`,
-                                            textTransform: "uppercase"
+                                            textTransform: "uppercase",
+                                            cursor: actionProps.disabled || isLoading ? "not-allowed" : "pointer"
                                         }}
                                     />
                                 }

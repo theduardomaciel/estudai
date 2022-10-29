@@ -4,9 +4,10 @@ interface Props {
     initialCounter: number,
     initialIntervalCounter: number
     pauseInterval: number
+    notificationFunction: (title: string, message: string) => void;
 }
 
-const useCountdown = ({ initialCounter, initialIntervalCounter, pauseInterval }: Props) => {
+const useCountdown = ({ initialCounter, initialIntervalCounter, pauseInterval, notificationFunction }: Props) => {
     const _initialCounter = initialCounter,
         resume = useRef(0),
         [counter, setCounter] = useState(_initialCounter),
@@ -32,6 +33,8 @@ const useCountdown = ({ initialCounter, initialIntervalCounter, pauseInterval }:
         console.log('Início do intervalo...')
         setStatus('interval')
 
+        notificationFunction('Pediu pra parar, parou!', 'Ninguém é feito de aço, então levanta essa bunda da cadeira e vai beber uma aguinha :)')
+
         currentIntervalIndexRef.current = currentIntervalIndexRef.current + 1;
         pauseCounter();
 
@@ -41,6 +44,8 @@ const useCountdown = ({ initialCounter, initialIntervalCounter, pauseInterval }:
                 setIntervalCounter(newIntervalCounter)
             } else {
                 clearInterval(intervalLoopRef.current)
+
+                notificationFunction('Voltando com todo vapor!', 'Corre que acabou o intervalo, então, de volta ao foco!')
 
                 console.log('Fim do intervalo...')
                 setStatus('active')
@@ -66,6 +71,7 @@ const useCountdown = ({ initialCounter, initialIntervalCounter, pauseInterval }:
                     }
                 } else {
                     stopCounter();
+                    notificationFunction('E chegamos ao fim!', 'Parabéns por ter mantido o foco até aqui.')
                 }
             }, 1000);
         },

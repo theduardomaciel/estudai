@@ -83,13 +83,17 @@ export default function NewTask() {
     const initialDate = router.query.date;
 
     const { isUploading } = useAppContext();
+
     const [modalVisible, setModalVisible] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [creatingTask, setCreatingTask] = useState(false);
 
+    const actualDate = new Date();
     const darkFrameRef = useRef<HTMLDivElement | null>(null);
 
     const [type, setType] = useState('obligatory');
-    const [date, setDate] = useState(initialDate ? initialDate : formatDate(new Date().getTime()))
+    const [date, setDate] = useState(initialDate ? initialDate : `${actualDate.getFullYear()}-${actualDate.getMonth() < 10 ? `0${actualDate.getMonth()}` : actualDate.getMonth()}-${actualDate.getDate()}`);
+    console.log(date)
     const [storage, setStorage] = useState("account");
     const [attachments, setAttachments] = useState<Array<Attachment>>([])
 
@@ -214,7 +218,7 @@ export default function NewTask() {
 
     const ActivityRealization = <div className={styles.selectHolder}>
         <InputLabel label='Como a atividade deve ser realizada?' />
-        <Select name='mode'>
+        <Select name='mode' defaultValue='free'>
             <SelectTrigger aria-label="activity-mode">
                 <SelectValue placeholder="Selecione como será realizada" />
                 <SelectIcon>
@@ -242,6 +246,12 @@ export default function NewTask() {
                         </SelectItem>
                         <SelectItem value="both">
                             <SelectItemText>Digitada e impressa</SelectItemText>
+                            <SelectItemIndicator>
+                                <CheckIcon />
+                            </SelectItemIndicator>
+                        </SelectItem>
+                        <SelectItem value="online">
+                            <SelectItemText>On-line</SelectItemText>
                             <SelectItemIndicator>
                                 <CheckIcon />
                             </SelectItemIndicator>
@@ -411,18 +421,41 @@ export default function NewTask() {
         console.log(taskData, date, storage, attachments, subjects)
 
         if (isUploading) {
+            console.log('Um arquivo ainda está sendo enviado. Impedindo que o usuário avance.')
             if (darkFrameRef.current) {
                 darkFrameRef.current.classList.toggle(styles.uploading)
             }
         } else {
             if (!creatingTask) {
-                setCreatingTask(true)
-                setModalVisible('upload')
-
                 const { type, mode, title, address, questionsAmount, maxScore, subject } = taskData;
                 const singleSubject = subject ? [subject] : [];
 
                 const editorContent = editor?.getHTML()
+
+                if (!date) {
+                    return setErrorMessage('Ei! Não se esquece de marcar a data da tarefa no calendário!')
+                }
+
+                if (type === "obligatory" || type == 'elective') {
+                    if (!subject) {
+                        return setErrorMessage('Por favor, insira a matéria da atividade!')
+                    }
+                }
+
+                if (type === "av1" || type == 'av2') {
+                    if (subjects.length < 1) {
+                        return setErrorMessage('Por favor, insira pelo menos uma matéria na avaliação!')
+                    }
+                }
+
+                if (type === 'event') {
+                    if (!title) {
+                        return setErrorMessage('Por favor, insira um título para o evento!')
+                    }
+                }
+
+                setCreatingTask(true)
+                setModalVisible('upload')
 
                 const data = {
                     userId: router.query.userId,
@@ -512,7 +545,7 @@ export default function NewTask() {
                         <div className='row'>
                             <h3>Escolha o dia da tarefa</h3>
                         </div>
-                        <Calendar setDate={setDate} hasMonthSelector initialDate={initialDate as string} />
+                        <Calendar setDate={setDate} hasMonthSelector initialDate={new Date(date as string)} />
                     </div>
 
                     <div className={styles.section}>
@@ -607,6 +640,15 @@ export default function NewTask() {
                 toggleVisibility={() => { modalVisible === "error" ? setModalVisible('') : "error" }}
                 title={"Ops... Não foi possível criar sua tarefa"}
                 description={"Por favor, pedimos que tente novamente. Caso o problema persista, entre em contato conosco."}
+            >
+            </Modal>
+            <Modal
+                isVisible={errorMessage !== ''}
+                color={`var(--primary-02)`}
+                icon={'gpp_bad'}
+                toggleVisibility={() => { setErrorMessage('') }}
+                title={"Ops... Não foi possível criar sua tarefa"}
+                description={errorMessage}
             >
             </Modal>
             <Modal

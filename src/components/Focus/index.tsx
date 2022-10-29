@@ -135,11 +135,53 @@ export default function Focus({ }: Props) {
             return setErrorMessage("Você esqueceu de escolher uma categoria para o foco!")
         }
 
-        if (data.focusName && focusMinutes && topicIdRef.current !== -1) {
+        if (data.focusName && topicIdRef.current !== -1) {
             console.warn("Criando novo foco.")
-            startNewFocus(data.focusName, topicIdRef.current, focusMinutes * 60)
+            startNewFocus(data.focusName, topicIdRef.current, focusMinutes ? focusMinutes * 60 : 60 * 60)
         }
     }
+
+    const [hasNotificationPermission, setHasNotificationPermission] = useState(true);
+
+    async function grantNotificationPermission() {
+        if (typeof Notification !== 'undefined') {
+            const result = await Notification.requestPermission()
+            if (result === "granted") {
+                setHasNotificationPermission(true)
+            } else {
+                setHasNotificationPermission(false)
+            }
+        }
+    }
+
+    let notification: Notification | undefined = undefined;
+
+    function createNotification(title: string, message: string) {
+        if (hasNotificationPermission) {
+            console.log('Tocando áudio de aviso e enviando notificação.')
+            const audio = new Audio(`/audio/Focus_Warning.mp3`);
+            audio.play();
+
+            notification = new Notification(title, { body: message, icon: '/images/notification_image.png' });
+        }
+    }
+
+    useEffect(() => {
+        setHasNotificationPermission(Notification.permission === "granted")
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                // The tab has become visible so clear the now-stale Notification.
+                if (typeof Notification !== 'undefined') {
+                    setTimeout(() => {
+                        if (typeof notification !== 'undefined') {
+                            notification.close();
+                        }
+                    }, 500);
+                }
+            }
+        });
+    }, [])
 
     const Focus1 = <div className={styles.column} style={{ gap: "1rem", /* justifyContent: "space-between", height: focusFrameSize */ }}>
         {
@@ -168,45 +210,75 @@ export default function Focus({ }: Props) {
                     />
                 </motion.div>
                 :
-                <>
-                    <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
-                    <div className={'row'} style={{ gap: "1.5rem" }}>
-                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
-                        <TopicsGroup topics={focusData} topicIdRef={topicIdRef} />
-                        <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
-                    </div>
-                    <Input
-                        onChange={(event) => {
-                            const parsed = parseInt(event.target.value);
-                            if (parsed) {
-                                setFocusMinutes(parsed)
-                            } else {
-                                setFocusMinutes("")
-                            }
-                        }}
-                        value={focusMinutes}
-                        label='Tempo de atividade'
-                        /* placeholder='escolha um tempo confortável <3' */
-                        placeholder="60"
-                        maxLength={5}
-                        type={'text'}
-                        height={'3.85rem'}
-                        fixedUnit='minutos'
-                    />
-                    <div /* style={{ gap: "2.5rem" }} */ className="row">
-                        <Button icon={'av_timer'} title={'Iniciar Foco'} preset="sendForm" />
-                        <Separator decorative orientation="vertical" />
-                        <p className={styles.intervalCount}>Você terá <br />
-                            <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
-                    </div>
-                </>
+                !hasNotificationPermission ?
+                    <motion.div
+                        className={styles.ongoingFocusContainer}
+                        variants={variants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={transition}
+                    >
+                        <header>
+                            <div className={styles.column}>
+                                <h5>Tá faltando alguma coisa...</h5>
+                                <div className={styles.iconHolder}>
+                                    <p>Para aproveitar o máximo do Foco precisamos que você nos permita enviar notificações!</p>
+                                </div>
+                            </div>
+                        </header>
+                        <Button
+                            icon={'notifications'}
+                            title="Permitir"
+                            style={{ width: "100%" }}
+                            onClick={grantNotificationPermission}
+                        />
+                    </motion.div>
+                    :
+                    <>
+                        <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
+                        <div className={'row'} style={{ gap: "1.5rem" }}>
+                            <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
+                            <TopicsGroup topics={focusData} topicIdRef={topicIdRef} />
+                            <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
+                        </div>
+                        <Input
+                            onChange={(event) => {
+                                const parsed = parseInt(event.target.value);
+                                if (parsed) {
+                                    setFocusMinutes(parsed)
+                                } else {
+                                    setFocusMinutes("")
+                                }
+                            }}
+                            value={focusMinutes}
+                            label='Tempo de atividade'
+                            /* placeholder='escolha um tempo confortável <3' */
+                            placeholder="60"
+                            maxLength={5}
+                            type={'text'}
+                            height={'3.85rem'}
+                            fixedUnit='minutos'
+                        />
+                        <div /* style={{ gap: "2.5rem" }} */ className="row">
+                            <Button icon={'av_timer'} title={'Iniciar Foco'} preset="sendForm" />
+                            <Separator decorative orientation="vertical" />
+                            <p className={styles.intervalCount}>Você terá <br />
+                                <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
+                        </div>
+                    </>
         }
     </div>
 
-    const intervalTime = 60 * 15;
+    const intervalTime = 60 * 1;
 
     const Focus2 = ({ focus }: { focus: Focus }) => {
-        const { actualCounter, status, isPaused, pauseCounter, resumeCounter, stopCounter } = useCountdown({ initialCounter: focus.totalTime, initialIntervalCounter: intervalTime, pauseInterval: pauseInterval })
+        const { actualCounter, status, isPaused, pauseCounter, resumeCounter, stopCounter } = useCountdown({
+            initialCounter: focus.totalTime,
+            initialIntervalCounter: intervalTime,
+            pauseInterval: pauseInterval,
+            notificationFunction: createNotification
+        })
 
         const timeString = getCountdownTimes(actualCounter);
         const timePerSection = (focus.totalTime / 60) / (focusPauses === 1 ? focusPauses + 1 : focusPauses);
