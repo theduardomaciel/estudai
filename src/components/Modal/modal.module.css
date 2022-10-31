@@ -23,10 +23,10 @@
     padding: 2.5rem;
     gap: 3.5rem;
 
-    max-height: 85%;
+    max-height: 90vh;
     width: 85%;
 
-    overflow-y: scroll;
+    overflow-y: overlay;
 
     background-color: var(--background-01);
     border-radius: 1.5rem;
@@ -60,7 +60,7 @@
     color: var(--primary-03);
 }
 
-.container p {
+.container .description {
     text-align: center;
     color: var(--primary-03);
     width: 100%;
@@ -103,10 +103,23 @@
 @media (min-width: 1024px) {
     .container {
         max-width: 42.5%;
-        max-height: fit-content;
         padding: 5rem;
+    }
 
-        overflow-y: visible;
+    .container::-webkit-scrollbar {
+        width: 1rem;
+    }
+
+    .container::-webkit-scrollbar-track {
+        background: var(--background-02);
+        opacity: 0;
+    }
+
+    /* Handle */
+    .container::-webkit-scrollbar-thumb {
+        background: var(--primary-04);
+        border-radius: 1rem;
+        opacity: 0.5;
     }
 
     .buttonsHolder {

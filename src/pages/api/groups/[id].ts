@@ -8,6 +8,7 @@ import cors from "cors";
 // API
 import prisma from '../../../lib/prisma';
 import getGroup from '../../../services/getGroup';
+import getUserIdByToken from '../../../services/getUserIdByToken';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -152,17 +153,35 @@ router
     })
     .delete(async (req, res) => {
         const groupId = parseInt(req.query.id as string);
+        const { ['auth.token']: token } = req.cookies;
 
-        /* const group = await prisma.group.findUnique({
-            where: {
-                id: groupId
+        const userId = await getUserIdByToken(token as string);
+
+        if (!userId) {
+            res.status(400).json({ error: "We couldn't get enough info." })
+        } else {
+            const group = await prisma.group.findUnique({
+                where: {
+                    id: groupId
+                }
+            })
+
+            if (group && group.admins.indexOf(userId) === -1) {
+                res.status(400).json({ error: "You have not enough permissions for updating group info." })
+            } else {
+                try {
+                    await prisma.group.delete({
+                        where: {
+                            id: groupId
+                        }
+                    })
+                    res.status(200).json({ error: 'The group was deleted successfully.' })
+                } catch (error) {
+                    console.log(error)
+                    res.status(401).json({ error: 'There was not possible to delete the group' })
+                }
             }
-        })
-
-        if (group?.admins.indexOf(userId) === -1) {
-            res.status(400).json({ error: "You have not enough permissions for updating group info." })
-        } */
-        res.status(401).json({ error: 'There is not possible to delete a group for now.' })
+        }
     })
 
 export default router.handler({

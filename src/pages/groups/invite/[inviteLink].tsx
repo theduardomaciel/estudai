@@ -120,6 +120,7 @@ const GroupInvite = ({ user, groupInfo }: { user: User, groupInfo: GroupInfo }) 
 
     const [isLoading, setLoading] = useState(false);
     const isInGroup = user.groups.find((group, i) => group.id === groupInfo.id) ? true : false;
+    console.log(isInGroup)
 
     async function exitGroup() {
         setLoading(true)

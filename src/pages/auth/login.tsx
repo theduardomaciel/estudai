@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { parseCookies } from 'nookies';
 import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
 
@@ -81,15 +81,30 @@ export const ScopeMissing = ({ setSection }: { setSection: () => void }) => <div
     <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
 </div>
 
+const Error = ({ setSection }: { setSection: () => void }) => <div className={styles.section}>
+    <header>
+        <h1>Eita!</h1>
+        <p><strong>Parece que tivemos um problema interno no servidor :(</strong> <br /> <br />
+            Provavelmente, já estamos trabalhando o mais rápido possível para resolver isso. Desde já agradecemos sua compreensão e espera!
+        </p>
+    </header>
+    <Button
+        style={{ padding: "1rem 1.5rem", width: "100%" }}
+        title='Voltar ao início'
+        onClick={setSection}
+    />
+    <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
+</div>
+
 const Login: NextPage = () => {
     const { signIn } = useAuth();
     const router = useRouter();
 
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(router.query.code !== undefined);
     const [section, setSection] = useState<string | null>(null)
 
     const googleLogin = useGoogleLogin({
-        onSuccess: async ({ code }) => {
+        /* onSuccess: async ({ code }) => {
             const response = await signIn(code) // success | noAccount | scopeMissing
 
             if (response === 'success') {
@@ -97,16 +112,36 @@ const Login: NextPage = () => {
             } else {
                 setSection(response)
             }
-        },
+        }, */
         onError(errorResponse) {
             console.log(errorResponse)
             setLoading(false)
         },
         scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata",
         flow: 'auth-code',
-        /* ux_mode: "redirect",
-        redirect_uri: "http://localhost:3000/auth/login" */
+        ux_mode: "redirect",
+        redirect_uri: "http://localhost:3000/auth/login"
     });
+
+    const hasLoggedRef = useRef(false);
+
+    async function loginUser() {
+        if (router.query.code && hasLoggedRef.current === false) {
+            console.log("Logando")
+            hasLoggedRef.current = true
+            const response = await signIn(router.query.code as string) // success | noAccount | scopeMissing
+
+            if (response === 'success') {
+                router.push(`/home`)
+            } else {
+                setSection(response)
+            }
+        }
+    }
+
+    useEffect(() => {
+        loginUser()
+    }, [])
 
     return (
         <main className={styles.holder}>
@@ -151,10 +186,16 @@ const Login: NextPage = () => {
                                 <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                             </div>
                             :
-                            <ScopeMissing setSection={() => {
-                                setSection(null)
-                                setLoading(false)
-                            }} />
+                            section === "scopeMissing" ?
+                                <ScopeMissing setSection={() => {
+                                    setSection(null)
+                                    setLoading(false)
+                                }} />
+                                :
+                                <Error setSection={() => {
+                                    setSection(null)
+                                    setLoading(false)
+                                }} />
                 }
             </div>
             <Device additionalClass={styles.device} />

@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useMemo, useState, Dispatch } from 'react';
+import React, { SetStateAction, useEffect, useMemo, useRef, useState, Dispatch } from 'react';
 
 import Head from 'next/head';
 import type { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next'
@@ -16,7 +16,7 @@ import UsersPortraits from '../../components/UsersPortraits';
 import { Separator } from '../../components/Separator';
 import SectionSelector from '../../components/SectionSelector';
 import ErrorContainer from '../../components/ErrorContainer';
-import { perQuestion, subjectsString, taskGroupType, taskMaxScore, taskMode, taskType } from '../../components/Task';
+import Spinner from '../../components/Spinner';
 
 // Types
 import { Task } from '../../types/Task';
@@ -25,6 +25,7 @@ import { Task } from '../../types/Task';
 import getAllTasks from '../../services/getAllTasks';
 import getTask from '../../services/getTask';
 import formatDate from '../../utils/formatDate';
+import { perQuestion, subjectsString, taskGroupType, taskMaxScore, taskMode, taskType } from "../../components/Task";
 
 import { getTagInfo, tagsNames } from '../../utils/getTagInfo';
 import getSubjectInfo from '../../utils/getSubjectInfo';
@@ -88,7 +89,8 @@ import { EmptyTasksMessage } from '../home';
 import { parseCookies } from 'nookies';
 import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
-import Spinner from '../../components/Spinner';
+import EditTaskModal from '../../components/Modal/Presets/EditTaskModal';
+import EditTaskModalPreset from '../../components/Modal/Presets/EditTaskModal';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
@@ -295,6 +297,7 @@ const Task = ({ task }: { task: Task }) => {
         }
     </>
 
+    const [isCreator, setIsCreator] = useState(false);
     const [hasInteracted, setInteracted] = useState<boolean | null>(null)
 
     useEffect(() => {
@@ -302,6 +305,9 @@ const Task = ({ task }: { task: Task }) => {
         setInteracted(task.interactedBy.find((user, index) => {
             return user.id = parseInt(userId)
         }) ? true : false)
+
+        // Determinando se o usuário é criador da tarefa
+        setIsCreator(task.createdBy.id === parseInt(userId))
 
         // Carregamento da interação com um attachment
         const attachmentsThatUserHasInteracted = attachments.map((attachment, index) => attachment.markedBy.find(user => user.id === parseInt(userId)) ? true : false)
@@ -335,7 +341,6 @@ const Task = ({ task }: { task: Task }) => {
     }
 
     function goToTaskGroup() {
-        console.log(task.group, 'teste')
         if (task.group) {
             router.push(`/groups/${task.group.id}`)
         }
@@ -420,7 +425,28 @@ const Task = ({ task }: { task: Task }) => {
         }
     </Modal>
 
-    const [isEditModalVisible, setEditModalVisible] = useState(false);
+    const { EditTaskModal, setEditTaskModalVisible } = EditTaskModalPreset(task);
+
+    const UserInfo = ({ text, name }: { text: string, name: string }) => isCreator ?
+        <span
+            style={{ color: "var(--font-light)", fontSize: "1.6rem" }}
+            className="material-symbols-rounded static click"
+            onClick={() => setEditTaskModalVisible(true)}
+        >
+            more_horiz
+        </span>
+        :
+        <div className={styles.userInfo}>
+            <div className={styles.userIcon}>
+                <Image
+                    src={task.createdBy.image_url || placeholder}
+                    width={14}
+                    height={14}
+                    alt={`Imagem de perfil do usuário que criou a atividade.`}
+                />
+            </div>
+            <p>{text}<span>{name}</span></p>
+        </div>
 
     if (isActivity) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
@@ -457,17 +483,7 @@ const Task = ({ task }: { task: Task }) => {
                                     :
                                     <p>{`[nenhuma descrição provida]`}</p>
                             }
-                            <div className={styles.userInfo}>
-                                <div className={styles.userIcon}>
-                                    <Image
-                                        src={task.createdBy.image_url || placeholder}
-                                        width={14}
-                                        height={14}
-                                        alt={`Imagem de perfil do usuário que criou a atividade.`}
-                                    />
-                                </div>
-                                <p>{hasText ? 'descrição' : 'atividade'} enviada por <span>{task.createdBy?.firstName}</span></p>
-                            </div>
+                            <UserInfo text={`${hasText ? 'descrição' : 'atividade'} enviada por `} name={task.createdBy.firstName} />
                         </div>
                         <div className={styles.column}>
                             <Button
@@ -508,6 +524,7 @@ const Task = ({ task }: { task: Task }) => {
                 </div>
                 {usersModal}
                 {attachmentInfoModal}
+                {EditTaskModal}
             </main>
         )
     } else if (isTest) {
@@ -526,17 +543,7 @@ const Task = ({ task }: { task: Task }) => {
                     <div className={styles.info}>
                         <div className={styles.column} style={{ justifyContent: "space-between" }}>
                             <p><strong style={{ marginRight: "0.5rem" }}>{`Matérias: `} </strong> {subjectsText}</p>
-                            <div className={styles.userInfo}>
-                                <div className={styles.userIcon}>
-                                    <Image
-                                        src={task.createdBy?.image_url || placeholder}
-                                        width={14}
-                                        height={14}
-                                        alt={`Imagem de perfil do usuário que criou a atividade.`}
-                                    />
-                                </div>
-                                <p>conteúdo enviado por <span>{task.createdBy?.firstName}</span></p>
-                            </div>
+                            <UserInfo text={`conteúdo enviado por `} name={task.createdBy.firstName} />
                         </div>
                         <div className={styles.column}>
                             <Button
@@ -585,25 +592,8 @@ const Task = ({ task }: { task: Task }) => {
                         }
                     </div>
                 </Modal>
-                {/* <Modal
-                    icon={'apps'}
-                    isVisible={isEditModalVisible}
-                    toggleVisibility={() => setEditModalVisible(!isEditModalVisible)}
-                    color={"var(--primary-02)"}
-                    iconProps={{ position: "flex-start", size: '3.2rem' }}
-                >
-                    <div className={styles.contentsHolder}>
-                        <Button
-                            title='EXCLUIR AVALIAÇÃO'
-                            style={{
-                                width: "100%",
-                                backgroundColor: "var(--red-01)",
-                                padding: "1rem 2.5rem"
-                            }}
-                        />
-                    </div>
-                </Modal> */}
                 {attachmentInfoModal}
+                {EditTaskModal}
             </main>
         )
     } else if (task.title) {
@@ -635,17 +625,7 @@ const Task = ({ task }: { task: Task }) => {
                                     :
                                     <p>{`[nenhuma descrição provida]`}</p>
                             }
-                            <div className={styles.userInfo}>
-                                <div className={styles.userIcon}>
-                                    <Image
-                                        src={task.createdBy?.image_url || placeholder}
-                                        width={14}
-                                        height={14}
-                                        alt={`Imagem de perfil do usuário que criou a atividade.`}
-                                    />
-                                </div>
-                                <p>evento indicado por <span>{task.createdBy?.firstName}</span></p>
-                            </div>
+                            <UserInfo text={`evento adicionado por `} name={task.createdBy.firstName} />
                         </div>
                         <div className={styles.column}>
                             <Button
@@ -682,6 +662,7 @@ const Task = ({ task }: { task: Task }) => {
                 </div>
                 {usersModal}
                 {attachmentInfoModal}
+                {EditTaskModal}
             </main>
         )
     } else {

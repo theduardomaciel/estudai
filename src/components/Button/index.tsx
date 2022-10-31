@@ -8,6 +8,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     classes?: string;
     isLoading?: boolean;
     icon?: React.ReactElement | string;
+    accentColor?: string;
     iconProps?: {
         size?: string,
         filled?: boolean,
@@ -19,10 +20,10 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     preset?: 'sendForm' | 'fillHover'
 }
 
-const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, iconProps, isSelected, preset, children, disableHoverEffect, ...rest }: ButtonProps, ref) {
+const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, accentColor, iconProps, isSelected, preset, children, disableHoverEffect, ...rest }: ButtonProps, ref) {
     return <button
         type={preset === "sendForm" ? "submit" : "button"}
-        className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading ? styles.loading : ""} ${isSelected ? 'selected' : ""} ${disableHoverEffect ? styles.disableHoverEffect : ""}`}
+        className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading ? styles.loading : ""} ${isSelected ? 'selected' : ""} ${disableHoverEffect ? 'disableHoverEffect' : ""}`}
         disabled={isLoading}
         {...rest}
     >
@@ -75,6 +76,15 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
 
             .button.${styles.fillHover}.selected:hover {
                 filter: brightness(1.1);
+            }
+
+            .button:not(.${styles.sendForm}):not(.${styles.fillHover}):not(.${styles.loading}):not(.disableHoverEffect):hover {
+                outline: 2px solid ${accentColor ? accentColor : 'var(--primary-04)'};
+            }
+            
+            .button:not(.${styles.sendForm}):not(.${styles.fillHover}):not(.${styles.loading}):not(.disableHoverEffect):active {
+                outline: 2px solid var(--light);
+                transition: 0.1s;
             }
       `}</style>
     </button>

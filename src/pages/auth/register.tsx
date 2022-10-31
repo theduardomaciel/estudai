@@ -112,9 +112,9 @@ const Register: NextPage = () => {
     const { registered } = router.query;
 
     const { signIn } = useAuth();
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(router.query.code !== undefined);
 
-    const [[section, direction], setSection] = useState(registered ? [3, 1] : [1, 0]);
+    const [[section, direction], setSection] = useState(registered ? [3, 1] : router.query.code ? [2, 1] : [1, 0]);
     const [selected, setSelected] = useState<null | number>(null);
 
     const progressBar = useRef<HTMLDivElement>(null);
@@ -324,7 +324,7 @@ const Register: NextPage = () => {
     /*  */
 
     const googleLogin = useGoogleLogin({
-        onSuccess: async ({ code }) => {
+        /* onSuccess: async ({ code }) => {
             const response = await signIn(code, { course: selected as number })
             if (response === 'success') {
                 setSection([3, 1])
@@ -335,13 +335,15 @@ const Register: NextPage = () => {
             } else {
                 setSection([0, 1])
             }
-        },
+        }, */
         onError(errorResponse) {
             console.log(errorResponse)
             setLoading(false)
         },
         scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata",
         flow: 'auth-code',
+        ux_mode: "redirect",
+        redirect_uri: "http://localhost:3000/auth/register"
     });
 
 
@@ -349,6 +351,30 @@ const Register: NextPage = () => {
         googleLogin()
         setLoading(true)
     }
+
+    const hasRegisteredRef = useRef(false);
+
+    async function registerUser() {
+        if (router.query.code && hasRegisteredRef.current === false) {
+            console.log("Registrando")
+            hasRegisteredRef.current = true
+
+            const response = await signIn(router.query.code as string, { course: selected as number })
+            if (response === 'success') {
+                setSection([3, 1])
+            } else if (response === 'scopeMissing') {
+                setSection([4, 1])
+                setLoading(false)
+                setSelected(null)
+            } else {
+                setSection([0, 1])
+            }
+        }
+    }
+
+    useEffect(() => {
+        registerUser()
+    }, [])
 
     return (
         <main className={loginStyles.holder}>

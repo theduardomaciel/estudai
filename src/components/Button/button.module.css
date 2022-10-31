@@ -29,15 +29,6 @@
     cursor: not-allowed;
 }
 
-.button:not(.sendForm):not(.fillHover):not(.loading):not(.disableHoverEffect):hover {
-    outline: 2px solid var(--primary-04);
-}
-
-.button:not(.sendForm):not(.fillHover):not(.loading):not(.disableHoverEffect):active {
-    outline: 2px solid var(--light);
-    transition: 0.1s;
-}
-
 .input {
     display: flex;
     position: relative;
@@ -69,6 +60,10 @@
     text-transform: uppercase;
 
     transition: 0.25s;
+}
+
+.fillHover {
+    display: flex;
 }
 
 .sendForm:not(.loading):hover {

@@ -1,4 +1,4 @@
-import { FormEvent, SetStateAction, useEffect, useRef, useState } from 'react';
+import { FormEvent, SetStateAction, useEffect, useRef, useState, Dispatch, MutableRefObject } from 'react';
 
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -19,6 +19,9 @@ import Button from '../../components/Button';
 import UsersPortraits from '../../components/UsersPortraits';
 import AttachmentsLoader from '../../components/AttachmentLoader';
 import Modal from '../../components/Modal';
+import SubjectsSelector from '../../components/SubjectsSelector';
+import { isActivity, isTest } from '../../components/Task';
+import SubjectsModalPreset from '../../components/Modal/Presets/SubjectsModal';
 
 // Select Components
 import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../components/Input/Select';
@@ -35,15 +38,13 @@ import TextAlign from '@tiptap/extension-text-align'
 
 // Types
 import { Attachment } from '../../types/Attachment';
+import { TaskMode, TaskType } from '../../types/Task';
+import { Group } from '../../types/Group';
 
 // Services
 import { useAppContext } from '../../contexts/AppContext';
-import SubjectsSelector from '../../components/SubjectsSelector';
 import getSubjectInfo, { subjectsData } from '../../utils/getSubjectInfo';
 import { api } from '../../lib/api';
-import { isActivity, isTest } from '../../components/Task';
-import formatDate from '../../utils/formatDate';
-import { Group } from '../../types/Group';
 
 interface TaskData {
     type: string;
@@ -55,18 +56,307 @@ interface TaskData {
     address: string;
 }
 
-export function toggleSubject(subjectId: number, subjects: Array<number>, setSubjects: (state: Array<number>) => SetStateAction<void>) {
-    const indexOnArray = subjects.indexOf(subjectId)
-    if (indexOnArray !== -1) {
-        let subjectsStateCopy = [...subjects];
-        subjectsStateCopy.splice(indexOnArray, 1)
-        setSubjects(subjectsStateCopy)
-    } else {
-        let subjectsStateCopy = [...subjects];
-        subjectsStateCopy.push(subjectId)
-        setSubjects(subjectsStateCopy)
-    }
+const typesData = {
+    activity: [
+        {
+            name: "Obrigatória (AV3)",
+            value: 'obligatory',
+        },
+        {
+            name: "Eletiva",
+            value: 'elective',
+        },
+    ],
+    test: [
+        {
+            name: "Mensal (AV1)",
+            value: 'av1',
+        },
+        {
+            name: "Bimestral (AV2)",
+            value: 'av2',
+        },
+    ],
+    event: [
+        {
+            name: "Evento",
+            value: 'event',
+        },
+    ]
 }
+
+export const ActivityTypeSelector = ({ limitType, setType, defaultValue }: { limitType?: 'activity' | 'test' | 'event', defaultValue?: string, setType?: Dispatch<SetStateAction<TaskType>> }) => {
+    return (
+        <div className={styles.selectHolder}>
+            <InputLabel label='Qual o tipo de atividade?' />
+            <Select name='type' onValueChange={(value) => setType && setType(value as any)} defaultValue={defaultValue ? defaultValue : 'obligatory'}>
+                <SelectTrigger aria-label="activity-type">
+                    <SelectValue placeholder="Selecione o tipo de atividade" />
+                    <SelectIcon>
+                        <ChevronDownIcon />
+                    </SelectIcon>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectScrollDownButton>
+                        <ChevronUpIcon />
+                    </SelectScrollDownButton>
+                    <SelectViewport>
+                        {
+                            limitType === "activity" || limitType === undefined ?
+                                <>
+                                    <SelectGroup>
+                                        <SelectLabel>Atividades</SelectLabel>
+                                        {(Object.entries(typesData.activity) as Array<any>).map(([index, data]) => {
+                                            return (
+                                                <SelectItem key={index.toString()} value={data.value}>
+                                                    <SelectItemText >
+                                                        {data.name}
+                                                    </SelectItemText>
+                                                    <SelectItemIndicator>
+                                                        <CheckIcon />
+                                                    </SelectItemIndicator>
+                                                </SelectItem>
+                                            )
+                                        })}
+                                    </SelectGroup>
+                                    {
+                                        limitType === undefined ? <SelectSeparator /> : <></>
+                                    }
+                                </>
+                                : <></>
+                        }
+                        {
+                            limitType === "test" || limitType === undefined ?
+                                <>
+                                    <SelectGroup>
+                                        <SelectLabel>Avaliações</SelectLabel>
+                                        {(Object.entries(typesData.test) as Array<any>).map(([index, data]) => {
+                                            return (
+                                                <SelectItem key={index.toString()} value={data.value}>
+                                                    <SelectItemText >
+                                                        {data.name}
+                                                    </SelectItemText>
+                                                    <SelectItemIndicator>
+                                                        <CheckIcon />
+                                                    </SelectItemIndicator>
+                                                </SelectItem>
+                                            )
+                                        })}
+                                    </SelectGroup>
+                                    {
+                                        limitType === undefined ? <SelectSeparator /> : <></>
+                                    }
+                                </>
+                                : <></>
+                        }
+                        {
+                            limitType === "event" || limitType === undefined ?
+                                <>
+                                    <SelectGroup>
+                                        <SelectLabel>Eletivas</SelectLabel>
+                                        {(Object.entries(typesData.event) as Array<any>).map(([index, data]) => {
+                                            return (
+                                                <SelectItem key={index.toString()} value={data.value}>
+                                                    <SelectItemText >
+                                                        {data.name}
+                                                    </SelectItemText>
+                                                    <SelectItemIndicator>
+                                                        <CheckIcon />
+                                                    </SelectItemIndicator>
+                                                </SelectItem>
+                                            )
+                                        })}
+                                    </SelectGroup>
+                                </>
+                                : <></>
+                        }
+                    </SelectViewport>
+                    <SelectScrollDownButton>
+                        <ChevronDownIcon />
+                    </SelectScrollDownButton>
+                </SelectContent>
+            </Select>
+        </div>
+    )
+}
+
+export const ActivityModeSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<TaskMode>> }) => <div className={styles.selectHolder}>
+    <InputLabel label='Como a atividade deve ser realizada?' />
+    <Select name='mode' defaultValue={defaultValue ? defaultValue : 'free'} onValueChange={(value) => setSelectedValue && setSelectedValue(value as any)}>
+        <SelectTrigger aria-label="activity-mode">
+            <SelectValue placeholder="Selecione como será realizada" />
+            <SelectIcon>
+                <ChevronDownIcon />
+            </SelectIcon>
+        </SelectTrigger>
+        <SelectContent>
+            <SelectScrollDownButton>
+                <ChevronUpIcon />
+            </SelectScrollDownButton>
+            <SelectViewport>
+                <SelectGroup>
+                    {/* <SelectLabel>Atividades</SelectLabel> */}
+                    <SelectItem value="written">
+                        <SelectItemText>Manuscrita</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="typed">
+                        <SelectItemText>Digitada</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="both">
+                        <SelectItemText>Digitada e impressa</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="online">
+                        <SelectItemText>On-line</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                    <SelectItem value="free">
+                        <SelectItemText>Sem restrição</SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
+                </SelectGroup>
+            </SelectViewport>
+            <SelectScrollDownButton>
+                <ChevronDownIcon />
+            </SelectScrollDownButton>
+        </SelectContent>
+    </Select>
+</div>
+
+export const SubjectSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<Array<number>>> }) => <div className={styles.selectHolder}>
+    <InputLabel label='Qual a matéria da atividade?' />
+    <Select name='subject' defaultValue={defaultValue ? defaultValue : ""} onValueChange={(value) => setSelectedValue && setSelectedValue([parseInt(value)])}>
+        <SelectTrigger aria-label="subject">
+            <SelectValue placeholder="Escolha a matéria" />
+            <SelectIcon>
+                <ChevronDownIcon />
+            </SelectIcon>
+        </SelectTrigger>
+        <SelectContent>
+            <SelectScrollDownButton>
+                <ChevronUpIcon />
+            </SelectScrollDownButton>
+            <SelectViewport>
+                <SelectGroup>
+                    {(Object.entries(subjectsData) as Array<any>).map(([index, value]) => {
+                        return (
+                            <SelectItem key={index.toString()} value={index.toString()}>
+                                <SelectItemText >
+                                    <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>{value.icon}</span>
+                                    {value.name}
+                                </SelectItemText>
+                                <SelectItemIndicator>
+                                    <CheckIcon />
+                                </SelectItemIndicator>
+                            </SelectItem>
+                        )
+                    })}
+                </SelectGroup>
+            </SelectViewport>
+            <SelectScrollDownButton>
+                <ChevronDownIcon />
+            </SelectScrollDownButton>
+        </SelectContent>
+    </Select>
+</div>
+
+export const MaxScoreSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<number | undefined>> }) => <Input
+    height={"4.2rem"}
+    type="number"
+    onChange={(event) => setSelectedValue && setSelectedValue(parseInt(event.currentTarget.value) ? parseInt(event.currentTarget.value) : undefined)}
+    numberControl label='Qual a pontuação máxima que pode ser adquirida?'
+    placeholder={defaultValue ? defaultValue : '0'}
+    fixedUnit='pontos'
+/>
+
+export const QuestionsAmountSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<number | undefined>> }) => <Input
+    height={"4.2rem"}
+    type="number"
+    onChange={(event) => setSelectedValue && setSelectedValue(parseInt(event.currentTarget.value))}
+    name='questionsAmount'
+    label='Quantas questões terá a avaliação?'
+    placeholder={defaultValue ? defaultValue : '90'}
+    fixedUnit='questões'
+/>
+
+export const EventTitleSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<string | undefined>> }) => <Input
+    style={{ height: "4.2rem" }}
+    type="text"
+    onChange={(event) => setSelectedValue && setSelectedValue(event.currentTarget.value)}
+    name='title'
+    numberControl
+    label='Como o evento deve ser chamado?'
+    defaultValue={defaultValue}
+    placeholder={defaultValue ? defaultValue : 'Insira um título para o evento'}
+/>
+
+export const EventAddressSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<string | undefined>> }) => <Input
+    style={{ height: "4.2rem" }}
+    name='address'
+    type={'text'}
+    onChange={(event) => setSelectedValue && setSelectedValue(event.currentTarget.value)}
+    numberControl
+    defaultValue={defaultValue}
+    label='Onde o evento será realizado?'
+    placeholder={defaultValue ? defaultValue : 'Insira um endereço presencial ou link de acesso'}
+/>
+
+export const SubjectsContentsSelector = ({ subjects, contents, stateContents, setContents }: { subjects: Array<number>, stateContents?: Array<string>, contents?: MutableRefObject<string[]>, setContents?: Dispatch<SetStateAction<string[]>> }) => <div
+    className={`${inputStyles.input} ${styles.subjectsContent} ${styles.enforce}`}
+    style={{ justifyContent: subjects.length > 0 ? "flex-start" : "center" }}>
+    {
+        subjects.length > 0 ?
+            subjects.map((subjectId, index) => {
+                const [name, icon] = getSubjectInfo(subjectId);
+                return <li key={subjectId} className={styles.subject}>
+                    <h6>• {name}</h6>
+                    <input
+                        type="text"
+                        name=""
+                        id=""
+                        defaultValue={stateContents ? stateContents[subjectId] : contents?.current[subjectId]}
+                        placeholder='Insira aqui os conteúdos da matéria'
+                        onChange={(event) => {
+                            if (setContents && stateContents) {
+                                let copy = [...stateContents];
+                                copy[subjectId] = event.currentTarget.value
+                                setContents(copy)
+                            } else if (contents) {
+                                contents.current[subjectId] = event.currentTarget.value
+                            }
+                        }}
+                    />
+                </li>
+            })
+            :
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center", width: "85%", textAlign: "center", fontSize: "1.4rem" }}>
+                <span className={`material-symbols-rounded static`} style={{ fontSize: "4.2rem" }}>hourglass_empty</span>
+                <p className='static'>Adicione matérias nesta avaliação para inserir o conteúdo delas aqui!</p>
+            </div>
+    }
+</div>
+
+export const DescriptionEditor = ({ editor }: { editor: Editor | null }) => <div className={styles.column}>
+    <div className={'header'}>
+        <Section classes={styles.descriptionHeader} title='Descrição' />
+        <FormatToolbar editor={editor as Editor} />
+    </div>
+    <div className={styles.input}>
+        <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />
+    </div>
+</div>
 
 export default function NewTask() {
     const router = useRouter();
@@ -91,10 +381,12 @@ export default function NewTask() {
     const actualDate = new Date();
     const darkFrameRef = useRef<HTMLDivElement | null>(null);
 
-    const [type, setType] = useState('obligatory');
+    const [type, setType] = useState<TaskType>('obligatory');
+
     const [date, setDate] = useState(initialDate ? initialDate : `${actualDate.getFullYear()}-${actualDate.getMonth() < 10 ? `0${actualDate.getMonth()}` : actualDate.getMonth()}-${actualDate.getDate()}`);
-    console.log(date)
+
     const [storage, setStorage] = useState("account");
+
     const [attachments, setAttachments] = useState<Array<Attachment>>([])
 
     const editor = useEditor({
@@ -109,221 +401,23 @@ export default function NewTask() {
         content: ``,
     })
 
-    const [subjects, setSubjects] = useState<Array<number>>([])
     const [links, setLinks] = useState<Array<string>>([]);
 
+    const [subjects, setSubjects] = useState<Array<number>>([])
     const contents = useRef<Array<string>>([]);
 
-    const subjectsContent = subjects.map((subjectId, index) => {
-        const [name, icon] = getSubjectInfo(subjectId);
-        return <li key={subjectId} className={styles.subject}>
-            <h6>• {name}</h6>
-            <input
-                type="text"
-                name="" id=""
-                placeholder='Insira aqui os conteúdos da matéria'
-                onChange={(event) => contents.current[subjectId] = event.currentTarget.value}
-            />
-        </li>
-    })
-
-    const subjectsList = <div className={`${inputStyles.input} ${styles.subjectsList} ${styles.reforce} click static`}>
-        {
-            subjectsData.map((subject, index) => <li
-                key={index}
-                className={`${styles.subjectFromList} ${subjects.indexOf(index) !== -1 ? styles.selected : ""}`}
-                onClick={() => toggleSubject(index, subjects, setSubjects)}
-            >
-                <div className={styles.title}>
-                    <span className={'material-symbols-rounded'}>{subject.icon}</span>
-                    <p>{subject.name}</p>
-                </div>
-                <span className={'material-symbols-rounded'} style={{ opacity: subjects.indexOf(index) !== -1 ? 1 : 0, transition: '0.15s' }}>check_circle</span>
-            </li>)
-        }
-    </div>
-
-    const ActivityType = <div className={styles.selectHolder}>
-        <InputLabel label='Qual o tipo de atividade?' />
-        <Select name='type' onValueChange={(value) => setType(value)} defaultValue={'obligatory'}>
-            <SelectTrigger aria-label="activity-type">
-                <SelectValue placeholder="Selecione o tipo de atividade" />
-                <SelectIcon>
-                    <ChevronDownIcon />
-                </SelectIcon>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectScrollDownButton>
-                    <ChevronUpIcon />
-                </SelectScrollDownButton>
-                <SelectViewport>
-                    <SelectGroup>
-                        <SelectLabel>Atividades</SelectLabel>
-                        <SelectItem value="obligatory">
-                            <SelectItemText>Obrigatória {`(AV3)`}</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="elective">
-                            <SelectItemText>Eletiva </SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-
-                    <SelectSeparator />
-
-                    <SelectGroup>
-                        <SelectLabel>Avaliações</SelectLabel>
-                        <SelectItem value="av1">
-                            <SelectItemText>Mensal {`(AV1)`}</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="av2">
-                            <SelectItemText>Bimestral {`(AV2)`}</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="recuperation" disabled>
-                            <SelectItemText>Recuperação</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-
-                    <SelectSeparator />
-
-                    <SelectGroup>
-                        <SelectLabel>Estudos eletivos</SelectLabel>
-                        <SelectItem value="event">
-                            <SelectItemText>Evento</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectViewport>
-                <SelectScrollDownButton>
-                    <ChevronDownIcon />
-                </SelectScrollDownButton>
-            </SelectContent>
-        </Select>
-    </div>
-
-    const ActivityRealization = <div className={styles.selectHolder}>
-        <InputLabel label='Como a atividade deve ser realizada?' />
-        <Select name='mode' defaultValue='free'>
-            <SelectTrigger aria-label="activity-mode">
-                <SelectValue placeholder="Selecione como será realizada" />
-                <SelectIcon>
-                    <ChevronDownIcon />
-                </SelectIcon>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectScrollDownButton>
-                    <ChevronUpIcon />
-                </SelectScrollDownButton>
-                <SelectViewport>
-                    <SelectGroup>
-                        {/* <SelectLabel>Atividades</SelectLabel> */}
-                        <SelectItem value="written">
-                            <SelectItemText>Manuscrita</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="typed">
-                            <SelectItemText>Digitada</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="both">
-                            <SelectItemText>Digitada e impressa</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="online">
-                            <SelectItemText>On-line</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                        <SelectItem value="free">
-                            <SelectItemText>Sem restrição</SelectItemText>
-                            <SelectItemIndicator>
-                                <CheckIcon />
-                            </SelectItemIndicator>
-                        </SelectItem>
-                    </SelectGroup>
-                </SelectViewport>
-                <SelectScrollDownButton>
-                    <ChevronDownIcon />
-                </SelectScrollDownButton>
-            </SelectContent>
-        </Select>
-    </div>
-
-    const Subjects = <div className={styles.selectHolder}>
-        <InputLabel label='Qual a matéria da atividade?' />
-        <Select name='subject'>
-            <SelectTrigger aria-label="subject">
-                <SelectValue placeholder="Escolha a matéria" />
-                <SelectIcon>
-                    <ChevronDownIcon />
-                </SelectIcon>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectScrollDownButton>
-                    <ChevronUpIcon />
-                </SelectScrollDownButton>
-                <SelectViewport>
-                    <SelectGroup>
-                        {(Object.entries(subjectsData) as Array<any>).map(([index, value]) => {
-                            return (
-                                <SelectItem key={index.toString()} value={index.toString()}>
-                                    <SelectItemText >
-                                        <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>{value.icon}</span>
-                                        {value.name}
-                                    </SelectItemText>
-                                    <SelectItemIndicator>
-                                        <CheckIcon />
-                                    </SelectItemIndicator>
-                                </SelectItem>
-                            )
-                        })}
-                    </SelectGroup>
-                </SelectViewport>
-                <SelectScrollDownButton>
-                    <ChevronDownIcon />
-                </SelectScrollDownButton>
-            </SelectContent>
-        </Select>
-    </div>
+    const { SubjectsModal, setSubjectsModalVisible } = SubjectsModalPreset(subjects, setSubjects);
 
     const type1 = <>
         <div className={styles.column}>
             <Section title='Detalhes Iniciais' />
-            {ActivityType}
-            {ActivityRealization}
-            <Input
-                height={"4.2rem"}
-                type="number"
-                numberControl label='Qual a pontuação máxima que pode ser adquirida?'
-                placeholder='0'
-                fixedUnit='pontos'
-            />
+            <ActivityTypeSelector setType={setType} />
+            <ActivityModeSelector />
+            <MaxScoreSelector />
         </div>
         <div className={styles.column}>
             <Section title='Classificação' />
-            {Subjects}
+            <SubjectSelector />
             <div className={'header'}>
                 <Section classes={styles.descriptionHeader} title='Descrição' />
                 <FormatToolbar editor={editor as Editor} />
@@ -337,7 +431,7 @@ export default function NewTask() {
     const type2 = <>
         <div className={styles.column}>
             <Section title='Detalhes Iniciais' />
-            {ActivityType}
+            <ActivityTypeSelector setType={setType} />
             <div style={{
                 display: "flex",
                 flexDirection: "row",
@@ -346,70 +440,25 @@ export default function NewTask() {
                 justifyContent: "space-between",
                 width: "100%"
             }}>
-                <Input
-                    height={"4.2rem"}
-                    type="number"
-                    numberControl
-                    name='maxScore'
-                    label='Qual pontuação máxima pode ser atingida?'
-                    placeholder='10'
-                    fixedUnit='pontos'
-                />
-                <Input
-                    height={"4.2rem"}
-                    type="number"
-                    name='questionsAmount'
-                    label='Quantas questões terá a avaliação?'
-                    placeholder='90'
-                    fixedUnit='questões'
-                />
+                <MaxScoreSelector />
+                <QuestionsAmountSelector />
             </div>
-            <SubjectsSelector openModal={() => setModalVisible('subjects')} subjects={subjects} setSubjects={setSubjects} />
+            <SubjectsSelector openModal={() => setSubjectsModalVisible(true)} subjects={subjects} setSubjects={setSubjects} />
         </div>
         <div className={styles.column}>
             <Section title='Conteúdos' />
-            <div className={`${inputStyles.input} ${styles.subjectsContent} ${styles.enforce}`} style={{ justifyContent: subjects.length > 0 ? "flex-start" : "center" }}>
-                {
-                    subjects.length > 0 ?
-                        subjectsContent
-                        :
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center", width: "85%", textAlign: "center", fontSize: "1.4rem" }}>
-                            <span className={`material-symbols-rounded static`} style={{ fontSize: "4.2rem" }}>hourglass_empty</span>
-                            <p className='static'>Adicione matérias nesta avaliação para inserir o conteúdo delas aqui!</p>
-                        </div>
-                }
-            </div>
+            <SubjectsContentsSelector subjects={subjects} contents={contents} />
         </div>
     </>
 
     const type3 = <>
         <div className={styles.column}>
             <Section title='Detalhes Iniciais' />
-            {ActivityType}
-            <Input
-                style={{ height: "4.2rem" }}
-                type="text"
-                name='title'
-                numberControl label='Como o evento pode ser chamado?'
-                placeholder='Insira um título para o evento :)'
-            />
-            <Input
-                style={{ height: "4.2rem" }}
-                name='address'
-                type={'text '}
-                numberControl label='Onde o evento será realizado?'
-                placeholder='Insira um endereço presencial ou link de acesso :)'
-            />
+            <ActivityTypeSelector setType={setType} />
+            <EventTitleSelector />
+            <EventAddressSelector />
         </div>
-        <div className={styles.column}>
-            <div className={'header'}>
-                <Section classes={styles.descriptionHeader} title='Descrição' />
-                <FormatToolbar editor={editor as Editor} />
-            </div>
-            <div className={styles.input}>
-                <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />
-            </div>
-        </div>
+        <DescriptionEditor editor={editor} />
     </>
 
     async function createTask(event: FormEvent<HTMLFormElement>) {
@@ -486,7 +535,7 @@ export default function NewTask() {
                     console.log(error)
 
                     setCreatingTask(false)
-                    setModalVisible('error')
+                    setErrorMessage(`Infelizmente, algum problema que rolou durante o processo de criação da sua tarefa nos impediu de criá-la.:(\nPedimos que você tente novamente mais tarde.`)
                 }
             }
         }
@@ -509,12 +558,7 @@ export default function NewTask() {
     </li>
 
     return (
-        <form className={styles.holder} onSubmit={createTask} /* onChange={(event) => {
-            const formData = new FormData(event.currentTarget);
-            const taskData = Object.fromEntries(formData.entries()) as unknown as TaskData;
-
-            if (taskData.type)
-        }} */>
+        <form className={styles.holder} onSubmit={createTask}>
             <Head>
                 <title>{title}</title>
             </Head>
@@ -634,15 +678,6 @@ export default function NewTask() {
                 description={creatingTask ? `Estamos apertando uns botões e enviando alguns dados para criar sua nova tarefa.\nEspera um pouco!` : "Pronto! A atividade foi criada :)"}
             />
             <Modal
-                isVisible={modalVisible === 'error'}
-                color={`var(--primary-02)`}
-                icon={'gpp_bad'}
-                toggleVisibility={() => { modalVisible === "error" ? setModalVisible('') : "error" }}
-                title={"Ops... Não foi possível criar sua tarefa"}
-                description={"Por favor, pedimos que tente novamente. Caso o problema persista, entre em contato conosco."}
-            >
-            </Modal>
-            <Modal
                 isVisible={errorMessage !== ''}
                 color={`var(--primary-02)`}
                 icon={'gpp_bad'}
@@ -651,15 +686,7 @@ export default function NewTask() {
                 description={errorMessage}
             >
             </Modal>
-            <Modal
-                isVisible={modalVisible === 'subjects'}
-                color={`var(--primary-02)`}
-                icon={'subject'}
-                toggleVisibility={() => { modalVisible === "subjects" ? setModalVisible('') : "subjects" }}
-                title={"Selecione as matérias da tarefa abaixo:"}
-            >
-                {subjectsList}
-            </Modal>
+            {SubjectsModal}
         </form>
     )
 }

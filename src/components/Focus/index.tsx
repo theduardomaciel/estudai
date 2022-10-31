@@ -117,7 +117,7 @@ export default function Focus({ }: Props) {
     const topicIdRef = useRef<number>(-1);
 
     const [focusMinutes, setFocusMinutes] = useState<number | "">("");
-    const focusPauses = focusMinutes ? Math.max(1, Math.floor(focusMinutes / 25)) : 0;
+    const focusPauses = focusMinutes ? Math.max(1, Math.floor(focusMinutes / 25)) : 1;
     const pauseInterval = (focusMinutes as number * 60) / (focusPauses + 1)
 
     const { currentFocus, startNewFocus, removeFocus } = useAppContext();
@@ -270,7 +270,7 @@ export default function Focus({ }: Props) {
         }
     </div>
 
-    const intervalTime = 60 * 1;
+    const intervalTime = 60 * 5;
 
     const Focus2 = ({ focus }: { focus: Focus }) => {
         const { actualCounter, status, isPaused, pauseCounter, resumeCounter, stopCounter } = useCountdown({

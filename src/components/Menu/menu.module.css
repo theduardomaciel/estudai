@@ -67,7 +67,8 @@
     padding: 3.5rem 3.5rem calc(3.5rem + var(--sidebar-height)) 3.5rem;
 }
 
-.holder h3 {
+.holder h3,
+.title {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 700;

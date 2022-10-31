@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useRef } from "react";
+import React, { SetStateAction, useEffect, useRef, Dispatch } from "react";
 import UsersPortraits from "../UsersPortraits";
 
 import styles from "./styles.module.css"
@@ -10,16 +10,15 @@ import Link from "next/link";
 import { InputLabel } from "../Input";
 import Button from "../Button";
 import getSubjectInfo from "../../utils/getSubjectInfo";
-import { toggleSubject } from "../../pages/task/new";
+import { toggleSubject } from "../Modal/Presets/SubjectsModal";
 
 interface TaskProps {
     openModal: () => void;
     subjects: Array<number>;
-    setSubjects: (state: Array<number>) => SetStateAction<void>;
+    setSubjects: Dispatch<SetStateAction<Array<number>>>;
 }
 
 export default function SubjectsSelector(props: TaskProps) {
-
     const Tag = ({ subjectId }: { subjectId: number }) => {
         const [name, icon] = getSubjectInfo(subjectId)
 

@@ -43,20 +43,25 @@ export function AuthProvider({ children }: ContextProviderProps) {
                 console.log("Garantiu todo os escopos? ", hasAccess)
 
                 if (hasAccess) {
-                    console.log('Atualizando cookies com os tokens de autenticação.')
+                    console.log('Atualizando cookies com os tokens de autenticação.', appToken)
 
-                    console.log(appToken)
                     setCookie(undefined, 'auth.token', appToken as string, {
-                        maxAge: 60 * 60 * 24 * 30 * 12 // 1 year (60 seconds * 60 minutes * 24 hours * 30 days * 12 months)/
+                        maxAge: 60 * 60 * 24 * 30 * 12, // 1 year (60 seconds * 60 minutes * 24 hours * 30 days * 12 months)/
+                        path: "/"
                     })
 
-                    setCookie(undefined, 'app.userId', userId)
+                    setCookie(undefined, 'app.userId', userId, {
+                        path: "/"
+                    })
 
                     setCookie(undefined, 'auth.googleAccessToken', google_access_token, {
-                        maxAge: 60 * 60 * 24 * 30  // 30 days (60 seconds * 60 minutes * 24 hours * 30 days)
+                        maxAge: 60 * 60 * 24 * 30,  // 30 days (60 seconds * 60 minutes * 24 hours * 30 days)
+                        path: "/"
                     })
 
-                    setCookie(undefined, 'auth.googleRefreshToken', google_refresh_token)
+                    setCookie(undefined, 'auth.googleRefreshToken', google_refresh_token, {
+                        path: "/"
+                    })
 
                     //googleApi.defaults.headers.common['Authorization'] = `Bearer ${google_access_token}`;
                     api.defaults.headers.common['Authorization'] = `Bearer ${appToken}`;

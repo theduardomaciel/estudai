@@ -46,7 +46,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     }
 
     const groupId = parseInt(context.query.id as string);
-    console.log(groupId);
 
     let group = await getGroup(groupId) as unknown as Group | null;
 
@@ -55,6 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         group.createdAt = Math.floor(date.getTime()) as number;
         group.tasks.map((task, index) => {
             const date = new Date(task.date);
+            task.group.createdAt = Math.floor(date.getTime())
             task.date = Math.floor(date.getTime());
             return task;
         })
@@ -142,7 +142,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         })
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
-    const concludedTasks = user.tasks
+    const concludedTasks = group.tasks
         .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
         .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
 
@@ -159,6 +159,25 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
             const response = await api.patch(`/groups/${group.id}`, { userId: user.id, name: newGroupName, pinnedMessage: newPinnedMessage })
             if (response) {
                 router.push(`/groups/${group.id}`)
+            } else {
+                setConfigModalVisible(false)
+            }
+            setLoading(false)
+        } catch (error) {
+            setExitModalVisible('error')
+            setLoading(false)
+        }
+    }
+
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+
+    async function deleteGroup() {
+        setLoading(true)
+
+        try {
+            const response = await api.delete(`/groups/${group.id}`)
+            if (response) {
+                router.push(`/home`)
             } else {
                 setConfigModalVisible(false)
             }
@@ -259,14 +278,17 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                     iconProps={{ size: "1.8rem" }}
                                     style={{ width: "100%", padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)" }}
                                 />
-                                <Button
-                                    title='CONFIGURAÇÕES'
-                                    onClick={() => setConfigModalVisible(true)}
-                                    icon={'tune'}
-                                    iconProps={{ size: "1.8rem", color: "var(--font-light)" }}
-                                    preset={"fillHover"}
-                                    style={{ width: "100%", padding: "1rem 1.5rem" }}
-                                />
+                                {
+                                    user.groups.find((group, i) => group.id === group.id) &&
+                                    <Button
+                                        title='CONFIGURAÇÕES'
+                                        onClick={() => setConfigModalVisible(true)}
+                                        icon={'tune'}
+                                        iconProps={{ size: "1.8rem", color: "var(--font-light)" }}
+                                        preset={"fillHover"}
+                                        style={{ width: "100%", padding: "1rem 1.5rem" }}
+                                    />
+                                }
                                 <Button
                                     title='SAIR DO GRUPO'
                                     onClick={() => setExitModalVisible('default')}
@@ -288,10 +310,10 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 color={`var(--primary-02)`}
                 title={'Olha aqui o link ó:'}
             >
-                <p>Compartilhe-o com outros usuários da plataforma para que eles possam entrar no grupo e participar de sua comunidade!
+                <p style={{ color: "var(--primary-02)" }}>Compartilhe-o com outros usuários da plataforma para que eles possam entrar no grupo e participar de sua comunidade!
                     <br />Tarefas enviadas em um grupo serão visíveis para todos que estiverem nele!
                 </p>
-                <div className={`${inputStyles.input} hoverLink`} style={{ overflowX: "hidden" }} onClick={onLinkClick}>
+                <div className={`${inputStyles.input} hoverLink`} style={{ overflow: "hidden" }} onClick={onLinkClick}>
                     <p ref={linkTextRef}>{url}</p>
                     <span className='material-symbols-rounded'>content_copy</span>
                 </div>
@@ -382,7 +404,39 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         </li>)
                     }
                 </div>
+                <div className={'dangerZone'}>
+                    <p>Zona de Perigo</p>
+                    <Button
+                        icon={"delete_forever"}
+                        iconProps={{
+                            filled: true,
+                            size: "1.6rem"
+                        }}
+                        accentColor={'var(--red-02)'}
+                        title='EXCLUIR GRUPO'
+                        style={{
+                            width: "100%",
+                            backgroundColor: "var(--red-01)",
+                            padding: "1rem 2.5rem"
+                        }}
+                        isLoading={isLoading}
+                        onClick={() => setDeleteModalVisible(true)}
+                    />
+                </div>
             </Modal>
+            <Modal
+                icon={'delete_forever'}
+                isVisible={isDeleteModalVisible}
+                toggleVisibility={() => setDeleteModalVisible(!isDeleteModalVisible)}
+                isLoading={isLoading}
+                color={"var(--red-01)"}
+                title={"Você tem certeza que quer deletar este grupo?"}
+                description={`Ao apagar o grupo TUDO será perdido: tarefa, anexos e usuários.\nNão há como recuperar um grupo após ele ser apagado.`}
+                actionProps={{
+                    buttonText: "DELETAR",
+                    function: deleteGroup
+                }}
+            />
         </main>
     )
 }

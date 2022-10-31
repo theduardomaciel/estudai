@@ -2,12 +2,10 @@ import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import jwt, { decode } from 'jsonwebtoken';
+import { OAuth2Client } from "google-auth-library";
 
 // Middlewares
 import cors from "cors";
-
-// Authentication
-import { oAuth2Client } from '../../../../lib/oAuth2Client';
 
 // DB
 import prisma from '../../../../lib/prisma';
@@ -36,6 +34,13 @@ router
     .use(expressWrapper(cors()))
     .post(async (req, res) => {
         const { registerData, code } = req.body;
+
+        const oAuth2Client = new OAuth2Client(
+            process.env.NEXT_PUBLIC_GOOGLE_ID,
+            process.env.GOOGLE_SECRET,
+            process.env.NODE_ENV === "development" ? `http://localhost:3000/auth/${registerData ? 'register' : 'login'}` : `https://estudai.vercel.app/auth/${registerData ? 'register' : 'login'}`, // caso volte pro popup: "postmessage"
+        );
+
         const { tokens } = await oAuth2Client.getToken(code);
         console.log(tokens)
 

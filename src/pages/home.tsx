@@ -187,18 +187,18 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                 </div>
                 <div className={styles.subheader}>
                     <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
-                    <Button
+                    {/* <Button
                         style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
                         icon={'filter_alt'}
                         disableHoverEffect={true}
                         iconProps={{ size: "2.2rem" }}
                         title='Filtrar'
-                    />
+                    /> */}
                 </div>
                 <div className={`${styles.tasks} ${viewMode === "card" ? styles.cardView : ""}`}>
                     {
-                        user.tasks.length > 0 ?
-                            actualSection === 'Pendente' ?
+                        actualSection === 'Pendente' ?
+                            monthTasks.length > 0 || otherMonthsTasks.length > 0 ?
                                 <>
                                     {
                                         monthTasks.length > 0 &&
@@ -216,28 +216,28 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                                     }
                                 </>
                                 :
-                                <>
-                                    {viewMode === 'list' && <h5>Concluído</h5>}
-                                    {
-                                        user.tasks
-                                            .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
-                                            .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
-                                    }
-                                    {viewMode === 'list' && <h5>Expirado</h5>}
-                                    {
-                                        user.tasks
-                                            .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
-                                            .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                    }
-                                    {viewMode === 'list' && <h5>Arquivado</h5>}
-                                    {
-                                        user.tasks
-                                            .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
-                                            .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                    }
-                                </>
+                                <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente para você.\nAdicione uma nova tarefa para que ela apareça por aqui :)`} />
                             :
-                            <EmptyTasksMessage description='Adicione uma nova tarefa a este grupo para que ela apareça aqui!' />
+                            <>
+                                {viewMode === 'list' && <h5>Concluído</h5>}
+                                {
+                                    user.tasks
+                                        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
+                                        .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
+                                }
+                                {viewMode === 'list' && <h5>Expirado</h5>}
+                                {
+                                    user.tasks
+                                        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+                                        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                }
+                                {viewMode === 'list' && <h5>Arquivado</h5>}
+                                {
+                                    user.tasks
+                                        .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
+                                        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+                                }
+                            </>
                     }
                 </div>
             </div>

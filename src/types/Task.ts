@@ -2,13 +2,16 @@ import { Attachment } from "./Attachment";
 import { Group } from "./Group";
 import { User } from "./User";
 
+export type TaskType = 'obligatory' | 'elective' | 'av1' | 'av2' | 'recuperation' | 'event';
+export type TaskMode = 'written' | 'typed' | 'both' | 'online' | 'free';
+
 export type Task = {
     id: number;
-    type: 'obligatory' | 'elective' | 'av1' | 'av2' | 'recuperation' | 'event';
+    type: TaskType;
     date: number;
     description?: string;
     subjects: Array<number>;
-    mode?: 'written' | 'typed' | 'both';
+    mode?: TaskMode;
     maxScore?: number;
 
     links: Array<string>,

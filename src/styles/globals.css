@@ -275,6 +275,44 @@ input[type=number]::-webkit-outer-spin-button {
     justify-content: flex-start;
 }
 
+/* Modal */
+.dangerZone {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 1.5rem;
+
+    width: 100%;
+}
+
+.dangerZone p {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.4rem;
+    width: fit-content;
+
+    color: var(--red-01);
+}
+
+/* Scrollbar */
+textarea::-webkit-scrollbar {
+    width: 1rem;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: var(--background-02);
+    opacity: 0.85;
+}
+
+/* Handle */
+textarea::-webkit-scrollbar-thumb {
+    background: var(--primary-04);
+    border-radius: 1rem;
+    opacity: 0.5;
+}
+
 /* @media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;

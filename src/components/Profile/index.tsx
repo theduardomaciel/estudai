@@ -82,14 +82,21 @@ export default function Profile({ user, onClick, showMenu }: Props) {
             <div className={styles.row2}>
                 <div className={styles.pendingReminder}>
                     <span className="material-symbols-rounded">notifications_active</span>
-                    <p>Você tem <span>{`${pendingTasksLength} atividade${pendingTasksLength !== 1 ? "s" : ""}`}</span> pendente{pendingTasksLength !== 1 ? "s" : ""}</p>
-                    <div className={styles.progressHolder}>
-                        <p>{Math.floor(completedPercentage)}%</p>
-                        <div className={styles.progressBar}>
-                            <div style={{ width: `${completedPercentage}%` }} />
-                            <div />
-                        </div>
-                    </div>
+                    {
+                        pendingTasksLength > 0 ?
+                            <>
+                                <p>Você tem <span>{`${pendingTasksLength} atividade${pendingTasksLength !== 1 ? "s" : ""}`}</span> pendente{pendingTasksLength !== 1 ? "s" : ""}</p>
+                                <div className={styles.progressHolder}>
+                                    <p>{Math.floor(completedPercentage)}%</p>
+                                    <div className={styles.progressBar}>
+                                        <div style={{ width: `${completedPercentage}%` }} />
+                                        <div />
+                                    </div>
+                                </div>
+                            </>
+                            :
+                            <p>Você não tem nenhuma atividade pendente!</p>
+                    }
                 </div>
                 {showMenu && <Button classes={styles.openMenu} onClick={onClick} icon={"menu"} />}
             </div>

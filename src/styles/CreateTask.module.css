@@ -230,8 +230,6 @@
     width: 100%;
     justify-content: flex-start;
 
-    overflow-y: scroll;
-
     height: 100%;
     gap: 1rem;
 }

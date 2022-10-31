@@ -90,6 +90,8 @@ const Groups = ({ user }: { user: User }) => {
 
     const createdGroup = useRef<Group>();
 
+    console.warn(user.groups.length)
+
     async function createGroup() {
         console.log(groupName)
         setLoading(true)
@@ -147,8 +149,7 @@ const Groups = ({ user }: { user: User }) => {
                     {
                         user.groups.length > 0 ?
                             user.groups.map((group, index) => {
-                                const tasksLength = group.tasks.length;
-                                const completedTasksLength = group.tasks.filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? true : false).length;
+                                const pendingTasks = group.tasks.filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date > new Date().getTime()).length;
 
                                 return <Link key={index} href={`/groups/${group.id}`}>
                                     <div className={styles.groupCard}>
@@ -156,7 +157,7 @@ const Groups = ({ user }: { user: User }) => {
                                             <h3>{group.name}</h3>
                                             <div className={styles.iconContainer}>
                                                 <span className={'material-symbols-rounded static'}>notifications_active</span>
-                                                <p>{completedTasksLength} atividade{completedTasksLength !== 1 && "s"} pendente{completedTasksLength !== 1 && "s"}</p>
+                                                <p>{pendingTasks} atividade{pendingTasks !== 1 && "s"} pendente{pendingTasks !== 1 && "s"}</p>
                                             </div>
                                         </header>
                                         <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma mensagem fixada]"}</p>
