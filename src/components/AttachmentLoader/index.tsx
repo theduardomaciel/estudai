@@ -1,4 +1,4 @@
-import React, { Dispatch, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react"
+import React, { Dispatch, SetStateAction, useRef, useState } from "react"
 
 // Stylesheets
 import createTaskStyles from "../../styles/CreateTask.module.css"
@@ -17,10 +17,8 @@ import { useAppContext } from "../../contexts/AppContext";
 import LinkAttachment from "./Link";
 import Modal from "../Modal";
 import Input from "../Input";
-import { link } from "fs/promises";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
-    userId: number;
     attachments: any[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
     links: string[];
@@ -40,7 +38,7 @@ function isValidUrl(str: string) {
     return pattern.test(str);
 }
 
-export default function AttachmentsLoader({ userId, attachments, setAttachments, links, setLinks, ...rest }: Props) {
+export default function AttachmentsLoader({ attachments, setAttachments, links, setLinks, ...rest }: Props) {
     const dragFrame = useRef<HTMLDivElement | null>(null);
 
     const counter = useRef<number>(0);
@@ -73,7 +71,7 @@ export default function AttachmentsLoader({ userId, attachments, setAttachments,
     const hasLinks = links.length !== 0;
 
     const listItems = attachments.map((attach, index) => {
-        return <File key={`card_${index}`} userId={userId} attachmentIndex={index} attachments={attachments} setAttachments={setAttachments} />
+        return <File key={`card_${index}`} attachmentIndex={index} attachments={attachments} setAttachments={setAttachments} />
     }).concat(linksItems);
 
     async function processFile(type: 'input' | 'drag', triggerEvent: any) {

@@ -13,6 +13,7 @@ import { setCookie } from 'nookies';
 // Middlewares
 import cors from "cors";
 import refreshToken from '../../../services/refreshToken';
+import getUserIdByToken from '../../../services/getUserIdByToken';
 
 const url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable';
 
@@ -21,16 +22,43 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 router
     .use(expressWrapper(cors()))
     .post(async (req, res) => {
-        const { meta, userId } = req.body;
+        const { meta } = req.body;
 
-        console.log(req.cookies);
+        const { ['auth.token']: token, ['auth.googleRefreshToken']: googleRefreshToken } = req.cookies;
+        const userId = await getUserIdByToken(token as string) as number;
 
-        const googleRefreshToken = req.cookies['auth.googleRefreshToken'];
-        const appToken = req.cookies['auth.token'];
+        async function getFolderId(token: string) {
+            const folderQueryResponse = await axios.get(`https://www.googleapis.com/drive/v3/files?q=mimeType=\'application/vnd.google-apps.folder\'`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            })
 
-        const api = getAPIClient(undefined, appToken)
+            console.log(folderQueryResponse.data, 'procurando pasta')
 
-        async function returnURL(token: string) {
+            if (folderQueryResponse.data.files.length > 0) {
+                console.log("O usuário já possui uma pasta, portanto, estamos adicionando o arquivo a ela.", folderQueryResponse.data.files[0].id)
+                return folderQueryResponse.data.files[0].id
+            } else {
+                const folderMeta = {
+                    name: 'anexos do estudaí :)',
+                    mimeType: 'application/vnd.google-apps.folder',
+                };
+
+                const response = await axios.post(`https://www.googleapis.com/drive/v3/files`, JSON.stringify(folderMeta), {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    }
+                })
+                console.log("A pasta do estudaí foi criada com sucesso!", response.data.id)
+                return response.data.id;
+            }
+        }
+
+        async function returnURL(token: string, folderId: string) {
+            meta.parents = [folderId]
             const body = JSON.stringify(meta);
             const response = await axios.post(url, body, {
                 headers: {
@@ -46,13 +74,15 @@ router
         if (meta) {
             try {
                 const googleToken = req.cookies['auth.googleAccessToken'] as string;
-                await returnURL(googleToken)
+                const folderId = await getFolderId(googleToken);
+                await returnURL(googleToken, folderId)
             } catch (err: any) {
                 const error = err as AxiosError;
                 if (error.response?.status == 401) {
                     const newAccessToken = await refreshToken(res, userId, googleRefreshToken as string)
                     if (newAccessToken) {
-                        await returnURL(newAccessToken);
+                        const folderId = await getFolderId(newAccessToken);
+                        await returnURL(newAccessToken, folderId);
                     } else {
                         res.status(401).send({ error: 'Google refresh and access token expired.' })
                     }

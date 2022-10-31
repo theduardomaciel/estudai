@@ -203,7 +203,7 @@
 .darkFrame.uploading {
     display: flex;
 
-    animation: fadeIn 2.5s forwards;
+    animation: fadeIn 2s forwards;
 }
 
 @keyframes fadeIn {

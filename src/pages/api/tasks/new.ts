@@ -7,6 +7,7 @@ import cors from "cors";
 
 // API
 import prisma from '../../../lib/prisma';
+import getUserIdByToken from '../../../services/getUserIdByToken';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -14,8 +15,8 @@ router
     //.use(isAuthenticated)
     .use(expressWrapper(cors()))
     .post(async (req, res) => {
-        const userId = parseInt(req.body.userId);
-        console.log(userId)
+        const { ['auth.token']: token } = req.cookies;
+        const userId = await getUserIdByToken(token as string) as number;
 
         if (!userId || typeof userId === "string") {
             console.log('O ID do usuário não foi informado corretamente.')

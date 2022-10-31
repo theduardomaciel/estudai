@@ -76,10 +76,20 @@
             transparent,
             transparent 15px,
             var(--primary-04) 15px,
-            var(--primary-04) 35px);
+            var(--primary-04) 30px);
 
-    animation: slide 4s linear infinite;
+    animation: slide 5s linear infinite;
     will-change: background-position;
+}
+
+@keyframes slide {
+    from {
+        background-position-x: 0;
+    }
+
+    to {
+        background-position-x: 300px;
+    }
 }
 
 .progressBar div:nth-child(2) {
@@ -89,16 +99,6 @@
     z-index: 0;
     border-radius: 2.5rem;
     background-color: var(--light-gray);
-}
-
-@keyframes slide {
-    from {
-        background-position-x: 0;
-    }
-
-    to {
-        background-position-x: 200px;
-    }
 }
 
 @keyframes pulseAnimation {

@@ -42,7 +42,7 @@ function divideFileInChunks(fileData: File) {
     return fileChunks;
 }
 
-async function uploadFile(fileData: File, userId: number, setGoogleAuthentication: Dispatch<SetStateAction<boolean>>, setProgress: Dispatch<SetStateAction<number>>) {
+async function uploadFile(fileData: File, setGoogleAuthentication: Dispatch<SetStateAction<boolean>>, setProgress: Dispatch<SetStateAction<number>>) {
     const meta = {
         name: fileData.name,
         mimeType: fileData.type,
@@ -84,7 +84,7 @@ async function uploadFile(fileData: File, userId: number, setGoogleAuthenticatio
     }
 
     try {
-        const response = await api.post(`/upload/getGoogleSessionUrl`, JSON.stringify({ meta, userId }), {
+        const response = await api.post(`/upload/getGoogleSessionUrl`, JSON.stringify({ meta }), {
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -109,14 +109,13 @@ async function uploadFile(fileData: File, userId: number, setGoogleAuthenticatio
 }
 
 type Props = React.LiHTMLAttributes<HTMLLIElement> & {
-    userId: number;
     attachmentIndex: number;
     attachments: Attachment[];
     setAttachments: Dispatch<SetStateAction<Attachment[]>>;
     /* attachments: MutableRefObject<Attachment[]>; */
 };
 
-export default function File({ userId, attachmentIndex, attachments, setAttachments, ...rest }: Props) {
+export default function File({ attachmentIndex, attachments, setAttachments, ...rest }: Props) {
     const [[dropProps], { html5: [html5DropProps, html5Drop], touch: [touchDropProps, touchDrop] }] = useMultiDrop({
         accept: 'card',
         drop: (item: TagProps) => {
@@ -185,7 +184,7 @@ export default function File({ userId, attachmentIndex, attachments, setAttachme
         async function upload() {
             setUploading(true)
 
-            const uploadedFile = await uploadFile(fileInfo.current, userId, setGoogleAuthentication, setProgress);
+            /* const uploadedFile = await uploadFile(fileInfo.current, setGoogleAuthentication, setProgress);
             if (uploadedFile) {
                 let array = [...attachments];
                 array[attachmentIndex].fileId = uploadedFile.id;
@@ -199,7 +198,7 @@ export default function File({ userId, attachmentIndex, attachments, setAttachme
             } else {
                 setProgress(-1)
             }
-            setUploading(false)
+            setUploading(false) */
         }
         if (calledUpload.current === false) {
             calledUpload.current = true

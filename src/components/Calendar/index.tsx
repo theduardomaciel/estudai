@@ -35,7 +35,7 @@ export default function Calendar(props: Props) {
 
     // Specific Dates
     const currentYear = date.getFullYear();
-    const currentMonth = useRef(initialDate ? initialDate.getMonth() : date.getMonth());
+    const currentMonth = useRef(initialDate ? initialDate.getMonth() + 1 : date.getMonth());
     const initialFirstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth.current)
 
     // Calendar

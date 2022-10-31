@@ -110,7 +110,6 @@ export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) 
         pathname: '/task/new',
         query: query,
     }}
-    replace
     as={`/task/new`}
 >
     <a style={{ width: "100%" }} href="">

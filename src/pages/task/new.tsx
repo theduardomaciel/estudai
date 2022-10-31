@@ -364,14 +364,6 @@ export default function NewTask() {
     const router = useRouter();
 
     const groups = router.query.groups ? JSON.parse(router.query.groups as string) as Group[] : null;
-    const userId = parseInt(router.query.userId as string) as number | string;
-
-    useEffect(() => {
-        if (!userId || userId === 'NaN') {
-            router.push('/home');
-        }
-    }, [])
-
     const initialDate = router.query.date;
 
     const { isUploading } = useAppContext();
@@ -417,7 +409,11 @@ export default function NewTask() {
             <ActivityModeSelector />
             <MaxScoreSelector />
         </div>
-        <DescriptionEditor editor={editor} />
+        <div className={styles.column}>
+            <Section title='Classificação' />
+            <SubjectSelector />
+            <DescriptionEditor editor={editor} />
+        </div>
     </>
 
     const type2 = <>
@@ -465,6 +461,11 @@ export default function NewTask() {
             console.log('Um arquivo ainda está sendo enviado. Impedindo que o usuário avance.')
             if (darkFrameRef.current) {
                 darkFrameRef.current.classList.toggle(styles.uploading)
+                setTimeout(() => {
+                    if (darkFrameRef.current) {
+                        darkFrameRef.current.classList.toggle(styles.uploading)
+                    }
+                }, 2000);
             }
         } else {
             if (!creatingTask) {
@@ -499,7 +500,6 @@ export default function NewTask() {
                 setModalVisible('upload')
 
                 const data = {
-                    userId: router.query.userId,
                     type: type,
                     date: date,
                     mode: mode,
@@ -567,7 +567,6 @@ export default function NewTask() {
                     }
                 </div>
                 <AttachmentsLoader
-                    userId={userId as number}
                     attachments={attachments}
                     setAttachments={setAttachments}
                     style={{ paddingBottom: "3.5rem" }}
