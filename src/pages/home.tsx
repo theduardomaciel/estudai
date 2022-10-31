@@ -39,7 +39,7 @@ import { Task } from '../types/Task';
 
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token, ['shown.modal']: shownModal } = parseCookies(context)
+    const { ['auth.token']: token, ['app.shownModal']: shownModal } = parseCookies(context)
 
     context.res.setHeader(
         'Cache-Control',
@@ -58,8 +58,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
             },
         }
     }
-
-    setCookie(context, 'shown.modal', "true")
 
     let user = await getUser(userId as number, 'full') as unknown as User;
 
@@ -84,7 +82,12 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         return group;
     })
 
+    setCookie(context, 'app.shownModal', 'true', {
+        path: "/"
+    })
+
     const alreadyShownIntroModal = shownModal === 'true' ? true : false;
+    console.log(alreadyShownIntroModal)
 
     return {
         props: {
@@ -270,7 +273,7 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                 {focus}
             </Menu>
             {
-                !alreadyShownIntroModal &&
+                alreadyShownIntroModal === false &&
                 <LandingIntroModal sections={[
                     {
                         title: 'Bem-vindo ao estudaí',

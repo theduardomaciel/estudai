@@ -66,8 +66,8 @@ const useCountdown = ({ initialCounter, initialIntervalCounter, pauseInterval, n
                     resume.current = newCounter;
 
                     if (newCounter !== 0 && newCounter % (pauseInterval * currentIntervalIndexRef.current) === 0) {
-                        clearInterval(loopRef.current);
                         beginInterval()
+                        clearInterval(loopRef.current);
                     }
                 } else {
                     stopCounter();

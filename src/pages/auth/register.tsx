@@ -218,7 +218,7 @@ const Register: NextPage = () => {
                 style={selected === 1 ? selectedStyle : unselectedStyle}
                 onClick={(event) => changeSection(1)}
             >
-                <div className={styles.buttonInfo} >
+                <div className={styles.buttonInfo}>
                     <h6>Estou cursando o ensino médio</h6>
                     <p>Preciso de ajuda para organizar horários e ter sanidade mental </p>
                 </div>
@@ -343,7 +343,7 @@ const Register: NextPage = () => {
         scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata",
         flow: 'auth-code',
         ux_mode: "redirect",
-        redirect_uri: "http://localhost:3000/auth/register"
+        redirect_uri: process.env.NEXT_PUBLIC_NODE_ENV === "development" ? `http://localhost:3000/auth/login` : `https://estudai.vercel.app/auth/login`
     });
 
 
