@@ -343,7 +343,7 @@ const Register: NextPage = () => {
         scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata",
         flow: 'auth-code',
         ux_mode: "redirect",
-        redirect_uri: process.env.NEXT_PUBLIC_NODE_ENV === "development" ? `http://localhost:3000/auth/login` : `https://estudai.vercel.app/auth/login`
+        redirect_uri: process.env.NEXT_PUBLIC_NODE_ENV === "development" ? `http://localhost:3000/auth/register` : `https://estudai.vercel.app/auth/register`
     });
 
 
