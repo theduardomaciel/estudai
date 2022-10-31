@@ -348,13 +348,15 @@ export const SubjectsContentsSelector = ({ subjects, contents, stateContents, se
     }
 </div>
 
+const CustomEditor = ({ editor }: { editor: any }) => <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />;
+
 export const DescriptionEditor = ({ editor }: { editor: Editor | null }) => <div className={styles.column}>
     <div className={'header'}>
         <Section classes={styles.descriptionHeader} title='Descrição' />
         <FormatToolbar editor={editor as Editor} />
     </div>
     <div className={styles.input}>
-        <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />
+        <CustomEditor editor={editor} />
     </div>
 </div>
 
@@ -415,17 +417,7 @@ export default function NewTask() {
             <ActivityModeSelector />
             <MaxScoreSelector />
         </div>
-        <div className={styles.column}>
-            <Section title='Classificação' />
-            <SubjectSelector />
-            <div className={'header'}>
-                <Section classes={styles.descriptionHeader} title='Descrição' />
-                <FormatToolbar editor={editor as Editor} />
-            </div>
-            <div className={styles.input}>
-                <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />
-            </div>
-        </div>
+        <DescriptionEditor editor={editor} />
     </>
 
     const type2 = <>
