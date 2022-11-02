@@ -29,31 +29,62 @@ router
     })
     .patch(async (req, res) => {
         const groupId = parseInt(req.query.id as string);
-        const userId = parseInt(req.body.userId);
+        const { updateInteraction } = req.body;
+        const { ['auth.token']: token } = req.cookies;
 
-        const { name, pinnedMessage } = req.body;
+        const userId = await getUserIdByToken(token as string) as number;
 
         if (!userId || typeof userId === "string") {
             console.log('O ID do usuário não foi informado corretamente.')
-            res.status(400).json({ error: "User id was not given correctly." })
+            res.status(400).json({ error: "We couldn't get user id." })
         }
+
+        const { name, pinnedMessage } = req.body;
 
         const user = await prisma.user.findUnique({
             where: {
                 id: userId
             },
             include: {
-                groups: true
+                groups: true,
+                groupsInteracted: true
             }
         })
 
-        const group = await prisma.group.findUnique({
-            where: {
-                id: groupId
+        if (updateInteraction && user) {
+            const hasInteracted = user.groupsInteracted.find((group, i) => group.id === groupId) ? true : false;
+            if (!hasInteracted) {
+                await prisma.group.update({
+                    where: {
+                        id: groupId
+                    },
+                    data: {
+                        usersThatInteracted: {
+                            connect: {
+                                id: userId
+                            }
+                        }
+                    },
+                })
+                console.log("Interação do usuário adicionada ao grupo.")
+                res.status(200).json({ interaction: true })
+            } else {
+                await prisma.group.update({
+                    where: {
+                        id: groupId
+                    },
+                    data: {
+                        usersThatInteracted: {
+                            disconnect: {
+                                id: userId
+                            }
+                        }
+                    },
+                })
+                console.log("Interação do usuário removida do grupo.")
+                res.status(200).json({ interaction: false })
             }
-        })
-
-        if (name || pinnedMessage) {
+        } else if (name || pinnedMessage) {
             try {
                 if (pinnedMessage) {
                     await prisma.group.update({
@@ -61,7 +92,8 @@ router
                             id: groupId
                         },
                         data: {
-                            pinnedMessage: pinnedMessage
+                            pinnedMessage: pinnedMessage,
+                            usersThatInteracted: {}
                         },
                     })
                     console.log("Mensagem fixada atualizada.")
@@ -124,29 +156,6 @@ router
                         console.log(err)
                         res.status(400).json({ error: "There was not possible to add user to group.", serverError: err })
                     }
-                }
-            } else {
-                try {
-
-
-                    if (group?.admins.indexOf(userId) === -1) {
-                        res.status(400).json({ error: "You have not enough permissions for updating group info." })
-                    }
-
-                    const { name, isPrivate } = req.body;
-
-                    const task = await prisma.group.update({
-                        where: {
-                            id: groupId
-                        },
-                        data: {
-                            pinnedMessage: req.body.pinnedMessage
-                        },
-                    })
-                    res.status(200).json(task)
-                } catch (err: any) {
-                    console.log(err)
-                    res.status(400).json({ error: "One or more body elements were incorrectly written.", serverError: err })
                 }
             }
         }

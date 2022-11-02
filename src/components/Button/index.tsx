@@ -32,7 +32,7 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
                 <Spinner
                     classes={styles.hovered}
                     size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.125}
-                    color={preset === "fillHover" && isSelected ? iconProps?.color as string : iconProps?.color ? iconProps.color : "var(--light)"}
+                    color={"var(--light)"}
                 />
                 :
                 <>
@@ -69,13 +69,14 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
             }
 
             .button.${styles.fillHover}:not(.selected):hover,
-            .button.selected {
+            .button.selected,
+            .button.${styles.loading} {
                 background-color: ${iconProps?.color};
                 color: ${iconProps?.color ? "var(--light)" : iconProps?.color};
             }
 
             .button.${styles.fillHover}.selected:hover {
-                filter: brightness(1.1);
+                filter: brightness(1.15);
             }
 
             .button:not(.${styles.sendForm}):not(.${styles.fillHover}):not(.${styles.loading}):not(.disableHoverEffect):hover {

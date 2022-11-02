@@ -35,7 +35,7 @@ export default function Calendar(props: Props) {
 
     // Specific Dates
     const currentYear = date.getFullYear();
-    const currentMonth = useRef(initialDate ? initialDate.getMonth() + 1 : date.getMonth());
+    const currentMonth = useRef(initialDate ? initialDate.getMonth() : date.getMonth());
     const initialFirstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth.current)
 
     // Calendar
@@ -44,7 +44,7 @@ export default function Calendar(props: Props) {
 
     // Date Selection
     const initialMonthDay = initialDate?.getDate() as number;
-    const [selected, setSelected] = useState<number | undefined>(initialMonthDay + initialFirstDayOfMonth);
+    const [selected, setSelected] = useState<number | undefined>(initialMonthDay + initialFirstDayOfMonth - 1);
 
     // Functions
     const isBeforeMonth = (day: number) => {
@@ -64,6 +64,17 @@ export default function Calendar(props: Props) {
         const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth.current)
         const lastDateOfMonth = getLastDateOfMonth(currentYear, currentMonth.current);
         const lastDateOfLastMonth = getLastDateOfMonth(currentYear, currentMonth.current - 1)
+
+        /* if (isBeforeMonth(index)) {
+            console.log('O index está antes do começo do mês atual.')
+            return lastDateOfLastMonth - (firstDayOfMonth - 1) + index
+        } else if (isAfterMonth(index + 1)) {
+            console.log('O index está depois do começo do mês atual.')
+            return (index - firstDayOfMonth) - lastDateOfMonth + 1
+        } else {
+            console.log('O index está no mês atual.')
+            return index - firstDayOfMonth + 1;
+        } */
 
         return isBeforeMonth(index) ?
             lastDateOfLastMonth - (firstDayOfMonth - 1) + index
@@ -115,7 +126,7 @@ export default function Calendar(props: Props) {
     }
 
     function setDate(index: number, day: number, month: number) {
-        console.log("Dia: ", day, "Mês: ", month)
+        console.log("Dia: ", day, "Mês: ", month, 'Index: ', index)
         setSelected(index)
         if (props.setDate) {
             props.setDate(`${currentYear}-${month}-${day}`)
@@ -159,7 +170,16 @@ export default function Calendar(props: Props) {
                         const calendarMonth = isBeforeMonth(index) ? currentMonth.current : isAfterMonth(index + 1) ? currentMonth.current + 2 : currentMonth.current + 1;
 
                         return props.linkToCreate ?
-                            <Link href={`/task/new?userId=${props.userId}&date=${`${currentYear}-${calendarMonth}-${day}`}`} key={index.toString()} as={`/task/new`}>
+                            <Link
+                                key={index.toString()}
+                                href={{
+                                    pathname: '/task/new',
+                                    query: {
+                                        date: `${currentYear}-${calendarMonth}-${day + 1}`
+                                    },
+                                }}
+                                as={`/task/new`}
+                            >
                                 <li
                                     onMouseEnter={(event) => !props.setDate ? event.currentTarget.textContent = "+" : ""}
                                     onMouseLeave={(event) => !props.setDate ? event.currentTarget.textContent = day.toString() : ""}

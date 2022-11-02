@@ -364,7 +364,6 @@ export default function NewTask() {
     const router = useRouter();
 
     const groups = router.query.groups ? JSON.parse(router.query.groups as string) as Group[] : null;
-    const initialDate = router.query.date;
 
     const { isUploading } = useAppContext();
 
@@ -377,7 +376,9 @@ export default function NewTask() {
 
     const [type, setType] = useState<TaskType>('obligatory');
 
-    const [date, setDate] = useState(initialDate ? initialDate : `${actualDate.getFullYear()}-${actualDate.getMonth() < 10 ? `0${actualDate.getMonth()}` : actualDate.getMonth()}-${actualDate.getDate()}`);
+    const initialDate = router.query.date;
+    const [date, setDate] = useState(initialDate ? new Date(initialDate as string) : actualDate);
+    console.log(date)
 
     const [storage, setStorage] = useState("account");
 
@@ -580,7 +581,7 @@ export default function NewTask() {
                         <div className='row'>
                             <h3>Escolha o dia da tarefa</h3>
                         </div>
-                        <Calendar setDate={setDate} hasMonthSelector initialDate={new Date(date as string)} />
+                        <Calendar setDate={setDate} hasMonthSelector initialDate={date} />
                     </div>
 
                     <div className={styles.section}>

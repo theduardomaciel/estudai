@@ -91,6 +91,8 @@ import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import EditTaskModal from '../../components/Modal/Presets/EditTaskModal';
 import EditTaskModalPreset from '../../components/Modal/Presets/EditTaskModal';
+import UsersModalPreset from '../../components/Modal/Presets/UsersModal';
+import AttachmentsLoader from '../../components/AttachmentLoader';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
@@ -104,6 +106,8 @@ const Task = ({ task }: { task: Task }) => {
 
     const [isActivity, isTest] = taskGroupType(task.type);
     const titleType = isActivity ? "Atividade" : isTest ? "Avaliação" : "Evento"
+
+    const [links, setLinks] = useState<Array<string>>(task.links);
 
     const [attachments, setAttachments] = useState(task.attachments);
     const [attachmentsInteracted, setAttachmentsInteracted] = useState<Array<boolean | string>>(['loading'])
@@ -136,7 +140,7 @@ const Task = ({ task }: { task: Task }) => {
 
         const [isAttachmentOwner, setIsAttachmentOwner] = useState(false);
 
-        useEffect(() => setIsAttachmentOwner(attachment.uploadedBy.id === parseInt(userId)))
+        useEffect(() => attachment.uploadedBy && setIsAttachmentOwner(attachment.uploadedBy.id === parseInt(userId)))
 
         return <li key={index} className={fileStyles.attachment} style={{ maxWidth: "fit-content" }} {...rest} >
             <div className={fileStyles.header}>
@@ -204,7 +208,9 @@ const Task = ({ task }: { task: Task }) => {
             />
             <div className={'iconHolder'} style={{ fontSize: "1.4rem", color: "var(--primary-02)", fontWeight: 600, fontFamily: "Inter" }}>
                 <span style={{ fontSize: "1.6rem" }} className="material-symbols-rounded static">check_circle</span>
-                <p style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => setUsersModalVisible(attachment)}>{attachment.markedBy.length}</p>
+                {
+                    attachment.markedBy && <p style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => setUsersModalVisible(attachment.markedBy)}>{attachment.markedBy.length}</p>
+                }
             </div>
         </li>
     }
@@ -270,7 +276,11 @@ const Task = ({ task }: { task: Task }) => {
             <SectionSelector sections={["Anexos", "Links"]} actualSection={section} setSection={setSection} />
             <div className={`row ${styles.headerButtons}`}>
                 <Button icon={'filter_alt'} />
-                <Button icon={section === "Anexos" ? 'attach_file' : 'link'} title={section === 'Anexos' ? 'Adicionar anexo' : 'Adicionar link'} />
+                <Button
+                    icon={section === "Anexos" ? 'attach_file' : 'link'}
+                    title={'Adicionar'}
+                    onClick={() => setAddAttachmentModalVisible(true)}
+                />
             </div>
         </div>
         {
@@ -288,8 +298,8 @@ const Task = ({ task }: { task: Task }) => {
                     :
                     <EmptyTasksMessage description='Essa atividade ainda não possui anexos.' />
                 :
-                task.links.length > 0 ?
-                    task.links.map((link, index) => {
+                links.length > 0 ?
+                    links.map((link, index) => {
                         return <LinkAttachment key={index} link={link} index={index} />
                     })
                     :
@@ -351,47 +361,7 @@ const Task = ({ task }: { task: Task }) => {
     const subjectsText = useMemo(() => subjectsString(task.subjects), [])
 
     // Activity and Event Type
-    const [isUsersModalVisible, setUsersModalVisible] = useState<boolean | Attachment>(false);
-
-    const usersModal = <Modal
-        isVisible={isUsersModalVisible !== false}
-        toggleVisibility={() => setUsersModalVisible(false)}
-        icon={'check'}
-        iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
-        color={`var(--primary-02)`}
-    >
-        <div className={styles.usersContainer}>
-            <header>
-                <div className={'iconHolder'}>
-                    <span className="material-symbols-rounded static">person</span>
-                    <p>Usuário</p>
-                </div>
-                {/* <div className={'iconHolder'}>
-                    <span className="material-symbols-rounded static">calendar_today</span>
-                    <p>Data</p>
-                </div> */}
-            </header>
-            {
-                typeof isUsersModalVisible !== "boolean" ? isUsersModalVisible.markedBy.map((user, index) => <li key={index} className={styles.user}>
-                    <div className={'iconHolder'} style={{ gap: "1rem" }}>
-                        <Image src={user.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
-                        <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
-                    </div>
-
-                    {/* <p>---</p> */}
-                </li>)
-                    :
-                    task.interactedBy.map((user, index) => <li key={index} className={styles.user}>
-                        <div className={'iconHolder'} style={{ gap: "1rem" }}>
-                            <Image src={user.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
-                            <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
-                        </div>
-
-                        {/* <p>---</p> */}
-                    </li>)
-            }
-        </div>
-    </Modal>
+    const { setUsersModalVisible, UsersModal } = UsersModalPreset();
 
     const attachmentInfoModal = <Modal
         isVisible={attachmentFromDetailsModal !== null}
@@ -448,6 +418,55 @@ const Task = ({ task }: { task: Task }) => {
             <p>{text}<span>{name}</span></p>
         </div>
 
+    const [isAddAttachmentModalVisible, setAddAttachmentModalVisible] = useState(false);
+    const [newAttachments, setNewAttachments] = useState<Array<Attachment>>([]);
+    const [newLinks, setNewLinks] = useState<Array<string>>([]);
+
+    async function uploadAttachments() {
+        setLoading(true)
+        try {
+            const response = await api.patch(`/tasks/${task.id}`, { userId: parseInt(userId), existingTaskId: task.id, attachments: newAttachments, links: newLinks })
+            console.log(response.data)
+            setAttachments(attachments.concat(newAttachments))
+            setLinks(links.concat(newLinks))
+            setNewAttachments([])
+            setNewLinks([])
+        } catch (error) {
+            console.log(error)
+        }
+        setNewAttachments([])
+        setAddAttachmentModalVisible(false);
+        setLoading(false)
+    }
+
+    const hasUploadedAtLeastOne = newAttachments.find((attachment, i) => attachment.downloadLink !== "") ? true : false;
+
+    const AddAttachmentModal = <Modal
+        isVisible={isAddAttachmentModalVisible}
+        color={`var(--primary-02)`}
+        icon={'add'}
+        iconProps={{ builtWithTitle: true, size: "2.8rem", position: "center" }}
+        toggleVisibility={() => {
+            setNewAttachments([])
+            setAddAttachmentModalVisible(!isAddAttachmentModalVisible)
+        }}
+        isLoading={isLoading}
+        title={"Adicione novos anexos ou links abaixo:"}
+        actionProps={{
+            buttonText: "ENVIAR",
+            buttonIcon: "file_upload",
+            disabled: !hasUploadedAtLeastOne && newLinks.length === 0,
+            function: uploadAttachments
+        }}
+    >
+        <AttachmentsLoader
+            attachments={newAttachments}
+            setAttachments={setNewAttachments}
+            links={newLinks}
+            setLinks={setNewLinks}
+        />
+    </Modal>
+
     if (isActivity) {
         const [name, icon] = getSubjectInfo(task.subjects[0])
         const title = `${titleType} de ${name}`
@@ -471,7 +490,7 @@ const Task = ({ task }: { task: Task }) => {
                             task.interactedBy.length > 0 &&
                             <div className={styles.usersInfo}>
                                 <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} />
-                                <p>+ de <span onClick={() => setUsersModalVisible(true)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'concluíram' : 'concluiu'} a atividade</p>
+                                <p>+ de <span onClick={() => setUsersModalVisible(task.interactedBy)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'concluíram' : 'concluiu'} a atividade</p>
                             </div>
                         }
                     </div>
@@ -522,9 +541,10 @@ const Task = ({ task }: { task: Task }) => {
                     </div>
                     {attachmentsContainer}
                 </div>
-                {usersModal}
+                {UsersModal}
                 {attachmentInfoModal}
                 {EditTaskModal}
+                {AddAttachmentModal}
             </main>
         )
     } else if (isTest) {
@@ -594,6 +614,7 @@ const Task = ({ task }: { task: Task }) => {
                 </Modal>
                 {attachmentInfoModal}
                 {EditTaskModal}
+                {AddAttachmentModal}
             </main>
         )
     } else if (task.title) {
@@ -613,7 +634,7 @@ const Task = ({ task }: { task: Task }) => {
                             task.interactedBy.length > 0 &&
                             <div className={styles.usersInfo}>
                                 <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} />
-                                <p>+ de <span onClick={() => setUsersModalVisible(true)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'marcaram' : 'marcou'} presença</p>
+                                <p>+ de <span onClick={() => setUsersModalVisible(task.interactedBy)}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'marcaram' : 'marcou'} presença</p>
                             </div>
                         }
                     </div>
@@ -660,9 +681,10 @@ const Task = ({ task }: { task: Task }) => {
                     />
                     {attachmentsContainer}
                 </div>
-                {usersModal}
+                {UsersModal}
                 {attachmentInfoModal}
                 {EditTaskModal}
+                {AddAttachmentModal}
             </main>
         )
     } else {

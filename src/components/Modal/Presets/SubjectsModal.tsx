@@ -47,8 +47,9 @@ export default function SubjectsModalPreset(subjects: Array<number>, setSubjects
             isVisible={isModalVisible}
             color={`var(--primary-02)`}
             icon={'subject'}
+            iconProps={{ builtWithTitle: true, size: "2.8rem", position: "center" }}
             toggleVisibility={() => setModalVisible(!isModalVisible)}
-            title={"Selecione as matérias da tarefa abaixo:"}
+            title={"Selecione as matérias da avaliação abaixo:"}
         >
             {subjectsList}
         </Modal>,

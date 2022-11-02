@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import Head from 'next/head';
-import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
+import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 
 // Stylesheets
 import styles from '../../styles/Group.module.css'
@@ -29,6 +29,8 @@ import getUser from '../../services/getUser';
 import { User } from '../../types/User';
 import Input, { InputLabel } from '../../components/Input';
 import Image from 'next/image';
+import UsersPortraits from '../../components/UsersPortraits';
+import UsersModalPreset from '../../components/Modal/Presets/UsersModal';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
@@ -146,6 +148,14 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
         .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
 
+    const expiredTasks = group.tasks
+        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+
+    const archivedTasks = group.tasks
+        .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
+        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+
     const [isConfigModalVisible, setConfigModalVisible] = useState(false);
     const [newPinnedMessage, setNewPinnedMessage] = useState(group.pinnedMessage);
     const [newGroupName, setNewGroupName] = useState(group.name);
@@ -188,6 +198,28 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         }
     }
 
+    const [userInteracted, setUserInteracted] = useState(false);
+
+    async function toggleUserInteraction() {
+        setLoading(true)
+
+        try {
+            const response = await api.patch(`/groups/${group.id}`, { updateInteraction: true })
+            console.log(response.data, response.data.interaction)
+            setUserInteracted(response.data.interaction)
+            setLoading(false)
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        setUserInteracted(user.groups.find((userGroup, i) => userGroup.id === group.id) ? true : false)
+    }, [])
+
+    const { setUsersModalVisible, UsersModal } = UsersModalPreset()
+
     return (
         <main className={styles.holder}>
             <Head>
@@ -215,11 +247,10 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         <div className={homeStyles.subheader}>
                             <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
                             <Button
-                                style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
+                                style={{ fontSize: "1.4rem", paddingInline: "1.15rem", paddingBlock: "1.15rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
                                 icon={'filter_alt'}
                                 disableHoverEffect
                                 iconProps={{ size: "2.2rem" }}
-                                title='Filtrar'
                             />
                         </div>
                         <div className={`${homeStyles.tasks}`}>
@@ -230,22 +261,17 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                         :
                                         <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente neste grupo pra você :)`} />
                                     :
-                                    <>
-                                        <h5>Concluído</h5>
-                                        {concludedTasks}
-                                        <h5>Expirado</h5>
-                                        {
-                                            group.tasks
-                                                .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
-                                                .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                        }
-                                        <h5>Arquivado</h5>
-                                        {
-                                            group.tasks
-                                                .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
-                                                .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                        }
-                                    </>
+                                    concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 ?
+                                        <>
+                                            {concludedTasks.length > 0 && <h5>Concluído</h5>}
+                                            {concludedTasks}
+                                            {expiredTasks.length > 0 && <h5>Expirado</h5>}
+                                            {expiredTasks}
+                                            {expiredTasks.length > 0 && <h5>Arquivado</h5>}
+                                            {archivedTasks}
+                                        </>
+                                        :
+                                        <EmptyTasksMessage description={`Parece que não há nenhuma tarefa arquivada neste grupo por aqui :)`} />
                             }
                         </div>
                     </div>
@@ -258,6 +284,17 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                     Mensagem Fixada
                                 </header>
                                 <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma]"}</p>
+                                <Button
+                                    title='ESTOU CIENTE'
+                                    onClick={toggleUserInteraction}
+                                    icon={'check'}
+                                    isSelected={userInteracted}
+                                    isLoading={isLoading}
+                                    iconProps={{ size: "1.8rem", color: "var(--primary-02)" }}
+                                    preset={"fillHover"}
+                                    style={{ width: "100%", padding: "0.5rem" }}
+                                />
+                                <UsersPortraits onClick={() => setUsersModalVisible(group.usersThatInteracted)} maxLength={8} size={24} imagesUrls={group.usersThatInteracted.map((user, i) => user.image_url)} />
                             </div>
                             <div className={`${styles.tasksInfoContainer} ${styles.sidebarContainer}`}>
                                 <div>
@@ -437,6 +474,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                     function: deleteGroup
                 }}
             />
+            {UsersModal}
         </main>
     )
 }

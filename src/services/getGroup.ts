@@ -11,6 +11,7 @@ export default async function getGroup(id?: number, inviteLink?: string) {
                 },
                 include: {
                     users: true,
+                    usersThatInteracted: true,
                     tasks: {
                         include: {
                             group: true,

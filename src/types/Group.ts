@@ -13,5 +13,7 @@ export type Group = {
     createdAt: Date | string | number,
     tasks: Task[],
     users: User[],
-    admins: number[]
+    admins: number[],
+
+    usersThatInteracted: User[]
 }

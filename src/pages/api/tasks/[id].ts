@@ -8,6 +8,7 @@ import cors from "cors";
 import prisma from '../../../lib/prisma';
 import { AxiosError } from 'axios';
 import getUserIdByToken from '../../../services/getUserIdByToken';
+import { api } from '../../../lib/api';
 
 // API
 
@@ -20,10 +21,50 @@ router
     .use(expressWrapper(cors()))
     .patch(async (req, res) => {
         const { id } = req.query;
-        const { userId } = req.body;
+        const { userId, existingTaskId, attachments, links } = req.body;
 
         const parsedId = parseInt(id as string)
         const parsedUserId = parseInt(userId as string);
+
+        if (existingTaskId && attachments) {
+            if (attachments && attachments.length > 0) {
+                await prisma.task.update({
+                    where: {
+                        id: parseInt(existingTaskId)
+                    },
+                    data: {
+                        attachments: {
+                            create: attachments.map((attachment: any, index: number) => {
+                                return {
+                                    uploadedBy: {
+                                        connect: {
+                                            id: userId
+                                        }
+                                    },
+                                    ...attachment
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+
+            if (links && links.length > 0) {
+                await prisma.task.update({
+                    where: {
+                        id: parseInt(existingTaskId)
+                    },
+                    data: {
+                        links: {
+                            push: links
+                        }
+                    }
+                })
+            }
+
+            console.log("Attachment adicionado à tarefa existente.")
+            return res.status(200).json({ success: "Attachment added to existing task successfully." })
+        }
 
         try {
             if (userId) {
@@ -240,6 +281,18 @@ router
 
         const userId = await getUserIdByToken(token as string);
 
+        async function deleteAttachment(attachmentId: string) {
+            console.log("Excluindo attachment.")
+            try {
+                const response = await api.delete(`/attachments/${attachmentId}`)
+                if (response) {
+                    console.log("Attachment deletado", attachmentId)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
         if (!userId) {
             res.status(400).json({ error: "We couldn't get enough info." })
         } else {
@@ -248,26 +301,32 @@ router
                     id: taskId
                 },
                 include: {
-                    createdBy: true
+                    createdBy: true,
+                    attachments: true
                 }
             })
 
-            console.log(userId, task?.createdBy?.id)
+            console.log("indo", taskId, task)
 
             if (task && task.createdBy && task.createdBy.id !== userId) {
                 res.status(401).json({ error: "You have not enough permissions for updating task info." })
-            } else {
+            } else if (task) {
                 try {
+                    console.log('antes')
+                    await task.attachments.forEach(async (attach, i) => await deleteAttachment(attach.id))
+                    console.log("depois")
                     await prisma.task.delete({
                         where: {
                             id: taskId
                         }
                     })
-                    res.status(200).json({ error: 'The task was deleted successfully.' })
+                    res.status(200).json({ success: 'The task and the attachments were deleted successfully.' })
                 } catch (error) {
                     console.log(error)
                     res.status(500).json({ error: 'There was not possible to delete the task.' })
                 }
+            } else {
+                res.status(500).json({ error: 'There was not possible to delete the task.' })
             }
         }
     })

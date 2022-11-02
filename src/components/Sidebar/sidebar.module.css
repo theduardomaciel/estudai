@@ -28,6 +28,8 @@
     font-size: 3.2rem;
     user-select: none;
     cursor: pointer;
+
+    color: var(--light);
 }
 
 .clubOutlined path {

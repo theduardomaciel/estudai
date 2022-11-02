@@ -157,7 +157,7 @@ export default function Focus({ }: Props) {
     let notification: Notification | undefined = undefined;
 
     function createNotification(title: string, message: string) {
-        if (hasNotificationPermission) {
+        if (hasNotificationPermission && screen.width > 500) {
             console.log('Tocando áudio de aviso e enviando notificação.')
             const audio = new Audio(`/audio/Focus_Warning.mp3`);
             audio.play();
@@ -232,6 +232,12 @@ export default function Focus({ }: Props) {
                             title="Permitir"
                             style={{ width: "100%" }}
                             onClick={grantNotificationPermission}
+                        />
+                        <Button
+                            icon={'notifications_paused'}
+                            title="Prefiro não ser notificado"
+                            style={{ width: "100%" }}
+                            onClick={() => setHasNotificationPermission(true)}
                         />
                     </motion.div>
                     :

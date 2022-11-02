@@ -8,18 +8,35 @@ import styles from "./portraits.module.css"
 interface Props {
     imagesUrls: Array<string>;
     position?: 'flex-start' | 'center' | 'flex-end';
+    size?: number;
+    maxLength?: number;
+    onClick?: () => void;
 }
 
-export default function UsersPortraits({ imagesUrls, position }: Props) {
+const defaultSize = 22;
+
+export default function UsersPortraits({ imagesUrls, maxLength: max, position, size, onClick }: Props) {
     const { viewMode } = useAppContext();
 
-    const imagesArray = imagesUrls.length > 5 ? imagesUrls.slice(1, 5) : imagesUrls;
+    const maxLength = max ? max : 5;
 
-    return <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} /* style={{ justifyContent: position ? position : 'flex-start' }} */>
+    const imagesArray = imagesUrls.length > maxLength ? imagesUrls.slice(1, maxLength) : imagesUrls;
+
+    return <div
+        className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}
+        onClick={onClick}
+        style={{ cursor: onClick ? "pointer" : 'default' /* justifyContent: position ? position : 'flex-start' */ }}
+    >
         {
             imagesArray.map((url, i) => {
-                return <Image key={i} className={styles.image} src={url.replace('"', '')} width={22} height={22} alt="imagem de usuário" />
+                return <Image key={i} className={styles.image} src={url.replace('"', '')} width={size ? size : defaultSize} height={size ? size : defaultSize} alt="imagem de usuário" />
             })
+        }
+        {
+            imagesUrls.length > maxLength &&
+            <div className={styles.additionalUsers} style={{ width: size ? size : defaultSize, height: size ? size : defaultSize }}>
+                +{imagesUrls.length - maxLength}
+            </div>
         }
     </div>
 }

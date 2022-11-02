@@ -58,6 +58,8 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
             name: file.name,
             type: file.type,
             tags: [],
+            viewLink: "",
+            downloadLink: "",
             fileId: file,
         };
         setAttachments(attachments.concat(preAttachment))

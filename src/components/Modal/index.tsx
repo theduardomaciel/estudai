@@ -76,7 +76,7 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
                                         </span>
                                     </div>
                                     {
-                                        iconProps?.builtWithTitle && <h2 style={{ textAlign: "left", fontSize: iconProps.size ? iconProps.size : "3.8rem" }}>{title}</h2>
+                                        iconProps?.builtWithTitle && <h2 style={{ textAlign: "left", fontSize: iconProps.size ? iconProps.size : "3.8rem", lineHeight: "3.25rem" }}>{title}</h2>
                                     }
                                 </div>
                                 {
@@ -106,13 +106,13 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
 
                             <div className={styles.buttonsHolder}>
                                 {
-                                    !suppressReturnButton && !isLoading && !iconProps?.builtWithTitle &&
+                                    !suppressReturnButton && !isLoading && iconProps?.position !== "flex-start" &&
                                     <Button
                                         onClick={toggleVisibility}
                                         title={actionProps?.function ? `CANCELAR` : "RETORNAR"}
                                         icon={actionProps?.function ? 'close' : 'arrow_back'}
                                         style={{
-                                            background: color ? "var(--font-light)" : "var(--primary-02)",
+                                            background: color ? color === "var(--primary-02)" ? 'var(--primary-04)' : "var(--font-light)" : "var(--primary-02)",
                                             padding: `0.7rem 1.5rem`
                                         }}
                                         accentColor={color && "var(--light-gray)"}

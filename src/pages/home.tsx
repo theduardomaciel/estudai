@@ -167,6 +167,19 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
         })
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
+    const concludedTasks = user.tasks
+        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
+        .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
+
+    const expiredTasks = user.tasks
+        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+
+    const archivedTasks = user.tasks
+        .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
+        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+
+
     const focus = useMemo(() => <Focus />, [])
 
     return (
@@ -218,28 +231,19 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                                     }
                                 </>
                                 :
-                                <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente para você.\nAdicione uma nova tarefa para que ela apareça por aqui :)`} />
+                                <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente para você :)`} />
                             :
-                            <>
-                                {viewMode === 'list' && <h5>Concluído</h5>}
-                                {
-                                    user.tasks
-                                        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
-                                        .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
-                                }
-                                {viewMode === 'list' && <h5>Expirado</h5>}
-                                {
-                                    user.tasks
-                                        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
-                                        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                }
-                                {viewMode === 'list' && <h5>Arquivado</h5>}
-                                {
-                                    user.tasks
-                                        .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
-                                        .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-                                }
-                            </>
+                            concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 ?
+                                <>
+                                    {concludedTasks.length > 0 && viewMode === 'list' && <h5>Concluído</h5>}
+                                    {concludedTasks}
+                                    {expiredTasks.length > 0 && viewMode === 'list' && <h5>Expirado</h5>}
+                                    {expiredTasks}
+                                    {expiredTasks.length > 0 && viewMode === 'list' && <h5>Arquivado</h5>}
+                                    {archivedTasks}
+                                </>
+                                :
+                                <EmptyTasksMessage description={`Parece que não há nenhuma tarefa arquivada por aqui :)`} />
                     }
                 </div>
             </div>

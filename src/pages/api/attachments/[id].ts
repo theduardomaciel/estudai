@@ -100,23 +100,24 @@ router
                 'Authorization': `Bearer ${token}`
             };
 
-            const response = await axios.delete(`https://www.googleapis.com/drive/v3/files/${attachment?.fileId}`, { headers: headers }) as AxiosResponse;
-            console.log(`Arquivo de id ${attachment?.fileId} removido com sucesso!`)
+            try {
+                const { id } = req.query;
+                const token = req.cookies['auth.googleAccessToken'];
 
-            if (response) {
                 try {
-                    await prisma.attachment.delete({
-                        where: {
-                            id: id as string,
-                        },
-                    })
-                    res.status(200).json({ success: "Attachment removed successfully." })
-                } catch (error) {
-                    console.log(error)
-                    res.status(500).json({ error: 'We could delete the file, but was not possible to delete the attachment.' })
+                    console.log(id)
+                    const response = await axios.delete(`https://www.googleapis.com/drive/v3/files/${id}`, { headers: headers })
+                    console.log(`Arquivo de id ${id} removido com sucesso!`)
+
+                    res.status(200).json({ success: "File removed successfully." })
+                } catch (err: any) {
+                    const error = err as AxiosError;
+                    if (error.response) {
+                        res.status(500).json({ error: error.response.statusText })
+                    }
                 }
-            } else {
-                res.status(500).json({ error: 'There was not possible to delete the attachment file.' })
+            } catch (error) {
+                res.status(500).json({ error: 'We could not delete the file.' })
             }
         }
 

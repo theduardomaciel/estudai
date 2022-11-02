@@ -184,7 +184,7 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
         async function upload() {
             setUploading(true)
 
-            /* const uploadedFile = await uploadFile(fileInfo.current, setGoogleAuthentication, setProgress);
+            const uploadedFile = await uploadFile(fileInfo.current, setGoogleAuthentication, setProgress);
             if (uploadedFile) {
                 let array = [...attachments];
                 array[attachmentIndex].fileId = uploadedFile.id;
@@ -198,7 +198,7 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
             } else {
                 setProgress(-1)
             }
-            setUploading(false) */
+            setUploading(false)
         }
         if (calledUpload.current === false) {
             calledUpload.current = true

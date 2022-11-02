@@ -127,12 +127,11 @@ export default function EditTaskModalPreset(task: Task) {
         try {
             const response = await api.delete(`/tasks/${task.id}`)
             console.log(response)
-            if (response.status === 200) {
-                router.push(`/groups`)
+            if (task.group) {
+                router.push(`/groups/${task.group.id}`)
             } else {
-                setDeleteModalVisible(false)
+                router.push(`/home`)
             }
-            setLoading(false)
         } catch (error) {
             setDeleteModalVisible(false)
             setLoading(false)

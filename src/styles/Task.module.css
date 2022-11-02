@@ -345,53 +345,6 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
-.usersContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 3.5rem;
-
-    width: 100%;
-    color: var(--primary-04);
-
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 1.6rem;
-}
-
-.usersContainer p,
-.usersContainer .user p {
-    width: fit-content;
-}
-
-.usersContainer header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    justify-content: space-between;
-}
-
-.usersContainer header p,
-.usersContainer header span {
-    color: var(--primary-03);
-    font-weight: 700;
-
-    font-size: 1.8rem;
-}
-
-.user {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    justify-content: space-between;
-}
-
-.usersContainer ul {
-    list-style-type: none;
-}
-
 @media (min-width: 1024px) {
 
     .container {

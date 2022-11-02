@@ -63,7 +63,7 @@ model Subgroup {
     id    String @id @unique @default(uuid())
     title String
 
-    group   Group @relation(fields: [groupId], references: [id])
+    group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
     groupId Int
 
     users User[]
@@ -105,7 +105,7 @@ model Attachment {
 
     markedBy User[] @relation(name: "marked")
 
-    task   Task @relation(fields: [taskId], references: [id])
+    task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
     taskId Int
 
     uploadedBy User @relation(fields: [userId], references: [id])
@@ -141,7 +141,7 @@ model Task {
 
     interactedBy User[] @relation(name: "interacted")
 
-    group      Group?    @relation(fields: [groupId], references: [id])
+    group      Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
     groupId    Int?
     subgroup   Subgroup? @relation(fields: [subgroupId], references: [id])
     subgroupId String?
