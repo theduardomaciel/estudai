@@ -17,8 +17,9 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
     fixedUnit?: string;
     height?: string | number;
     numberControl?: boolean;
+    icon?: string;
 }
-const Input = ({ label, fixedUnit, height, numberControl, ...rest }: Props) => {
+const Input = ({ label, fixedUnit, height, numberControl, icon, ...rest }: Props) => {
     const input = useRef<HTMLInputElement | null>(null);
 
     function animateArrow(button: HTMLElement) {
@@ -84,7 +85,16 @@ const Input = ({ label, fixedUnit, height, numberControl, ...rest }: Props) => {
                     </div>
                 </div>
                 :
-                <input style={{ height: height ? height : "3.8rem", }} className={styles.input} key={'taskNAme'} id="taskName" {...rest} />
+                icon ?
+                    <div className={styles.fixedUnitFrame}>
+                        {
+                            icon &&
+                            <span style={{ fontSize: "1.8rem" }} className={`static material-symbols-rounded ${styles.icon}`}>{icon}</span>
+                        }
+                        <input style={{ height: height ? height : "3.8rem", paddingLeft: "3.4rem" }} className={styles.input} key={'taskNAme'} id="taskName" {...rest} />
+                    </div>
+                    :
+                    <input style={{ height: height ? height : "3.8rem", }} className={styles.input} key={'taskNAme'} id="taskName" {...rest} />
         }
 
     </div>

@@ -193,10 +193,13 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                 <div className={"header"}>
                     <h3 className={"title"}>Minhas tarefas</h3>
                     <div className={styles.actionButtons}>
-                        <div className={styles.viewType}>
-                            <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
-                            <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
-                        </div>
+                        {
+                            user.tasks.length > 0 &&
+                            <div className={styles.viewType}>
+                                <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
+                                <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
+                            </div>
+                        }
                         <AddTaskButton query={{ userId: user.id, groups: JSON.stringify(user.groups) }} />
                     </div>
                 </div>

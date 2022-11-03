@@ -50,6 +50,7 @@ export const GoogleButton = (props: any) => <Button
     icon={<GoogleLogo />}
     title={"Entrar com Google"}
     iconProps={{ color: 'var(--primary-02)' }}
+    coloredSpinner
     style={{
         padding: "1.2rem",
         gap: "3rem",

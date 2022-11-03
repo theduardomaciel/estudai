@@ -25,6 +25,8 @@ model User {
     defaultColor Int?
     language     String?
 
+    customSubjects Json
+
     account Account?
 
     tasks       Task[]

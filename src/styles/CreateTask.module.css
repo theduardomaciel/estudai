@@ -279,7 +279,7 @@
 .subjectsList.reforce {
     display: flex;
     flex-direction: column;
-    height: 25rem;
+    height: 100%;
     width: 100%;
 
     justify-content: flex-start;
@@ -287,6 +287,15 @@
     overflow-y: scroll;
 
     gap: 1rem;
+}
+
+.subjectsList.reforce p {
+    width: 100%;
+    text-align: left;
+
+    font-size: 1.8rem;
+    font-family: 'Raleway';
+    font-weight: 600;
 }
 
 .subjectsList::-webkit-scrollbar {

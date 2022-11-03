@@ -215,7 +215,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
     }
 
     useEffect(() => {
-        setUserInteracted(user.groups.find((userGroup, i) => userGroup.id === group.id) ? true : false)
+        setUserInteracted(group.usersThatInteracted.find((groupUser, i) => groupUser.id === user.id) ? true : false)
     }, [])
 
     const { setUsersModalVisible, UsersModal } = UsersModalPreset()
@@ -277,7 +277,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                     </div>
                     <aside className={styles.sidebar}>
                         <div className={styles.sidebarContent}>
-                            <AddTaskButton width='100%' query={{ userId: user.id, groups: JSON.stringify(user.groups) }} />
+                            <AddTaskButton width='100%' query={{ userId: user.id, groups: JSON.stringify(user.groups), selectedGroupId: group.id }} />
                             <div className={`${styles.pinnedMessageContainer} ${styles.sidebarContainer}`}>
                                 <header>
                                     <span className={'material-symbols-rounded'}>push_pin</span>

@@ -9,6 +9,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     isLoading?: boolean;
     icon?: React.ReactElement | string;
     accentColor?: string;
+    coloredSpinner?: boolean;
     iconProps?: {
         size?: string,
         filled?: boolean,
@@ -20,7 +21,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     preset?: 'sendForm' | 'fillHover'
 }
 
-const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, accentColor, iconProps, isSelected, preset, children, disableHoverEffect, ...rest }: ButtonProps, ref) {
+const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, coloredSpinner, accentColor, iconProps, isSelected, preset, children, disableHoverEffect, ...rest }: ButtonProps, ref) {
     return <button
         type={preset === "sendForm" ? "submit" : "button"}
         className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading ? styles.loading : ""} ${isSelected ? 'selected' : ""} ${disableHoverEffect ? 'disableHoverEffect' : ""}`}
@@ -32,7 +33,7 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
                 <Spinner
                     classes={styles.hovered}
                     size={parseFloat(iconProps?.size?.split('r')[0] as string) / 1.125}
-                    color={"var(--light)"}
+                    color={coloredSpinner && iconProps?.color ? iconProps.color : "var(--light)"}
                 />
                 :
                 <>

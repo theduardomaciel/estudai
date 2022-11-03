@@ -237,7 +237,7 @@ export const ActivityModeSelector = ({ defaultValue, setSelectedValue }: { defau
 
 export const SubjectSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<Array<number>>> }) => <div className={styles.selectHolder}>
     <InputLabel label='Qual a matéria da atividade?' />
-    <Select name='subject' defaultValue={defaultValue ? defaultValue : ""} onValueChange={(value) => setSelectedValue && setSelectedValue([parseInt(value)])}>
+    <Select name='subject' defaultValue={defaultValue && defaultValue} onValueChange={(value) => setSelectedValue && setSelectedValue([parseInt(value)])}>
         <SelectTrigger aria-label="subject">
             <SelectValue placeholder="Escolha a matéria" />
             <SelectIcon>
@@ -253,7 +253,7 @@ export const SubjectSelector = ({ defaultValue, setSelectedValue }: { defaultVal
                     {(Object.entries(subjectsData) as Array<any>).map(([index, value]) => {
                         return (
                             <SelectItem key={index.toString()} value={index.toString()}>
-                                <SelectItemText >
+                                <SelectItemText>
                                     <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>{value.icon}</span>
                                     {value.name}
                                 </SelectItemText>
@@ -364,6 +364,7 @@ export default function NewTask() {
     const router = useRouter();
 
     const groups = router.query.groups ? JSON.parse(router.query.groups as string) as Group[] : null;
+    const selectedGroupId = router.query.selectedGroupId;
 
     const { isUploading } = useAppContext();
 
@@ -378,9 +379,8 @@ export default function NewTask() {
 
     const initialDate = router.query.date;
     const [date, setDate] = useState(initialDate ? new Date(initialDate as string) : actualDate);
-    console.log(date)
 
-    const [storage, setStorage] = useState("account");
+    const [storage, setStorage] = useState(selectedGroupId ? selectedGroupId as string : "account");
 
     const [attachments, setAttachments] = useState<Array<Attachment>>([])
 
@@ -472,6 +472,7 @@ export default function NewTask() {
             if (!creatingTask) {
                 const { type, mode, title, address, questionsAmount, maxScore, subject } = taskData;
                 const singleSubject = subject ? [subject] : [];
+                console.log(singleSubject)
 
                 const editorContent = editor?.getHTML()
 

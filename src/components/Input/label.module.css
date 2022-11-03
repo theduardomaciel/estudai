@@ -66,6 +66,22 @@
     color: var(--primary-04);
 }
 
+.icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    /* height: 100%; */
+
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: var(--primary-04);
+}
+
 .increaseArrow {
     transform: translateY(0) scale(1);
 
