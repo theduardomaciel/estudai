@@ -91,6 +91,17 @@
     /* Firefox */
 }
 
+.menuHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.closeButton {
+    display: block;
+}
+
 @media (min-width: 1024px) {
     .holder {
         display: flex;
@@ -128,5 +139,9 @@
         justify-content: space-between;
 
         overflow-y: scroll;
+    }
+
+    .menuHeader .closeButton {
+        display: none;
     }
 }

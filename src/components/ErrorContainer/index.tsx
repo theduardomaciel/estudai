@@ -19,7 +19,7 @@ const ErrorContainer = ({ icon, title, description, returnButtonText }: Props) =
     return (
         <div className={styles.container}>
             <div className={styles.iconHolder}>
-                <span className={'material-symbols-rounded'} style={{ fontSize: "4.8rem", color: "var(--light" }}>{icon}</span>
+                <span className={'material-symbols-rounded'} style={{ fontSize: "2.8rem", color: "var(--light", padding: "0rem" }}>{icon ? icon : 'report'}</span>
             </div>
 
             <h2>{title}</h2>
@@ -28,11 +28,16 @@ const ErrorContainer = ({ icon, title, description, returnButtonText }: Props) =
                 <p>{description}</p>
             }
             <Button
-                onClick={() => router.back()}
+                onClick={() => router.push(`/home`)}
                 title={returnButtonText ? returnButtonText : "VOLTAR PARA O INÍCIO"}
                 icon={'subdirectory_arrow_left'}
+                iconProps={{ size: "1.3rem" }}
                 style={{
-                    padding: `0.5rem 1.5rem`
+                    padding: `1.25rem 1.75rem`,
+                    backgroundColor: "var(--primary-02)",
+                    borderRadius: "0.5rem",
+                    fontFamily: "Karla",
+                    fontSize: "1.4rem"
                 }}
             />
         </div>

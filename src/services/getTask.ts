@@ -14,7 +14,11 @@ export default async function getTask(id: number) {
                         markedBy: true,
                     },
                 },
-                group: true,
+                group: {
+                    include: {
+                        users: true
+                    }
+                },
                 interactedBy: true,
             }
         })

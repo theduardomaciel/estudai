@@ -22,10 +22,22 @@ const ComponentPreview = (): JSX.Element => {
 
 // Stylesheets
 import '../styles/globals.css'
-import { Tag, TagProps } from '../components/AttachmentLoader/Tag';
-import { getTagInfo } from '../utils/getTagInfo';
+import 'material-symbols/rounded.css';
 
+import Progressbar from '../components/Progressbar';
+
+// Props
+import { Tag, TagProps } from '../components/AttachmentLoader/Tag';
 import { AppProps } from 'next/dist/shared/lib/router/router';
+
+// Fonts
+import { Inter, Karla, Raleway, Trirong } from '@next/font/google';
+
+const inter = Inter({ variable: '--inter-font' });
+const karla = Karla({ variable: '--karla-font' });
+const raleway = Raleway({ variable: '--raleway-font' });
+const trirong700 = Trirong({ weight: "700", variable: '--trirong-700-font' });
+const trirong900 = Trirong({ weight: '900', variable: '--trirong-900-font' })
 
 function MyApp({ Component, pageProps }: AppProps) {
     return <React.Fragment>
@@ -35,8 +47,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <ThemeProvider>
                         <AppContextProvider>
                             <DndProvider options={HTML5toTouch}>
+                                {/* <RootLayout> */}
+                                <Progressbar />
                                 <Component {...pageProps} />
                                 <ComponentPreview />
+                                {/* </RootLayout> */}
                             </DndProvider>
                         </AppContextProvider>
                     </ThemeProvider>

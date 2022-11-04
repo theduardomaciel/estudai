@@ -8,7 +8,7 @@ import cors from "cors";
 import prisma from '../../../lib/prisma';
 import { AxiosError } from 'axios';
 import getUserIdByToken from '../../../services/getUserIdByToken';
-import { api } from '../../../lib/api';
+import { getAPIClient } from '../../../lib/api';
 
 // API
 
@@ -280,6 +280,8 @@ router
         const { ['auth.token']: token } = req.cookies;
 
         const userId = await getUserIdByToken(token as string);
+
+        const api = getAPIClient(req)
 
         async function deleteAttachment(attachmentId: string) {
             console.log("Excluindo attachment.")

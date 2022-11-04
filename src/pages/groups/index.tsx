@@ -31,6 +31,7 @@ import { User } from '../../types/User';
 import PlaneIcon from '/public/landing/paper_plane.svg';
 import Link from 'next/link';
 import UsersPortraits from '../../components/UsersPortraits';
+import Menu from '../../components/Menu';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
@@ -139,7 +140,7 @@ const Groups = ({ user }: { user: User }) => {
                     <h3 className={"title"}>Meus Grupos</h3>
                     <Button
                         classes={styles.addButton}
-                        style={{ backgroundColor: "var(--primary-02)", padding: "0.75rem 3rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
+                        style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
                         icon={"group_add"}
                         title='Criar um grupo'
                         onClick={() => setCreateGroupModalVisible('default')}
@@ -241,6 +242,7 @@ const Groups = ({ user }: { user: User }) => {
                             <p>Tivemos um problema interno e não foi possível criar seu grupo. Pedimos a você que tente novamente e entre em contato conosco caso o problema persista.</p>
                 }
             </Modal>
+            <Menu />
         </main>
     )
 }

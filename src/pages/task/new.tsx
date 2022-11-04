@@ -250,6 +250,15 @@ export const SubjectSelector = ({ defaultValue, setSelectedValue }: { defaultVal
             </SelectScrollDownButton>
             <SelectViewport>
                 <SelectGroup>
+                    <SelectItem key={'empty'} value={'empty'}>
+                        <SelectItemText>
+                            <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>block</span>
+                            Sem matéria
+                        </SelectItemText>
+                        <SelectItemIndicator>
+                            <CheckIcon />
+                        </SelectItemIndicator>
+                    </SelectItem>
                     {(Object.entries(subjectsData) as Array<any>).map(([index, value]) => {
                         return (
                             <SelectItem key={index.toString()} value={index.toString()}>
@@ -378,7 +387,7 @@ export default function NewTask() {
     const [type, setType] = useState<TaskType>('obligatory');
 
     const initialDate = router.query.date;
-    const [date, setDate] = useState(initialDate ? new Date(initialDate as string) : actualDate);
+    const [date, setDate] = useState(initialDate ? new Date(initialDate as string) : null);
 
     const [storage, setStorage] = useState(selectedGroupId ? selectedGroupId as string : "account");
 
@@ -476,9 +485,9 @@ export default function NewTask() {
 
                 const editorContent = editor?.getHTML()
 
-                if (!date) {
+                /* if (!date) {
                     return setErrorMessage('Ei! Não se esquece de marcar a data da tarefa no calendário!')
-                }
+                } */
 
                 if (type === "obligatory" || type == 'elective') {
                     if (!subject) {
@@ -582,7 +591,7 @@ export default function NewTask() {
                         <div className='row'>
                             <h3>Escolha o dia da tarefa</h3>
                         </div>
-                        <Calendar setDate={setDate} hasMonthSelector initialDate={date} />
+                        <Calendar setDate={setDate} hasMonthSelector initialDate={date !== null ? date : undefined} />
                     </div>
 
                     <div className={styles.section}>

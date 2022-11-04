@@ -1,20 +1,29 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 
-import styles from "./styles.module.css";
+import styles from "../preset.module.css";
 
 import Modal from '..';
 
 import { User } from '../../../types/User';
+import formatDate from '../../../utils/formatDate';
 
-export default function UsersModalPreset() {
-    const [isModalVisible, setModalVisible] = useState<boolean | User[]>(false)
+interface ModalProps {
+    icon?: string;
+    name?: string;
+    users: User[];
+    dates?: string[] | Date[] | number[];
+}
+
+export default function UsersModalPreset(defaultProps?: ModalProps) {
+    const [isModalVisible, setModalVisible] = useState<boolean>(false)
+    const [modalProps, setModalProps] = useState<ModalProps | undefined>(defaultProps ? defaultProps : undefined)
 
     return {
         UsersModal: <Modal
             isVisible={isModalVisible !== false}
             toggleVisibility={() => setModalVisible(false)}
-            icon={'check'}
+            icon={modalProps?.icon ? modalProps.icon : 'check'}
             iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
             color={`var(--primary-02)`}
         >
@@ -22,25 +31,32 @@ export default function UsersModalPreset() {
                 <header>
                     <div className={'iconHolder'}>
                         <span className="material-symbols-rounded static">person</span>
-                        <p>Usuário</p>
+                        <p>{modalProps?.name ? modalProps.name : 'Usuário'}</p>
                     </div>
-                    {/* <div className={'iconHolder'}>
-                    <span className="material-symbols-rounded static">calendar_today</span>
-                    <p>Data</p>
-                </div> */}
+                    {
+                        modalProps?.dates &&
+                        <div className={'iconHolder'}>
+                            <span className="material-symbols-rounded static">calendar_today</span>
+                            <p>Data</p>
+                        </div>
+                    }
                 </header>
                 {
-                    typeof isModalVisible !== "boolean" && isModalVisible.map((user, index) => <li key={index} className={styles.user}>
+                    modalProps?.users && modalProps.users.map((user, index) => <li key={index} className={styles.user}>
                         <div className={'iconHolder'} style={{ gap: "1rem" }}>
                             <Image src={user.image_url} alt={'User avatar'} width={22} height={22} style={{ borderRadius: "50%" }} />
                             <p style={{ width: "fit-content" }}>{`${user.firstName} ${user.lastName}`}</p>
                         </div>
 
-                        {/* <p>---</p> */}
+                        {
+                            modalProps?.dates &&
+                            <p>{formatDate(modalProps.dates[index] as number)}</p>
+                        }
                     </li>)
                 }
             </div>
         </Modal>,
-        setUsersModalVisible: setModalVisible
+        setUsersModalVisible: setModalVisible,
+        setUsersModalProps: setModalProps
     }
 }

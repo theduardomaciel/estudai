@@ -6,7 +6,9 @@
     
     1rem = 10px
     */
-    font-family: Inter, Raleway, Trirong, Karla, sans-serif;
+
+    /* font-family: Inter, Raleway, Trirong, Karla, sans-serif; */
+    font-family: var(--inter-font), var(--karla-font), var(--raleway-font), var(--trirong-700-font), var(--trirong-900-font), sans-serif;
 
     color-scheme: light dark;
 

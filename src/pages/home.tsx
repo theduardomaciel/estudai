@@ -11,11 +11,9 @@ import Profile from '../components/Profile'
 import Button from '../components/Button'
 import Menu from '../components/Menu';
 import SectionSelector from '../components/SectionSelector';
-import Calendar from '../components/Calendar';
 import TaskView from '../components/Task';
 import Sidebar from '../components/Sidebar';
 import LandingIntroModal from '../components/Landing/IntroModal';
-import Focus from '../components/Focus';
 
 // Intro Modal Images
 import Modal1Image from "/public/landing/introModal/modal_1.png";
@@ -128,13 +126,7 @@ export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) 
 </Link>
 
 const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroModal: boolean }) => {
-    const [menuOpened, setMenuOpened] = useState(false);
-
-    function toggleMenu() {
-        setMenuOpened(!menuOpened)
-    }
-
-    const { changeViewMode, viewMode } = useAppContext();
+    const { changeViewMode, viewMode, toggleMenu } = useAppContext();
 
     const [actualSection, setActualSection] = useState('Pendente');
 
@@ -178,9 +170,6 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
     const archivedTasks = user.tasks
         .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
-
-
-    const focus = useMemo(() => <Focus />, [])
 
     return (
         <main>
@@ -250,35 +239,7 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                     }
                 </div>
             </div>
-            <Menu isOpened={menuOpened}>
-                <div className={styles.menuHeader}>
-                    <div className='row'>
-                        <h3>Agenda</h3>
-                        <Button classes={styles.closeButton} icon={'close'} onClick={toggleMenu} style={{ height: "3rem", width: "3rem", padding: 0 }} />
-                    </div>
-                    <Calendar userId={user.id} linkToCreate />
-                    {/* <div className={styles.eventHolder} >
-                        <h6>Próximo evento importante</h6>
-                        <div className={styles.card}>
-                        </div>
-                        <div className={styles.card}>
-                            <div className={styles.cardColumn}>
-                                <p style={{ textTransform: "uppercase" }}>AV1 | 3º BIMESTRE</p>
-                                <h5>Matemática e Natureza</h5>
-                            </div>
-                            <div className={styles.cardColumn} style={{ alignItems: "flex-end" }}>
-                                <div className='row' style={{ gap: "0.25rem", width: "fit-content" }}>
-                                    <span style={{ fontSize: "1.2rem" }} className={`material-symbols-rounded`}>calendar_today</span>
-                                    <p>29/02</p>
-                                </div>
-                                <p style={{ textAlign: "end" }}>90 questões</p>
-                            </div>
-                        </div>
-                    </div> */}
-                </div>
-
-                {focus}
-            </Menu>
+            <Menu />
             {
                 alreadyShownIntroModal === false &&
                 <LandingIntroModal sections={[

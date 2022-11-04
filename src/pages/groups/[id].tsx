@@ -218,7 +218,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         setUserInteracted(group.usersThatInteracted.find((groupUser, i) => groupUser.id === user.id) ? true : false)
     }, [])
 
-    const { setUsersModalVisible, UsersModal } = UsersModalPreset()
+    const { setUsersModalVisible, UsersModal } = UsersModalPreset({ users: group.usersThatInteracted })
 
     return (
         <main className={styles.holder}>
@@ -294,7 +294,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                     preset={"fillHover"}
                                     style={{ width: "100%", padding: "0.5rem" }}
                                 />
-                                <UsersPortraits onClick={() => setUsersModalVisible(group.usersThatInteracted)} maxLength={8} size={24} imagesUrls={group.usersThatInteracted.map((user, i) => user.image_url)} />
+                                <UsersPortraits onClick={() => setUsersModalVisible(true)} maxLength={8} size={24} imagesUrls={group.usersThatInteracted.map((user, i) => user.image_url)} />
                             </div>
                             <div className={`${styles.tasksInfoContainer} ${styles.sidebarContainer}`}>
                                 <div>

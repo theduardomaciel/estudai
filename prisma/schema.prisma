@@ -121,7 +121,7 @@ model Task {
 
     // Geral (general)
     type        String
-    date        DateTime
+    date        DateTime?
     attachments Attachment[]
     links       String[]
 

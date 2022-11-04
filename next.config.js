@@ -4,6 +4,11 @@ const withTM = require('next-transpile-modules')([/* 'react-dnd' */]) // or what
 module.exports = withTM({
     reactStrictMode: true,
     swcMinify: true,
+    experimental: {
+        fontLoaders: [
+            { loader: '@next/font/google', options: { subsets: ['latin'] } },
+        ],
+    },
 
     webpack(config) {
         config.module.rules.push({

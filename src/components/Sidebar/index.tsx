@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,12 +12,20 @@ import { useAuth } from "../../contexts/AuthContext";
 // Icons
 import ClubIcon from "/public/icons/club.svg";
 import ClubOutlinedIcon from "/public/icons/club_outlined.svg";
+import Logo from "/public/logo.svg";
 
 import LogoutModalPreset from "../Modal/Presets/LogoutModal";
+import { parseCookies } from "nookies";
+import Button from "../Button";
 
 const sections = ["home", "groups", "settings"]
 
-export default function Sidebar() {
+interface Props {
+    notAuthenticated?: boolean;
+}
+
+export default function Sidebar({ notAuthenticated }: Props) {
+    const { 'app.userId': userId } = parseCookies()
     const { signOut } = useAuth();
 
     const router = useRouter();
@@ -69,15 +77,7 @@ export default function Sidebar() {
     }, [])
 
     return <>
-        <nav className={`${styles.container} pulse`}>
-            <Link href={`/home`}>
-                <span ref={dashboardButton} className={`material-symbols-rounded ${section === "home" ? "filled" : "outlined"}`}>space_dashboard</span>
-            </Link>
-
-            <Link href={"/groups"}>
-                <span ref={groupsButton} className={`material-symbols-rounded ${section === "groups" ? "filled" : "outlined"}`}>group</span>
-            </Link>
-
+        <nav className={`${styles.container} pulse ${notAuthenticated ? styles.unauthenticated : ""}`}>
             {/* <Link href={"/club"}>
                 {
                     section === "club" ?
@@ -96,8 +96,49 @@ export default function Sidebar() {
                     <span ref={settingsButton} className={`material-symbols-rounded ${section === "settings" ? "filled" : "outlined"}`}>settings</span>
                 </a>
             </Link> */}
-            <span onClick={() => setLogoutModalVisible(true)} className={`material-symbols-rounded`}>exit_to_app</span>
-            <div ref={sectionBar} className={styles.sectionBar} />
+            {
+                !notAuthenticated ?
+                    <>
+                        <Link href={`/home`}>
+                            <span ref={dashboardButton} className={`material-symbols-rounded ${section === "home" ? "filled" : "outlined"}`}>space_dashboard</span>
+                        </Link>
+
+                        <Link href={"/groups"}>
+                            <span ref={groupsButton} className={`material-symbols-rounded ${section === "groups" ? "filled" : "outlined"}`}>group</span>
+                        </Link>
+                        <span onClick={() => setLogoutModalVisible(true)} className={`material-symbols-rounded`}>exit_to_app</span>
+
+                        <div ref={sectionBar} className={styles.sectionBar} />
+                    </>
+                    :
+                    <div className={styles.authenticationWarning}>
+                        <h6>Organize seus estudos.</h6>
+                        <div className={styles.row}>
+                            <p>Crie uma conta no <span>estudaí{/* <Logo fill={"var(--light)"} width={72} height={24} /> */}</span> para aproveitar todas as funções da plataforma.</p>
+                        </div>
+                        <div className={styles.row}>
+                            <Link href={`/auth/login`} style={{ width: "49%" }}>
+                                <Button
+                                    title="Entrar"
+                                    style={{ border: "1px solid var(--light)", borderRadius: "5rem", padding: "0.75rem 2.25rem", width: "100%" }}
+                                />
+                            </Link>
+                            <Link href={`/auth/register`} style={{ width: "49%" }}>
+                                <Button
+                                    title="Cadastrar"
+                                    style={{
+                                        border: "1px solid var(--light)",
+                                        borderRadius: "5rem",
+                                        padding: "0.75rem 2.25rem",
+                                        width: "100%",
+                                        backgroundColor: "var(--light)",
+                                        color: "var(--primary-02"
+                                    }}
+                                />
+                            </Link>
+                        </div>
+                    </div>
+            }
         </nav>
         {LogoutModal}
     </>

@@ -31,7 +31,7 @@ export default function Calendar(props: Props) {
 
     // Dates
     const date = new Date();
-    const initialDate = props.initialDate ? props.initialDate : null;
+    const initialDate = props.initialDate ? new Date(props.initialDate) : null;
 
     // Specific Dates
     const currentYear = date.getFullYear();

@@ -16,6 +16,9 @@
     transition: 1s;
 }
 
+.holder.unauthenticated {
+    padding-bottom: calc(var(--sidebar-height) * 2);
+}
 
 .container::-webkit-scrollbar {
     display: none;
@@ -214,6 +217,8 @@
     font-style: normal;
     font-weight: 700;
     font-size: 1.6rem;
+
+    color: var(--light);
 }
 
 .horizontalInfo {
@@ -242,18 +247,27 @@
     display: flex;
     flex-direction: row;
     gap: 1rem;
+
+    width: 100%;
+}
+
+.attachmentButtonsHolder a {
+    display: flex;
+    width: 49%;
 }
 
 .attachmentButtonsHolder .attachmentButton,
 .attachmentButton.use {
     background-color: none;
-    padding: 0.5rem 1.5rem;
+    padding: 0.65rem 1.5rem;
     border-radius: 3rem;
     color: var(--primary-02);
     font-size: 1.2rem;
     font-family: Inter;
     font-weight: 600;
     text-transform: uppercase;
+
+    width: 100%;
 }
 
 .modalRow {
@@ -319,7 +333,7 @@
 }
 
 .defaultButton:has(span) {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     width: 100%;
     padding: 0.5rem 1rem;
     gap: 1.5rem;
@@ -345,6 +359,15 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
+/* .file {
+    min-width: 100%;
+} */
+
+.file {
+    width: initial;
+    max-width: 100%;
+}
+
 @media (min-width: 1024px) {
 
     .container {
@@ -358,6 +381,15 @@
         transition: 0s;
     }
 
+    .holder.unauthenticated .container {
+        width: 100vw;
+        left: 0;
+    }
+
+    .file {
+        width: fit-content;
+    }
+
     .modalRow {
         flex-wrap: nowrap;
     }
@@ -369,6 +401,16 @@
 
     .info .column:nth-child(2) {
         max-width: 25%;
+    }
+
+    /* .file {
+        min-height: 12rem;
+        max-width: 25rem;
+    } */
+
+    .attachmentButtonsHolder a {
+        display: flex;
+        width: fit-content;
     }
 
     .headerButtons {

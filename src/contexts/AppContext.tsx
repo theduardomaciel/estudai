@@ -6,6 +6,9 @@ type ContextTypes = {
     viewMode: string;
     changeViewMode: (newViewMode: "card" | "list") => void;
 
+    isMenuOpened: boolean;
+    toggleMenu: () => void;
+
     hasGoogleAuthentication: boolean;
     setGoogleAuthentication: Dispatch<SetStateAction<boolean>>;
 
@@ -57,6 +60,13 @@ export function AppContextProvider({ children }: ContextProviderProps) {
         }
     }
 
+    const [isMenuOpened, setMenuOpened] = useState(false);
+
+    function toggleMenu() {
+        setMenuOpened(!isMenuOpened)
+        console.log(isMenuOpened)
+    }
+
     const sharedState = {
         changeViewMode,
         viewMode,
@@ -66,7 +76,9 @@ export function AppContextProvider({ children }: ContextProviderProps) {
         setUploading,
         currentFocus,
         startNewFocus,
-        removeFocus
+        removeFocus,
+        isMenuOpened,
+        toggleMenu
     };
 
     return (

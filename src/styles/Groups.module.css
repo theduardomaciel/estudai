@@ -197,7 +197,7 @@
         top: 0;
         left: var(--sidebar-width);
         flex: 1;
-        width: calc(100vw - var(--sidebar-width));
+        width: calc(100vw - var(--menu-width) - var(--sidebar-width));
         margin-left: auto;
 
         padding: 3.5rem;

@@ -163,7 +163,6 @@ export default function EditTaskModalPreset(task: Task) {
             const response = await api.patch(`/tasks/${task.id}`, data)
             console.log(response.data)
 
-            setLoading(false)
             router.push(`/task/${task.id}`)
         } catch (error) {
             console.log(error)
