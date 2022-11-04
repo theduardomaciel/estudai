@@ -458,7 +458,7 @@ const Task = ({ task }: { task: Task }) => {
         />
     </Modal>
 
-    if (task.group.private && !hasPermission) {
+    if (task.group && task.group.private && !hasPermission) {
         return <main className={styles.holder}>
             <Head>
                 <title>Opa!</title>
