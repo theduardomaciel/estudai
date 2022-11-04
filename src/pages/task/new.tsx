@@ -585,7 +585,7 @@ export default function NewTask() {
                     setLinks={setLinks}
                 />
             </div>
-            <Menu flex isOpened={true}>
+            <Menu flex>
                 <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
                     <div className={styles.section}>
                         <div className='row'>
