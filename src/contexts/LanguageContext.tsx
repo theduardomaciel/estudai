@@ -1,7 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import updateVisual from "../utils/updateVisual";
-
 type ContextTypes = {
     changeLanguage: () => void;
     language: string;
