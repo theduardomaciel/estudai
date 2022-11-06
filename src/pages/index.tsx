@@ -64,6 +64,11 @@ const Landing: NextPage = () => {
             <Head>
                 <meta name="google-site-verification" content="G9W38esL-KS54yNvXPERwXXO8mwCwXb1ko3_ls6rm_o" />
                 <title>estudaí</title>
+                <meta
+                    name="description"
+                    content="Uma plataforma de organização de estudos online que o ajudará a revisar e manter suas matérias em dia.
+                    Chega de esquecimentos."
+                />
             </Head>
             <LandingHeader />
             <StarIcon className={styles.star} />

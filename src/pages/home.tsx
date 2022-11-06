@@ -180,6 +180,11 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
         <main>
             <Head>
                 <title>estudaí</title>
+                <meta
+                    name="description"
+                    content="Uma plataforma de organização de estudos online que o ajudará a revisar e manter suas matérias em dia.
+                    Chega de esquecimentos."
+                />
             </Head>
             <Sidebar />
             <div className={styles.container}>

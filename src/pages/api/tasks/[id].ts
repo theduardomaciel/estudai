@@ -72,16 +72,16 @@ router
         try {
             if (userId) {
                 if (parsedId) {
-                    const task = await prisma.task.findUnique({
+                    const user = await prisma.user.findFirst({
                         where: {
-                            id: parsedId
+                            id: parsedUserId
                         },
                         include: {
-                            interactedBy: true
+                            tasksInteracted: true
                         }
                     })
 
-                    const hasInteracted = task?.interactedBy.find((user, i) => user.id === parsedUserId) ? true : false;
+                    const hasInteracted = user?.tasksInteracted.find(task => task.id === parsedId) ? true : false;
 
                     if (hasInteracted) {
                         try {

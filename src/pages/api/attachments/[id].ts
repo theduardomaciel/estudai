@@ -66,16 +66,16 @@ router
 
         try {
             if (id) {
-                const attachment = await prisma.attachment.findUnique({
+                const user = await prisma.user.findFirst({
                     where: {
-                        id: id as string
+                        id: parsedUserId
                     },
                     include: {
-                        interactedBy: true
+                        attachmentsInteracted: true
                     }
                 })
 
-                const hasInteracted = attachment?.interactedBy.find((user, i) => user.id === parsedUserId) ? true : false;
+                const hasInteracted = user?.attachmentsInteracted.find(attachment => attachment.id === id) ? true : false;
 
                 if (hasInteracted) {
                     try {

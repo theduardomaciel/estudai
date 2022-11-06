@@ -1,0 +1,7 @@
+# Block all crawlers for /auth
+User-agent: *
+Disallow: /auth
+
+# Allow all crawlers
+User-agent: *
+Allow: /
