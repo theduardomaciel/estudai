@@ -253,7 +253,14 @@ const Task = ({ task }: { task: Task }) => {
             <div className={'iconHolder'} style={{ fontSize: "1.4rem", color: "var(--primary-02)", fontWeight: 600, fontFamily: "Inter" }}>
                 <span style={{ fontSize: "1.6rem" }} className="material-symbols-rounded static">check_circle</span>
                 {
-                    attachment.interactedBy && <p style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => setUsersModalProps({ users: attachment.interactedBy })}>{attachment.interactedBy.length}</p>
+                    attachment.interactedBy && <p
+                        style={{ textDecoration: "underline", cursor: "pointer" }}
+                        onClick={() => {
+                            setUsersModalProps({ users: attachment.interactedBy })
+                            setUsersModalVisible(true)
+                        }}>
+                        {attachment.interactedBy.length}
+                    </p>
                 }
             </div>
         </li>
@@ -595,7 +602,10 @@ const Task = ({ task }: { task: Task }) => {
                             task.interactedBy.length > 0 &&
                             <div className={styles.usersInfo}>
                                 <UsersPortraits imagesUrls={task.interactedBy.map((user, i) => user.image_url)} />
-                                <p>+ de <span onClick={() => setUsersModalProps({ users: task.interactedBy })}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'concluíram' : 'concluiu'} a atividade</p>
+                                <p>+ de <span onClick={() => {
+                                    setUsersModalProps({ users: task.interactedBy })
+                                    setUsersModalVisible(true)
+                                }}>{task.interactedBy.length} membro{task.interactedBy.length !== 1 ? "s" : ''}</span> já {task.interactedBy.length !== 1 ? 'concluíram' : 'concluiu'} a atividade</p>
                             </div>
                         }
                     </div>

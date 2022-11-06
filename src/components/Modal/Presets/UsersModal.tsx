@@ -24,6 +24,7 @@ export default function UsersModalPreset(defaultProps?: ModalProps) {
             isVisible={isModalVisible !== false}
             toggleVisibility={() => setModalVisible(false)}
             icon={modalProps?.icon ? modalProps.icon : 'check'}
+            suppressReturnButton
             iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
             color={`var(--primary-02)`}
         >
