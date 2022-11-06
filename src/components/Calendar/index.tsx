@@ -129,7 +129,9 @@ export default function Calendar(props: Props) {
         console.log("Dia: ", day, "Mês: ", month, 'Index: ', index)
         setSelected(index)
         if (props.setDate) {
-            props.setDate(`${currentYear}-${month}-${day}`)
+            const newDate = `${currentYear}-${month}-${day}`;
+            console.log(newDate)
+            props.setDate(newDate)
         }
     }
 

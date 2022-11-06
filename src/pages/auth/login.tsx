@@ -178,7 +178,7 @@ const Login: NextPage = () => {
                                         Crie sua conta agora para aproveitar todas as funcionalidades de sua conta Estudaí.
                                     </p>
                                 </header>
-                                <Link href={"/auth/register"}>
+                                <Link href={"/auth/register"} style={{ width: "100%" }}>
                                     <Button
                                         style={{ padding: "1rem 1.5rem", width: "100%" }}
                                         title='Criar uma conta'

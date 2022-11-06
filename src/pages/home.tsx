@@ -97,9 +97,10 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 
 interface EmptyTasks {
     description?: string;
+    removeMargin?: boolean;
 }
 
-export const EmptyTasksMessage = ({ description }: EmptyTasks) => <div className={styles.emptyTasks}>
+export const EmptyTasksMessage = ({ description, removeMargin }: EmptyTasks) => <div style={{ marginTop: removeMargin ? "0px" : "10rem" }} className={styles.emptyTasks}>
     <span className={`material-symbols-rounded static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
     <p><strong>Um pouco vazio aqui, né?</strong> </p>
     <p>{description ? description : "Adicione uma nova tarefa com o botão acima para que ela apareça aqui!"}</p>
@@ -164,12 +165,16 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
         .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
 
     const expiredTasks = user.tasks
-        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date && task.date <= now && task.type !== "av1" && task.type !== "av2")
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
 
     const archivedTasks = user.tasks
         .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+
+    const noDateTasks = user.tasks
+        .filter((task, i) => !task.date)
+        .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
     return (
         <main>
@@ -229,6 +234,8 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                                 <>
                                     {concludedTasks.length > 0 && viewMode === 'list' && <h5>Concluído</h5>}
                                     {concludedTasks}
+                                    {noDateTasks.length > 0 && viewMode === 'list' && <h5>Sem data</h5>}
+                                    {noDateTasks}
                                     {expiredTasks.length > 0 && viewMode === 'list' && <h5>Expirado</h5>}
                                     {expiredTasks}
                                     {expiredTasks.length > 0 && viewMode === 'list' && <h5>Arquivado</h5>}

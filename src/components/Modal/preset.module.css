@@ -45,3 +45,64 @@
 .usersContainer ul {
     list-style-type: none;
 }
+
+/* Icon Picker */
+.iconsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+    gap: 0.75rem;
+    background-color: transparent;
+    padding: 0px;
+    height: fit-content;
+    width: 100%;
+}
+
+.iconsContainer.empty {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.iconsContainer .icon {
+    background-color: var(--background-02);
+    color: var(--primary-02);
+
+    width: 13.5rem;
+    height: 15rem;
+
+    margin: 1rem;
+    border-radius: 0.5rem;
+
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 2rem;
+    transition: 0.35s;
+}
+
+.iconsContainer .icon span {
+    color: var(--primary-02);
+    font-size: 4.8rem;
+}
+
+.iconsContainer .icon p {
+    font-family: "Karla";
+    word-break: break-all;
+    text-transform: capitalize;
+    text-align: center;
+    font-weight: 500;
+
+    margin-inline: 1rem;
+}
+
+.iconsContainer .icon:hover {
+    background-color: var(--background-03);
+    outline: 1px solid var(--primary-03);
+
+    color: var(--primary-03);
+}

@@ -64,7 +64,7 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
                             initial={{ y: 300, x: 0, opacity: 0 }}
                             animate={{ y: 0, x: 0, opacity: 1 }}
                             exit={{ y: 300, x: 0, opacity: 0 }}
-                            transition={{ type: "spring", duration: 0.85 }}
+                            transition={{ type: "spring", duration: 0.65 }}
                         >
                             <div className={styles.headerContainer} >
                                 <div className={styles.headerContainer} style={{ justifyContent: iconProps?.position ? iconProps?.position : "center" }}>
@@ -106,7 +106,7 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
 
                             <div className={styles.buttonsHolder}>
                                 {
-                                    !suppressReturnButton && !isLoading && iconProps?.position !== "flex-start" &&
+                                    !suppressReturnButton && !isLoading /* && iconProps?.position !== "flex-start" */ &&
                                     <Button
                                         onClick={toggleVisibility}
                                         title={actionProps?.function ? `CANCELAR` : "RETORNAR"}

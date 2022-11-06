@@ -25,6 +25,7 @@ import styles from "./styles.module.css";
 // Icons
 import DocAttachment from "/public/icons/attachment/doc.svg";
 import PDFAttachment from "/public/icons/attachment/pdf.svg";
+import ImgAttachment from "/public/icons/attachment/img.svg";
 
 function divideFileInChunks(fileData: File) {
     const fileChunks = [];
@@ -54,6 +55,11 @@ async function uploadFile(fileData: File, setGoogleAuthentication: Dispatch<SetS
 
     const percentageIncrement = 100 / fileChunks.length;
 
+    // Caso o arquivo seja pequeno, iniciamos um carregamento falso
+    if (fileChunks.length < 3) {
+        setProgress(99.9)
+    }
+
     async function uploadChunks(googleSessionUrl: string, length: string) {
         for (let i = 0; i < fileChunks.length; i += 1) {
             const formData = new FormData();
@@ -72,7 +78,9 @@ async function uploadFile(fileData: File, setGoogleAuthentication: Dispatch<SetS
                 }
             })
 
-            setProgress(percentageIncrement * i)
+            if (fileChunks.length > 2) {
+                setProgress(percentageIncrement * i)
+            }
 
             if (chunkUpload.status === 200) {
                 console.log(`${i + 1} Chunk Uploaded of ${fileChunks.length}`);
@@ -154,7 +162,7 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
     }
 
     const { setGoogleAuthentication, setUploading } = useAppContext();
-    const [progress, setProgress] = useState(99.9)
+    const [progress, setProgress] = useState(0)
 
     const fileInfo = useRef(attachments[attachmentIndex].fileId as File); // precisa ser fixo pois será trocado pelo id do objeto após o envio para o Google Drive
     const tags = attachments[attachmentIndex].tags;
@@ -216,8 +224,10 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
                 {
                     fileInfo.current.type === "application/pdf" ?
                         <PDFAttachment className={styles.icon} />
-                        :
-                        <DocAttachment className={styles.icon} />
+                        : fileInfo.current.type === "image/png" || fileInfo.current.type === "image/jpg" || fileInfo.current.type === "image/jpeg" ?
+                            <ImgAttachment className={styles.icon} />
+                            :
+                            <DocAttachment className={styles.icon} />
                 }
                 {
                     progress === -5 ?
@@ -231,7 +241,7 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
             <p className={styles.fileName}>{fileInfo.current.name}</p>
             {
                 progress >= 0 && progress !== 100 ?
-                    <div className={styles.progressBar}>
+                    <div className={`${styles.progressBar} ${progress === -3 ? styles.fakeLoading : ""}`}>
                         <div style={{ width: `${progress}%` }} />
                         <div />
                     </div>

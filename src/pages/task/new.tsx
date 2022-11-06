@@ -20,7 +20,7 @@ import UsersPortraits from '../../components/UsersPortraits';
 import AttachmentsLoader from '../../components/AttachmentLoader';
 import Modal from '../../components/Modal';
 import SubjectsSelector from '../../components/SubjectsSelector';
-import { isActivity, isTest } from '../../components/Task';
+import { isActivity, isTest, taskGroupType } from '../../components/Task';
 import SubjectsModalPreset from '../../components/Modal/Presets/SubjectsModal';
 
 // Select Components
@@ -38,13 +38,14 @@ import TextAlign from '@tiptap/extension-text-align'
 
 // Types
 import { Attachment } from '../../types/Attachment';
-import { TaskMode, TaskType } from '../../types/Task';
+import { Contents, TaskMode, TaskType } from '../../types/Task';
 import { Group } from '../../types/Group';
 
 // Services
 import { useAppContext } from '../../contexts/AppContext';
-import getSubjectInfo, { subjectsData } from '../../utils/getSubjectInfo';
 import { api } from '../../lib/api';
+import { Subject } from '../../types/Subject';
+import NewSubjectModalPreset from '../../components/Modal/Presets/NewSubjectModal';
 
 interface TaskData {
     type: string;
@@ -235,58 +236,104 @@ export const ActivityModeSelector = ({ defaultValue, setSelectedValue }: { defau
     </Select>
 </div>
 
-export const SubjectSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<Array<number>>> }) => <div className={styles.selectHolder}>
-    <InputLabel label='Qual a matéria da atividade?' />
-    <Select name='subject' defaultValue={defaultValue && defaultValue} onValueChange={(value) => setSelectedValue && setSelectedValue([parseInt(value)])}>
-        <SelectTrigger aria-label="subject">
-            <SelectValue placeholder="Escolha a matéria" />
-            <SelectIcon>
-                <ChevronDownIcon />
-            </SelectIcon>
-        </SelectTrigger>
-        <SelectContent>
-            <SelectScrollDownButton>
-                <ChevronUpIcon />
-            </SelectScrollDownButton>
-            <SelectViewport>
-                <SelectGroup>
-                    <SelectItem key={'empty'} value={'empty'}>
-                        <SelectItemText>
-                            <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>block</span>
-                            Sem matéria
-                        </SelectItemText>
-                        <SelectItemIndicator>
-                            <CheckIcon />
-                        </SelectItemIndicator>
-                    </SelectItem>
-                    {(Object.entries(subjectsData) as Array<any>).map(([index, value]) => {
-                        return (
-                            <SelectItem key={index.toString()} value={index.toString()}>
-                                <SelectItemText>
-                                    <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>{value.icon}</span>
-                                    {value.name}
-                                </SelectItemText>
-                                <SelectItemIndicator>
-                                    <CheckIcon />
-                                </SelectItemIndicator>
-                            </SelectItem>
-                        )
-                    })}
-                </SelectGroup>
-            </SelectViewport>
-            <SelectScrollDownButton>
-                <ChevronDownIcon />
-            </SelectScrollDownButton>
-        </SelectContent>
-    </Select>
-</div>
+export const SubjectSelector = ({ userSubjects, defaultSubjects, defaultValue, setSelectedValue }:
+    { userSubjects: Subject[] | undefined, defaultSubjects: Subject[] | undefined, defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<Array<Subject>>> }) => <div className={styles.selectHolder}>
+        <InputLabel label='Qual a matéria da atividade?' />
+        <Select
+            name='subject'
+            defaultValue={defaultValue && defaultValue}
+            onValueChange={(value) => {
+                const searchOnUserSubjects = userSubjects?.find(subject => subject.id === value) as Subject;
+                const searchOnDefaultSubjects = defaultSubjects?.find(subject => subject.id === value) as Subject;
+                if (setSelectedValue && searchOnUserSubjects || setSelectedValue && searchOnDefaultSubjects) {
+                    setSelectedValue([searchOnUserSubjects ? searchOnUserSubjects : searchOnDefaultSubjects])
+                }
+            }}
+        >
+            <SelectTrigger aria-label="subject">
+                <SelectValue placeholder="Escolha a matéria" />
+                <SelectIcon>
+                    <ChevronDownIcon />
+                </SelectIcon>
+            </SelectTrigger>
+            <SelectContent>
+                <SelectScrollDownButton>
+                    <ChevronUpIcon />
+                </SelectScrollDownButton>
+                <SelectViewport>
+                    <SelectGroup>
+                        <SelectItem key={'empty'} value={'-1'}>
+                            <SelectItemText>
+                                <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>block</span>
+                                Sem matéria
+                            </SelectItemText>
+                            <SelectItemIndicator>
+                                <CheckIcon />
+                            </SelectItemIndicator>
+                        </SelectItem>
+                        <SelectSeparator />
+
+                        {
+                            userSubjects && userSubjects.length > 0 ?
+                                <>
+                                    <SelectGroup>
+                                        <SelectLabel>Suas matérias</SelectLabel>
+                                        {(Object.entries(userSubjects) as Array<any>).map(([index, subject]) => {
+                                            return (
+                                                <SelectItem key={index.toString()} value={subject.id}>
+                                                    <SelectItemText>
+                                                        <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>{subject.icon}</span>
+                                                        {subject.name}
+                                                    </SelectItemText>
+                                                    <SelectItemIndicator>
+                                                        <CheckIcon />
+                                                    </SelectItemIndicator>
+                                                </SelectItem>
+                                            )
+                                        })}
+                                    </SelectGroup>
+                                    <SelectSeparator /> : <></>
+                                </>
+                                : <></>
+                        }
+
+                        {
+                            defaultSubjects && defaultSubjects.length > 0 ?
+                                <>
+                                    <SelectGroup>
+                                        <SelectLabel>Outras matérias</SelectLabel>
+                                        {(Object.entries(defaultSubjects) as Array<any>).map(([index, subject]) => {
+                                            return (
+                                                <SelectItem key={index.toString()} value={subject.id}>
+                                                    <SelectItemText>
+                                                        <span className='material-symbols-rounded' style={{ fontSize: "1.6rem", marginRight: "1rem" }}>{subject.icon}</span>
+                                                        {subject.name}
+                                                    </SelectItemText>
+                                                    <SelectItemIndicator>
+                                                        <CheckIcon />
+                                                    </SelectItemIndicator>
+                                                </SelectItem>
+                                            )
+                                        })}
+                                    </SelectGroup>
+                                </>
+                                : <></>
+                        }
+                    </SelectGroup>
+                </SelectViewport>
+                <SelectScrollDownButton>
+                    <ChevronDownIcon />
+                </SelectScrollDownButton>
+            </SelectContent>
+        </Select>
+    </div>
 
 export const MaxScoreSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<number | undefined>> }) => <Input
     height={"4.2rem"}
     type="number"
     onChange={(event) => setSelectedValue && setSelectedValue(parseInt(event.currentTarget.value) ? parseInt(event.currentTarget.value) : undefined)}
     numberControl label='Qual a pontuação máxima que pode ser adquirida?'
-    placeholder={defaultValue ? defaultValue : '0'}
+    placeholder={defaultValue ? defaultValue : '10'}
     fixedUnit='pontos'
 />
 
@@ -322,40 +369,48 @@ export const EventAddressSelector = ({ defaultValue, setSelectedValue }: { defau
     placeholder={defaultValue ? defaultValue : 'Insira um endereço presencial ou link de acesso'}
 />
 
-export const SubjectsContentsSelector = ({ subjects, contents, stateContents, setContents }: { subjects: Array<number>, stateContents?: Array<string>, contents?: MutableRefObject<string[]>, setContents?: Dispatch<SetStateAction<string[]>> }) => <div
-    className={`${inputStyles.input} ${styles.subjectsContent} ${styles.enforce}`}
-    style={{ justifyContent: subjects.length > 0 ? "flex-start" : "center" }}>
-    {
-        subjects.length > 0 ?
-            subjects.map((subjectId, index) => {
-                const [name, icon] = getSubjectInfo(subjectId);
-                return <li key={subjectId} className={styles.subject}>
-                    <h6>• {name}</h6>
-                    <input
-                        type="text"
-                        name=""
-                        id=""
-                        defaultValue={stateContents ? stateContents[subjectId] : contents?.current[subjectId]}
-                        placeholder='Insira aqui os conteúdos da matéria'
-                        onChange={(event) => {
-                            if (setContents && stateContents) {
-                                let copy = [...stateContents];
-                                copy[subjectId] = event.currentTarget.value
-                                setContents(copy)
-                            } else if (contents) {
-                                contents.current[subjectId] = event.currentTarget.value
-                            }
-                        }}
-                    />
-                </li>
-            })
-            :
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center", width: "85%", textAlign: "center", fontSize: "1.4rem" }}>
-                <span className={`material-symbols-rounded static`} style={{ fontSize: "4.2rem" }}>hourglass_empty</span>
-                <p className='static'>Adicione matérias nesta avaliação para inserir o conteúdo delas aqui!</p>
-            </div>
-    }
-</div>
+const teste = {
+    "matéria1": "conteúdo1",
+    "matéria2": "conteúdo1",
+    "matéria3": "conteúdo1",
+}
+
+export const SubjectsContentsSelector = ({ subjects, contents, stateContents, setContents }:
+    { subjects: Array<Subject>, stateContents?: Contents, contents?: MutableRefObject<Contents>, setContents?: Dispatch<SetStateAction<Contents>> }) => <div
+        className={`${inputStyles.input} ${styles.subjectsContent} ${styles.enforce}`}
+        style={{ justifyContent: subjects.length > 0 ? "flex-start" : "center" }}>
+        {
+            subjects.length > 0 ?
+                subjects.map((subject, index) => {
+                    return <li key={subject.id} className={styles.subject}>
+                        <h6>• {subject.name}</h6>
+                        <input
+                            type="text"
+                            name=""
+                            id=""
+                            defaultValue={stateContents ? JSON.parse(stateContents)[subject.id] : contents?.current[subject.id]}
+                            placeholder='Insira aqui os conteúdos da matéria'
+                            onChange={(event) => {
+                                if (setContents && stateContents) {
+                                    let copy = JSON.parse(stateContents);
+                                    copy[subject.id] = event.currentTarget.value
+                                    setContents(JSON.stringify(copy))
+                                } else if (contents) {
+                                    let contentsCopy = Object.assign(contents.current) as Contents;
+                                    contentsCopy[subject.id] = event.currentTarget.value
+                                    contents.current = contentsCopy;
+                                }
+                            }}
+                        />
+                    </li>
+                })
+                :
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center", width: "85%", textAlign: "center", fontSize: "1.4rem" }}>
+                    <span className={`material-symbols-rounded static`} style={{ fontSize: "4.2rem" }}>hourglass_empty</span>
+                    <p className='static'>Adicione matérias nesta avaliação para inserir o conteúdo delas aqui!</p>
+                </div>
+        }
+    </div>
 
 const CustomEditor = ({ editor }: { editor: any }) => <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />;
 
@@ -368,6 +423,9 @@ export const DescriptionEditor = ({ editor }: { editor: Editor | null }) => <div
         <CustomEditor editor={editor} />
     </div>
 </div>
+
+export type SubjectsData = { defaultSubjects: Array<Subject> | undefined; userSubjects: Array<Subject> | undefined; }
+export type SetSubjectsData = Dispatch<SetStateAction<SubjectsData>>
 
 export default function NewTask() {
     const router = useRouter();
@@ -405,12 +463,26 @@ export default function NewTask() {
         content: ``,
     })
 
+    const [subjectsData, setSubjectsData] = useState<SubjectsData>({ defaultSubjects: undefined, userSubjects: undefined })
+
+    useEffect(() => {
+        async function getSubjects() {
+            const response = await api.get(`/subjects/true`)
+            if (response.status === 200) {
+                console.log("Matérias obtidas com sucesso.")
+                setSubjectsData({ userSubjects: response.data.userSubjects ? response.data.userSubjects : [], defaultSubjects: response.data.defaultSubjects })
+            }
+        }
+        getSubjects()
+    }, [])
+
     const [links, setLinks] = useState<Array<string>>([]);
 
-    const [subjects, setSubjects] = useState<Array<number>>([])
-    const contents = useRef<Array<string>>([]);
+    const [subjects, setSubjects] = useState<Array<Subject>>([])
+    const contents = useRef<Contents>({});
 
-    const { SubjectsModal, setSubjectsModalVisible } = SubjectsModalPreset(subjects, setSubjects);
+    const { NewSubjectModal, setNewSubjectModalStatus } = NewSubjectModalPreset(subjectsData, setSubjectsData);
+    const { SubjectsModal, setSubjectsModalVisible } = SubjectsModalPreset(subjectsData.userSubjects, subjectsData.defaultSubjects, subjects, setSubjects);
 
     const type1 = <>
         <div className={styles.column}>
@@ -420,10 +492,25 @@ export default function NewTask() {
             <MaxScoreSelector />
         </div>
         <div className={styles.column}>
-            <Section title='Classificação' />
-            <SubjectSelector />
+            <div style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "2.5rem",
+                alignItems: "flex-end",
+                justifyContent: "space-between",
+                width: "100%"
+            }}>
+                <Section title='Matéria' />
+                <Button
+                    style={{ height: "100%", padding: "0px 0.65rem" }}
+                    icon={'add'}
+                    onClick={() => setNewSubjectModalStatus(true)}
+                />
+            </div>
+            <SubjectSelector userSubjects={subjectsData.userSubjects} defaultSubjects={subjectsData.defaultSubjects} />
             <DescriptionEditor editor={editor} />
         </div>
+        {NewSubjectModal}
     </>
 
     const type2 = <>
@@ -465,7 +552,7 @@ export default function NewTask() {
         const formData = new FormData(event.currentTarget);
         const taskData = Object.fromEntries(formData.entries()) as unknown as TaskData;
 
-        console.log(taskData, date, storage, attachments, subjects)
+        console.log(taskData, date, storage, attachments, subjects, contents.current)
 
         if (isUploading) {
             console.log('Um arquivo ainda está sendo enviado. Impedindo que o usuário avance.')
@@ -480,30 +567,33 @@ export default function NewTask() {
         } else {
             if (!creatingTask) {
                 const { type, mode, title, address, questionsAmount, maxScore, subject } = taskData;
-                const singleSubject = subject ? [subject] : [];
-                console.log(singleSubject)
+                const taskSubjects = subject && subject !== "-1" ? [subject] : subjects.length > 0 ? subjects : [];
+
+                const [isActivity, isTest] = taskGroupType(type);
 
                 const editorContent = editor?.getHTML()
 
-                /* if (!date) {
-                    return setErrorMessage('Ei! Não se esquece de marcar a data da tarefa no calendário!')
-                } */
-
-                if (type === "obligatory" || type == 'elective') {
+                if (isActivity) {
                     if (!subject) {
                         return setErrorMessage('Por favor, insira a matéria da atividade!')
                     }
                 }
 
-                if (type === "av1" || type == 'av2') {
+                if (isTest) {
                     if (subjects.length < 1) {
                         return setErrorMessage('Por favor, insira pelo menos uma matéria na avaliação!')
+                    }
+                    if (!date) {
+                        return setErrorMessage('Ei! Não se esquece de marcar a data da tarefa no calendário!')
                     }
                 }
 
                 if (type === 'event') {
                     if (!title) {
                         return setErrorMessage('Por favor, insira um título para o evento!')
+                    }
+                    if (!date) {
+                        return setErrorMessage('Ei! Não se esquece de marcar a data da tarefa no calendário!')
                     }
                 }
 
@@ -516,14 +606,14 @@ export default function NewTask() {
                     mode: mode,
                     storage: storage,
                     contents: contents.current,
-                    description: editorContent && editorContent.length > 7 ? editorContent : "",
+                    description: editorContent && editorContent.length > 7 ? editorContent : null,
                     title: title,
                     address: address,
                     links: links.length > 0 ? links : null,
                     attachments: attachments.length > 0 ? attachments : null,
-                    subjects: subjects.length === 0 ? singleSubject : subjects,
-                    questionsAmount: questionsAmount,
-                    maxScore: maxScore,
+                    subjects: taskSubjects,
+                    questionsAmount: isTest && questionsAmount ? questionsAmount : 90,
+                    maxScore: isTest || isActivity && maxScore ? maxScore : 10,
                 }
 
                 console.log(data)
@@ -532,11 +622,15 @@ export default function NewTask() {
                     const response = await api.post('/tasks/new', data)
                     console.log(response.data)
 
-                    setCreatingTask(false)
-                    setModalVisible(response.data.id)
+                    if (response.status === 200) {
+                        console.log("Atividade criada com sucesso.", response.data)
+                        setCreatingTask(false)
+                        setModalVisible(response.data.id)
+                    }
                 } catch (error) {
                     console.log(error)
 
+                    setModalVisible("")
                     setCreatingTask(false)
                     setErrorMessage(`Infelizmente, algum problema que rolou durante o processo de criação da sua tarefa nos impediu de criá-la.:(\nPedimos que você tente novamente mais tarde.`)
                 }
@@ -548,7 +642,7 @@ export default function NewTask() {
 
     const [groupVisible, setGroupVisible] = useState(0);
 
-    const groupElement = groups !== null && <li
+    const groupElement = groups && groups.length > 0 && <li
         key={groupVisible}
         className={`${styles.group} click ${storage === groups[groupVisible].id.toString() ? styles.selected : ''}`}
         onClick={() => setStorage(groups[groupVisible].id.toString())}
@@ -618,7 +712,7 @@ export default function NewTask() {
                         </Button>
                         <div className={styles.section} style={{ gap: "0.5rem" }}>
                             {
-                                groups ?
+                                groups && groups.length > 0 ?
                                     <>
                                         <h6>Grupos</h6>
                                         {

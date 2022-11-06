@@ -4,47 +4,80 @@ import Modal from '..';
 
 // Stylesheets
 import taskStyles from '../../../styles/CreateTask.module.css';
-import { subjectsData } from '../../../utils/getSubjectInfo';
+import { Subject } from '../../../types/Subject';
 import Button from '../../Button';
 import Input from '../../Input';
 
 // Data
 import inputStyles from "../../Input/label.module.css";
+import Spinner from '../../Spinner';
+import NewSubjectModalPreset from './NewSubjectModal';
 
-export function toggleSubject(subjectId: number, subjects: Array<number>, setSubjects: Dispatch<SetStateAction<Array<number>>>) {
-    const indexOnArray = subjects.indexOf(subjectId)
+const teste = {
+    "isdasdioajdoidenoem": "aosdjadsada",
+    "iddamatéria": "assuntodamatéria"
+}
+
+export function toggleSubject(subject: Subject, subjects: Array<Subject>, setSubjects: Dispatch<SetStateAction<Array<Subject>>>) {
+    const indexOnArray = subjects.indexOf(subject)
     if (indexOnArray !== -1) {
         let subjectsStateCopy = [...subjects];
         subjectsStateCopy.splice(indexOnArray, 1)
         setSubjects(subjectsStateCopy)
     } else {
         let subjectsStateCopy = [...subjects];
-        subjectsStateCopy.push(subjectId)
+        subjectsStateCopy.push(subject)
         setSubjects(subjectsStateCopy)
     }
 }
 
-export default function SubjectsModalPreset(subjects: Array<number>, setSubjects: Dispatch<SetStateAction<Array<number>>>) {
+export default function SubjectsModalPreset(userSubjects: Array<Subject> | undefined, defaultSubjects: Array<Subject> | undefined, subjects: Array<Subject>, setSubjects: Dispatch<SetStateAction<Array<Subject>>>) {
     const [isModalVisible, setModalVisible] = useState(false)
     const [isLoading, setLoading] = useState(false)
 
     const [search, setSearch] = useState('');
 
-    const defaultSubjectsList = <>
+    const userSubjectsList = <>
         {
-            subjectsData.filter((subject, i) => search.length > 0 ? subject.name.toLowerCase().includes(search) : true).map((subject, index) => <li
-                key={index}
-                className={`${taskStyles.subjectFromList} ${subjects.indexOf(index) !== -1 ? taskStyles.selected : ""} click static`}
-                onClick={() => toggleSubject(index, subjects, setSubjects)}
-            >
-                <div className={taskStyles.title}>
-                    <span className={'material-symbols-rounded'}>{subject.icon}</span>
-                    <p>{subject.name}</p>
+            userSubjects ?
+                userSubjects.filter((subject, i) => search.length > 0 ? subject.name.toLowerCase().includes(search) : true).map((subject, index) => <li
+                    key={index}
+                    className={`${taskStyles.subjectFromList} ${subjects.indexOf(subject) !== -1 ? taskStyles.selected : ""} click static`}
+                    onClick={() => toggleSubject(subject, subjects, setSubjects)}
+                >
+                    <div className={taskStyles.title}>
+                        <span className={'material-symbols-rounded'}>{subject.icon}</span>
+                        <p>{subject.name}</p>
+                    </div>
+                    <span className={'material-symbols-rounded'} style={{ opacity: subjects.indexOf(subject) !== -1 ? 1 : 0, transition: '0.15s' }}>check_circle</span>
+                </li>)
+                :
+                <div style={{ marginBlock: "1rem" }}>
+                    <Spinner color='var(--primary-02)' />
                 </div>
-                <span className={'material-symbols-rounded'} style={{ opacity: subjects.indexOf(index) !== -1 ? 1 : 0, transition: '0.15s' }}>check_circle</span>
-            </li>)
         }
     </>
+
+    const defaultSubjectsList = <>
+        {
+            defaultSubjects ?
+                defaultSubjects.filter((subject, i) => search.length > 0 ? subject.name.toLowerCase().includes(search) : true).map((subject, index) => <li
+                    key={index}
+                    className={`${taskStyles.subjectFromList} ${subjects.indexOf(subject) !== -1 ? taskStyles.selected : ""} click static`}
+                    onClick={() => toggleSubject(subject, subjects, setSubjects)}
+                >
+                    <div className={taskStyles.title}>
+                        <span className={'material-symbols-rounded'}>{subject.icon}</span>
+                        <p>{subject.name}</p>
+                    </div>
+                    <span className={'material-symbols-rounded'} style={{ opacity: subjects.indexOf(subject) !== -1 ? 1 : 0, transition: '0.15s' }}>check_circle</span>
+                </li>)
+                :
+                <Spinner color='var(--primary-02)' />
+        }
+    </>
+
+    const { NewSubjectModal, setNewSubjectModalStatus } = NewSubjectModalPreset();
 
     return {
         SubjectsModal: <Modal
@@ -71,10 +104,13 @@ export default function SubjectsModalPreset(subjects: Array<number>, setSubjects
                         width: "100%",
                         padding: "0.85rem 1.5rem"
                     }}
+                    onClick={() => setNewSubjectModalStatus(true)}
                 />
+                {userSubjectsList}
                 <p>Outras matérias</p>
                 {defaultSubjectsList}
             </div>
+            {NewSubjectModal}
         </Modal>,
         setSubjectsModalVisible: setModalVisible
     }

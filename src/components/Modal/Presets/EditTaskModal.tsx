@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import Modal from '..';
 
@@ -8,7 +8,7 @@ import inputStyles from "../../Input/label.module.css";
 import menuStyles from "../../Menu/menu.module.css"
 
 // Types
-import { Task, TaskMode, TaskType } from '../../../types/Task';
+import { Contents, Task, TaskMode, TaskType } from '../../../types/Task';
 
 // Data
 import { perQuestion, subjectsString, taskGroupType, taskMaxScore, taskMode, taskType } from '../../Task';
@@ -32,6 +32,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 // Routing and Authentication
 import { api } from '../../../lib/api';
 import { useRouter } from 'next/router';
+import { Subject } from '../../../types/Subject';
 
 export default function EditTaskModalPreset(task: Task) {
     const router = useRouter();
@@ -70,11 +71,24 @@ export default function EditTaskModalPreset(task: Task) {
 
     // Test Specific
 
-    const [newSubjects, setNewSubjects] = useState<Array<number>>(task.subjects)
-    const [newContents, setNewContents] = useState<Array<string>>(task.contents as Array<string>);
+    const [newSubjects, setNewSubjects] = useState<Array<Subject>>(task.subjects)
+    const [newContents, setNewContents] = useState<Contents | undefined>(task.contents);
     const [newQuestionsAmount, setNewQuestionsAmount] = useState<number | undefined>(task.questionsAmount);
 
-    const { SubjectsModal, setSubjectsModalVisible } = SubjectsModalPreset(newSubjects, setNewSubjects)
+    const [subjectsData, setSubjectsData] = useState<{ defaultSubjects: Array<Subject> | undefined, userSubjects: Array<Subject> | undefined }>({ defaultSubjects: undefined, userSubjects: undefined })
+
+    useEffect(() => {
+        async function getSubjects() {
+            const response = await api.get(`/subjects/true`)
+            if (response.status === 200) {
+                console.log("Matérias obtidas com sucesso.")
+                setSubjectsData({ userSubjects: response.data.userSubjects ? response.data.userSubjects : undefined, defaultSubjects: response.data.defaultSubjects })
+            }
+        }
+        getSubjects()
+    }, [])
+
+    const { SubjectsModal, setSubjectsModalVisible } = SubjectsModalPreset(subjectsData.userSubjects, subjectsData.defaultSubjects, newSubjects, setNewSubjects)
 
     // Event Specific
     const [newTitle, setNewTitle] = useState(task.title);
@@ -95,7 +109,8 @@ export default function EditTaskModalPreset(task: Task) {
             task.type !== newTaskType ||
             newMaxScore !== undefined && task.maxScore !== newMaxScore ||
             newQuestionsAmount !== undefined && task.questionsAmount !== newQuestionsAmount ||
-            task.contents !== newContents :
+            task.contents !== newContents
+            :
             task.date !== new Date(newDate).getTime() ||
             task.title !== newTitle ||
             task.address !== newAddress ||
@@ -126,7 +141,6 @@ export default function EditTaskModalPreset(task: Task) {
 
         try {
             const response = await api.delete(`/tasks/${task.id}`)
-            console.log(response)
             if (task.group) {
                 router.push(`/groups/${task.group.id}`)
             } else {
@@ -138,32 +152,39 @@ export default function EditTaskModalPreset(task: Task) {
         }
     }
 
+    const hasUpdated = useRef<boolean>(false);
+
     async function updateTask() {
         setLoading(true)
         console.log('Atualizando tarefa...')
 
         const data = {
             id: task.id,
-            type: newTaskType,
+            type: newTaskType !== task.type ? newTaskType : null,
             date: newDate,
-            mode: newMode,
-            storage: task.group ? task.group.id : "account",
-            contents: newContents,
+            mode: newMode !== task.mode ? newMode : null,
+            /* storage: task.group ? task.group.id : "account", */
+            contents: newContents !== task.contents ? newContents : null,
             description: editor?.getHTML(),
-            title: newTitle,
-            address: newAddress,
-            subjects: newSubjects,
-            questionsAmount: newQuestionsAmount,
-            maxScore: newMaxScore,
+            title: newTitle !== task.title ? newTitle : null,
+            address: newAddress !== task.address ? newAddress : null,
+            subjects: newSubjects !== task.subjects ? newSubjects : null,
+            questionsAmount: newQuestionsAmount !== task.questionsAmount ? newQuestionsAmount : null,
+            maxScore: newMaxScore !== task.maxScore ? newMaxScore : null,
         }
 
         console.log(data)
 
         try {
-            const response = await api.patch(`/tasks/${task.id}`, data)
-            console.log(response.data)
+            if (!hasUpdated.current) {
+                const response = await api.patch(`/tasks/${task.id}`, data)
+                hasUpdated.current = true
 
-            router.push(`/task/${task.id}`)
+                console.log(response.data)
+
+                router.push(`/task/${task.id}`)
+                setLoading(false)
+            }
         } catch (error) {
             console.log(error)
 
@@ -203,7 +224,9 @@ export default function EditTaskModalPreset(task: Task) {
                             <MaxScoreSelector defaultValue={task.maxScore?.toString()} setSelectedValue={setNewMaxScore} />
                         </div>
                     </div>
-                    <SubjectSelector defaultValue={task.subjects[0].toString()} setSelectedValue={setNewSubjects} />
+                    {
+                        task.subjects.length > 0 && <SubjectSelector defaultValue={task.subjects[0].id} setSelectedValue={setNewSubjects} userSubjects={subjectsData.userSubjects} defaultSubjects={subjectsData.defaultSubjects} />
+                    }
                     <DescriptionEditor editor={editor} />
                     <div className={'dangerZone'}>
                         <p>Zona de Perigo</p>

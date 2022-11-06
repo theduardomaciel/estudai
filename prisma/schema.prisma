@@ -25,20 +25,19 @@ model User {
     defaultColor Int?
     language     String?
 
-    customSubjects Json
+    customSubjects Subject[]
 
     account Account?
 
-    tasks       Task[]
-    attachments Attachment[]
+    tasks           Task[]
+    tasksInteracted Task[] @relation(name: "task_interacted")
 
-    groups Group[]
+    attachments           Attachment[]
+    attachmentsInteracted Attachment[] @relation(name: "attachment_interacted")
 
-    markedAttachments Attachment[] @relation(name: "marked")
-    groupsInteracted  Group[]      @relation(name: "group_interaction")
-
-    tasksInteracted Task? @relation(fields: [taskId], references: [id], name: "interacted")
-    taskId          Int?
+    groups           Group[]
+    groupsInteracted Group[] @relation(name: "group_interacted")
+    groupsAdmin      Group[] @relation(name: "admin")
 
     subgroups  Subgroup? @relation(fields: [subgroupId], references: [id])
     subgroupId String?
@@ -61,6 +60,21 @@ model Account {
     @@map("accounts")
 }
 
+model Subject {
+    id   String @id @unique @default(cuid())
+    name String
+    icon String
+
+    isDefault Boolean @default(false)
+
+    createdByUser User? @relation(fields: [userId], references: [id])
+    userId        Int?
+
+    tasks Task[]
+
+    @@map("subjects")
+}
+
 model Subgroup {
     id    String @id @unique @default(uuid())
     title String
@@ -70,6 +84,8 @@ model Subgroup {
 
     users User[]
     tasks Task[]
+
+    @@map("subgroups")
 }
 
 model Group {
@@ -86,10 +102,10 @@ model Group {
     tasks Task[]
 
     users               User[]
-    usersThatInteracted User[] @relation(name: "group_interaction")
+    admins              User[] @relation(name: "admin")
+    usersThatInteracted User[] @relation(name: "group_interacted")
 
     subgroups Subgroup[]
-    admins    Int[] // lista contendo o id dos usuários
 
     @@map("groups")
 }
@@ -105,7 +121,7 @@ model Attachment {
     downloadLink String
     viewLink     String?
 
-    markedBy User[] @relation(name: "marked")
+    interactedBy User[] @relation(name: "attachment_interacted")
 
     task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
     taskId Int
@@ -127,7 +143,7 @@ model Task {
 
     // Specific and shared
     description String? // precisa ser opcional já que avaliações não têm descrição, somente as matérias
-    subjects    Int[]
+    subjects    Subject[]
 
     // Atividade (activity)
     mode     String?
@@ -135,16 +151,17 @@ model Task {
 
     // Avaliação (test)
     questionsAmount Int?
-    contents        String[]
+    contents        Json
 
     // Evento (event)
     title   String?
     address String?
 
-    interactedBy User[] @relation(name: "interacted")
+    interactedBy User[] @relation(name: "task_interacted")
 
-    group      Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-    groupId    Int?
+    group   Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    groupId Int?
+
     subgroup   Subgroup? @relation(fields: [subgroupId], references: [id])
     subgroupId String?
 

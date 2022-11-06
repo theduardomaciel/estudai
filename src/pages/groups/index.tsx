@@ -176,7 +176,7 @@ const Groups = ({ user }: { user: User }) => {
                             <div className={styles.emptyGroups}>
                                 <PlaneIcon className={styles.icon} />
                                 <h2>Parece que por aqui está vazio, né?</h2>
-                                <p>Para entrar em um grupo, acesse o link de convite enviado por algum integrante do grupo desejado.</p>
+                                <p>Para entrar em um grupo, acesse um link de convite que tenha sido enviado a você.</p>
                                 {/* <svg width="500px" height="200px">
                             <defs>
                                 <filter id="blur">
@@ -217,7 +217,7 @@ const Groups = ({ user }: { user: User }) => {
                     isCreateGroupModalVisible === "default" ?
                         <>
                             <Input
-                                label='Nome do Grupo'
+                                label='Nome do grupo'
                                 placeholder='Insira o nome do grupo'
                                 maxLength={15}
                                 type="text"

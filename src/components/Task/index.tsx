@@ -7,8 +7,8 @@ import styles from "./task.module.css"
 import { useAppContext } from "../../contexts/AppContext";
 import Link from "next/link";
 import { Task } from "../../types/Task";
-import getSubjectInfo from "../../utils/getSubjectInfo";
 import formatDate from "../../utils/formatDate";
+import { Subject } from "../../types/Subject";
 
 // Data
 export const isActivity = (type: string) => type === 'obligatory' || type === "elective";;
@@ -21,16 +21,14 @@ export const taskMaxScore = (score: number | undefined) => score && score > 0 ? 
 
 export const perQuestion = (questionsAmount: number) => questionsAmount ? (10 / questionsAmount).toString().slice(0, 5) : 0
 
-export const subjectsString = (subjects: number[]) => subjects.map((subjectId, index) => {
-    const [name, icon] = getSubjectInfo(subjectId)
-    if (name.length > 0) {
-        if (index + 1 === subjects.length) {
-            return "e " + name
-        } else if (subjects.length !== 2) {
-            return name + ", "
-        } else {
-            return name + " "
-        }
+export const subjectsString = (subjects: Subject[]) => subjects.map((subject, index) => {
+    const name = subject.name as string;
+    if (index + 1 === subjects.length) {
+        return "e " + name
+    } else if (index + 1 !== subjects.length - 1) {
+        return name + ", "
+    } else {
+        return name + " "
     }
 })
 
@@ -68,104 +66,90 @@ export default function TaskView({ task, status }: TaskProps) {
     const concludedUsersAmount = task.interactedBy ? task.interactedBy.length : 0;
     const images = task.interactedBy ? task.interactedBy.map((user, index) => user.image_url) : 0;
 
-    const Status = ({ icon, text, color }: { icon: string, text: string, color: string }) => <div className={styles.deadline} style={{ color: color }}>
+    const Status = ({ icon, text, color, hideTime }: { icon: string, text: string, color: string, hideTime?: boolean }) => <div className={styles.deadline} style={{ color: color }}>
         <>
             <span className={`material-symbols-rounded`}>{icon}</span>
-            {`${text} ${formatDate(task.date, true)}`}
+            {
+                hideTime ?
+                    text
+                    :
+                    `${text} ${formatDate(task.date, true)}`
+            }
         </>
     </div>
 
+    const taskIsActivity = isActivity(task.type);
+    const taskIsTest = isTest(task.type);
+
+    // General
     const borderStyle = `1px ${status !== "pending" ? 'double' : 'solid'} ${status === 'concluded' ? 'var(--green-01)' : status === 'expired' ? 'var(--red-01)' : 'var(--primary-04)'}`;
 
-    if (isActivity(task.type)) {
-        const [name, icon] = getSubjectInfo(task.subjects[0])
+    const infoContent = taskIsActivity ?
+        <>
+            {taskType(task.type)}
+            <div className={styles.circle} />
+            {taskMode(task.mode)}
+            <div className={styles.circle} />
+            {taskMaxScore(task.maxScore)}
+        </> :
+        taskIsTest ?
+            <>
+                {taskType(task.type)}
+                <div className={styles.circle} />
+                {task.questionsAmount + " questões"}
+                <div className={styles.circle} />
+                {perQuestion(task.questionsAmount as number) + " por questão"}
+            </>
+            : <>
+                <span style={{ fontSize: "1.6rem" }} className={`material-symbols-rounded`}>location_on</span>
+                <p>{task.address}</p>
+            </>
 
-        return <Link href={`/task/${task.id}`}>
+    const statusMessage = taskIsActivity ?
+        task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'concluíram' : 'concluiu'} a atividade`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+        : taskIsTest ?
+            <></>
+            :
+            task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'marcaram' : 'marcou'} presença`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+
+    const statusContent = taskIsActivity ?
+        status === 'concluded' ? <Status icon="check" text="atividade concluída" color="var(--green-01)" hideTime /> :
+            status === "expired" ? <Status icon="schedule" text="expirou no dia" color="var(--red-01)" /> :
+                task.date ? <Status icon="schedule" text="entrega até" color="var(--primary-02)" /> :
+                    <></>
+        : taskIsTest ?
+            status === "expired" ? <Status icon="archive" text="arquivada no dia" color="var(--primary-02)" /> :
+                <Status icon="calendar_today" text="" color="var(--primary-02)" />
+            :
+            status === 'concluded' ? <Status icon="schedule" text="Concluído" color="var(--green-01)" /> :
+                status === "expired" ? <Status icon="schedule" text="evento no dia" color="var(--red-01)" /> :
+                    <Status icon="schedule" text="evento no dia" color="var(--primary-02)" />
+
+    const icon = taskIsActivity ? (task.subjects.length > 0 ? task.subjects[0].icon : "check_box_outline_blank") : taskIsTest ? "glyphs" : "local_activity";
+    const title = taskIsActivity ? (task.subjects.length > 0 ? task.subjects[0].name : "Tarefa genérica") :
+        taskIsTest ? task.type === "av1" ? "Avaliação Mensal (AV1)" : "Avaliação Bimestral (AV2)" :
+            task.title
+
+    return (
+        <Link href={`/task/${task.id}`}>
             <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
                 <div className={styles.column}>
                     <div className={styles.icon}>
                         <span className={`material-symbols-rounded`}>{icon} </span>
                     </div>
                     <div className={styles.description}>
-                        <h4>{name}</h4>
+                        <h4>{title}</h4>
                         <div className={styles.info}>
-                            <>
-                                {taskType(task.type)}
-                                <div className={styles.circle} />
-                                {taskMode(task.mode)}
-                                <div className={styles.circle} />
-                                {taskMaxScore(task.maxScore)}
-                            </>
+                            {infoContent}
                         </div>
-                        <Content />
+                        {taskIsTest ? <p>{subjectsString(task.subjects)}</p> : <Content />}
                     </div>
                 </div>
                 <div className={`${styles.column} ${styles.two}`}>
-                    {
-                        task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'concluíram' : 'concluiu'} a atividade`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
-                    }
-                    {
-                        status === 'concluded' ? <Status icon="schedule" text="concluída no dia" color="var(--green-01)" /> :
-                            status === "expired" ? <Status icon="schedule" text="expirou no dia" color="var(--red-01)" /> :
-                                <Status icon="schedule" text="entrega até" color="var(--primary-02)" />
-                    }
+                    {statusMessage}
+                    {statusContent}
                 </div>
             </div>
         </Link>
-    } else if (isTest(task.type)) {
-        return <Link href={`/task/${task.id}`}>
-            <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`}>
-                <div className={styles.column}>
-                    <div className={styles.icon}>
-                        <span className={`material-symbols-rounded`}>glyphs</span>
-                    </div>
-                    <div className={styles.description}>
-                        <h4>{task.type === "av1" ? "Avaliação Mensal (AV1)" : "Avaliação Bimestral (AV2)"}</h4>
-                        <div className={styles.info}>
-                            <>
-                                {taskType(task.type)}
-                                <div className={styles.circle} />
-                                {task.questionsAmount + " questões"}
-                                <div className={styles.circle} />
-                                {perQuestion(task.questionsAmount as number) + " por questão"}
-                            </>
-                        </div>
-                        <p>{subjectsString(task.subjects)}</p>
-                    </div>
-                </div>
-                <div className={`${styles.column} ${styles.two}`}>
-                    {
-                        status === "expired" ? <Status icon="archive" text="arquivada no dia" color="var(--primary-02)" /> :
-                            <Status icon="calendar_today" text="" color="var(--primary-02)" />
-                    }
-                </div>
-            </div>
-        </Link>
-    } else {
-        return <Link href={`/task/${task.id}`}>
-            <div className={`${styles.container} ${viewMode === "card" ? styles.card : ""}`} style={{ border: borderStyle }}>
-                <div className={styles.column}>
-                    <div className={styles.icon}>
-                        <span className={`material-symbols-rounded`}>local_activity</span>
-                    </div>
-                    <div className={styles.description}>
-                        <h4>{task.title}</h4>
-                        <Content />
-                        <div className={styles.info}>
-                            <span style={{ fontSize: "1.6rem" }} className={`material-symbols-rounded`}>location_on</span>
-                            <p>{task.address}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className={`${styles.column} ${styles.two}`}>
-                    {task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'marcaram' : 'marcou'} presença`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />}
-                    {
-                        status === 'concluded' ? <Status icon="schedule" text="Concluído" color="var(--green-01)" /> :
-                            status === "expired" ? <Status icon="schedule" text="evento no dia" color="var(--red-01)" /> :
-                                <Status icon="schedule" text="evento no dia" color="var(--primary-02)" />
-                    }
-                </div>
-            </div>
-        </Link>
-    }
+    )
 }

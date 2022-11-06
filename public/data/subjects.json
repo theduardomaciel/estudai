@@ -1,0 +1,54 @@
+[
+    {
+        "name": "Arte",
+        "icon": "brush"
+    },
+    {
+        "name": "Biologia",
+        "icon": "temp_preferences_eco"
+    },
+    {
+        "name": "Ed. Física",
+        "icon": "fitness_center"
+    },
+    {
+        "name": "Ensino Religioso",
+        "icon": "church"
+    },
+    {
+        "name": "Filosofia",
+        "icon": "balance"
+    },
+    {
+        "name": "Física",
+        "icon": "bolt"
+    },
+    {
+        "name": "Geografia",
+        "icon": "tsunami"
+    },
+    {
+        "name": "História",
+        "icon": "public"
+    },
+    {
+        "name": "Língua Portuguesa",
+        "icon": "language"
+    },
+    {
+        "name": "Língua Estrangeira",
+        "icon": "translate"
+    },
+    {
+        "name": "Matemática",
+        "icon": "calculate"
+    },
+    {
+        "name": "Química",
+        "icon": "science"
+    },
+    {
+        "name": "Sociologia",
+        "icon": "diversity_3"
+    }
+]

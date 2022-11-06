@@ -291,7 +291,7 @@ const Register: NextPage = () => {
                 <br />
                 Nunca mais uma matéria ficará atrasada.</p>
         </header>
-        <Link href={"/home"}>
+        <Link href={"/home"} style={{ width: "100%" }}>
             <Button
                 style={{ padding: "1rem 1.5rem", width: "100%" }}
                 title='Entrar na plataforma'

@@ -1,33 +1,27 @@
 import React, { SetStateAction, useEffect, useRef, Dispatch } from "react";
-import UsersPortraits from "../UsersPortraits";
 
 import styles from "./styles.module.css"
 import inputStyles from '../Input/label.module.css';
 
-// Contexto
-import { useAppContext } from "../../contexts/AppContext";
-import Link from "next/link";
+// Components
 import { InputLabel } from "../Input";
 import Button from "../Button";
-import getSubjectInfo from "../../utils/getSubjectInfo";
 import { toggleSubject } from "../Modal/Presets/SubjectsModal";
+
+import { Subject } from "../../types/Subject";
 
 interface TaskProps {
     openModal: () => void;
-    subjects: Array<number>;
-    setSubjects: Dispatch<SetStateAction<Array<number>>>;
+    subjects: Array<Subject>;
+    setSubjects: Dispatch<SetStateAction<Array<Subject>>>;
 }
 
-export default function SubjectsSelector(props: TaskProps) {
-    const Tag = ({ subjectId }: { subjectId: number }) => {
-        const [name, icon] = getSubjectInfo(subjectId)
-
-        return <li key={subjectId} onClick={() => toggleSubject(subjectId, props.subjects, props.setSubjects)} className={styles.tag} style={{ border: "none", opacity: 1, color: "var(--light)" }}>
-            <span className={`material-symbols-rounded`}>{icon}</span>
-            <p>{name}</p>
-            <span className={`material-symbols-rounded`}>close</span>
-        </li>
-    }
+export default function SubjectsSelector({ subjects, setSubjects, openModal }: TaskProps) {
+    const Tag = ({ subject }: { subject: Subject }) => <li key={subject.id} onClick={() => toggleSubject(subject, subjects, setSubjects)} className={styles.tag} style={{ border: "none", opacity: 1, color: "var(--light)" }}>
+        <span className={`material-symbols-rounded`}>{subject.icon}</span>
+        <p>{subject.name}</p>
+        <span className={`material-symbols-rounded`}>close</span>
+    </li>
 
     const tagsContainer = useRef<HTMLDivElement | null>(null);
 
@@ -63,10 +57,10 @@ export default function SubjectsSelector(props: TaskProps) {
         <div className={`${inputStyles.input} ${styles.tagsContainer}`} style={{ justifyContent: "space-between", padding: "1rem" }}>
             <div ref={tagsContainer} className={`${styles.tagsContainer}`}>
                 {
-                    props.subjects.map((subjectId, index) => <Tag key={index} subjectId={subjectId} />)
+                    subjects.map((subject, index) => <Tag key={index} subject={subject} />)
                 }
             </div>
-            <Button icon={"add"} style={{ padding: "0.5rem" }} onClick={() => props.openModal()} />
+            <Button icon={"add"} style={{ padding: "0.5rem" }} onClick={() => openModal()} />
         </div>
     </div>
 }

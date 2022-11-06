@@ -16,23 +16,27 @@ import PaperPlaneIcon from "/public/landing/paper_plane.svg";
 import BaskharaIcon from "/public/landing/baskhara.svg";
 import { useRouter } from "next/router";
 
-const Page404: NextPage = () => {
+function Error({ statusCode }: { statusCode: string }) {
     const router = useRouter();
 
     return (
         <main className={styles.holder}>
             <Head>
-                <title>opa... 404</title>
+                <title>opa... parece que tivemos um problema...</title>
             </Head>
             <div className={styles.container} style={{ justifyContent: "center" }}>
-                <div className={styles.title} style={{ width: "65%", gap: "5rem" }}>
-                    <h1>Parece que essa página não existe :(<br /> </h1>
-                    <p>Acabamos dando de cara com um erro 404. <br /><strong>Muito provavelmente a página foi excluída ou simplesmente nunca existiu.</strong><br /> Volte pro site e aproveite telas mais úteis que essa :)</p>
+                <div className={styles.title}>
+                    <h1>Opa! Parece que tivemos um problema!<br /> </h1>
+                    <p>
+                        {statusCode
+                            ? `Um erro (código: ${statusCode}) foi encontrado no servidor.`
+                            : 'Um erro foi encontrado no cliente.'}
+                    </p>
                     <Button
                         icon={'arrow_left'}
                         title={"Voltar para o início"}
                         onClick={() => router.push('/')}
-                        style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem" }}
+                        style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse" }}
                     />
                 </div>
             </div>
@@ -46,4 +50,9 @@ const Page404: NextPage = () => {
     )
 }
 
-export default Page404;
+Error.getInitialProps = ({ res, err }: any) => {
+    const statusCode = res ? res.statusCode : err ? err.statusCode : 404
+    return { statusCode }
+}
+
+export default Error

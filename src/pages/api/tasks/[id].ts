@@ -9,6 +9,9 @@ import prisma from '../../../lib/prisma';
 import { AxiosError } from 'axios';
 import getUserIdByToken from '../../../services/getUserIdByToken';
 import { getAPIClient } from '../../../lib/api';
+import { deleteAttachmentWithGoogleFallback } from '../attachments/[id]';
+import { getDataFromRequestBody } from './new';
+import { Subject } from '../../../types/Subject';
 
 // API
 
@@ -69,15 +72,18 @@ router
         try {
             if (userId) {
                 if (parsedId) {
-                    const taskThatHasInteracted = await prisma.user.findFirst({
+                    const task = await prisma.task.findUnique({
                         where: {
-                            tasksInteracted: {
-                                id: parsedId
-                            }
+                            id: parsedId
+                        },
+                        include: {
+                            interactedBy: true
                         }
                     })
 
-                    if (taskThatHasInteracted !== null) {
+                    const hasInteracted = task?.interactedBy.find((user, i) => user.id === parsedUserId) ? true : false;
+
+                    if (hasInteracted) {
                         try {
                             await prisma.task.update({
                                 where: {
@@ -125,141 +131,44 @@ router
                     res.status(500).json({ error: 'Invalid user id' })
                 }
             } else {
-                console.log("Atualizando a tarefa.")
-
-                const hasAttachments = req.body.attachments && req.body.attachments.length > 0
-                const attachments = hasAttachments ? req.body.attachments : []
-
-                const links = req.body.links && req.body.links.length > 0 ? req.body.links : []
-                const date = new Date(req.body.date).toISOString();
-
-                const { type, storage } = req.body;
-
-                const storageConnection = storage !== 'account' ? {
-                    connect: {
-                        id: parseInt(storage)
-                    }
-                } : {}
-
                 const { ['auth.token']: token } = req.cookies;
-
                 const userId = await getUserIdByToken(token as string);
 
+                console.log("Atualizando dados da tarefa de id :", id)
+
                 if (userId) {
+                    const { date, description, subjects, title, address, type, mode, contents, questionsAmount, maxScore } = getDataFromRequestBody(req);
+
                     try {
-                        if (type === "event") {
-                            const task = await prisma.task.update({
-                                where: {
-                                    id: parseInt(id as string)
+                        await prisma.task.update({
+                            where: {
+                                id: parsedId
+                            },
+                            data: {
+                                createdBy: {
+                                    connect: { id: userId }
                                 },
-                                data: {
-                                    createdBy: {
-                                        connect: { id: userId }
-                                    },
-                                    date: date,
-                                    type: req.body.type,
-                                    description: req.body.description,
-                                    title: req.body.title,
-                                    address: req.body.address,
-                                    links: links,
-                                    group: storageConnection,
-                                    attachments: hasAttachments ?
-                                        {
-                                            create: attachments.map((attachment: any, index: number) => {
-                                                return {
-                                                    uploadedBy: {
-                                                        connect: {
-                                                            id: userId
-                                                        }
-                                                    },
-                                                    ...attachment
-                                                }
-                                            })
+                                type: type ? type : undefined,
+                                date: date ? date : undefined,
+                                description: description ? description : undefined,
+                                subjects: subjects && subjects.length > 0 ? {
+                                    connect: subjects.map((subject: Subject) => {
+                                        return {
+                                            id: subject.id
                                         }
-                                        :
-                                        {}
+                                    })
                                 }
-                            })
-
-                            console.log("Activity updated successfully!")
-                            res.status(200).json(task)
-                        } else if (type === 'av1' || type === 'av2' || type === 'recuperation') {
-                            const subjects = req.body.subjects;
-                            const maxScore = parseInt(req.body.questionsAmount) ? parseInt(req.body.questionsAmount) : 0;
-                            const contents = req.body.contents.map((content: string, index: number) => content ? content : "");
-
-                            const task = await prisma.task.update({
-                                where: {
-                                    id: parseInt(id as string)
-                                },
-                                data: {
-                                    date: date,
-                                    type: req.body.type,
-                                    subjects: subjects,
-                                    description: req.body.description,
-                                    questionsAmount: maxScore,
-                                    contents: contents,
-                                    links: links,
-                                    group: storageConnection,
-                                    attachments: hasAttachments ?
-                                        {
-                                            create: attachments.map((attachment: any, index: number) => {
-                                                return {
-                                                    uploadedBy: {
-                                                        connect: {
-                                                            id: userId
-                                                        }
-                                                    },
-                                                    ...attachment
-                                                }
-                                            })
-                                        }
-                                        :
-                                        {}
-                                }
-                            })
-
-                            console.log("Test updated successfully!")
-                            res.status(200).json(task)
-                        } else {
-                            const subjects = req.body.subjects.map((subject: string, index: number) => parseInt(subject));
-                            const maxScore = parseInt(req.body.maxScore) ? parseInt(req.body.maxScore) : 0;
-
-                            const task = await prisma.task.update({
-                                where: {
-                                    id: parseInt(id as string)
-                                },
-                                data: {
-                                    date: date,
-                                    type: req.body.type,
-                                    subjects: subjects,
-                                    description: req.body.description,
-                                    mode: req.body.mode,
-                                    maxScore: maxScore,
-                                    links: links,
-                                    group: storageConnection,
-                                    attachments: hasAttachments ?
-                                        {
-                                            create: attachments.map((attachment: any, index: number) => {
-                                                return {
-                                                    uploadedBy: {
-                                                        connect: {
-                                                            id: userId
-                                                        }
-                                                    },
-                                                    ...attachment
-                                                }
-                                            })
-                                        }
-                                        :
-                                        {}
-                                }
-                            })
-
-                            console.log("Event updated successfully!")
-                            res.status(200).json(task)
-                        }
-
+                                    :
+                                    {},
+                                mode: mode ? mode : undefined,
+                                questionsAmount: questionsAmount ? questionsAmount : undefined,
+                                maxScore: maxScore ? maxScore : undefined,
+                                contents: JSON.stringify(contents),
+                                title: title ? title : undefined,
+                                address: address ? address : undefined,
+                            }
+                        })
+                        res.status(200).json({ success: "The task was updated successfully." })
                     } catch (err: any) {
                         console.log(err)
                         res.status(400).json({ error: "One or more body elements were incorrectly written.", serverError: err })
@@ -279,19 +188,22 @@ router
         const taskId = parseInt(req.query.id as string);
         const { ['auth.token']: token } = req.cookies;
 
-        const userId = await getUserIdByToken(token as string);
+        const userId = await getUserIdByToken(token as string) as number;
 
-        const api = getAPIClient(req)
+        const googleRefreshToken = req.cookies['auth.googleRefreshToken'] as string;
+        const googleAccessToken = req.cookies['auth.googleAccessToken'] as string;
 
         async function deleteAttachment(attachmentId: string) {
             console.log("Excluindo attachment.")
             try {
-                const response = await api.delete(`/attachments/${attachmentId}`)
-                if (response) {
+                const response = await deleteAttachmentWithGoogleFallback(googleRefreshToken, googleAccessToken, userId, attachmentId)
+                if (response.code === 200) {
                     console.log("Attachment deletado", attachmentId)
+                } else {
+                    console.log("Server error.")
                 }
-            } catch (error) {
-                console.log(error)
+            } catch (error: any) {
+                console.log(error.code)
             }
         }
 
@@ -308,15 +220,13 @@ router
                 }
             })
 
-            console.log("indo", taskId, task)
+            console.log("Iniciando processo de exclusão da tarefa de id: ", taskId)
 
             if (task && task.createdBy && task.createdBy.id !== userId) {
                 res.status(401).json({ error: "You have not enough permissions for updating task info." })
             } else if (task) {
                 try {
-                    console.log('antes')
-                    await task.attachments.forEach(async (attach, i) => await deleteAttachment(attach.id))
-                    console.log("depois")
+                    await task.attachments.forEach(async (attach, i) => await deleteAttachment(attach.fileId))
                     await prisma.task.delete({
                         where: {
                             id: taskId
@@ -324,7 +234,6 @@ router
                     })
                     res.status(200).json({ success: 'The task and the attachments were deleted successfully.' })
                 } catch (error) {
-                    console.log(error)
                     res.status(500).json({ error: 'There was not possible to delete the task.' })
                 }
             } else {
@@ -332,6 +241,118 @@ router
             }
         }
     })
+
+/* if (type === "event") {
+                        const task = await prisma.task.update({
+                            where: {
+                                id: parseInt(id as string)
+                            },
+                            data: {
+                                createdBy: {
+                                    connect: { id: userId }
+                                },
+                                date: date,
+                                type: req.body.type,
+                                description: req.body.description,
+                                title: req.body.title,
+                                address: req.body.address,
+                                links: links,
+                                group: storageConnection,
+                                attachments: hasAttachments ?
+                                    {
+                                        create: attachments.map((attachment: any, index: number) => {
+                                            return {
+                                                uploadedBy: {
+                                                    connect: {
+                                                        id: userId
+                                                    }
+                                                },
+                                                ...attachment
+                                            }
+                                        })
+                                    }
+                                    :
+                                    {}
+                            }
+                        })
+
+                        console.log("Activity updated successfully!")
+                        res.status(200).json(task)
+                    } else if (type === 'av1' || type === 'av2' || type === 'recuperation') {
+                        const subjects = req.body.subjects;
+                        const maxScore = parseInt(req.body.questionsAmount) ? parseInt(req.body.questionsAmount) : 0;
+                        const contents = req.body.contents.map((content: string, index: number) => content ? content : "");
+
+                        const task = await prisma.task.update({
+                            where: {
+                                id: parseInt(id as string)
+                            },
+                            data: {
+                                date: date,
+                                type: req.body.type,
+                                subjects: subjects,
+                                description: req.body.description,
+                                questionsAmount: maxScore,
+                                contents: contents,
+                                links: links,
+                                group: storageConnection,
+                                attachments: hasAttachments ?
+                                    {
+                                        create: attachments.map((attachment: any, index: number) => {
+                                            return {
+                                                uploadedBy: {
+                                                    connect: {
+                                                        id: userId
+                                                    }
+                                                },
+                                                ...attachment
+                                            }
+                                        })
+                                    }
+                                    :
+                                    {}
+                            }
+                        })
+
+                        console.log("Test updated successfully!")
+                        res.status(200).json(task)
+                    } else {
+                        const subjects = req.body.subjects.map((subject: string, index: number) => parseInt(subject));
+                        const maxScore = parseInt(req.body.maxScore) ? parseInt(req.body.maxScore) : 0;
+
+                        const task = await prisma.task.update({
+                            where: {
+                                id: parseInt(id as string)
+                            },
+                            data: {
+                                date: date,
+                                type: req.body.type,
+                                subjects: subjects,
+                                description: req.body.description,
+                                mode: req.body.mode,
+                                maxScore: maxScore,
+                                links: links,
+                                group: storageConnection,
+                                attachments: hasAttachments ?
+                                    {
+                                        create: attachments.map((attachment: any, index: number) => {
+                                            return {
+                                                uploadedBy: {
+                                                    connect: {
+                                                        id: userId
+                                                    }
+                                                },
+                                                ...attachment
+                                            }
+                                        })
+                                    }
+                                    :
+                                    {}
+                            }
+                            console.log("Task updated successfully!")
+                            res.status(200).json(task)
+                    }
+                        }) */
 
 export default router.handler({
     onError: (err: any, req, res) => {

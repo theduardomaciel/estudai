@@ -53,18 +53,6 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
         }
     }
 
-    function formatNewFile(file: File) {
-        const preAttachment = {
-            name: file.name,
-            type: file.type,
-            tags: [],
-            viewLink: "",
-            downloadLink: "",
-            fileId: file,
-        };
-        setAttachments(attachments.concat(preAttachment))
-    }
-
     const linksItems = links.map((link, index) => {
         return <LinkAttachment key={index} link={link} index={index} links={links} setLinks={setLinks} />
     })
@@ -75,6 +63,23 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
     const listItems = attachments.map((attach, index) => {
         return <File key={`card_${index}`} attachmentIndex={index} attachments={attachments} setAttachments={setAttachments} />
     }).concat(linksItems);
+
+    const preAttachments = useRef<Array<any>>([]);
+
+    async function formatNewFile(file: File) {
+        console.log(file, 'Iniciando processo de upload do arquivo.')
+
+        const preAttachment = {
+            name: file.name,
+            type: file.type,
+            tags: [],
+            viewLink: "",
+            downloadLink: "",
+            fileId: file,
+        };
+
+        preAttachments.current.push(preAttachment)
+    }
 
     async function processFile(type: 'input' | 'drag', triggerEvent: any) {
         if (type === "drag") {
@@ -88,8 +93,13 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
                         const file = item.getAsFile() as File;
 
                         if (file) {
-                            console.log(file, 'Iniciando processo de upload do arquivo.')
-                            formatNewFile(file)
+                            await formatNewFile(file)
+                        }
+
+                        // Agora que todos os attachments foram pré-carregados, iniciamos o processo de upload
+                        if (i === items.length - 1) {
+                            console.log(preAttachments.current.length)
+                            setAttachments(preAttachments.current)
                         }
                     }
                 });
@@ -97,11 +107,18 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
         } else if (type === "input") {
             const event = triggerEvent as React.ChangeEvent<HTMLInputElement>;
             const files = event.currentTarget.files as FileList;
-            const file = files[0] as File;
 
-            if (file) {
-                console.log(file, 'Iniciando processo de upload do arquivo.')
-                formatNewFile(file)
+            if (files) {
+                Array.from(files).forEach((file, i) => {
+                    formatNewFile(file)
+
+                    console.log(i, files.length)
+                    // Agora que todos os attachments foram pré-carregados, iniciamos o processo de upload
+                    if (i === files.length - 1) {
+                        console.log(preAttachments.current.length)
+                        setAttachments(preAttachments.current)
+                    }
+                })
             }
         }
     }
@@ -178,7 +195,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
                         {listItems}
                     </ul>
                     <label className={styles.picker} htmlFor="attachmentUpload" />
-                    <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" />
+                    <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" multiple />
                     {
                         hasFiles && <div className={styles.tagsHolder}>
                             <div>

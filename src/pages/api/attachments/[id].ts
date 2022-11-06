@@ -15,6 +15,46 @@ export type NextApiRequestWithBodyData = NextApiRequest & { file: any };
 
 const router = createRouter<NextApiRequestWithBodyData, NextApiResponse>();
 
+async function deleteAttachment(token: string, id: string) {
+    const headers = {
+        'Authorization': `Bearer ${token}`
+    };
+
+    console.log(id)
+
+    try {
+        try {
+            await axios.delete(`https://www.googleapis.com/drive/v3/files/${id}`, { headers: headers })
+            console.log(`Arquivo de id ${id} removido com sucesso!`)
+
+            return { code: 200, error: "" };
+        } catch (err: any) {
+            console.log(err.response)
+            return { code: 401, error: err };
+        }
+    } catch (error: any) {
+        console.log(error)
+        return { code: 500, error: 'There was not possible to delete the file.' };
+    }
+}
+
+export async function deleteAttachmentWithGoogleFallback(googleRefreshToken: string, googleAccessToken: string, userId: number, attachmentId: string) {
+    console.log(attachmentId)
+
+    const response = await deleteAttachment(googleAccessToken, attachmentId)
+    if (response.code === 401) {
+        const newAccessToken = await refreshToken(null, userId, googleRefreshToken as string)
+        if (newAccessToken) {
+            const response = await deleteAttachment(newAccessToken, attachmentId)
+            return response;
+        } else {
+            return { code: 500, error: 'Google refresh and access token expired.' }
+        }
+    } else {
+        return response
+    }
+}
+
 router
     //.use(isAuthenticated)
     .use(expressWrapper(cors()))
@@ -28,7 +68,7 @@ router
             if (id) {
                 const userHasInteractedWithAttachment = await prisma.user.findFirst({
                     where: {
-                        markedAttachments: {
+                        attachmentsInteracted: {
                             some: {
                                 id: id as string
                             }
@@ -43,7 +83,7 @@ router
                                 id: id as string,
                             },
                             data: {
-                                markedBy: {
+                                interactedBy: {
                                     disconnect: { id: parsedUserId }
                                 }
                             }
@@ -62,7 +102,7 @@ router
                                 id: id as string,
                             },
                             data: {
-                                markedBy: {
+                                interactedBy: {
                                     connect: { id: parsedUserId }
                                 }
                             },
@@ -95,46 +135,24 @@ router
             }
         })
 
-        async function deleteAttachment(token: string) {
-            const headers = {
-                'Authorization': `Bearer ${token}`
-            };
-
-            try {
-                const { id } = req.query;
-                const token = req.cookies['auth.googleAccessToken'];
-
-                try {
-                    console.log(id)
-                    const response = await axios.delete(`https://www.googleapis.com/drive/v3/files/${id}`, { headers: headers })
-                    console.log(`Arquivo de id ${id} removido com sucesso!`)
-
-                    res.status(200).json({ success: "File removed successfully." })
-                } catch (err: any) {
-                    const error = err as AxiosError;
-                    if (error.response) {
-                        res.status(500).json({ error: error.response.statusText })
-                    }
-                }
-            } catch (error) {
-                res.status(500).json({ error: 'We could not delete the file.' })
-            }
+        if (!attachment) {
+            return res.status(401).json({ error: 'It was not possible to find the attachment' })
         }
 
-        const googleRefreshToken = req.cookies['auth.googleRefreshToken'];
-        const userId = parseInt(req.cookies['app.userId'] as string);
-
-        try {
+        if (id) {
+            const googleRefreshToken = req.cookies['auth.googleRefreshToken'] as string;
             const token = req.cookies['auth.googleAccessToken'] as string;
-            await deleteAttachment(token)
-        } catch (error) {
-            const newAccessToken = await refreshToken(res, userId, googleRefreshToken as string)
-            if (newAccessToken) {
-                await deleteAttachment(newAccessToken)
-            } else {
-                res.status(401).send({ error: 'Google refresh and access token expired.' })
-            }
+            const userId = parseInt(req.cookies['app.userId'] as string);
 
+            const response = await deleteAttachmentWithGoogleFallback(googleRefreshToken, token, userId, attachment?.fileId as string);
+
+            if (response.code === 200) {
+                res.status(200).json({ success: "File removed successfully." })
+            } else {
+                res.status(500).json({ error: response.error })
+            }
+        } else {
+            res.status(401).json({ error: 'The id was not provided.' })
         }
     })
 

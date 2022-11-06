@@ -10,7 +10,7 @@ export type Attachment = {
     downloadLink?: string;
     viewLink?: string;
 
-    markedBy: Array<User>;
+    interactedBy: Array<User>;
     createdAt: Date | string | number;
     uploadedBy: User;
 }

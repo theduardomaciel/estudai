@@ -6,7 +6,7 @@ import { setCookie } from "nookies";
 // DB
 import prisma from '../lib/prisma';
 
-export default async function refreshToken(res: NextApiResponse<any>, userId: number, googleRefreshToken: string) {
+export default async function refreshToken(res: NextApiResponse<any> | null, userId: number, googleRefreshToken: string) {
     console.log("O token de acesso ao Google do usuário expirou, obtendo um novo...")
 
     try {
@@ -30,9 +30,11 @@ export default async function refreshToken(res: NextApiResponse<any>, userId: nu
 
             console.log(credentials.access_token, "Novo access_token do Google obtido com sucesso.")
 
-            setCookie({ res }, 'auth.googleAccessToken', credentials.access_token as string, {
-                maxAge: 60 * 60 * 24 * 30 * 12 * 180,
-            })
+            if (res) {
+                setCookie({ res }, 'auth.googleAccessToken', credentials.access_token as string, {
+                    maxAge: 60 * 60 * 24 * 30 * 12 * 180,
+                })
+            }
 
             return credentials.access_token as string;
         } else {

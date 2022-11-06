@@ -93,10 +93,6 @@
     font-weight: 400;
     font-size: 1.2rem;
     line-height: 1.5rem;
-    display: flex;
-    align-items: center;
-
-    /* font-light */
 
     color: var(--font-light);
 }

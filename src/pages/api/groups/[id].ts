@@ -172,10 +172,13 @@ router
             const group = await prisma.group.findUnique({
                 where: {
                     id: groupId
+                },
+                include: {
+                    admins: true
                 }
             })
 
-            if (group && group.admins.indexOf(userId) === -1) {
+            if (group && group.admins.find(admin => admin.id === userId) ? false : true) {
                 res.status(400).json({ error: "You have not enough permissions for updating group info." })
             } else {
                 try {
