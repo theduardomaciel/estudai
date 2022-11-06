@@ -272,7 +272,7 @@ const Register: NextPage = () => {
                 Caso o acesso não seja concedido, você será incapaz de enviar anexos em atividades!</p>
         </header>
         <GoogleButton onClick={authenticate} isLoading={isLoading} />
-        <p className={styles.privacy}>Ao se cadastrar, você concorda com os <a href="/tos" target={"_blank"}>Termos de Serviço</a> e a <a target={"_blank"} href="/privacy">Política de Privacidade</a>.</p>
+        <p className={styles.privacy}>Ao se cadastrar, você concorda com os <Link href="/tos" target={"_blank"}>Termos de Serviço</Link> e a <Link target={"_blank"} href="/privacy">Política de Privacidade</Link>.</p>
         <Separator style={separator} orientation='horizontal' />
         <div onClick={returnToSection1} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
