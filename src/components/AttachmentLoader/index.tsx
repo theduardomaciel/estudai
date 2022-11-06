@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useRef, useState } from "react"
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 
 // Stylesheets
 import createTaskStyles from "../../styles/CreateTask.module.css"
@@ -17,6 +17,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import LinkAttachment from "./Link";
 import Modal from "../Modal";
 import Input from "../Input";
+import useHorizontalScroll from "../../hooks/useHorizontalScroll";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
     attachments: any[];
@@ -123,6 +124,25 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
         }
     }
 
+    const { setHorizontalScroll } = useHorizontalScroll()
+
+    const TagsPanel = () => {
+        useEffect(() => {
+            setHorizontalScroll("tagsScroll")
+        }, [])
+
+        return <div id="tagsScroll" className={styles.tagsHolder}>
+            <div>
+                <span className="material-symbols-rounded">sell</span>
+                <p>Tags</p>
+            </div>
+            <AttachmentTag index={"1"} tagId={1} />
+            <AttachmentTag index={"2"} tagId={2} />
+            <AttachmentTag index={"3"} tagId={3} />
+            <AttachmentTag index={"4"} tagId={4} />
+        </div>
+    }
+
     return <div className={createTaskStyles.column} {...rest}>
         <div className='header'>
             <Section title='Anexos' />
@@ -197,16 +217,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
                     <label className={styles.picker} htmlFor="attachmentUpload" />
                     <input onChange={(event) => processFile('input', event)} type={"file"} name="" id="attachmentUpload" multiple />
                     {
-                        hasFiles && <div className={styles.tagsHolder}>
-                            <div>
-                                <span className="material-symbols-rounded">sell</span>
-                                <p>Tags</p>
-                            </div>
-                            <AttachmentTag index={"1"} tagId={1} />
-                            <AttachmentTag index={"2"} tagId={2} />
-                            <AttachmentTag index={"3"} tagId={3} />
-                            <AttachmentTag index={"4"} tagId={4} />
-                        </div>
+                        hasFiles && <TagsPanel />
                     }
                 </div>
                 :

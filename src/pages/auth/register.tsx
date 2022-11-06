@@ -114,7 +114,7 @@ const Register: NextPage = () => {
     const { signIn } = useAuth();
     const [isLoading, setLoading] = useState(router.query.code !== undefined);
 
-    const [[section, direction], setSection] = useState(registered ? [3, 1] : router.query.code ? [2, 1] : [1, 0]);
+    const [[section, direction], setSection] = useState(registered ? [3, 1] : router.query.code ? [3, 1] : [1, 0]);
     const [selected, setSelected] = useState<null | number>(null);
 
     const progressBar = useRef<HTMLDivElement>(null);
@@ -137,6 +137,10 @@ const Register: NextPage = () => {
         } else {
             // Alteramos a seção selecionada pelo usuário
             setSelected(newSection)
+            console.log(newSection)
+            if (newSection) {
+                window.sessionStorage.setItem("course", newSection.toString() as string)
+            }
 
             setTimeout(() => {
                 // Iniciamos a animação da barra de progresso
@@ -268,6 +272,29 @@ const Register: NextPage = () => {
                 Caso o acesso não seja concedido, você será incapaz de enviar anexos em atividades!</p>
         </header>
         <GoogleButton onClick={authenticate} isLoading={isLoading} />
+        <p className={styles.privacy}>Ao se cadastrar, você concorda com os <a href="/tos" target={"_blank"}>Termos de Serviço</a> e a <a target={"_blank"} href="/privacy">Política de Privacidade</a>.</p>
+        <Separator style={separator} orientation='horizontal' />
+        <div onClick={returnToSection1} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
+            <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
+            <p className={loginStyles.link}>Voltar para o início</p>
+        </div>
+    </motion.div>
+
+    const Section2_1 = <motion.div
+        className={styles.section}
+        key={section}
+        custom={direction}
+        variants={variants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={transition}
+    >
+        <header>
+            <h1>Criando sua conta</h1>
+            <p>Calma um pouco que estamos apertando uns botões e rodando algumas manivelas para que sua conta seja criada!</p>
+        </header>
+        <GoogleButton onClick={authenticate} isLoading={isLoading} />
         <Separator style={separator} orientation='horizontal' />
         <div onClick={returnToSection1} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
@@ -319,7 +346,7 @@ const Register: NextPage = () => {
         <ScopeMissing setSection={() => setSection([1, -1])} />
     </motion.div>
 
-    const sections = [Error, Section1, Section2, Section3, MissingScope]
+    const sections = [Error, Section1, Section2, Section2_1, Section3, MissingScope]
 
     /*  */
 
@@ -359,11 +386,14 @@ const Register: NextPage = () => {
             console.log("Registrando")
             hasRegisteredRef.current = true
 
-            const response = await signIn(router.query.code as string, { course: selected as number })
+            const course = parseInt(window.sessionStorage.getItem("course") as string);
+            console.log(window.sessionStorage, course)
+
+            const response = await signIn(router.query.code as string, { course: course })
             if (response === 'success') {
-                setSection([3, 1])
-            } else if (response === 'scopeMissing') {
                 setSection([4, 1])
+            } else if (response === 'scopeMissing') {
+                setSection([5, 1])
                 setLoading(false)
                 setSelected(null)
             } else {
@@ -381,7 +411,7 @@ const Register: NextPage = () => {
             <Head>
                 <title>Criar uma conta</title>
             </Head>
-            <div className={`${loginStyles.container} ${section === 3 ? loginStyles.fullScreen : ""}`} style={{ gap: "3.5rem" }}>
+            <div className={`${loginStyles.container} ${section === 4 ? loginStyles.fullScreen : ""}`} style={{ gap: "3.5rem" }}>
                 <Logo width={121.19} height={58.72} style={{ minHeight: 58 }} fill={`var(--primary-02)`} />
                 <AnimatePresence initial={false} custom={direction} mode="wait">
                     {sections[section]}

@@ -78,6 +78,7 @@
             transparent 15px,
             var(--primary-04) 15px,
             var(--primary-04) 30px);
+    /* tem que ser sempre menor que os outros | é a distância entre as linhas */
 
     animation: slide 5s linear infinite;
     will-change: background-position;

@@ -10,7 +10,7 @@ import { api } from "../../../lib/api";
 // Hooks
 import { useAppContext } from "../../../contexts/AppContext";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useScreenSize } from "../../../hooks/useScreenSize";
+import useScreenSize from "../../../hooks/useScreenSize";
 
 // Components
 import { Tag, TagProps } from "../Tag";
@@ -272,6 +272,41 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
                     }
                 </ul>
             </div>
+            {/* <style jsx>{`
+                .${styles.progressBar} div:nth-child(1) {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 1;
+                
+                    width: 0%;
+                    height: 100%;
+                
+                    transition: 0.35s;
+                
+                    border-radius: 2.5rem;
+                    background-color: var(--primary-03);
+                
+                    background-image: repeating-linear-gradient(45deg,
+                            transparent,
+                            transparent ${barRef.current ? barRef.current.offsetWidth / 11.5 : 15}px,
+                            var(--primary-04) ${barRef.current ? barRef.current.offsetWidth / 11.5 : 15}px,
+                            var(--primary-04) ${barRef.current ? barRef.current.offsetWidth / 6 : 15}px);
+                
+                    animation: slide 5s linear infinite;
+                    will-change: background-position;
+                }
+                
+                @keyframes slide {
+                    from {
+                        background-position-x: 0;
+                    }
+                
+                    to {
+                        background-position-x: ${barRef.current ? barRef.current.offsetWidth * 3 : 300}px;
+                    }
+                }
+            `}</style> */}
         </li>
     );
 }

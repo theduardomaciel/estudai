@@ -29,7 +29,11 @@ router
             const task = await prisma.group.create({
                 data: {
                     name: name,
-                    admins: [userId],
+                    admins: {
+                        connect: {
+                            id: userId
+                        }
+                    },
                     private: isPrivate === 'true' || true ? true : false,
                     users: {
                         connect: {

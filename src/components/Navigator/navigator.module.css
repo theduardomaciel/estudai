@@ -27,10 +27,10 @@
     font-size: 1.8rem;
     margin-right: 0.5rem;
     color: var(--primary-04);
+    cursor: pointer;
 }
 
 .container h3 {
-    cursor: pointer;
     margin-right: 0.5rem;
 }
 

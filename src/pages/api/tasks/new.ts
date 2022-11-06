@@ -12,7 +12,7 @@ import { Subject } from '@prisma/client';
 
 export function getDataFromRequestBody(req: NextApiRequest) {
     // General Props
-    const date = req.body.date ? new Date(req.body.date).toISOString() : null;
+    const date = req.body.date && new Date(req.body.date).toISOString();
     const hasAttachments = req.body.attachments && req.body.attachments.length > 0
     const attachments = hasAttachments ? req.body.attachments : []
     const links = req.body.links && req.body.links.length > 0 ? req.body.links : []
@@ -61,7 +61,7 @@ router
                         connect: { id: userId }
                     },
                     type: type,
-                    date: date ? date : undefined,
+                    date: date,
                     description: description,
                     subjects: subjects && subjects.length === 1 ?
                         {

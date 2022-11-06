@@ -1,6 +1,6 @@
 import { styled } from "@stitches/react";
 import React from "react";
-import { useScreenSize } from "../../../hooks/useScreenSize";
+import useScreenSize from "../../../hooks/useScreenSize";
 
 import styles from "./note.module.css";
 

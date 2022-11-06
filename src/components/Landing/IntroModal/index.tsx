@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 // Components
 import Button from '../../Button';
 import Image, { StaticImageData } from 'next/image';
-import { useScreenSize } from '../../../hooks/useScreenSize';
+import useScreenSize from '../../../hooks/useScreenSize';
 
 interface Section {
     title: string;

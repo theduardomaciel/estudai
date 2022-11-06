@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Topic from ".";
+import useHorizontalScroll from "../../hooks/useHorizontalScroll";
 
 import styles from "./topic.module.css";
 
@@ -15,6 +16,12 @@ interface TopicsGroupProps {
 
 export default function TopicsGroup(props: TopicsGroupProps) {
     const [selected, setSelected] = useState<number | null>(null);
+
+    const { setHorizontalScroll } = useHorizontalScroll();
+
+    useEffect(() => {
+        setHorizontalScroll("topicsScroll")
+    }, [])
 
     return <ul id="topicsScroll" className={`row ${styles.topics} static`} style={{ overflow: "scroll" }}>
         {

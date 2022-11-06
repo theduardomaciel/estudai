@@ -1,8 +1,7 @@
 import styles from './modal.module.css';
 import React, { useRef } from 'react';
 
-import { AnimatePresence, MotionStyle } from "framer-motion";
-import { motion } from "framer-motion"
+import { AnimatePresence, MotionStyle, motion } from "framer-motion";
 
 // Components
 import Button from '../Button';

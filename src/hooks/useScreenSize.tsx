@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const WIDE_SIZE = 1024;
 
-export const useScreenSize = () => {
+const useScreenSize = () => {
     const [isScreenWide, setIsScreenWide] = useState(false);
     const [screenSize, setScreenSize] = useState({
         width: 0,
@@ -45,3 +45,5 @@ export const useScreenSize = () => {
 
     return { isScreenWide, width, height };
 }
+
+export default useScreenSize;

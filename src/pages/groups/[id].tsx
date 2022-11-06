@@ -376,6 +376,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 toggleVisibility={() => setConfigModalVisible(!isConfigModalVisible)}
                 icon={'tune'}
                 isLoading={isLoading}
+                suppressReturnButton
                 iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
                 color={`var(--primary-02)`}
                 actionProps={{
@@ -420,7 +421,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                             </div>
 
                             {
-                                !group.admins.find((userId, i) => userId === user.id) &&
+                                !group.admins.find((admin, i) => admin.id === user.id) &&
                                 <Button
                                     title='REMOVER PARTICIPANTE'
                                     iconProps={{ filled: true, size: '1.8rem' }}

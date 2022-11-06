@@ -1,7 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import updateVisual from "../utils/updateVisual";
-
 type ContextTypes = {
     switchTheme: () => void;
     theme: string;
@@ -23,9 +21,9 @@ export function ThemeProvider({ children }: ContextProviderProps) {
         setTheme(newTheme)
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         updateVisual(theme)
-    }, [theme])
+    }, [theme]) */
 
     const sharedState = {
         switchTheme,

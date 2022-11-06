@@ -100,6 +100,7 @@ import { parseCookies } from 'nookies';
 import { api } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { Subject } from '../../types/Subject';
+import AttachmentPreview from '../../components/AttachmentPreview';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
@@ -218,14 +219,13 @@ const Task = ({ task }: { task: Task }) => {
             </div>
             <p className={fileStyles.fileName}>{attachment.name}</p>
             <div className={styles.attachmentButtonsHolder}>
-                <a href={attachment.viewLink} target={"_blank"} rel="noreferrer">
-                    <Button
-                        title='Visualizar'
-                        icon={'visibility'}
-                        iconProps={{ size: "1.6rem" }}
-                        classes={styles.attachmentButton}
-                    />
-                </a>
+                <Button
+                    title='Visualizar'
+                    icon={'visibility'}
+                    iconProps={{ size: "1.6rem" }}
+                    classes={styles.attachmentButton}
+                    onClick={() => setActualUrl(attachment.fileId as string)}
+                />
                 <a href={attachment.downloadLink} download>
                     <Button
                         title='Baixar'
@@ -572,6 +572,8 @@ const Task = ({ task }: { task: Task }) => {
     const closeToDeadline = 2 * 24 * 60 * 60 * 1000; // 2 dias em mili-segundos
     const daysToExpire = task.date - new Date().getTime();
 
+    const [actualUrl, setActualUrl] = useState<undefined | string>(undefined);
+
     if (task.group && task.group.private && permissionLevel === "noPermission") {
         return <main className={styles.holder}>
             <Head>
@@ -646,6 +648,7 @@ const Task = ({ task }: { task: Task }) => {
                     }
                     {AttachmentsContainer}
                 </div>
+                <AttachmentPreview url={actualUrl} setUrl={setActualUrl} />
                 {UsersModal}
                 {EditTaskModal}
                 {AddAttachmentModal}

@@ -4,7 +4,7 @@ import styles from './device.module.css'
 // Images
 import MobileScreenshot from "/public/images/portrait_screenshot.png";
 import DesktopScreenshot from "/public/images/landscape_screenshot.png";
-import { useScreenSize } from '../../../hooks/useScreenSize';
+import useScreenSize from '../../../hooks/useScreenSize';
 
 interface Props {
     additionalClass?: string;

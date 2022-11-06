@@ -135,3 +135,23 @@
 .timer span {
     z-index: 1;
 }
+
+.privacy {
+    font-family: 'Inter';
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+
+    width: 90%;
+
+    color: var(--primary-04);
+}
+
+.privacy a {
+    font-weight: 700;
+}
+
+.privacy a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

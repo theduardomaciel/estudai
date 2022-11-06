@@ -32,6 +32,7 @@ import PlaneIcon from '/public/landing/paper_plane.svg';
 import Link from 'next/link';
 import UsersPortraits from '../../components/UsersPortraits';
 import Menu from '../../components/Menu';
+import { EmptyTasksMessage } from '../home';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
@@ -173,18 +174,7 @@ const Groups = ({ user }: { user: User }) => {
                                 </Link>
                             })
                             :
-                            <div className={styles.emptyGroups}>
-                                <PlaneIcon className={styles.icon} />
-                                <h2>Parece que por aqui está vazio, né?</h2>
-                                <p>Para entrar em um grupo, acesse um link de convite que tenha sido enviado a você.</p>
-                                {/* <svg width="500px" height="200px">
-                            <defs>
-                                <filter id="blur">
-                                    <feGaussianBlur stdDeviation="0" />
-                                </filter>
-                            </defs>
-                        </svg> */}
-                            </div>
+                            <EmptyTasksMessage description='Para entrar em um grupo, acesse um link de convite que tenha sido enviado a você.' />
                     }
                 </div>
             </div>
@@ -207,6 +197,7 @@ const Groups = ({ user }: { user: User }) => {
                             undefined
 
                 }}
+                style={{ color: "var(--primary-02)", fontFamily: "Inter", fontWeight: 500 }}
                 suppressReturnButton={isCreateGroupModalVisible === 'success'}
                 title={isCreateGroupModalVisible === 'default' ? "Criar grupo" :
                     isCreateGroupModalVisible === 'success' ? 'Eba! Deu tudo certo.' :

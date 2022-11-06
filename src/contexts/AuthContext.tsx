@@ -29,6 +29,7 @@ export function AuthProvider({ children }: ContextProviderProps) {
 
     async function signIn(code: string, registerData?: RegisterProps) {
         try {
+            console.log(registerData)
             const response = await api.post('/auth/google', { registerData, code });
 
             if (response.status === 200) {

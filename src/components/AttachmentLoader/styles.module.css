@@ -166,10 +166,7 @@
     width: 100%;
 
     z-index: 6;
-    overflow-x: none;
-    overflow-y: scroll;
-
-    /* flex-wrap: wrap; */
+    overflow-x: scroll;
 
     position: absolute;
     left: 0;

@@ -20,10 +20,15 @@ const TermsOfService: NextPage = () => {
                 <title>estudaí</title>
             </Head>
             <LandingHeader />
-            <div className={styles.container}>
+            <div className={styles.container} style={{ justifyContent: "center", marginBottom: "6.5rem" }}>
                 <Note showOnlyInMobile tag='ALPHA' />
-                <div className={styles.title}>
-                    <p>work in progress...</p>
+                <div className={styles.title} style={{ maxWidth: "65%" }}>
+                    <h2>Relaxa, só queremos paz e tranquilidade.</h2>
+                    <p>Em relação a nossos termos, somente <strong>pedimos que você mantenha uma boa conduta durante o uso na plataforma.</strong></p>
+                    <p>Ainda estamos em seus estágios iniciais de desenvolvimento, portanto, muitos problemas e falhas estarão presentes na aplicação durante esse período. </p>
+                    <p>Nesse cenário, práticas como o abuso de bugs e outros problemas para prejudicar o desempenho da plataforma são totalmente repudiáveis.</p>
+                    <p><strong>Contamos com você para fazer do estudaí um ambiente livre e seguro a todos.</strong></p>
+                    <p>- equipe estudaí 💜</p>
                 </div>
             </div>
         </main>

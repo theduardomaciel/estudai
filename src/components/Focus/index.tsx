@@ -15,6 +15,7 @@ import TopicsGroup from "../Topic/TopicsGroup";
 // Stylesheets
 import styles from "./focus.module.css"
 import Modal from "../Modal";
+import useHorizontalScroll from "../../hooks/useHorizontalScroll";
 
 // Types
 interface Props {
@@ -78,41 +79,7 @@ const transition = {
 }
 
 export default function Focus({ }: Props) {
-
-    function moveScroll(amount: number) {
-        const scroll = document.getElementById('topicsScroll') as HTMLDivElement;
-        /* scroll.scrollLeft -= 20; */
-        scroll.scrollTo({
-            top: 0,
-            left: scroll.scrollLeft + amount,
-            behavior: 'smooth'
-        });
-    }
-
-    useEffect(() => {
-        const scroll = document.getElementById('topicsScroll') as HTMLDivElement;
-        if (scroll) {
-            scroll.addEventListener("wheel", function (event) {
-                if (event.deltaY > 0) {
-                    scroll.scrollTo({
-                        top: 0,
-                        left: scroll.scrollLeft + 100,
-                        behavior: 'smooth'
-                    });
-                    event.preventDefault();
-                    // preventDefault() will help avoid worrisome 
-                    // inclusion of vertical scroll 
-                } else {
-                    scroll.scrollTo({
-                        top: 0,
-                        left: scroll.scrollLeft - 100,
-                        behavior: "smooth"
-                    });
-                    event.preventDefault();
-                }
-            });
-        }
-    }, [])
+    const { moveScroll } = useHorizontalScroll('topicsScroll');
 
     const topicIdRef = useRef<number>(-1);
 

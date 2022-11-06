@@ -235,7 +235,7 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                                 :
                                 <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente para você :)`} />
                             :
-                            concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 ?
+                            concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 || noDateTasks.length > 0 ?
                                 <>
                                     {concludedTasks.length > 0 && viewMode === 'list' && <h5>Concluído</h5>}
                                     {concludedTasks}

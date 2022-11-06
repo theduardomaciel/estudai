@@ -43,19 +43,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     return <React.Fragment>
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_ID as string}>
             <AuthProvider>
-                <LanguageProvider>
-                    <ThemeProvider>
-                        <AppContextProvider>
-                            <DndProvider options={HTML5toTouch}>
-                                {/* <RootLayout> */}
-                                <Progressbar />
-                                <Component {...pageProps} />
-                                <ComponentPreview />
-                                {/* </RootLayout> */}
-                            </DndProvider>
-                        </AppContextProvider>
-                    </ThemeProvider>
-                </LanguageProvider>
+                <AppContextProvider>
+                    <DndProvider options={HTML5toTouch}>
+                        <Progressbar />
+                        <Component {...pageProps} />
+                        <ComponentPreview />
+                    </DndProvider>
+                </AppContextProvider>
             </AuthProvider>
         </GoogleOAuthProvider>
     </React.Fragment >

@@ -46,7 +46,8 @@
     color: var(--font-dark);
 }
 
-.title p {
+.title p,
+.title ul {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 500;
@@ -81,6 +82,17 @@
 
 .energy {
     display: none;
+}
+
+.title h2 {
+    font-size: 2.4;
+    color: var(--font-dark);
+}
+
+.title ul {
+    list-style-type: initial;
+    text-align: left;
+    font-size: 1.8rem;
 }
 
 @media (min-width: 1024px) {
