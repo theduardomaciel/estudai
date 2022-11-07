@@ -2,12 +2,12 @@
     display: flex;
     flex-direction: column;
 
-    height: 100vh;
+    height: 115vh;
     width: 100%;
 
     position: relative;
 
-    overflow: hidden;
+    overflow-y: hidden;
 
     background: linear-gradient(180deg, var(--light) 0%, var(--light) 56.25%, var(--background-02) 100%);
 }

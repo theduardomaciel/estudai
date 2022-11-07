@@ -148,13 +148,17 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id))
         .map((task, index) => <TaskView key={index} task={task} status={"concluded"} />)
 
-    const expiredTasks = group.tasks
-        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date <= now && task.type !== "av1" && task.type !== "av2")
+    const expiredTasks = user.tasks
+        .filter((task, i) => task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true && task.date && task.date <= now && task.type !== "av1" && task.type !== "av2")
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
 
     const archivedTasks = group.tasks
         .filter((task, i) => task.date <= now && task.type === "av1" || task.date <= now && task.type === "av2")
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
+
+    const noDateTasks = user.tasks
+        .filter((task, i) => !task.date && task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true)
+        .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
     const [isConfigModalVisible, setConfigModalVisible] = useState(false);
     const [newPinnedMessage, setNewPinnedMessage] = useState(group.pinnedMessage);
@@ -246,12 +250,12 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                     <div className={styles.tasks}>
                         <div className={homeStyles.subheader}>
                             <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
-                            <Button
+                            {/* <Button
                                 style={{ fontSize: "1.4rem", paddingInline: "1.15rem", paddingBlock: "1.15rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
                                 icon={'filter_alt'}
                                 disableHoverEffect
                                 iconProps={{ size: "2.2rem" }}
-                            />
+                            /> */}
                         </div>
                         <div className={`${homeStyles.tasks}`}>
                             {
@@ -261,10 +265,12 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                         :
                                         <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente neste grupo pra você :)`} />
                                     :
-                                    concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 ?
+                                    concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 || noDateTasks.length > 0 ?
                                         <>
                                             {concludedTasks.length > 0 && <h5>Concluído</h5>}
                                             {concludedTasks}
+                                            {noDateTasks.length > 0 && <h5>Sem data</h5>}
+                                            {noDateTasks}
                                             {expiredTasks.length > 0 && <h5>Expirado</h5>}
                                             {expiredTasks}
                                             {expiredTasks.length > 0 && <h5>Arquivado</h5>}

@@ -93,6 +93,7 @@ const Landing: NextPage = () => {
                 </div>
                 <Device />
             </div>
+            <LandingFooter />
         </main>
     )
 }

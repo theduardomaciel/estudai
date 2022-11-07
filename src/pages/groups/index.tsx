@@ -210,7 +210,7 @@ const Groups = ({ user }: { user: User }) => {
                             <Input
                                 label='Nome do grupo'
                                 placeholder='Insira o nome do grupo'
-                                maxLength={15}
+                                maxLength={30}
                                 type="text"
                                 onChange={(event) => groupName.current = event.currentTarget.value}
                             />

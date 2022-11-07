@@ -7,6 +7,7 @@ export default async function removeCookies(context?: GetServerSidePropsContext<
     try {
         await destroyCookie(context, 'auth.googleAccessToken')
         await destroyCookie(context, 'auth.googleRefreshToken')
+        await destroyCookie(context, 'app.userId')
         await destroyCookie(context, 'auth.token')
     } catch (error) {
         console.log(error)

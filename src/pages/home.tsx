@@ -173,7 +173,7 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
 
     const noDateTasks = user.tasks
-        .filter((task, i) => !task.date)
+        .filter((task, i) => !task.date && task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true)
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
     return (

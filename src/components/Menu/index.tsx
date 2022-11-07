@@ -20,12 +20,12 @@ export default function Menu({ children, flex }: Props) {
     const focus = useMemo(() => <Focus />, [])
 
     return children ?
-        <div className={`${isMenuOpened || flex && styles.open} ${flex && styles.flex} ${styles.holder}`}>
+        <div className={`${isMenuOpened || flex ? styles.open : ""} ${flex ? styles.flex : ""} ${styles.holder}`}>
             <div className={styles.content}>
                 {children}
             </div>
         </div> :
-        <div className={`${isMenuOpened || flex && styles.open} ${flex && styles.flex} ${styles.holder}`}>
+        <div className={`${isMenuOpened || flex ? styles.open : ""} ${flex ? styles.flex : ""} ${styles.holder}`}>
             <div className={styles.content}>
                 <div className={styles.menuHeader}>
                     <div className='row'>

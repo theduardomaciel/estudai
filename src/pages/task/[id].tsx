@@ -301,7 +301,7 @@ const Task = ({ task }: { task: Task }) => {
         <div className='header'>
             <SectionSelector sections={["Anexos", "Links"]} actualSection={section} setSection={setSection} />
             <div className={`row ${styles.headerButtons}`}>
-                <Button icon={'filter_alt'} />
+                {/* <Button icon={'filter_alt'} /> */}
                 {
                     permissionLevel &&
                     <Button
