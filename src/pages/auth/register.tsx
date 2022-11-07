@@ -25,6 +25,7 @@ import Device from '../../components/Landing/Device';
 import { GoogleButton, ScopeMissing } from './login';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../contexts/AuthContext';
+import EarlyAccessModalPreset from '../../components/Modal/Presets/EarlyAccessModal';
 
 interface TimerProps {
     current?: boolean;
@@ -418,6 +419,7 @@ const Register: NextPage = () => {
                 </AnimatePresence>
             </div>
             <Device additionalClass={loginStyles.device} />
+            <EarlyAccessModalPreset />
         </main>
     )
 }

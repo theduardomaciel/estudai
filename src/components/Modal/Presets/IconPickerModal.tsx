@@ -46,13 +46,34 @@ const bannedIcons = [
     "discount",
     "play_circle_outline",
     "signal_wifi_statusbar_connected_no_internet_4",
-    "play_circle_filled"
+    "play_circle_filled",
+    'contact_emergency',
+    'push_pin',
+    'person_2',
+    'person_3',
+    'person_4',
+    'shape_line',
+    'unfold_less_double',
+    'woman_2',
+    'auto_fix_high',
+    'auto_fix_normal',
+    'auto_fix_off',
+    'blind',
+    'contact_emergency',
+    'diversity_1',
+    'diversity_2',
+    'diversity_3',
+    'fluorescent',
+    'fmd_good',
+    'video_chat',
+    "add_home",
+    "add_home_work"
 ]
 
 // https://fonts.google.com/metadata/icons ou https://raw.githubusercontent.com/google/material-design-icons/master/font/MaterialIcons-Regular.codepoints
 
 const filteredIcons = iconsData
-    .filter((icon, index) => bannedIcons.includes(icon.name) ? false : true && !icon.name.match(/^\d/))
+    .filter((icon, index) => bannedIcons.includes(icon.name) ? false : true && !icon.name.includes("0") && !icon.name.includes("1") && !icon.name.includes("2") && !icon.name.includes("3") && !icon.name.includes("4") && !icon.name.includes("5") && !icon.name.includes("6") && !icon.name.includes("7") && !icon.name.includes("8") && !icon.name.includes("9")/* !icon.name.match(/^\d/) */)
 // removemos os ícones banidos e os ícones que começam com número
 
 export default function IconPickerModalPreset(setSelectedIcon: Dispatch<SetStateAction<string>>) {

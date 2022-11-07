@@ -142,11 +142,19 @@ const Task = ({ task }: { task: Task }) => {
 
     const [attachmentsInteracted, setAttachmentsInteracted] = useState<Array<boolean | string>>(['loading'])
 
+    function checkIfIsOwner(attachmentUploadedById: number) {
+        if (attachmentUploadedById === parseInt(userId)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function Tag({ attachment, index, ...rest }: TagComponentProps) {
         const [isAttachmentLoading, setAttachmentLoading] = useState(attachmentsInteracted[0] === 'loading');
         const attachmentInteracted = attachmentsInteracted[index] === true;
 
-        const [isAttachmentOwner, setIsAttachmentOwner] = useState(false);
+        const isAttachmentOwner = useMemo(() => checkIfIsOwner(attachment.uploadedBy.id), [])
 
         async function toggleAttachmentInteraction(attachmentId: string, attachmentIndex: number, setAttachmentLoading: (state: boolean) => SetStateAction<void>) {
             setAttachmentLoading(true)
@@ -175,12 +183,6 @@ const Task = ({ task }: { task: Task }) => {
 
             setAttachmentLoading(false)
         }
-
-        useEffect(() => {
-            if (attachment.uploadedBy && permissionLevel && attachment.uploadedBy.id === parseInt(userId)) {
-                setIsAttachmentOwner(true)
-            }
-        }, [])
 
         return <li key={index} className={`${fileStyles.attachment} ${styles.file}`} {...rest} >
             <div className={fileStyles.header}>
@@ -284,7 +286,7 @@ const Task = ({ task }: { task: Task }) => {
         return (
             <div className={styles.attachmentsSection}>
                 <div className={styles.attachmentHeader}>
-                    <span className={`material-symbols-rounded`}>{icon}</span>
+                    <span className={`material-symbols-rounded static`}>{icon}</span>
                     <p>{name}</p>
                 </div>
                 <ul className={styles.attachmentsContainer}>

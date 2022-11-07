@@ -4,11 +4,7 @@ const withTM = require('next-transpile-modules')([/* 'react-dnd' */]) // or what
 module.exports = withTM({
     reactStrictMode: true,
     swcMinify: true,
-    experimental: {
-        fontLoaders: [
-            { loader: '@next/font/google', options: { subsets: ['latin'] } },
-        ],
-    },
+
     redirects() {
         return [
             process.env.MAINTENANCE_MODE === "1"

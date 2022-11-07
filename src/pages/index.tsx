@@ -17,15 +17,14 @@ import Note from '../components/Landing/Note';
 import Button from '../components/Button';
 import Device from '../components/Landing/Device';
 
+import EarlyAccessModalPreset from '../components/Modal/Presets/EarlyAccessModal';
+
 // Icons
 import StarIcon from "/public/landing/star.svg";
 import PiIcon from "/public/landing/pi.svg";
 import EnergyIcon from "/public/landing/energy.svg";
 import PaperPlaneIcon from "/public/landing/paper_plane.svg";
 import BaskharaIcon from "/public/landing/baskhara.svg";
-
-// App Context
-import getUserIdByToken from '../services/getUserIdByToken';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
@@ -57,8 +56,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 }
 
 const Landing: NextPage = () => {
-    const router = useRouter();
-
     return (
         <main className={styles.holder}>
             <Head>
@@ -82,14 +79,13 @@ const Landing: NextPage = () => {
                 <div className={styles.title}>
                     <h1>Organize seus estudos.</h1>
                     <p>Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.</p>
-                    {/* <Link href={"/auth/register"}> */}
-                    <Button
-                        icon={'arrow_right_alt'}
-                        title={"Criar uma conta"}
-                        onClick={() => router.push(`/auth/register`)}
-                        style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse", zIndex: 5 }}
-                    />
-                    {/* </Link> */}
+                    <Link href={"/auth/register"}>
+                        <Button
+                            icon={'arrow_right_alt'}
+                            title={"Criar uma conta"}
+                            style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse", zIndex: 5 }}
+                        />
+                    </Link>
                 </div>
                 <Device />
             </div>

@@ -22,7 +22,6 @@ const ComponentPreview = (): JSX.Element => {
 
 // Stylesheets
 import '../styles/globals.css'
-import 'material-symbols/rounded.css';
 
 import Progressbar from '../components/Progressbar';
 
@@ -31,13 +30,16 @@ import { Tag, TagProps } from '../components/AttachmentLoader/Tag';
 import { AppProps } from 'next/dist/shared/lib/router/router';
 
 // Fonts
+import localFont from '@next/font/local'
 import { Inter, Karla, Raleway, Trirong } from '@next/font/google';
 
-const inter = Inter({ variable: '--inter-font' });
-const karla = Karla({ variable: '--karla-font' });
-const raleway = Raleway({ variable: '--raleway-font' });
-const trirong700 = Trirong({ weight: "700", variable: '--trirong-700-font' });
-const trirong900 = Trirong({ weight: '900', variable: '--trirong-900-font' })
+const inter = Inter({ variable: '--inter-font', subsets: ['latin'] });
+const karla = Karla({ variable: '--karla-font', subsets: ['latin'] });
+const raleway = Raleway({ variable: '--raleway-font', subsets: ['latin'] });
+const trirong700 = Trirong({ weight: "700", variable: '--trirong-700-font', subsets: ['latin'] });
+const trirong900 = Trirong({ weight: '900', variable: '--trirong-900-font', subsets: ['latin'] })
+
+const materialSymbols = localFont({ src: "../styles/fonts/material-symbols.ttf", display: "block" })
 
 function MyApp({ Component, pageProps }: AppProps) {
     return <React.Fragment>
@@ -46,6 +48,26 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <AppContextProvider>
                     <DndProvider options={HTML5toTouch}>
                         <Progressbar />
+                        <style jsx global>{`
+                            html {
+                                font-family: ${inter.style.fontFamily}, ${karla.style.fontFamily}, ${raleway.style.fontFamily}, ${trirong700.style.fontFamily}, ${trirong900.style.fontFamily}, ${inter.style.fontFamily}, ${materialSymbols.style.fontFamily};
+                            }
+
+                            .material-symbols-rounded {
+                                font-family: ${materialSymbols.style.fontFamily};
+                                font-weight: normal;
+                                font-style: normal;
+                                font-size: 24px;
+                                /* Preferred icon size */
+                                display: inline-block;
+                                line-height: 1;
+                                text-transform: none;
+                                letter-spacing: normal;
+                                word-wrap: normal;
+                                white-space: nowrap;
+                                direction: ltr;
+                            }
+                        `}</style>
                         <Component {...pageProps} />
                         <ComponentPreview />
                     </DndProvider>

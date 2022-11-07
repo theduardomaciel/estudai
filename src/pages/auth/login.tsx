@@ -21,6 +21,7 @@ import GoogleLogo from "/public/google_logo.svg";
 import Button from '../../components/Button';
 import { Separator } from '../../components/Separator';
 import Device from '../../components/Landing/Device';
+import EarlyAccessModalPreset from '../../components/Modal/Presets/EarlyAccessModal';
 
 interface Props {
     onClick?: () => void;
@@ -200,6 +201,9 @@ const Login: NextPage = () => {
                 }
             </div>
             <Device additionalClass={styles.device} />
+            {
+                !router.query.code && <EarlyAccessModalPreset />
+            }
         </main>
     )
 }
