@@ -11,7 +11,6 @@ import styles from '../styles/Landing.module.css'
 
 // Components
 import Note from '../components/Landing/Note';
-import Button from '../components/Button';
 
 const TermsOfService: NextPage = () => {
     return (
@@ -31,6 +30,7 @@ const TermsOfService: NextPage = () => {
                     <p>- equipe estudaí 💜</p>
                 </div>
             </div>
+            <LandingFooter />
         </main>
     )
 }

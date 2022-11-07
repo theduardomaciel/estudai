@@ -35,6 +35,7 @@ const PolicyOfPrivacy: NextPage = () => {
                     <p>- estudaí 💜</p>
                 </div>
             </div>
+            <LandingFooter />
         </main>
     )
 }

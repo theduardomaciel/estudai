@@ -8,6 +8,7 @@
     position: relative;
 
     overflow-y: hidden;
+    overflow-x: hidden;
 
     background: linear-gradient(180deg, var(--light) 0%, var(--light) 56.25%, var(--background-02) 100%);
 }
