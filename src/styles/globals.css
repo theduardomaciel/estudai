@@ -48,17 +48,17 @@
     -webkit-text-size-adjust: 100%;
 }
 
-/* @font-face {
+@font-face {
     font-family: 'Material Symbols Rounded';
     font-style: normal;
-    src: url(/fonts/material-symbols.ttf) format('ttf');
-} */
+    src: url(/fonts/material-symbols.ttf) format('woff');
+}
 
 .material-symbols-rounded {
     font-family: 'Material Symbols Rounded';
     font-weight: normal;
     font-style: normal;
-    font-size: 24px;
+    font-size: 2.4rem;
     /* Preferred icon size */
     display: inline-block;
     line-height: 1;

@@ -184,7 +184,7 @@ const Task = ({ task }: { task: Task }) => {
             setAttachmentLoading(false)
         }
 
-        return <li key={index} className={`${fileStyles.attachment} ${styles.file}`} {...rest} >
+        return <li key={index} className={`${fileStyles.attachment} ${styles.file}`} {...rest} suppressHydrationWarning >
             <div className={fileStyles.header}>
                 {
                     attachment.type == "application/pdf" ?
