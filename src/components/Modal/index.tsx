@@ -69,7 +69,7 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
                                 <div className={styles.headerContainer} style={{ justifyContent: iconProps?.position ? iconProps?.position : "center" }}>
                                     <div style={{ backgroundColor: color }} className={styles.iconHolder}>
                                         <span
-                                            className={'material-symbols-rounded static'}
+                                            className={'material-icons-round static'}
                                             style={{ color: "var(--light)", fontSize: iconProps?.size ? iconProps?.size : "4.8rem" }}>
                                             {icon}
                                         </span>

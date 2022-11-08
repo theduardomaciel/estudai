@@ -1,5 +1,5 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import React, { CSSProperties } from 'react'
+import React, { CSSProperties, useEffect } from 'react'
 
 // Contexts
 import { AppContextProvider } from '../contexts/AppContext'
@@ -43,6 +43,13 @@ const materialSymbols = localFont({ src: "../styles/fonts/material-symbols.ttf",
 import '@material-design-icons/font/round.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+    useEffect(() => {
+        document.fonts.ready.then(function () {
+            document.body.classList.add('loaded')
+        });
+    }, [])
+
     return <React.Fragment>
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_ID as string}>
             <AuthProvider>

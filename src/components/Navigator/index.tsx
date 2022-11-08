@@ -16,7 +16,7 @@ export default function Navigator(props: Props) {
         <div className={`${styles.container} ${props.parentDirectory ? "parentDirectory" : ""}`}>
             {
                 !props.suppressBackButton &&
-                <span className={`material-symbols-rounded click`} onClick={() => router.back()}>subdirectory_arrow_left</span>
+                <span className={`material-icons-round click`} onClick={() => router.back()}>subdirectory_arrow_left</span>
             }
             {
                 props.parentDirectory ?

@@ -47,25 +47,13 @@
     -webkit-text-size-adjust: 100%;
 }
 
-@font-face {
+/* @font-face {
     font-family: 'Material Symbols Rounded';
     font-style: normal;
     src: url(/fonts/material-symbols.ttf) format('woff');
 }
 
-.material-symbols-rounded {
-    font-family: 'Material Symbols Rounded';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 2.4rem;
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-}
+ */
 
 * {
     margin: 0;
@@ -120,6 +108,31 @@ body {
 
     overflow: overlay;
     background-color: var(--background-01);
+}
+
+.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded';
+    position: absolute;
+    opacity: 0;
+    transition: 0.25s;
+}
+
+body .material-icons-round {
+    position: absolute;
+    opacity: 0;
+    transition: 0.25s;
+}
+
+body.loaded .material-icons-round {
+    position: initial;
+    display: inline-block;
+    opacity: 1;
+}
+
+body.loaded .material-symbols-rounded {
+    position: initial;
+    display: inline-block;
+    opacity: 1;
 }
 
 main {
