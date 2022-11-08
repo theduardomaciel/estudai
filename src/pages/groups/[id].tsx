@@ -157,7 +157,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
 
     const noDateTasks = user.tasks
-        .filter((task, i) => !task.date && task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true)
+        .filter((task, i) => new Date(task.date).getFullYear() === 112 && (task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true) === true)
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
     const [isConfigModalVisible, setConfigModalVisible] = useState(false);

@@ -110,28 +110,29 @@ body {
     background-color: var(--background-01);
 }
 
-.material-symbols-rounded {
-    font-family: 'Material Symbols Rounded';
-    position: absolute;
-    opacity: 0;
-    transition: 0.25s;
-}
-
 body .material-icons-round {
-    position: absolute;
+    /* position: absolute; */
+    font-size: 2.4rem;
     opacity: 0;
     transition: 0.25s;
 }
 
 body.loaded .material-icons-round {
-    position: initial;
-    display: inline-block;
+    /* position: initial; */
+    font-size: none;
     opacity: 1;
 }
 
+.material-symbols-rounded {
+    /* position: absolute; */
+    font-size: 2.4rem;
+    opacity: 0;
+    transition: 0.25s;
+}
+
 body.loaded .material-symbols-rounded {
-    position: initial;
-    display: inline-block;
+    position: none;
+    font-size: none;
     opacity: 1;
 }
 

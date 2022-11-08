@@ -204,6 +204,7 @@
 
     width: 100%;
 
+    color: var(--light);
     background: var(--primary-04);
     border-radius: 0px 0.5rem;
 }

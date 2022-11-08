@@ -18,14 +18,56 @@
 }
 
 .content {
+    background-color: var(--background-01);
     border-radius: 1rem;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     width: 90%;
     height: 80%;
 
-    background-color: var(--background-01);
-
+    z-index: 5;
     overflow: hidden;
+}
+
+.frame {
+    width: 100%;
+    height: 100%;
+
+    background: transparent;
+
+    z-index: 5;
+}
+
+.loadingFrame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    z-index: 1;
+    user-select: none;
+
+    opacity: 0;
+    transition: 0.25s;
+
+    transform: translate(-50%, -50%);
+}
+
+.loadingFrame.loading {
+    opacity: 1;
+}
+
+.loadingFrame p {
+    font-family: 'Karla';
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-align: center;
+
+    color: var(--primary-02);
 }
 
 @media (min-width: 1024px) {

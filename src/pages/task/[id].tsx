@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useMemo, useRef, useState, Dispatch } from 'react';
+import React, { SetStateAction, useEffect, useMemo, useRef, useState, Dispatch, useCallback } from 'react';
 
 import Head from 'next/head';
 import type { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next'
@@ -142,26 +142,20 @@ const Task = ({ task }: { task: Task }) => {
 
     const [attachmentsInteracted, setAttachmentsInteracted] = useState<Array<boolean | string>>(['loading'])
 
-    function checkIfIsOwner(attachmentUploadedById: number) {
-        if (attachmentUploadedById === parseInt(userId)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     function Tag({ attachment, index, ...rest }: TagComponentProps) {
         const [isAttachmentLoading, setAttachmentLoading] = useState(attachmentsInteracted[0] === 'loading');
         const attachmentInteracted = attachmentsInteracted[index] === true;
 
-        const isAttachmentOwner = useMemo(() => checkIfIsOwner(attachment.uploadedBy.id), [])
+        const [isAttachmentOwner, setIsAttachmentOwner] = useState(useMemo(() => false, []))
+
+        useEffect(() => {
+            setIsAttachmentOwner(attachment.uploadedBy.id === parseInt(userId))
+        }, [attachmentsInteracted])
 
         async function toggleAttachmentInteraction(attachmentId: string, attachmentIndex: number, setAttachmentLoading: (state: boolean) => SetStateAction<void>) {
             setAttachmentLoading(true)
 
-            if (!userId) {
-                await signOut();
-            }
+            if (!userId) await signOut();
 
             try {
                 const response = await api.patch(`/attachments/${attachmentId}`, { userId: userId })
@@ -196,8 +190,19 @@ const Task = ({ task }: { task: Task }) => {
                             <DocAttachment className={fileStyles.icon} />
                 }
                 <div style={{ display: "flex", flexDirection: "row", gap: "1rem", alignItems: "center", justifyContent: "center" }}>
+                    {
+                        isAttachmentOwner ?
+                            isAttachmentLoading ?
+                                <Spinner color='var(--primary-02)' size={1.5} />
+                                :
+                                <span className={`material-symbols-rounded ${fileStyles.close}`} onClick={() => removeAttachment(attachment, index, setAttachmentLoading)} style={{ fontSize: "2rem" }}>
+                                    close
+                                </span>
+                            :
+                            <></>
+                    }
                     <span
-                        className={`material-icons-round ${fileStyles.close}`}
+                        className={`material-symbols-rounded ${fileStyles.close}`}
                         onClick={() => {
                             setUsersModalProps({ users: [attachment.uploadedBy], icon: 'add_to_drive', name: 'enviado por', dates: [attachment.createdAt as string] })
                             setUsersModalVisible(true)
@@ -206,17 +211,6 @@ const Task = ({ task }: { task: Task }) => {
                     >
                         info
                     </span>
-                    {
-                        isAttachmentOwner ?
-                            isAttachmentLoading ?
-                                <Spinner color='var(--primary-02)' size={1.5} />
-                                :
-                                <span className={`material-icons-round${fileStyles.close}`} onClick={() => removeAttachment(attachment, index, setAttachmentLoading)} style={{ fontSize: "2rem" }}>
-                                    close
-                                </span>
-                            :
-                            <></>
-                    }
                 </div>
             </div>
             <p className={fileStyles.fileName}>{attachment.name}</p>
@@ -253,7 +247,7 @@ const Task = ({ task }: { task: Task }) => {
                 onClick={() => toggleAttachmentInteraction(attachment.id, index, setAttachmentLoading)}
             />
             <div className={'iconHolder'} style={{ fontSize: "1.4rem", color: "var(--primary-02)", fontWeight: 600, fontFamily: "Inter" }}>
-                <span style={{ fontSize: "1.6rem" }} className="material-icons-round static">check_circle</span>
+                <span style={{ fontSize: "1.6rem" }} className="material-symbols-rounded static">check_circle</span>
                 {
                     attachment.interactedBy && <p
                         style={{ textDecoration: "underline", cursor: "pointer" }}
@@ -351,7 +345,7 @@ const Task = ({ task }: { task: Task }) => {
         const subject = subjects?.find((subject, i) => subject.id === subjectId)
         return <div key={index} className={styles.content}>
             <div className={styles.header}>
-                <span className={'material-icons-round static'}>{subject?.icon}</span>
+                <span className={'material-symbols-rounded static'}>{subject?.icon}</span>
                 <p>{subject?.name}</p>
             </div>
             <p>{content as string}</p>
@@ -616,7 +610,7 @@ const Task = ({ task }: { task: Task }) => {
                     <div className={styles.info}>
                         <div className={styles.column} style={{ justifyContent: "space-between" }}>
                             {
-                                isTest || isActivity ?
+                                !isTest ?
                                     task.description ?
                                         <div dangerouslySetInnerHTML={{ __html: JSON.stringify(task.description) as unknown as string }}></div>
                                         :

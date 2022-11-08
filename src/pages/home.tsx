@@ -1,6 +1,6 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { parseCookies, setCookie } from 'nookies';
 
 import Head from 'next/head';
@@ -80,10 +80,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         return group;
     })
 
-    setCookie(context, 'app.shownModal', 'true', {
-        path: "/"
-    })
-
     const alreadyShownIntroModal = shownModal === 'true' ? true : false;
     console.log(alreadyShownIntroModal)
 
@@ -126,9 +122,10 @@ export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) 
     </a>
 </Link>
 
-const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroModal: boolean }) => {
+const Home = ({ user }: { user: User }) => {
     const { changeViewMode, viewMode, toggleMenu } = useAppContext();
 
+    const [alreadyShownModal, setAlreadyShownModal] = useState(true);
     const [actualSection, setActualSection] = useState('Pendente');
 
     const actualDate = new Date();
@@ -173,8 +170,16 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
 
     const noDateTasks = user.tasks
-        .filter((task, i) => !task.date && task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true)
+        .filter((task, i) => new Date(task.date).getFullYear() === 112 && (task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true) === true)
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
+
+    useEffect(() => {
+        const haveShown = localStorage.getItem('shownModal') ? true : false;
+        if (!haveShown) {
+            localStorage.setItem('shownModal', "true")
+            setAlreadyShownModal(false)
+        }
+    }, [])
 
     return (
         <main>
@@ -253,7 +258,7 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
             </div>
             <Menu />
             {
-                alreadyShownIntroModal === false &&
+                !alreadyShownModal &&
                 <LandingIntroModal sections={[
                     {
                         title: 'Bem-vindo ao estudaí',
