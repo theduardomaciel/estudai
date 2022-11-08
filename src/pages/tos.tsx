@@ -20,7 +20,14 @@ const TermsOfService: NextPage = () => {
             </Head>
             <LandingHeader />
             <div className={styles.container} style={{ justifyContent: "center", marginBottom: "6.5rem" }}>
-                <Note showOnlyInMobile tag='ALPHA' />
+                <Note
+                    showOnlyInMobile
+                    tag='ALPHA'
+                    description={{
+                        landscape: "Este projeto ainda está em andamento, portanto, espere bugs e outros problemas.",
+                        portrait: "Este projeto ainda está em andamento."
+                    }}
+                />
                 <div className={styles.title} style={{ maxWidth: "65%" }}>
                     <h2>Relaxa, só queremos paz e tranquilidade.</h2>
                     <p>Em relação a nossos termos, somente <strong>pedimos que você mantenha uma boa conduta durante o uso na plataforma.</strong></p>

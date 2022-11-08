@@ -21,7 +21,14 @@ const PolicyOfPrivacy: NextPage = () => {
             </Head>
             <LandingHeader />
             <div className={styles.container} style={{ justifyContent: "center", marginBottom: "6.5rem" }}>
-                <Note showOnlyInMobile tag='ALPHA' />
+                <Note
+                    showOnlyInMobile
+                    tag='ALPHA'
+                    description={{
+                        landscape: "Este projeto ainda está em andamento, portanto, espere bugs e outros problemas.",
+                        portrait: "Este projeto ainda está em andamento."
+                    }}
+                />
                 <div className={styles.title} style={{ maxWidth: "65%" }}>
                     <h2>Ainda não estamos nesse nível, pode ficar tranquilo.</h2>
                     <p>Nosso objetivo aqui é lhe ajudar, por isso, <strong>não coletamos informações sensíveis.</strong></p>
