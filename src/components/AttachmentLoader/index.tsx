@@ -133,7 +133,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
 
         return <div id="tagsScroll" className={styles.tagsHolder}>
             <div>
-                <span className="material-symbols-rounded">sell</span>
+                <span className="material-icons-round">sell</span>
                 <p>Tags</p>
             </div>
             <AttachmentTag index={"1"} tagId={1} />
@@ -222,7 +222,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
                 </div>
                 :
                 <div className={`${styles.attachmentHolder} ${styles.expired}`}>
-                    <span className={`${styles.icon} static material-symbols-rounded`}>
+                    <span className={`${styles.icon} static material-icons-round`}>
                         sentiment_dissatisfied
                     </span>
                     <div className="">

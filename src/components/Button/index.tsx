@@ -45,7 +45,8 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
                                     flexDirection: iconProps?.position && iconProps?.position === 'right' ? "row-reverse" : "row"
                                     /*  color: iconProps?.color ? iconProps.color : "var(--light)" */
                                 }}
-                                className={`material-symbols-rounded ${iconProps?.filled ? "instantFilled" : "instantOutlined"}`}
+                                /* className={`material-symbols-rounded ${iconProps?.filled ? "instantFilled" : "instantOutlined"}`} */
+                                className={`material-icons-round`}
                             >
                                 {icon}
                             </span> :

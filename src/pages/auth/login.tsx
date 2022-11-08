@@ -22,6 +22,7 @@ import Button from '../../components/Button';
 import { Separator } from '../../components/Separator';
 import Device from '../../components/Landing/Device';
 import EarlyAccessModalPreset from '../../components/Modal/Presets/EarlyAccessModal';
+import Note from '../../components/Landing/Note';
 
 interface Props {
     onClick?: () => void;

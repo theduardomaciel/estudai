@@ -1,26 +1,24 @@
-import { styled } from "@stitches/react";
 import React from "react";
-import useScreenSize from "../../../hooks/useScreenSize";
 
 import styles from "./note.module.css";
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
     tag?: string;
-    description?: string;
+    description: { landscape: string, portrait: string };
     showOnlyInMobile?: boolean;
     showOnlyInDesktop?: boolean;
 }
 
-const ALPHA_MESSAGE = "Este projeto ainda está em andamento, portanto, espere bugs e outros problemas."
-const REDUCED_ALPHA_MESSAGE = "Este projeto ainda está em andamento."
-
 export default function Note({ tag, description, showOnlyInDesktop, showOnlyInMobile, ...rest }: Props) {
-    const { isScreenWide } = useScreenSize();
-
-    return <div className={`${styles.container} ${showOnlyInMobile ? styles.mobile : showOnlyInDesktop ? styles.desktop : ""}`} {...rest}>
+    return <div className={`${styles.container} ${showOnlyInMobile ? styles.mobile : showOnlyInDesktop ? styles.desktop : ""}`}>
         <div className={styles.tagHolder}>
             <p className={styles.tag}>{tag}</p>
         </div>
-        <p>{/* description ? description :  */isScreenWide ? ALPHA_MESSAGE : REDUCED_ALPHA_MESSAGE}</p>
+        {
+            description.landscape && <p className={styles.landscape}>{description.landscape}</p>
+        }
+        {
+            description.portrait && <p className={styles.portrait}>{description.portrait}</p>
+        }
     </div>
 }

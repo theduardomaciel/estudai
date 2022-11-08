@@ -197,7 +197,7 @@ const Task = ({ task }: { task: Task }) => {
                 }
                 <div style={{ display: "flex", flexDirection: "row", gap: "1rem", alignItems: "center", justifyContent: "center" }}>
                     <span
-                        className={`material-symbols-rounded ${fileStyles.close}`}
+                        className={`material-icons-round ${fileStyles.close}`}
                         onClick={() => {
                             setUsersModalProps({ users: [attachment.uploadedBy], icon: 'add_to_drive', name: 'enviado por', dates: [attachment.createdAt as string] })
                             setUsersModalVisible(true)
@@ -211,7 +211,7 @@ const Task = ({ task }: { task: Task }) => {
                             isAttachmentLoading ?
                                 <Spinner color='var(--primary-02)' size={1.5} />
                                 :
-                                <span className={`material-symbols-rounded ${fileStyles.close}`} onClick={() => removeAttachment(attachment, index, setAttachmentLoading)} style={{ fontSize: "2rem" }}>
+                                <span className={`material-icons-round${fileStyles.close}`} onClick={() => removeAttachment(attachment, index, setAttachmentLoading)} style={{ fontSize: "2rem" }}>
                                     close
                                 </span>
                             :
@@ -253,7 +253,7 @@ const Task = ({ task }: { task: Task }) => {
                 onClick={() => toggleAttachmentInteraction(attachment.id, index, setAttachmentLoading)}
             />
             <div className={'iconHolder'} style={{ fontSize: "1.4rem", color: "var(--primary-02)", fontWeight: 600, fontFamily: "Inter" }}>
-                <span style={{ fontSize: "1.6rem" }} className="material-symbols-rounded static">check_circle</span>
+                <span style={{ fontSize: "1.6rem" }} className="material-icons-round static">check_circle</span>
                 {
                     attachment.interactedBy && <p
                         style={{ textDecoration: "underline", cursor: "pointer" }}
@@ -286,7 +286,7 @@ const Task = ({ task }: { task: Task }) => {
         return (
             <div className={styles.attachmentsSection}>
                 <div className={styles.attachmentHeader}>
-                    <span className={`material-symbols-rounded static`}>{icon}</span>
+                    <span className={`material-icons-round static`}>{icon}</span>
                     <p>{name}</p>
                 </div>
                 <ul className={styles.attachmentsContainer}>
@@ -351,7 +351,7 @@ const Task = ({ task }: { task: Task }) => {
         const subject = subjects?.find((subject, i) => subject.id === subjectId)
         return <div key={index} className={styles.content}>
             <div className={styles.header}>
-                <span className={'material-symbols-rounded static'}>{subject?.icon}</span>
+                <span className={'material-icons-round static'}>{subject?.icon}</span>
                 <p>{subject?.name}</p>
             </div>
             <p>{content as string}</p>
@@ -389,7 +389,7 @@ const Task = ({ task }: { task: Task }) => {
             />
             <div className={styles.taskInfo}>
                 <div className={'iconHolder'} >
-                    <span className="material-symbols-rounded static" style={{ color: "var(--primary-02)", fontSize: "1.6rem" }}>calendar_today</span>
+                    <span className="material-icons-round static" style={{ color: "var(--primary-02)", fontSize: "1.6rem" }}>calendar_today</span>
                     <p>{formatDate(task.date)}</p>
                 </div>
                 <Separator orientation='vertical' />
@@ -424,11 +424,11 @@ const Task = ({ task }: { task: Task }) => {
             />
             <div className={`${styles.taskInfo} ${styles.vertical}`}>
                 <div className={styles.horizontalInfo}>
-                    <span className={`material-symbols-rounded`}>location_on</span>
+                    <span className={`material-icons-round`}>location_on</span>
                     <p>{task.address}</p>
                 </div>
                 <div className={styles.horizontalInfo}>
-                    <span className={`material-symbols-rounded`}>calendar_today</span>
+                    <span className={`material-icons-round`}>calendar_today</span>
                     <p>{formatDate(task.date, true)}</p>
                 </div>
             </div>
@@ -440,7 +440,7 @@ const Task = ({ task }: { task: Task }) => {
     const UserInfo = ({ text, name }: { text: string, name: string }) => permissionLevel === "creator" ?
         <span
             style={{ color: "var(--font-light)", fontSize: "1.6rem" }}
-            className="material-symbols-rounded static click"
+            className="material-icons-round static click"
             onClick={() => setEditTaskModalVisible(true)}
         >
             more_horiz
@@ -641,7 +641,7 @@ const Task = ({ task }: { task: Task }) => {
                                     }
                                 </p>
                                 <div>
-                                    <span className={`material-symbols-rounded static`}>calendar_today</span>
+                                    <span className={`material-icons-round static`}>calendar_today</span>
                                     <span>{formatDate(task.date)}</span>
                                 </div>
                                 <p>para entregar essa atividade.</p>

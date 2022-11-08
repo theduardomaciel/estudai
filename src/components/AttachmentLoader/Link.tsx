@@ -22,10 +22,10 @@ export default function LinkAttachment({ link, index, links, setLinks }: Props) 
     return (
         <li key={index} className={fileStyles.attachment}>
             <div className={fileStyles.header}>
-                <span style={{ color: "var(--primary-02)" }} className="material-symbols-rounded">link</span>
+                <span style={{ color: "var(--primary-02)" }} className="material-icons-round">link</span>
                 {
                     links && setLinks &&
-                    <span className={`material-symbols-rounded ${fileStyles.close}`} onClick={removeLink}> close  </span>
+                    <span className={`material-icons-round ${fileStyles.close}`} onClick={removeLink}> close  </span>
                 }
             </div>
             <a

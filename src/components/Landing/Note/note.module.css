@@ -40,26 +40,30 @@
     font-weight: 700;
     font-size: 1.2rem;
 
-    display: flex;
     align-items: center;
 
     color: var(--primary-02);
 }
 
-.container.mobile {
+.container.mobile,
+.portrait {
     display: flex;
 }
 
-.container.desktop {
+.container.desktop,
+.landscape {
     display: none;
 }
 
 @media (min-width: 1024px) {
-    .container.mobile {
+
+    .container.mobile,
+    .portrait {
         display: none;
     }
 
-    .container.desktop {
+    .container.desktop,
+    .landscape {
         display: flex;
     }
 }

@@ -4,26 +4,29 @@ import styles from './device.module.css'
 // Images
 import MobileScreenshot from "/public/images/portrait_screenshot.png";
 import DesktopScreenshot from "/public/images/landscape_screenshot.png";
-import useScreenSize from '../../../hooks/useScreenSize';
 
 interface Props {
     additionalClass?: string;
 }
 
 export default function Device(props: Props) {
-    const { isScreenWide } = useScreenSize();
-
-    /* const width = isScreenWide ? 996 : 290;
-    const height = isScreenWide ? 560 : 600; */
-
     return (
         <div id={props.additionalClass} className={`${styles.container} ${props.additionalClass}`}>
             <div className={styles.imageHolder}>
-                <Image
-                    alt='Screenshot do app'
-                    className={styles.image}
-                    src={isScreenWide ? DesktopScreenshot : MobileScreenshot}
-                />
+                <div className={styles.landscape}
+                >
+                    <Image
+                        alt='Screenshot em paisagem do app'
+                        src={DesktopScreenshot}
+                    />
+                </div>
+                <div className={styles.portrait}
+                >
+                    <Image
+                        alt='Screenshot em retrato do app'
+                        src={MobileScreenshot}
+                    />
+                </div>
             </div>
         </div>
     )

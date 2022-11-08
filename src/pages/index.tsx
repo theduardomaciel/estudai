@@ -17,8 +17,6 @@ import Note from '../components/Landing/Note';
 import Button from '../components/Button';
 import Device from '../components/Landing/Device';
 
-import EarlyAccessModalPreset from '../components/Modal/Presets/EarlyAccessModal';
-
 // Icons
 import StarIcon from "/public/landing/star.svg";
 import PiIcon from "/public/landing/pi.svg";
@@ -28,18 +26,6 @@ import BaskharaIcon from "/public/landing/baskhara.svg";
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
-
-    /* if (token) {
-        const userId = await getUserIdByToken(token);
-        if (userId) {
-            return {
-                redirect: {
-                    destination: "/home",
-                    permanent: false
-                }
-            }
-        }
-    } */
 
     if (token) {
         return {
@@ -74,8 +60,16 @@ const Landing: NextPage = () => {
             <PaperPlaneIcon className={styles.paperPlane} />
             <BaskharaIcon className={styles.baskhara} />
             <StarIcon className={styles.star2} />
+            <Note
+                showOnlyInMobile
+                tag='ALPHA'
+                description={{
+                    landscape: "Este projeto ainda está em andamento, portanto, espere bugs e outros problemas.",
+                    portrait: "Este projeto ainda está em andamento."
+                }}
+            />
             <div className={styles.container}>
-                <Note showOnlyInMobile tag='ALPHA' />
+
                 <div className={styles.title}>
                     <h1>Organize seus estudos.</h1>
                     <p>Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.</p>

@@ -8,7 +8,6 @@
     */
 
     /* font-family: Inter, Raleway, Trirong, Karla, sans-serif; */
-    /* font-family: var(--inter-font), var(--karla-font), var(--raleway-font), var(--trirong-700-font), var(--trirong-900-font), sans-serif; */
 
     color-scheme: light dark;
 
@@ -59,7 +58,6 @@
     font-weight: normal;
     font-style: normal;
     font-size: 2.4rem;
-    /* Preferred icon size */
     display: inline-block;
     line-height: 1;
     text-transform: none;

@@ -30,18 +30,17 @@ import { Tag, TagProps } from '../components/AttachmentLoader/Tag';
 import { AppProps } from 'next/dist/shared/lib/router/router';
 
 // Fonts
-/* import localFont from '@next/font/local' */
+import localFont from '@next/font/local'
 import { Inter, Karla, Raleway, Trirong } from '@next/font/google';
 
-const inter = Inter({ variable: '--inter-font', subsets: ['latin'] });
-const karla = Karla({ variable: '--karla-font', subsets: ['latin'] });
-const raleway = Raleway({ variable: '--raleway-font', subsets: ['latin'] });
-const trirong700 = Trirong({ weight: "700", variable: '--trirong-700-font', subsets: ['latin'] });
-const trirong900 = Trirong({ weight: '900', variable: '--trirong-900-font', subsets: ['latin'] })
+/* const inter = Inter({ subsets: ['latin'] });
+const karla = Karla({ subsets: ['latin'] });
+const raleway = Raleway({ subsets: ['latin'] });
+const trirong = Trirong({ weight: '900', subsets: ['latin'] })
 
-/* const materialSymbols = localFont({ src: "../styles/fonts/material-symbols.ttf", display: "block" }) */
+const materialSymbols = localFont({ src: "../styles/fonts/material-symbols.ttf", display: "block" }) */
 
-// , ${materialSymbols.style.fontFamily}
+import '@material-design-icons/font/round.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return <React.Fragment>
@@ -50,12 +49,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <AppContextProvider>
                     <DndProvider options={HTML5toTouch}>
                         <Progressbar />
-                        <style jsx global>{`
-                            html {
-                                font-family: ${inter.style.fontFamily}, ${karla.style.fontFamily}, ${raleway.style.fontFamily}, ${trirong700.style.fontFamily}, ${trirong900.style.fontFamily}, ${inter.style.fontFamily};
-                            }
-                        `}</style>
+                        {/* <main className={`${inter.className} ${karla.className} ${raleway.className} ${trirong.className} ${materialSymbols.className}`}> */}
                         <Component {...pageProps} />
+                        {/* </main> */}
                         <ComponentPreview />
                     </DndProvider>
                 </AppContextProvider>

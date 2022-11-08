@@ -101,7 +101,7 @@ interface EmptyTasks {
 }
 
 export const EmptyTasksMessage = ({ description, removeMargin }: EmptyTasks) => <div style={{ marginTop: removeMargin ? "0px" : "10rem" }} className={styles.emptyTasks}>
-    <span className={`material-symbols-rounded static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
+    <span className={`material-icons-round static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
     <p><strong>Um pouco vazio aqui, né?</strong> </p>
     <p>{description ? description : "Adicione uma nova tarefa com o botão acima para que ela apareça aqui!"}</p>
 </div>
@@ -195,8 +195,8 @@ const Home = ({ user, alreadyShownIntroModal }: { user: User, alreadyShownIntroM
                         {
                             user.tasks.length > 0 &&
                             <div className={styles.viewType}>
-                                <span onClick={() => changeViewMode("list")} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
-                                <span onClick={() => changeViewMode('card')} className={`material-symbols-rounded click static ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
+                                <span onClick={() => changeViewMode("list")} className={`material-icons-round click static ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
+                                <span onClick={() => changeViewMode('card')} className={`material-icons-round click static ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
                             </div>
                         }
                         <AddTaskButton query={{ userId: user.id, groups: JSON.stringify(user.groups) }} />

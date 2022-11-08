@@ -286,7 +286,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                             <AddTaskButton width='100%' query={{ userId: user.id, groups: JSON.stringify(user.groups), selectedGroupId: group.id }} />
                             <div className={`${styles.pinnedMessageContainer} ${styles.sidebarContainer}`}>
                                 <header>
-                                    <span className={'material-symbols-rounded static'}>home_pin</span>
+                                    <span className={'material-icons-round static'}>push_pin</span>
                                     Mensagem Fixada
                                 </header>
                                 <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma]"}</p>

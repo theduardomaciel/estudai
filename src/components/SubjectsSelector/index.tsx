@@ -21,9 +21,9 @@ export default function SubjectsSelector({ subjects, setSubjects, openModal }: T
     const moveScroll = useHorizontalScroll('subjectsScroll', true);
 
     const Tag = ({ subject }: { subject: Subject }) => <li key={subject.id} onClick={() => toggleSubject(subject, subjects, setSubjects)} className={styles.tag} style={{ border: "none", opacity: 1, color: "var(--light)" }}>
-        <span className={`material-symbols-rounded`}>{subject.icon}</span>
+        <span className={`material-icons-round`}>{subject.icon}</span>
         <p>{subject.name}</p>
-        <span className={`material-symbols-rounded`}>close</span>
+        <span className={`material-icons-round`}>close</span>
     </li>
 
     return <div className={`${styles.container}`}>
