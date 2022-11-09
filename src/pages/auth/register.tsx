@@ -419,7 +419,9 @@ const Register: NextPage = () => {
                 </AnimatePresence>
             </div>
             <Device additionalClass={loginStyles.device} />
-            <EarlyAccessModalPreset />
+            {
+                !router.query.code && <EarlyAccessModalPreset />
+            }
         </main>
     )
 }

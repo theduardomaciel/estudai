@@ -22,7 +22,7 @@
     transition: 1s;
 }
 
-.holder h6 {
+/* .holder h6 {
     font-family: 'Raleway';
     font-style: normal;
     font-weight: 700;
@@ -32,7 +32,7 @@
     align-items: center;
 
     color: var(--primary-04);
-}
+} */
 
 @media (max-width: 1023px) {
     .holder.flex {

@@ -211,9 +211,9 @@ export default function Focus({ }: Props) {
                     <>
                         <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
                         <div className={'row'} style={{ gap: "1.5rem" }}>
-                            <span className={`material-icons-round click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
+                            <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
                             <TopicsGroup topics={focusData} topicIdRef={topicIdRef} />
-                            <span className={`material-icons-round click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
+                            <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(25)}>chevron_right</span>
                         </div>
                         <Input
                             onChange={(event) => {
@@ -292,7 +292,7 @@ export default function Focus({ }: Props) {
                                 <div className={styles.column} style={{ width: "100%" }}>
                                     <h5>{focus.name}</h5>
                                     <div className={styles.iconHolder}>
-                                        <span className="material-icons-round static">nest_clock_farsight_analog</span>
+                                        <span className="material-symbols-rounded static">nest_clock_farsight_analog</span>
                                         <p>{`${focus.totalTime / 60} minuto${(focus.totalTime / 60) !== 1 ? 's' : ''}`}</p>
                                     </div>
                                 </div>
@@ -304,7 +304,7 @@ export default function Focus({ }: Props) {
                                     {
                                         status as 'interval' | 'active' | 'inactive' !== "interval" && <span
                                             style={{ fontSize: "2rem" }}
-                                            className="material-icons-round click static"
+                                            className="material-symbols-rounded click static"
                                             onClick={() => {
                                                 if (isPaused) {
                                                     resumeCounter()
@@ -329,7 +329,7 @@ export default function Focus({ }: Props) {
                                 style={{ color: "red", background: `conic-gradient(var(--primary-01) ${((actualCounter * 360) / (status === "interval" ? intervalTime : focus.totalTime))}deg, var(--primary-03) 90deg, var(--primary-02) 180deg, var(--primary-02) 270deg)` }}
                             />
                             <h3 style={{ fontSize: timeString.length > 5 ? "2rem" : "2.4rem", opacity: isVisiblyPaused ? 0.25 : 1 }}>{timeString}</h3>
-                            {isVisiblyPaused && <span onClick={() => stopCounter()} className={`${styles.pauseIcon} material-icons-round static click instantFilled`}>stop</span>}
+                            {isVisiblyPaused && <span onClick={() => stopCounter()} className={`${styles.pauseIcon} material-symbols-rounded static click instantFilled`}>stop</span>}
                         </div>
                     </div>
                     :

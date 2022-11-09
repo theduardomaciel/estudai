@@ -79,6 +79,7 @@
 
 .ongoingFocusContainer h6 {
     font-family: 'Inter';
+    color: var(--light);
 }
 
 .column {
