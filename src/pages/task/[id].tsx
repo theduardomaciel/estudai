@@ -566,9 +566,11 @@ const Task = ({ task }: { task: Task }) => {
     const title = isActivity ? (task.subjects.length > 0 ? `Atividade de ${task.subjects[0].name}` : "Tarefa genérica") : isTest ? `Avaliação ${task.type === "av1" ? 'Mensal' : "Bimestral"} ${`(${task.type.toUpperCase()})`}` : task.title ? task.title : "Tarefa"
 
     const closeToDeadline = 2 * 24 * 60 * 60 * 1000; // 2 dias em mili-segundos
-    const daysToExpire = task.date - new Date().getTime();
+    const daysToExpire = (task.date / 1000 / 60 / 60 / 24) - ((new Date().getTime() / 1000 / 60 / 60 / 24) - 2);
 
     const [actualUrl, setActualUrl] = useState<undefined | string>(undefined);
+
+    console.log(daysToExpire)
 
     if (task.group && task.group.private && permissionLevel === "noPermission") {
         return <main className={styles.holder}>

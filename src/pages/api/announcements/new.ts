@@ -24,25 +24,24 @@ router
                 res.status(400).json({ error: "User id was not given correctly." })
             }
 
-            const { name, isPrivate } = req.body;
+            const { description, condition, price, whatsApp, phone, email } = req.body;
 
-            const group = await prisma.group.create({
+            const announcement = await prisma.announcement.create({
                 data: {
-                    name: name,
-                    admins: {
+                    user: {
                         connect: {
                             id: userId
                         }
                     },
-                    private: isPrivate === 'true' || true ? true : false,
-                    users: {
-                        connect: {
-                            id: userId
-                        }
-                    }
+                    description: description,
+                    materialCondition: condition,
+                    materialPrice: parseInt(price),
+                    whatsAppNumber: whatsApp,
+                    phoneNumber: phone,
+                    email: email
                 },
             })
-            res.status(200).json(group)
+            res.status(200).json(announcement)
         } catch (err: any) {
             console.log(err)
             res.status(400).json({ error: "One or more body elements were incorrectly written.", serverError: err })

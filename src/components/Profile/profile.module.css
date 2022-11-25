@@ -37,6 +37,16 @@
     font-size: 1.8rem;
 }
 
+.holder .text a {
+    margin-inline: 0.5rem;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.holder .text a:hover {
+    text-decoration: underline;
+}
+
 .holder .image {
     width: 4.2rem;
     height: 4.2rem;

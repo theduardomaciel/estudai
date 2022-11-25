@@ -379,8 +379,8 @@
     }
 
     .holder.unauthenticated .container {
-        width: 100vw;
-        left: 0;
+        width: calc(100vw - (var(--sidebar-width) * 2));
+        left: calc(var(--sidebar-width) * 2);
     }
 
     .file {

@@ -12,7 +12,7 @@ generator client {
 }
 
 model User {
-    id        Int     @id @default(autoincrement())
+    id        Int     @id @unique @default(autoincrement())
     firstName String
     lastName  String?
     username  String?
@@ -42,12 +42,14 @@ model User {
     subgroups  Subgroup? @relation(fields: [subgroupId], references: [id])
     subgroupId String?
 
+    announcements Announcement[]
+
     @@map("users")
 }
 
 model Account {
-    id           String  @id @default(uuid())
-    access_token String
+    id           String  @id @unique @default(uuid())
+    access_token String  @unique
     expires_at   BigInt?
 
     google_access_token  String? @db.Text
@@ -169,4 +171,22 @@ model Task {
     userId    Int?
 
     @@map("tasks")
+}
+
+model Announcement {
+    id Int @id @default(autoincrement())
+
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId Int
+
+    description       String
+    materialCondition String
+    materialPrice     Int
+
+    whatsAppNumber String?
+    phoneNumber    String?
+    email          String?
+
+    visualizationsCount String[]
+    isLocked            Boolean  @default(false)
 }

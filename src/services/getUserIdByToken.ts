@@ -16,7 +16,7 @@ export default async function getUserIdByToken(token: string) {
         if (account && account !== null) {
             const id = account.user.id;
 
-            console.log(id, "🐶 ID do usuário obtido com sucesso!")
+            //console.log("ID do usuário obtido com sucesso!")
             return id;
         } else {
             console.log("❌ Não foi possível obter o ID do usuário.")

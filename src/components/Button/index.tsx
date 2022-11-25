@@ -46,7 +46,7 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
                                     /*  color: iconProps?.color ? iconProps.color : "var(--light)" */
                                 }}
                                 /* className={`material-symbols-rounded ${iconProps?.filled ? "instantFilled" : "instantOutlined"}`} */
-                                className={`material-icons-round`}
+                                className={iconProps?.filled ? `material-icons-round` : 'material-icons-outlined'}
                             >
                                 {icon}
                             </span> :
@@ -73,7 +73,7 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
             .button.${styles.fillHover}:not(.selected):hover,
             .button.selected,
             .button.${styles.loading} {
-                background-color: ${iconProps?.color};
+                background-color: ${accentColor ? accentColor : iconProps?.color};
                 color: ${iconProps?.color ? "var(--light)" : iconProps?.color};
             }
 

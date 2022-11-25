@@ -160,6 +160,14 @@ textarea {
     width: 100%;
 }
 
+.selectHolder {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    width: 100%;
+}
+
 .click {
     cursor: pointer;
 }
@@ -334,12 +342,13 @@ input[type=number]::-webkit-outer-spin-button {
 /* Scrollbar */
 textarea::-webkit-scrollbar,
 .customScroll::-webkit-scrollbar {
+    background: transparent;
     width: 1rem;
 }
 
 textarea::-webkit-scrollbar-track,
 .customScroll::-webkit-scrollbar-track {
-    background: var(--background-02);
+    background: transparent;
     opacity: 0.85;
 }
 

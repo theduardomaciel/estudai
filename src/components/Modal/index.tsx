@@ -25,8 +25,9 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
     actionProps?: {
         buttonText: string,
         disabled?: boolean,
-        function?: () => void;
+        function?: () => void,
         buttonIcon?: string,
+        isForm?: boolean,
     },
 
     isLoading?: boolean;
@@ -103,40 +104,42 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
 
                             {children}
 
-                            <div className={styles.buttonsHolder}>
-                                {
-                                    !suppressReturnButton && !isLoading /* && iconProps?.position !== "flex-start" */ &&
-                                    <Button
-                                        onClick={toggleVisibility}
-                                        title={actionProps?.function ? `CANCELAR` : "RETORNAR"}
-                                        icon={actionProps?.function ? 'close' : 'arrow_back'}
-                                        style={{
-                                            background: color ? color === "var(--primary-02)" ? 'var(--primary-04)' : "var(--font-light)" : "var(--primary-02)",
-                                            padding: `0.7rem 1.5rem`
-                                        }}
-                                        accentColor={color && "var(--light-gray)"}
-                                    />
-                                }
-                                {
-                                    actionProps?.function &&
-                                    <Button
-                                        onClick={actionProps?.function}
-                                        title={actionProps?.buttonText}
-                                        disabled={actionProps?.disabled}
-                                        isLoading={isLoading}
-                                        icon={actionProps.buttonIcon ? actionProps.buttonIcon : icon}
-                                        iconProps={{ color: 'var(--light)', filled: true }}
-                                        disableHoverEffect={actionProps?.disabled}
-                                        style={{
-                                            background: !actionProps?.disabled ? color : "var(--light-gray)",
-                                            padding: `0.7rem 1.5rem`,
-                                            textTransform: "uppercase",
-                                            cursor: actionProps.disabled || isLoading ? "not-allowed" : "pointer"
-                                        }}
-                                        accentColor={color && color}
-                                    />
-                                }
-                            </div>
+                            {
+                                !actionProps?.isForm && <div className={styles.buttonsHolder}>
+                                    {
+                                        !suppressReturnButton && !isLoading /* && iconProps?.position !== "flex-start" */ &&
+                                        <Button
+                                            onClick={toggleVisibility}
+                                            title={actionProps?.function ? `CANCELAR` : "RETORNAR"}
+                                            icon={actionProps?.function ? 'close' : 'arrow_back'}
+                                            style={{
+                                                background: color ? color === "var(--primary-02)" ? 'var(--primary-04)' : "var(--font-light)" : "var(--primary-02)",
+                                                padding: `0.7rem 1.5rem`
+                                            }}
+                                            accentColor={color && "var(--light-gray)"}
+                                        />
+                                    }
+                                    {
+                                        actionProps?.function &&
+                                        <Button
+                                            onClick={actionProps?.function}
+                                            title={actionProps?.buttonText}
+                                            disabled={actionProps?.disabled}
+                                            isLoading={isLoading}
+                                            icon={actionProps.buttonIcon ? actionProps.buttonIcon : icon}
+                                            iconProps={{ color: 'var(--light)', filled: true }}
+                                            disableHoverEffect={actionProps?.disabled}
+                                            style={{
+                                                background: !actionProps?.disabled ? color : "var(--light-gray)",
+                                                padding: `0.7rem 1.5rem`,
+                                                textTransform: "uppercase",
+                                                cursor: actionProps.disabled || isLoading ? "not-allowed" : "pointer"
+                                            }}
+                                            accentColor={color && color}
+                                        />
+                                    }
+                                </div>
+                            }
                         </motion.div>
                     </motion.div>
                 )

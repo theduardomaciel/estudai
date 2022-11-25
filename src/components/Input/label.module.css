@@ -28,10 +28,17 @@
     font-weight: 500;
     font-size: 1.2rem;
 
+    text-align: left;
+    vertical-align: top;
+
     color: var(--primary-03);
 
     background-color: var(--light);
     border: 1px solid var(--primary-03);
+}
+
+.input::placeholder {
+    vertical-align: top;
 }
 
 .fixedUnitFrame {

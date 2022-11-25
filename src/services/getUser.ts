@@ -29,7 +29,7 @@ export default async function getUser(id: number, includeGroups?: 'basic' | 'ful
             }
         })
         if (user && user !== null) {
-            console.log('user', "🐶 Usuário obtido com sucesso!")
+            //console.log("Usuário obtido com sucesso!")
             return user;
         } else {
             console.log("❌ Não foi possível obter o usuário.")

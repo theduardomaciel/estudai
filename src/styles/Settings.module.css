@@ -50,6 +50,16 @@
     gap: 2.5rem;
 }
 
+/* .menu .sections .section {
+    display: flex;
+    order: 1;
+}
+
+.menu .sections .section.exit {
+    display: flex;
+    order: 0;
+}
+ */
 .menu .sections::-webkit-scrollbar {
     display: none;
 }
@@ -84,6 +94,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+
+    width: 100%;
 
     gap: 2.5rem;
 }

@@ -24,10 +24,16 @@ export default function SettingCard(props: Props) {
             <div className={`${styles.footer} ${props.footerStyle}`}>
                 <p>{props.footerOutro}</p>
                 <Button
-                    title={props.footerButtonText ? props.footerButtonText : "Salvar"}
+                    title={props.footerButtonText ? props.footerButtonText : "SALVAR"}
                     icon={props.buttonIcon ? props.buttonIcon : 'save'}
+                    style={{ height: "3.25rem" }}
+                    accentColor={`var(--primary-02)`}
+                    iconProps={{ size: "1.8rem", color: `var(--light)`, filled: true }}
+                    /* classes={`${styles.defaultButton} ${styles.top}`} */
+                    /* isSelected={hasInteracted === true}
+                    isLoading={isLoading || hasInteracted === null}
+                    onClick={toggleInteraction} */
                     preset={"fillHover"}
-                    iconProps={{ filled: true }}
                 />
             </div>
         </div>

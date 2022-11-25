@@ -88,7 +88,7 @@ const typesData = {
 
 export const ActivityTypeSelector = ({ limitType, setType, defaultValue }: { limitType?: 'activity' | 'test' | 'event', defaultValue?: string, setType?: Dispatch<SetStateAction<TaskType>> }) => {
     return (
-        <div className={styles.selectHolder}>
+        <div className={"selectHolder"}>
             <InputLabel label='Qual o tipo de atividade?' />
             <Select name='type' onValueChange={(value) => setType && setType(value as any)} defaultValue={defaultValue ? defaultValue : 'obligatory'}>
                 <SelectTrigger aria-label="activity-type">
@@ -181,7 +181,7 @@ export const ActivityTypeSelector = ({ limitType, setType, defaultValue }: { lim
     )
 }
 
-export const ActivityModeSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<TaskMode>> }) => <div className={styles.selectHolder}>
+export const ActivityModeSelector = ({ defaultValue, setSelectedValue }: { defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<TaskMode>> }) => <div className={"selectHolder"}>
     <InputLabel label='Como a atividade deve ser realizada?' />
     <Select name='mode' defaultValue={defaultValue ? defaultValue : 'free'} onValueChange={(value) => setSelectedValue && setSelectedValue(value as any)}>
         <SelectTrigger aria-label="activity-mode">
@@ -237,7 +237,7 @@ export const ActivityModeSelector = ({ defaultValue, setSelectedValue }: { defau
 </div>
 
 export const SubjectSelector = ({ userSubjects, defaultSubjects, defaultValue, setSelectedValue }:
-    { userSubjects: Subject[] | undefined, defaultSubjects: Subject[] | undefined, defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<Array<Subject>>> }) => <div className={styles.selectHolder}>
+    { userSubjects: Subject[] | undefined, defaultSubjects: Subject[] | undefined, defaultValue?: string, setSelectedValue?: Dispatch<SetStateAction<Array<Subject>>> }) => <div className={"selectHolder"}>
         <InputLabel label='Qual a matéria da atividade?' />
         <Select
             name='subject'

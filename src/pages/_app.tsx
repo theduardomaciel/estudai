@@ -41,6 +41,7 @@ const trirong = Trirong({ weight: '900', subsets: ['latin'] })
 const materialSymbols = localFont({ src: "../styles/fonts/material-symbols.ttf", display: "block" }) */
 
 import '@material-design-icons/font/round.css';
+import '@material-design-icons/font/outlined.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
 

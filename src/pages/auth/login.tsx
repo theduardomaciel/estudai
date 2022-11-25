@@ -202,9 +202,9 @@ const Login: NextPage = () => {
                 }
             </div>
             <Device additionalClass={styles.device} />
-            {
+            {/* {
                 !router.query.code && <EarlyAccessModalPreset />
-            }
+            } */}
         </main>
     )
 }

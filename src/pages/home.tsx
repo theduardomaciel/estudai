@@ -37,15 +37,15 @@ import { Task } from '../types/Task';
 
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token, ['app.shownModal']: shownModal } = parseCookies(context)
+    const { ['app.userId']: userId, ['app.shownModal']: shownModal } = parseCookies(context)
 
-    context.res.setHeader(
+    /* context.res.setHeader(
         'Cache-Control',
         'public, s-maxage=60, stale-while-revalidate=59'
-    )
+    ) */
 
-    console.warn(token, context.req.cookies)
-    const userId = await getUserIdByToken(token as string);
+    /* console.warn(token, context.req.cookies)
+    const userId = await getUserIdByToken(token as string); */
 
     if (!userId) {
         await removeCookies(context);
@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 
-    let user = await getUser(userId as number, 'full') as unknown as User;
+    let user = await getUser(parseInt(userId) as number, 'full') as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
@@ -170,7 +170,7 @@ const Home = ({ user }: { user: User }) => {
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
 
     const noDateTasks = user.tasks
-        .filter((task, i) => new Date(task.date).getFullYear() === 112 && (task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true) === true)
+        .filter((task, i) => !task.date || task.date === 0 && (task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true) === true)
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
     useEffect(() => {
