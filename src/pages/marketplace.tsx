@@ -6,32 +6,32 @@ import type { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { parseCookies } from 'nookies';
 
 // Components
-import Sidebar from '../../components/Sidebar';
-import Profile from '../../components/Profile';
-import Button from '../../components/Button';
+import Sidebar from '../components/Sidebar';
+import Profile from '../components/Profile';
+import Button from '../components/Button';
 
 // Intro Modal Images
 import Modal1Image from "/public/images/marketplace/marketplace_1.png";
 import Modal2Image from "/public/images/marketplace/marketplace_2.png";
 
 // Select Components
-import { Select, SelectContent, SelectGroup, SelectItem, SelectItemIndicator, SelectItemText, SelectScrollDownButton, SelectSeparator, SelectViewport } from '../../components/Input/Select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectItemIndicator, SelectItemText, SelectScrollDownButton, SelectViewport } from '../components/Input/Select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
 // Server Props
-import getUser from '../../services/getUser';
-import getUserIdByToken from '../../services/getUserIdByToken';
+import getUser from '../services/getUser';
+import getUserIdByToken from '../services/getUserIdByToken';
 
 // Stylesheets
-import styles from '../../styles/Marketplace.module.css';
-import inputStyles from "../../components/Input/label.module.css";
+import styles from '../styles/Marketplace.module.css';
+import inputStyles from "../components/Input/label.module.css";
 
 // Types
-import { User } from '../../types/User';
+import { User } from '../types/User';
 
 // Icons
-import Menu from '../../components/Menu';
-import { EmptyTasksMessage } from '../home';
+import Menu from '../components/Menu';
+import { EmptyTasksMessage } from './home';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
     const { ['auth.token']: token } = parseCookies(context)
@@ -78,15 +78,15 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 
 import placeholder from "/public/images/event_example.png";
 import Image from 'next/image';
-import Modal from '../../components/Modal';
-import { Switch, SwitchThumb } from '../../components/Switch';
-import Input, { InputLabel } from '../../components/Input';
-import { SelectIcon, SelectTrigger, SelectValue } from '../../components/Input/Select';
-import { api } from '../../lib/api';
-import { Separator } from '../../components/Separator';
-import getAllAnnouncements from '../../services/getAllAnnouncements';
-import Announcement from '../../types/Announcement';
-import LandingIntroModal from '../../components/Landing/IntroModal';
+import Modal from '../components/Modal';
+import { Switch, SwitchThumb } from '../components/Switch';
+import Input, { InputLabel } from '../components/Input';
+import { SelectIcon, SelectTrigger, SelectValue } from '../components/Input/Select';
+import { api } from '../lib/api';
+import { Separator } from '../components/Separator';
+import getAllAnnouncements from '../services/getAllAnnouncements';
+import Announcement from '../types/Announcement';
+import LandingIntroModal from '../components/Landing/IntroModal';
 
 function EventHeader({ hasUser }: { hasUser: boolean }) {
     return <div className={styles.marketplaceEvent}>
@@ -154,7 +154,7 @@ function Announcement({ userId, announcement, setContactModalState, setDeleteMod
                                 }
                                 <p style={{ fontSize: "1.4rem" }}><strong>{announcement.materialPrice === 0 ? "Valor não informado" : announcement.materialPrice < 0 ? "Doação" : `R$${announcement.materialPrice},00`}</strong></p>
                             </div>
-                            <Separator orientation="vertical" />
+                            <Separator orientation="vertical" style={{ backgroundColor: "var(--light)" }} />
                             <div className={styles.iconHolder}>
                                 {announcement.materialCondition !== "used" && <span className={'material-symbols-rounded static'} style={{ fontSize: "1.5rem" }}>{announcement.materialCondition === "new" ? "temp_preferences_custom" : announcement.materialCondition === "used" ? "autorenew" : "add_moderator"}</span>}
                                 <p style={{ fontSize: "1.4rem", fontWeight: 600 }}>{announcement.materialCondition === "new" ? "Novo" : announcement.materialCondition === "used" ? "Usado" : "Usado e bem conservado"}</p>

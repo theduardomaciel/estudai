@@ -170,7 +170,7 @@ const Home = ({ user }: { user: User }) => {
         .map((task, index) => <TaskView key={index} task={task} status={"expired"} />)
 
     const noDateTasks = user.tasks
-        .filter((task, i) => !task.date || task.date === 0 && (task.interactedBy.find((taskUser, i) => taskUser.id === user.id) ? false : true) === true)
+        .filter((task, i) => !task.date && task.interactedBy.find((taskUser, i) => taskUser.id !== user.id) || task.date === 0 && task.interactedBy.find((taskUser, i) => taskUser.id !== user.id))
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
     useEffect(() => {

@@ -162,6 +162,8 @@
     text-overflow: -o-ellipsis-lastline;
     width: 100%;
     height: fit-content;
+
+    color: var(--light);
 }
 
 .column h3.big:hover {
@@ -340,6 +342,8 @@
 
     user-select: none;
 
+    padding: 3rem;
+
     width: 100%;
     height: 100%;
     position: absolute;
@@ -350,7 +354,7 @@
 
 .lockView p {
     font-family: 'Trirong';
-    font-size: 2rem;
+    font-size: 1.6rem;
     color: var(--light);
     font-style: normal;
     font-weight: 800;
@@ -359,7 +363,7 @@
 
 .lockView span {
     color: var(--light);
-    font-size: 3rem;
+    font-size: 2.6rem;
     z-index: 6;
 }
 
@@ -392,5 +396,24 @@
     .container.noUser {
         width: calc(100vw - (var(--sidebar-width) * 2));
         left: calc(var(--sidebar-width) * 2);
+    }
+
+    .lockView {
+        padding: 0px;
+    }
+
+    .lockView p {
+        font-family: 'Trirong';
+        font-size: 2rem;
+        color: var(--light);
+        font-style: normal;
+        font-weight: 800;
+        z-index: 6;
+    }
+
+    .lockView span {
+        color: var(--light);
+        font-size: 3rem;
+        z-index: 6;
     }
 }
