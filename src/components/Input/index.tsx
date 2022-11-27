@@ -75,7 +75,7 @@ const Input = ({ label, fixedUnit, height, numberControl, icon, ...rest }: Props
                     <input
                         name='maxScore'
                         key={'input'}
-                        style={{ height: height ? height : "3.8rem", textAlign: numberControl ? "end" : "start", paddingRight: input.current ? `${Math.max(input.current.placeholder.length * 4.5, 7.5)}rem` : "7.5rem" }}
+                        style={{ height: height ? height : "3.8rem", textAlign: numberControl ? "end" : "start", paddingRight: "7.5rem" }}
                         className={styles.input}
                         ref={input}
                         {...rest}

@@ -55,7 +55,7 @@ export default function Sidebar({ notAuthenticated }: Props) {
         moveSectionBar(section ? section : "home")
     }, [])
 
-    console.log(notAuthenticated)
+    //console.log(notAuthenticated)
 
     return <>
         <nav className={`${styles.container} pulse ${notAuthenticated === true ? styles.unauthenticated : ""}`}>

@@ -273,6 +273,10 @@
     color: var(--primary-02);
 }
 
+.row span.button {
+    color: var(--light);
+}
+
 .row span.button:hover {
     transform: scale(1.1);
     color: var(--background-02);
@@ -365,6 +369,28 @@
     color: var(--light);
     font-size: 2.6rem;
     z-index: 6;
+}
+
+.description {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 2.2rem;
+
+    color: var(--light);
+}
+
+.description ul {
+    list-style-type: circle;
+    margin-left: 2.5rem;
+}
+
+.description ol {
+    margin-left: 2.5rem;
+}
+
+.description strong {
+    font-weight: 900;
 }
 
 @media (min-width: 1024px) {

@@ -137,44 +137,6 @@
     display: none;
 }
 
-.inputHolder {
-    height: 100%;
-    min-height: 15rem;
-    padding: 1.2rem;
-}
-
-.column .input {
-    text-align: left;
-    align-items: flex-start;
-    justify-content: flex-start;
-    height: 100%;
-    resize: none;
-
-    width: 100%;
-    max-width: 100%;
-
-    min-height: 15rem;
-
-    overflow-y: scroll;
-    overflow-x: hidden;
-
-    line-break: normal;
-
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-}
-
-.input:focus {
-    outline: none;
-    border: none;
-}
-
-.input::-webkit-scrollbar {
-    display: none;
-}
-
 .darkFrame {
     display: none;
 

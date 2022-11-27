@@ -25,7 +25,7 @@ const StyledThumb = styled(SwitchPrimitive.Thumb, {
     transition: 'transform 100ms',
     transform: 'translateX(0.25rem)',
     willChange: 'transform',
-    '&[data-state="checked"]': { transform: 'translateX(1.75rem)' },
+    '&[data-state="checked"]': { transform: 'translateX(1.5rem)' },
 });
 
 // Exports

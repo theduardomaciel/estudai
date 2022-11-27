@@ -1,4 +1,4 @@
-import { Dispatch, FormEvent, SetStateAction, useEffect, useState, useRef } from 'react';
+import React, { Dispatch, FormEvent, SetStateAction, useEffect, useState, useRef } from 'react';
 
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -25,6 +25,15 @@ import getUserIdByToken from '../services/getUserIdByToken';
 // Stylesheets
 import styles from '../styles/Marketplace.module.css';
 import inputStyles from "../components/Input/label.module.css";
+
+// Editor
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import Highlight from '@tiptap/extension-highlight';
+import Placeholder from '@tiptap/extension-placeholder'
+import CharacterCount from '@tiptap/extension-character-count'
 
 // Types
 import { User } from '../types/User';
@@ -88,6 +97,9 @@ import getAllAnnouncements from '../services/getAllAnnouncements';
 import Announcement from '../types/Announcement';
 import LandingIntroModal from '../components/Landing/IntroModal';
 
+import parse from 'html-react-parser';
+import CustomEditor from '../components/Editor';
+
 function EventHeader({ hasUser }: { hasUser: boolean }) {
     return <div className={styles.marketplaceEvent}>
         <header>
@@ -119,6 +131,15 @@ function EventHeader({ hasUser }: { hasUser: boolean }) {
     </div>
 }
 
+/* const HTMLFromString = (string: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(string, 'text/html');
+    doc.body.classList.add(styles.content)
+
+    const body = doc.body;
+    return body;
+}; */
+
 function Announcement({ userId, announcement, setContactModalState, setDeleteModalVisible, setLockModalState }:
     { userId?: number, announcement: Announcement, setContactModalState: Dispatch<SetStateAction<Announcement | undefined>>, setDeleteModalVisible: Dispatch<SetStateAction<undefined | number>>, setLockModalState: Dispatch<SetStateAction<{ id: number, state: 'locked' | 'unlocked' } | undefined>> }) {
     const [isExpanded, setExpanded] = useState(false);
@@ -130,13 +151,18 @@ function Announcement({ userId, announcement, setContactModalState, setDeleteMod
                 className={announcement.description.length >= 100 ? styles.big : ""}
                 style={isExpanded ? { display: "flex" } : {}}
             >
-                {announcement.description}
+                {announcement.description && announcement.description.length > 7 ?
+                    <div className={styles.description}>
+                        {parse(announcement.description)}
+                    </div>
+                    :
+                    <p>{`[nenhuma descrição fornecida]`}</p>}
             </h3>
             <div className={styles.subheader}>
                 <div style={{ overflow: "hidden", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Image src={announcement.user.image_url} width={18} height={18} alt={"Imagem do usuário"} />
                 </div>
-                <p>anúncio por <strong>{announcement.user.firstName + " " + announcement.user.lastName}</strong></p>
+                <p>Anúncio por <strong>{`${announcement.user.firstName} ${announcement.user.lastName !== null ? announcement.user.lastName : ""}`}</strong></p>
             </div>
             <div className={styles.iconHolder}>
                 <span className={'material-icons-outlined static'} style={{ fontSize: "1.5rem" }}>visibility</span>
@@ -264,10 +290,10 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
         try {
             const response = await api.post('/announcements/new', {
                 userId: user.id,
-                description: data.description,
+                description: editor?.getHTML(),
                 condition: data.condition,
                 price: showPrice ? data.price : -1,
-                whatsApp: data.whatsApp,
+                whatsApp: showWhatsApp ? data.whatsApp : data.phone,
                 phone: data.phone,
                 email: data.email
             })
@@ -355,6 +381,24 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
         }
     }, [])
 
+    const MAX_CHARACTERS = 180;
+
+    const editor = useEditor({
+        extensions: [
+            StarterKit,
+            Underline,
+            TextAlign.configure({
+                types: ['heading', 'paragraph'],
+            }),
+            Placeholder.configure({
+                // Use a placeholder:
+                placeholder: `Seja o mais descritivo possível em ${MAX_CHARACTERS} caracteres.`,
+            }),
+            Highlight.configure({ multicolor: true }),
+            CharacterCount.configure({ limit: MAX_CHARACTERS }),
+        ],
+    })
+
     return (
         <main>
             <Head>
@@ -367,6 +411,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                     <h3 className={"title"}>Marketplaces ativos</h3>
                 </div>
                 <EventHeader hasUser={user ? true : false} />
+                <p className={inputStyles.input}>Clique no texto de um anúncio para vê-lo por completo.</p>
                 <ul className={styles.groupHolder} style={{ paddingBottom: "5rem" }}>
                     {
                         announcements && announcements.length > 0 ? announcements.map(announcement =>
@@ -415,23 +460,14 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                             style={{ width: "100%", }}
                         >
                             <div className={styles.modalContent} >
-                                <div className='selectHolder'>
-                                    <InputLabel label='Mensagem do Anúncio *' />
-                                    <textarea
-                                        className={`${inputStyles.input}`}
-                                        maxLength={180}
-                                        name="description"
-                                        placeholder={"Esta mensagem será exibida para os usuários que acessarem a página, portanto, seja o mais descritivo possível no limite de 180 caracteres."}
-                                        style={{ height: "7.5rem" }}
-                                    />
-                                </div>
+                                <CustomEditor editor={editor} />
                                 <div className={styles.groupHolder}>
                                     <div className='row' style={{ gap: "1.5rem" }}>
                                         <div className='selectHolder'>
                                             <InputLabel label='Estado de Conservação *' />
                                             <Select name='condition'>
                                                 <SelectTrigger aria-label="activity-mode">
-                                                    <SelectValue placeholder="Selecionar" />
+                                                    <SelectValue placeholder="Selecionar estado" />
                                                     <SelectIcon>
                                                         <ChevronDownIcon />
                                                     </SelectIcon>
@@ -473,6 +509,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                                             showPrice && <Input
                                                 label='Preço dos Itens'
                                                 name='price'
+                                                placeholder='Não informar valor'
                                                 maxLength={30}
                                                 fixedUnit={"R$"}
                                                 type="number"
@@ -490,10 +527,11 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                                 <div className={styles.groupHolder}>
                                     <div className='row' style={{ gap: "1.5rem" }}>
                                         <Input
-                                            label='Telefone *'
+                                            label={showWhatsApp ? 'Telefone' : 'Telefone *'}
                                             name='phone'
                                             id='phone'
                                             type="tel"
+                                            placeholder='(DDD) 9 XXXX-XXXX'
                                             onKeyDown={() => phoneNumberFormatter('phone')}
                                             required={showWhatsApp ? false : true}
                                         />
@@ -502,6 +540,8 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                                                 label='WhatsApp'
                                                 name='whatsApp'
                                                 id='whatsApp'
+                                                required={showWhatsApp ? true : false}
+                                                placeholder='(DDD) 9 XXXX-XXXX'
                                                 onKeyDown={() => phoneNumberFormatter('whatsApp')}
                                                 type="tel"
                                             />
@@ -514,9 +554,10 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                                         </Switch>
                                     </div>
                                     <Input
-                                        label='E-mail'
+                                        label='E-mail (opcional)'
                                         name='email'
                                         type="email"
+                                        style={{ marginBottom: "1rem" }}
                                     />
                                 </div>
                             </div>

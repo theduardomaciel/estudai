@@ -35,7 +35,7 @@ router
                     },
                     description: description,
                     materialCondition: condition,
-                    materialPrice: parseInt(price),
+                    materialPrice: price ? parseInt(price) : 0,
                     whatsAppNumber: whatsApp,
                     phoneNumber: phone,
                     email: email

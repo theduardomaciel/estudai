@@ -14,7 +14,6 @@ import Section from '../../components/Section';
 import Input, { InputLabel } from '../../components/Input';
 import Calendar from '../../components/Calendar';
 import Menu from '../../components/Menu';
-import FormatToolbar from '../../components/FormatToolbar';
 import Button from '../../components/Button';
 import UsersPortraits from '../../components/UsersPortraits';
 import AttachmentsLoader from '../../components/AttachmentLoader';
@@ -22,24 +21,24 @@ import Modal from '../../components/Modal';
 import SubjectsSelector from '../../components/SubjectsSelector';
 import { isActivity, isTest, taskGroupType } from '../../components/Task';
 import SubjectsModalPreset from '../../components/Modal/Presets/SubjectsModal';
+import CustomEditor from '../../components/Editor';
 
 // Select Components
 import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../components/Input/Select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
+// Types
+import { Attachment } from '../../types/Attachment';
+import { Contents, TaskMode, TaskType } from '../../types/Task';
+import { Group } from '../../types/Group';
+
 // Editor
-import { useEditor, EditorContent } from '@tiptap/react'
-import { Editor } from '@tiptap/core';
+import { useEditor } from '@tiptap/react'
 
 import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
 import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
-
-// Types
-import { Attachment } from '../../types/Attachment';
-import { Contents, TaskMode, TaskType } from '../../types/Task';
-import { Group } from '../../types/Group';
 
 // Services
 import { useAppContext } from '../../contexts/AppContext';
@@ -369,12 +368,6 @@ export const EventAddressSelector = ({ defaultValue, setSelectedValue }: { defau
     placeholder={defaultValue ? defaultValue : 'Insira um endereço presencial ou link de acesso'}
 />
 
-const teste = {
-    "matéria1": "conteúdo1",
-    "matéria2": "conteúdo1",
-    "matéria3": "conteúdo1",
-}
-
 export const SubjectsContentsSelector = ({ subjects, contents, stateContents, setContents }:
     { subjects: Array<Subject>, stateContents?: Contents, contents?: MutableRefObject<Contents>, setContents?: Dispatch<SetStateAction<Contents>> }) => <div
         className={`${inputStyles.input} ${styles.subjectsContent} ${styles.enforce}`}
@@ -411,18 +404,6 @@ export const SubjectsContentsSelector = ({ subjects, contents, stateContents, se
                 </div>
         }
     </div>
-
-const CustomEditor = ({ editor }: { editor: any }) => <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />;
-
-export const DescriptionEditor = ({ editor }: { editor: Editor | null }) => <div className={styles.column}>
-    <div className={'header'}>
-        <Section classes={styles.descriptionHeader} title='Descrição' />
-        <FormatToolbar editor={editor as Editor} />
-    </div>
-    <div className={styles.input}>
-        <CustomEditor editor={editor} />
-    </div>
-</div>
 
 export type SubjectsData = { defaultSubjects: Array<Subject> | undefined; userSubjects: Array<Subject> | undefined; }
 export type SetSubjectsData = Dispatch<SetStateAction<SubjectsData>>
@@ -508,7 +489,7 @@ export default function NewTask() {
                 />
             </div>
             <SubjectSelector userSubjects={subjectsData.userSubjects} defaultSubjects={subjectsData.defaultSubjects} />
-            <DescriptionEditor editor={editor} />
+            <CustomEditor editor={editor} />
         </div>
         {NewSubjectModal}
     </>
@@ -543,7 +524,7 @@ export default function NewTask() {
             <EventTitleSelector />
             <EventAddressSelector />
         </div>
-        <DescriptionEditor editor={editor} />
+        <CustomEditor editor={editor} />
     </>
 
     async function createTask(event: FormEvent<HTMLFormElement>) {
