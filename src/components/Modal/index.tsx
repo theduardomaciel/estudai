@@ -35,10 +35,10 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
 }
 
 export default function Modal({ isVisible, toggleVisibility, style, color, isLoading, icon, title, description, suppressReturnButton, iconProps, actionProps, children, ...rest }: Props) {
-    const modalRef = useRef<HTMLDivElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (!modalRef.current?.contains(event.nativeEvent.target as Node) && !isLoading) {
+        const target = event.nativeEvent.target as HTMLDivElement;
+        if (target.id === "background" && !isLoading) {
             toggleVisibility()
         };
     }
@@ -50,6 +50,7 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
                     <motion.div
                         className={styles.background}
                         key="modal"
+                        id='background'
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -60,7 +61,6 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
                             className={styles.container}
                             key="modalContent"
                             style={style}
-                            ref={modalRef}
                             initial={{ y: 300, x: 0, opacity: 0 }}
                             animate={{ y: 0, x: 0, opacity: 1 }}
                             exit={{ y: 300, x: 0, opacity: 0 }}
