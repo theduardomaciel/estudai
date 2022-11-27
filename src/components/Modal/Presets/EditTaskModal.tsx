@@ -15,11 +15,11 @@ import { perQuestion, subjectsString, taskGroupType, taskMaxScore, taskMode, tas
 
 // Components
 import Calendar from '../../Calendar';
-import { ActivityModeSelector, ActivityTypeSelector, DescriptionEditor, EventAddressSelector, EventTitleSelector, MaxScoreSelector, QuestionsAmountSelector, SubjectsContentsSelector, SubjectSelector } from "../../../pages/task/new";
+import { ActivityModeSelector, ActivityTypeSelector, EventAddressSelector, EventTitleSelector, MaxScoreSelector, QuestionsAmountSelector, SubjectsContentsSelector, SubjectSelector } from "../../../pages/task/new";
 import Button from '../../Button';
 import SubjectsSelector from '../../SubjectsSelector';
 import SubjectsModalPreset from './SubjectsModal';
-
+import CustomEditor from '../../Editor';
 
 // Editor
 import { useEditor } from '@tiptap/react';
@@ -227,7 +227,7 @@ export default function EditTaskModalPreset(task: Task) {
                     {
                         task.subjects.length > 0 && <SubjectSelector defaultValue={task.subjects[0].id} setSelectedValue={setNewSubjects} userSubjects={subjectsData.userSubjects} defaultSubjects={subjectsData.defaultSubjects} />
                     }
-                    <DescriptionEditor editor={editor} />
+                    <CustomEditor editor={editor} />
                     <div className={'dangerZone'}>
                         <p>Zona de Perigo</p>
                         <Button
@@ -336,7 +336,7 @@ export default function EditTaskModalPreset(task: Task) {
                                 <EventAddressSelector defaultValue={task.address} setSelectedValue={setNewAddress} />
                             </div>
                         </div>
-                        <DescriptionEditor editor={editor} />
+                        <CustomEditor editor={editor} />
                         <div className={'dangerZone'}>
                             <p>Zona de Perigo</p>
                             <Button
