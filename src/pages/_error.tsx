@@ -16,7 +16,7 @@ import PaperPlaneIcon from "/public/landing/paper_plane.svg";
 import BaskharaIcon from "/public/landing/baskhara.svg";
 import { useRouter } from "next/router";
 
-function Error({ statusCode }: { statusCode: string }) {
+function Error({ statusCode, res, error }: { statusCode: string, res: any, error: any }) {
     const router = useRouter();
 
     return (
@@ -30,7 +30,7 @@ function Error({ statusCode }: { statusCode: string }) {
                     <p>
                         {statusCode
                             ? `Um erro (código: ${statusCode}) foi encontrado no servidor.`
-                            : 'Um erro foi encontrado no cliente.'}
+                            : `Um erro foi encontrado no cliente. ${res} ${error}`}
                     </p>
                     <Button
                         icon={'arrow_left'}
@@ -52,6 +52,7 @@ function Error({ statusCode }: { statusCode: string }) {
 
 Error.getInitialProps = ({ res, err }: any) => {
     const statusCode = res ? res.statusCode : err ? err.statusCode : 404
+    console.log(res, err)
     return { statusCode }
 }
 
