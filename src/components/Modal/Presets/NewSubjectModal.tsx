@@ -9,7 +9,8 @@ import IconPickerModalPreset from './IconPickerModal';
 import { api } from '../../../lib/api';
 
 // Types
-import { SetSubjectsData, SubjectsData } from '../../../pages/task/new';
+import { SetSubjectsData, SubjectsData } from '../../../pages/groups/task/new';
+import { TranslateText } from '../../Translate';
 
 /* interface SubjectInfo {
     name: string;
@@ -61,26 +62,25 @@ export default function NewSubjectModalPreset(previousSubjectsData?: SubjectsDat
             color={`var(--primary-02)`}
             isLoading={isLoading}
             actionProps={{
-                buttonText: "CRIAR MATÉRIA",
+                buttonText: TranslateText("Create new subject"),
                 buttonIcon: "add",
                 disabled: newSubjectName.length < 4 || newSubjectIcon === defaultIcon,
                 function: modalStatus === true ? CreateNewSubject : undefined
             }}
             suppressReturnButton={modalStatus === true}
-            title={modalStatus === "success" ? "Matéria criada com sucesso" : modalStatus === "error" ? "Não foi possível criar sua matéria" : "Criar nova matéria"}
+            title={modalStatus === "success" ? TranslateText("Subject created with success") : modalStatus === "error" ? TranslateText("We were unable to create your subject") : TranslateText("Create new subject")}
         >
             {
                 modalStatus === true ?
                     <>
                         <Input
-                            label='Nome da matéria'
-                            placeholder='Insira o nome da matéria'
+                            label={TranslateText("Subject name")}
                             maxLength={30}
                             type="text"
                             onChange={(event) => setNewSubjectName(event.currentTarget.value)}
                         />
                         <Button
-                            title={newSubjectIcon === defaultIcon ? 'Selecionar ícone' : "Trocar de ícone"}
+                            title={newSubjectIcon === defaultIcon ? TranslateText("Select icon") : TranslateText("Change icon")}
                             icon={newSubjectIcon}
                             isLoading={isLoading}
                             style={{
@@ -93,7 +93,7 @@ export default function NewSubjectModalPreset(previousSubjectsData?: SubjectsDat
                     </>
                     :
                     <p style={{ color: "var(--primary-02)" }}>
-                        {modalStatus === "success" ? "Agora você pode selecioná-la em novas tarefas." : "Infelizmente não pudemos criar sua nova matéria."}
+                        {modalStatus === "success" ? TranslateText("Now you can select it in new tasks.") : TranslateText("Unfortunately we were unable to create your new subject.")}
                     </p>
             }
         </Modal>,

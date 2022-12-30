@@ -131,7 +131,7 @@ router
                     res.status(500).json({ error: 'Invalid user id' })
                 }
             } else {
-                const { ['auth.token']: token } = req.cookies;
+                const { ['estudai.token']: token } = req.cookies;
                 const userId = await getUserIdByToken(token as string);
 
                 console.log("Atualizando dados da tarefa de id :", id)
@@ -186,7 +186,7 @@ router
     })
     .delete(async (req, res) => {
         const taskId = parseInt(req.query.id as string);
-        const { ['auth.token']: token } = req.cookies;
+        const { ['estudai.token']: token } = req.cookies;
 
         const userId = await getUserIdByToken(token as string) as number;
 

@@ -51,6 +51,10 @@
     width: 100%;
 }
 
+.section h6 {
+    color: var(--primary-04);
+}
+
 .group p {
     font-family: 'Inter';
     font-style: normal;

@@ -233,7 +233,7 @@ export default function File({ attachmentIndex, attachments, setAttachments, ...
                     progress === -5 ?
                         <Spinner color="var(--primary-02)" />
                         :
-                        <span className={`material-icons-round ${styles.close}`} onClick={deleteFile}>
+                        <span className={`material-icons-rounded ${styles.close}`} onClick={deleteFile}>
                             close
                         </span>
                 }

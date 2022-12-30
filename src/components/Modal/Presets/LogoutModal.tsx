@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Modal from '..';
 
 import { useAuth } from '../../../contexts/AuthContext';
+import { TranslateText } from '../../Translate';
 
 export default function LogoutModalPreset() {
     const [isModalVisible, setModalVisible] = useState(false)
@@ -21,8 +22,8 @@ export default function LogoutModalPreset() {
             toggleVisibility={() => setModalVisible(!isModalVisible)}
             color={`var(--primary-02)`}
             icon={'exit_to_app'}
-            title={"Tem certeza que deseja sair?"}
-            description={"Será necessário entrar com sua conta novamente para poder acessar a plataforma."}
+            title={TranslateText("Are you sure you want to quit?")}
+            description={TranslateText("You will need to sign in with your account again to be able to access the platform.")}
             actionProps={{
                 buttonText: "LOG-OUT",
                 function: logout

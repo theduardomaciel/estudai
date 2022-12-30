@@ -1,4 +1,4 @@
-export const tagsNames = ['Lista de Questões', 'Material Teórico', 'Slides', 'Resumos', 'Resoluções']
+export const tagsNames = ['Questions List', 'Theoretical Material', 'Slides', 'Summaries', 'Reolutions']
 const tagsIcons = ['print', 'description', 'co_present', 'history_edu', 'wallpaper']
 
 export const getTagInfo = (id: number) => {

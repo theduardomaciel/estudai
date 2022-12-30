@@ -6,6 +6,7 @@ export type User = {
     firstName: string;
     lastName: string;
     username?: string;
+    avatar: string;
     role?: "user",
     email: string,
     image_url: string,

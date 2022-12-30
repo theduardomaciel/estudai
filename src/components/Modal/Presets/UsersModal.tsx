@@ -7,6 +7,7 @@ import Modal from '..';
 
 import { User } from '../../../types/User';
 import formatDate from '../../../utils/formatDate';
+import Translate, { TranslateText } from '../../Translate';
 
 interface ModalProps {
     icon?: string;
@@ -32,13 +33,13 @@ export default function UsersModalPreset(defaultProps?: ModalProps) {
                 <header>
                     <div className={'iconHolder'}>
                         <span className="material-symbols-rounded static">person</span>
-                        <p>{modalProps?.name ? modalProps.name : 'Usuário'}</p>
+                        <p>{modalProps?.name ? TranslateText(modalProps.name) : TranslateText("User")}</p>
                     </div>
                     {
                         modalProps?.dates &&
                         <div className={'iconHolder'}>
                             <span className="material-symbols-rounded static">calendar_today</span>
-                            <p>Data</p>
+                            <p><Translate>Date</Translate></p>
                         </div>
                     }
                 </header>

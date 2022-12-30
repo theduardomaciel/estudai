@@ -12,6 +12,7 @@ import Button from '../Button'
 // Types
 import { User } from '../../types/User';
 import Link from 'next/link';
+import Translate, { TranslateText } from '../Translate';
 
 interface Props {
     onClick?: () => void;
@@ -26,13 +27,13 @@ export default function Profile({ user, onClick, showMenu }: Props) {
         const actualHour = now.getHours()
 
         if (actualHour > 4 && actualHour <= 11) {
-            return "Bom dia,"
+            return `${TranslateText("Good morning")},`
         } else if (now.getHours() > 11 && actualHour <= 18) {
-            return "Boa tarde,"
+            return `${TranslateText("Good afternoon")},`
         } else if (now.getHours() > 18) {
-            return "Boa noite,"
+            return `${TranslateText("Good evening")},`
         } else {
-            return "Bem vindo,"
+            return `${TranslateText("Welcome")},`
         }
     }
 
@@ -67,22 +68,26 @@ export default function Profile({ user, onClick, showMenu }: Props) {
         <div className={styles.holder}>
             <div className={styles.profile}>
                 <div className={styles.image}>
-                    <Image
-                        src={user?.image_url || placeholder}
-                        width={42}
-                        height={42}
-                        alt='Avatar do usuário'
-                    />
+                    {
+                        user?.avatar === "google" ? <Image
+                            src={user?.image_url || placeholder}
+                            width={42}
+                            height={42}
+                            alt='Avatar do usuário'
+                        />
+                            :
+                            <div className={`${styles.avatar} ${`avatar_${user?.avatar}`}`} />
+                    }
                 </div>
 
                 <div className={styles.text}>
                     {
                         user ? <>
                             <p>{getGreetings()}</p>
-                            <p>{`${user?.firstName} ${user?.lastName}`}</p>
+                            <p>{`${user?.firstName} ${user?.lastName ? user?.lastName : ""}`}</p>
                         </> :
                             <>
-                                <p><Link href={`/auth/register`}>Cadastre-se</Link> ou <Link href={`/auth/login`}>Entre</Link> para ter acesso a todos os recursos.</p>
+                                <p><Link href={`/auth/register`}><Translate>Sign up</Translate></Link> <Translate>or</Translate> <Link href={`/auth/login`}><Translate>Sign in</Translate></Link> <Translate>to have access to all the features of the platform</Translate>.</p>
                             </>
                     }
                 </div>
@@ -104,7 +109,7 @@ export default function Profile({ user, onClick, showMenu }: Props) {
                                     </div>
                                 </>
                                 :
-                                <p>Você não tem nenhuma atividade pendente!</p>
+                                <p><Translate>You have no pending activities!</Translate></p>
                         }
                     </div>
                     {showMenu && <Button classes={styles.openMenu} onClick={onClick} icon={"menu"} />}

@@ -9,22 +9,32 @@ import Link from "next/link";
 import { Task } from "../../types/Task";
 import formatDate from "../../utils/formatDate";
 import { Subject } from "../../types/Subject";
+import Translate, { TranslateText } from "../Translate";
 
 // Data
 export const isActivity = (type: string) => type === 'obligatory' || type === "elective";;
 export const isTest = (type: string) => type === 'av1' || type === "av2" || type === "recuperation";
 export const taskGroupType = (type: string) => { return [isActivity(type), isTest(type)] };
 
-export const taskType = (type: string | undefined) => type === "obligatory" ? 'AV3' : type === "elective" ? 'Eletiva' : type === "av1" ? 'AV1' : type === 'av2' ? 'AV2' : "AV"
-export const taskMode = (mode: string | undefined) => mode === "written" ? "Escrita" : mode === "typed" ? "Digitada" : mode === "both" ? "Escrito ou Digitado" : "Livre"
-export const taskMaxScore = (score: number | undefined) => score && score > 0 ? `${score}${score?.toString().length === 1 ? ",0" : ""} pontos` : 'Sem pontuação'
+export const taskType = (type: string | undefined) => type === "obligatory" ? 'AV3' :
+    type === "elective" ? TranslateText("Elective") :
+        type === "av1" ? 'AV1' :
+            type === 'av2' ? 'AV2' : "AV"
+
+export const taskMode = (mode: string | undefined) => mode === "written" ? TranslateText("Written") :
+    mode === "typed" ? TranslateText("Typed") :
+        mode === "both" ? TranslateText("Written or typed") :
+            TranslateText("No restriction")
+
+export const taskMaxScore = (score: number | undefined) => score && score > 0 ? `${score}${score?.toString().length === 1 ? ",0" : ""} ${TranslateText("points")}` :
+    TranslateText("No score")
 
 export const perQuestion = (questionsAmount: number) => questionsAmount ? (10 / questionsAmount).toString().slice(0, 5) : 0
 
 export const subjectsString = (subjects: Subject[]) => subjects.map((subject, index) => {
     const name = subject.name as string;
     if (index + 1 === subjects.length) {
-        return "e " + name
+        return `${TranslateText("and")} ` + name
     } else if (index + 1 !== subjects.length - 1) {
         return name + ", "
     } else {
@@ -38,8 +48,8 @@ export const UsersPortraitsFromTask = ({ concludedUsersAmount, images, groupName
     }
     {
         concludedUsersAmount > 0 ?
-            <p className={styles.usersAmount}>{`+ de ${concludedUsersAmount} membro de ${groupName ? groupName : "placeholder"} ${message}`}</p> :
-            <p className={styles.usersAmount}>{`nenhum membro de `} <strong>{groupName}</strong> {` concluiu essa atividade ainda!`}</p>
+            <p className={styles.usersAmount}>{`${TranslateText("+ than")} ${concludedUsersAmount} ${TranslateText("member")} ${TranslateText("from")} ${groupName ? groupName : "..."} ${message}`}</p> :
+            <p className={styles.usersAmount}>{`${TranslateText("no member from")} `} <strong>{groupName}</strong> {` ${TranslateText("concluded this task yet")}!`}</p>
     }
 </div>;
 
@@ -60,7 +70,7 @@ export default function TaskView({ task, status }: TaskProps) {
             dangerouslySetInnerHTML={{ __html: JSON.stringify(task.description) as unknown as string }}
         />
         :
-        <p>{`[nenhuma descrição fornecida]`}</p>
+        <p>{`[${TranslateText("no description provided")}]`}</p>
 
     // Ícones dos usuários e informação de usuários que concluíram
     const concludedUsersAmount = task.interactedBy ? task.interactedBy.length : 0;
@@ -96,9 +106,9 @@ export default function TaskView({ task, status }: TaskProps) {
             <>
                 {taskType(task.type)}
                 <div className={styles.circle} />
-                {task.questionsAmount + " questões"}
+                {task.questionsAmount + ` ${TranslateText("questions")}`}
                 <div className={styles.circle} />
-                {perQuestion(task.questionsAmount as number) + " por questão"}
+                {perQuestion(task.questionsAmount as number) + ` ${TranslateText(" per question")}`}
             </>
             : <>
                 <span style={{ fontSize: "1.6rem" }} className={`material-symbols-rounded`}>location_on</span>
@@ -106,29 +116,36 @@ export default function TaskView({ task, status }: TaskProps) {
             </>
 
     const statusMessage = taskIsActivity ?
-        task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'concluíram' : 'concluiu'} a atividade`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+        task.group && <UsersPortraitsFromTask
+            message={`${TranslateText("already")} ${TranslateText("concluded", concludedUsersAmount !== 1)} ${TranslateText("the activity")}`}
+            groupName={task.group.name}
+            concludedUsersAmount={concludedUsersAmount} images={images as string[]}
+        />
         : taskIsTest ?
             <></>
             :
-            task.group && <UsersPortraitsFromTask message={`já ${concludedUsersAmount !== 1 ? 'marcaram' : 'marcou'} presença`} groupName={task.group.name} concludedUsersAmount={concludedUsersAmount} images={images as string[]} />
+            task.group && <UsersPortraitsFromTask
+                message={`${TranslateText("already")} ${TranslateText("confirmed", concludedUsersAmount !== 1)} ${TranslateText("presence")}`}
+                groupName={task.group.name}
+                concludedUsersAmount={concludedUsersAmount}
+                images={images as string[]}
+            />
 
     const statusContent = taskIsActivity ?
-        status === 'concluded' ? <Status icon="check" text="atividade concluída" color="var(--green-01)" hideTime /> :
-            status === "expired" ? <Status icon="schedule" text="expirou no dia" color="var(--red-01)" /> :
+        status === 'concluded' ? <Status icon="check" text={`${TranslateText("task concluded")}`} color="var(--green-01)" hideTime /> :
+            status === "expired" ? <Status icon="schedule" text={`${TranslateText("expired")} ${TranslateText("in the day")}`} color="var(--red-01)" /> :
                 task.date ? <Status icon="schedule" text="entrega até" color="var(--primary-02)" /> :
                     <></>
         : taskIsTest ?
-            status === "expired" ? <Status icon="archive" text="arquivada no dia" color="var(--primary-02)" /> :
+            status === "expired" ? <Status icon="archive" text={`${TranslateText("archived")} ${TranslateText("in the day")}`} color="var(--primary-02)" /> :
                 <Status icon="calendar_today" text="" color="var(--primary-02)" />
             :
-            status === 'concluded' ? <Status icon="schedule" text="Concluído" color="var(--green-01)" /> :
-                status === "expired" ? <Status icon="schedule" text="evento no dia" color="var(--red-01)" /> :
-                    <Status icon="schedule" text="evento no dia" color="var(--primary-02)" />
+            status === 'concluded' ? <Status icon="schedule" text={TranslateText("Concluded")} color="var(--green-01)" /> :
+                status === "expired" ? <Status icon="schedule" text={`${TranslateText("expired")} ${TranslateText("in the day")}`} color="var(--red-01)" /> :
+                    <Status icon="schedule" text={`${TranslateText("event")} ${TranslateText("in the day")}`} color="var(--primary-02)" />
 
     const icon = taskIsActivity ? (task.subjects.length > 0 ? task.subjects[0].icon : "check_box_outline_blank") : taskIsTest ? "glyphs" : "local_activity";
-    const title = taskIsActivity ? (task.subjects.length > 0 ? task.subjects[0].name : "Tarefa genérica") :
-        taskIsTest ? task.type === "av1" ? "Avaliação Mensal (AV1)" : "Avaliação Bimestral (AV2)" :
-            task.title
+    const title = taskIsActivity ? (task.subjects.length > 0 ? task.subjects[0].name : TranslateText("Generic task")) : taskIsTest ? task.type === "av1" ? TranslateText("Monthly evaluation (AV1)") : TranslateText("Bimonthly evaluation (AV2)") : task.title
 
     return (
         <Link href={`/task/${task.id}`}>
@@ -138,7 +155,7 @@ export default function TaskView({ task, status }: TaskProps) {
                         <span className={`material-symbols-rounded`}>{icon} </span>
                     </div>
                     <div className={styles.description}>
-                        <h4>{title}</h4>
+                        <h4><Translate>{title}</Translate></h4>
                         <div className={styles.info}>
                             {infoContent}
                         </div>

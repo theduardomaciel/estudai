@@ -10,6 +10,7 @@ import styles from './styles.module.css';
 import Button from '../../Button';
 import Image, { StaticImageData } from 'next/image';
 import useScreenSize from '../../../hooks/useScreenSize';
+import { TranslateText } from '../../Translate';
 
 interface Section {
     title: string;
@@ -87,14 +88,18 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
         }
     }
 
+    const SKIP_TRANSLATED = TranslateText("Skip");
+    const PREVIOUS_TRANSLATED = TranslateText("Previous");
+    const NEXT_TRANSLATED = TranslateText("Next");
+    const ENTER_TRANSLATED = TranslateText("Enter the platform");
+
     const sectionsModals = sections.map((section, index) => {
         return <motion.div
-            id='introModal'
             className={styles.background}
-            key={index}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            key={`modalHolder_${index}`}
         >
             <motion.div
                 className={styles.container}
@@ -133,7 +138,7 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
                 <div className={styles.buttonsHolder}>
                     <Button
                         onClick={actualSection === 0 ? hideModal : () => changeSection(-1)}
-                        title={actualSection === 0 ? 'Pular' : 'Anterior'}
+                        title={actualSection === 0 ? SKIP_TRANSLATED : PREVIOUS_TRANSLATED}
                         style={{
                             padding: "1rem 2.5rem",
                             background: "var(--light)",
@@ -145,7 +150,7 @@ export default function LandingIntroModal({ /* actualSection, setActualSection, 
                     />
                     <Button
                         onClick={() => changeSection(1)}
-                        title={actualSection === sections.length - 1 ? 'Entrar na plataforma' : 'Próximo'}
+                        title={actualSection === sections.length - 1 ? ENTER_TRANSLATED : NEXT_TRANSLATED}
                         style={{
                             padding: "1rem 2.5rem",
                             width: "100%",

@@ -14,7 +14,7 @@ import Input, { InputLabel } from '../../components/Input';
 import { Switch, SwitchThumb } from '../../components/Switch';
 
 // Server Props
-import getUser from '../../services/getUser';
+import getUser from '../../services/getUserByToken';
 import getUserIdByToken from '../../services/getUserIdByToken';
 import removeCookies from '../../services/removeCookies';
 import { api } from '../../lib/api';
@@ -33,26 +33,12 @@ import Link from 'next/link';
 import UsersPortraits from '../../components/UsersPortraits';
 import Menu from '../../components/Menu';
 import { EmptyTasksMessage } from '../home';
+import Translate, { TranslateText } from '../../components/Translate';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
+    const { ['estudai.token']: token } = parseCookies(context)
 
-    console.log(context.req.cookies);
-
-    console.log(token)
-    const userId = await getUserIdByToken(token);
-
-    if (userId === null) {
-        await removeCookies(context);
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        }
-    }
-
-    let user = await getUser(userId as number, 'full') as unknown as User;
+    let user = await getUser(token, 'full', "full") as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
@@ -92,11 +78,14 @@ const Groups = ({ user }: { user: User }) => {
 
     const createdGroup = useRef<Group>();
 
-    console.warn(user.groups.length)
-
     async function createGroup() {
         console.log(groupName)
         setLoading(true)
+
+        if (groupName.current.length < 3) {
+            setLoading(false)
+            return;
+        };
 
         try {
             const response = await api.post('/groups/new', { userId: user.id, name: groupName.current, isPrivate: isGroupPrivate })
@@ -120,7 +109,7 @@ const Groups = ({ user }: { user: User }) => {
     function onLinkClick() {
         navigator.clipboard.writeText(link)
         if (linkTextRef.current) {
-            linkTextRef.current.textContent = "Copiado para a área de transferência!"
+            linkTextRef.current.textContent = TranslateText("Copied to clipboard!")
             setTimeout(() => {
                 if (linkTextRef.current) {
                     linkTextRef.current.textContent = link
@@ -132,18 +121,18 @@ const Groups = ({ user }: { user: User }) => {
     return (
         <main>
             <Head>
-                <title>Grupos</title>
+                <title>{TranslateText("Groups")}</title>
             </Head>
             <Sidebar />
             <div className={styles.container}>
                 <Profile user={user} />
                 <div className={"header"}>
-                    <h3 className={"title"}>Meus Grupos</h3>
+                    <h3 className={"title"}><Translate>My Groups</Translate></h3>
                     <Button
                         classes={styles.addButton}
                         style={{ backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }}
                         icon={"group_add"}
-                        title='Criar um grupo'
+                        title={TranslateText("Create a group")}
                         onClick={() => setCreateGroupModalVisible('default')}
                     />
                 </div>
@@ -159,22 +148,22 @@ const Groups = ({ user }: { user: User }) => {
                                             <h3>{group.name}</h3>
                                             <div className={styles.iconContainer}>
                                                 <span className={'material-symbols-rounded static'}>notifications_active</span>
-                                                <p>{pendingTasks} atividade{pendingTasks !== 1 && "s"} pendente{pendingTasks !== 1 && "s"}</p>
+                                                <p>{pendingTasks} {pendingTasks === 1 ? TranslateText("pending activity") : TranslateText("pending activities")}</p>
                                             </div>
                                         </header>
-                                        <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma mensagem fixada]"}</p>
+                                        <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : `[${TranslateText("no pinned message")}]`}</p>
                                         <div className={styles.usersInfoContainer}>
                                             <UsersPortraits imagesUrls={group.users.map((user, i) => user.image_url)} />
                                             <div className={styles.iconContainer}>
                                                 <span className={'material-symbols-rounded static'}>person</span>
-                                                <p>{group.users.length} participante{group.users.length !== 1 && "s"}</p>
+                                                <p>{group.users.length} <Translate>participant</Translate>{group.users.length !== 1 && "s"}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </Link>
                             })
                             :
-                            <EmptyTasksMessage description='Para entrar em um grupo, acesse um link de convite que tenha sido enviado a você.' />
+                            <EmptyTasksMessage description={TranslateText("To join a group, access an invite link that has been sent to you.")} />
                     }
                 </div>
             </div>
@@ -182,14 +171,14 @@ const Groups = ({ user }: { user: User }) => {
                 isVisible={isCreateGroupModalVisible !== ''}
                 toggleVisibility={() => setCreateGroupModalVisible('')}
                 icon={isCreateGroupModalVisible === 'default' ? "add_box" :
-                    isCreateGroupModalVisible === 'success' ? "priority" :
+                    isCreateGroupModalVisible === 'success' ? "add_task" :
                         "remove"
                 }
                 iconProps={{ position: "flex-start", builtWithTitle: true, size: "3.8rem" }}
                 color={`var(--primary-02)`}
                 isLoading={isLoading}
                 actionProps={{
-                    buttonText: isCreateGroupModalVisible === 'default' ? 'Criar grupo' : "Entrar no grupo",
+                    buttonText: isCreateGroupModalVisible === 'default' ? TranslateText("Create group") : TranslateText("Join the group"),
                     function: isCreateGroupModalVisible === "default" ?
                         () => createGroup() :
                         isCreateGroupModalVisible === "success" ?
@@ -199,23 +188,23 @@ const Groups = ({ user }: { user: User }) => {
                 }}
                 style={{ color: "var(--primary-02)", fontFamily: "Inter", fontWeight: 500 }}
                 suppressReturnButton={isCreateGroupModalVisible === 'success'}
-                title={isCreateGroupModalVisible === 'default' ? "Criar grupo" :
-                    isCreateGroupModalVisible === 'success' ? 'Eba! Deu tudo certo.' :
-                        "Eita. Parece que deu ruim."
+                title={isCreateGroupModalVisible === 'default' ? TranslateText("Create group") :
+                    isCreateGroupModalVisible === 'success' ? TranslateText("Yay! Everything worked.") :
+                        TranslateText("Oh. Looks like something went bad.")
                 }
             >
                 {
                     isCreateGroupModalVisible === "default" ?
                         <>
                             <Input
-                                label='Nome do grupo'
-                                placeholder='Insira o nome do grupo'
+                                label={TranslateText("Group name")}
+                                placeholder={TranslateText("Insert the group name")}
                                 maxLength={30}
                                 type="text"
                                 onChange={(event) => groupName.current = event.currentTarget.value}
                             />
                             <div className={styles.toggleContainer}>
-                                <InputLabel label='Grupo privado?' />
+                                <InputLabel label={`${TranslateText("Private group")}?`} />
                                 <Switch defaultChecked onCheckedChange={(checked: boolean) => isGroupPrivate.current = checked}>
                                     <SwitchThumb />
                                 </Switch>
@@ -223,14 +212,14 @@ const Groups = ({ user }: { user: User }) => {
                         </>
                         : isCreateGroupModalVisible === "success" ?
                             <>
-                                <p>Acesse agora seu grupo recém-criado e compartilhe o link de acesso com outros!</p>
+                                <p><Translate>Access your newly created group now and share the access link with others!</Translate></p>
                                 <div className={`${inputStyles.input} hoverLink`} onClick={onLinkClick}>
                                     <p ref={linkTextRef}>{`https://estudai.vercel.app/groups/${createdGroup.current?.shareLink}`}</p>
                                     <span className='material-symbols-rounded'>content_copy</span>
                                 </div>
                             </>
                             :
-                            <p>Tivemos um problema interno e não foi possível criar seu grupo. Pedimos a você que tente novamente e entre em contato conosco caso o problema persista.</p>
+                            <p><Translate>We had an internal issue and were unable to create your group. Please try again and contact us if the problem persists.</Translate></p>
                 }
             </Modal>
             <Menu />

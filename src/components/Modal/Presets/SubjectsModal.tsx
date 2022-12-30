@@ -11,6 +11,7 @@ import Input from '../../Input';
 // Data
 import inputStyles from "../../Input/label.module.css";
 import Spinner from '../../Spinner';
+import Translate, { TranslateText } from '../../Translate';
 import NewSubjectModalPreset from './NewSubjectModal';
 
 const teste = {
@@ -33,7 +34,6 @@ export function toggleSubject(subject: Subject, subjects: Array<Subject>, setSub
 
 export default function SubjectsModalPreset(userSubjects: Array<Subject> | undefined, defaultSubjects: Array<Subject> | undefined, subjects: Array<Subject>, setSubjects: Dispatch<SetStateAction<Array<Subject>>>) {
     const [isModalVisible, setModalVisible] = useState(false)
-    const [isLoading, setLoading] = useState(false)
 
     const [search, setSearch] = useState('');
 
@@ -68,7 +68,7 @@ export default function SubjectsModalPreset(userSubjects: Array<Subject> | undef
                 >
                     <div className={taskStyles.title}>
                         <span className={'material-symbols-rounded'}>{subject.icon}</span>
-                        <p>{subject.name}</p>
+                        <p><Translate>{subject.name}</Translate></p>
                     </div>
                     <span className={'material-symbols-rounded'} style={{ opacity: subjects.indexOf(subject) !== -1 ? 1 : 0, transition: '0.15s' }}>check_circle</span>
                 </li>)
@@ -87,27 +87,28 @@ export default function SubjectsModalPreset(userSubjects: Array<Subject> | undef
             style={{ minHeight: "90vh", gap: "2rem" }}
             iconProps={{ builtWithTitle: true, size: "2.8rem", position: "center" }}
             toggleVisibility={() => setModalVisible(!isModalVisible)}
-            title={"Selecione as matérias da avaliação abaixo:"}
+            title={TranslateText("Select the test subjects below:")}
         >
             <Input
                 icon='search'
-                placeholder='Pesquisar matéria'
+                placeholder={TranslateText("Search subjects")}
                 onChange={(event) => setSearch(event.currentTarget.value.replaceAll(' ', '').toLowerCase())}
             />
             <div className={`${inputStyles.input} ${taskStyles.subjectsList} ${taskStyles.reforce} customScroll`}>
-                <p>Minhas matérias</p>
+                <p><Translate>My subjects</Translate></p>
                 <Button
-                    title='CRIAR MATÉRIA'
+                    title={TranslateText("Create new subject")}
                     icon={'add'}
                     iconProps={{ size: "1.8rem" }}
                     style={{
                         width: "100%",
+                        textTransform: "uppercase",
                         padding: "0.85rem 1.5rem"
                     }}
                     onClick={() => setNewSubjectModalStatus(true)}
                 />
                 {userSubjectsList}
-                <p>Outras matérias</p>
+                <p><Translate>Other subjects</Translate></p>
                 {defaultSubjectsList}
             </div>
             {NewSubjectModal}

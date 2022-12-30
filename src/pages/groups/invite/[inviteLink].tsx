@@ -14,13 +14,14 @@ import Logo from "/public/logo.svg";
 import { api } from '../../../lib/api';
 import { Group } from '../../../types/Group';
 import { User } from '../../../types/User';
-import getUser from '../../../services/getUser';
+import getUser from '../../../services/getUserByToken';
 import getGroup from '../../../services/getGroup';
 import getUserIdByToken from '../../../services/getUserIdByToken';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import removeCookies from '../../../services/removeCookies';
 import { parseCookies } from 'nookies';
 import Link from 'next/link';
+import Translate, { TranslateText } from '../../../components/Translate';
 
 interface GroupInfo {
     id: number;
@@ -29,19 +30,7 @@ interface GroupInfo {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
-
-    const userId = await getUserIdByToken(token);
-
-    if (userId === null) {
-        await removeCookies(context);
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        }
-    }
+    const { ['estudai.token']: token } = parseCookies(context)
 
     const groupInviteLink = context.query.inviteLink as string;
 
@@ -56,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 
-    let user = await getUser(userId as number, 'basic') as unknown as User;
+    let user = await getUser(token, 'basic') as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
@@ -144,27 +133,18 @@ const GroupInvite = ({ user, groupInfo }: { user: User, groupInfo: GroupInfo }) 
                 <Logo width={120} height={60} fill={'var(--light)'} />
                 <div className={`${styles.infoHolder} ${groupInfo === null || groupInfo === undefined ? styles.loading : ''}`}>
                     {
-                        /* groupInfo === 'error' ?
-                            <>
-                                <p>Não foi possível encontrar um grupo com o link de convite fornecido :(</p>
-                            </>
-                            : */ /* groupInfo === null || groupInfo === undefined ?
-<>
-<div></div>
-<div></div>
-</> */
                         groupInfo === null || groupInfo === undefined ?
                             <>
-                                <p>Não foi possível encontrar um grupo com o link de convite fornecido :(</p>
+                                <p><Translate>Unable to find a group with the provided invite link</Translate> :(</p>
                             </>
                             :
                             isInGroup ?
                                 <>
-                                    <p>Você já faz parte do grupo</p>
+                                    <p><Translate>You're already part of the group</Translate></p>
                                     <h1>{groupInfo.name}!</h1>
                                     <Link href={`/groups`} style={{ width: "100%" }}>
                                         <Button
-                                            title='Voltar ao início'
+                                            title={TranslateText("Back to home")}
                                             style={{ width: "100%", height: "3.85rem" }}
                                         />
                                     </Link>
@@ -172,14 +152,14 @@ const GroupInvite = ({ user, groupInfo }: { user: User, groupInfo: GroupInfo }) 
                                 :
                                 <>
                                     {/* <span className={`${styles.mainIcon} material-symbols-rounded static`}>group</span> */}
-                                    <p>Você foi convidado(a) a entrar em</p>
+                                    <p><Translate>You have been invited to join</Translate></p>
                                     <h1>{groupInfo.name}</h1>
                                     <div className={styles.iconHolder}>
                                         <span className='material-symbols-rounded instantFilled static'>person</span>
                                         <p>{`${groupInfo.usersAmount} membro${groupInfo.usersAmount !== 1 ? 's' : ''}`}</p>
                                     </div>
                                     <Button
-                                        title='Aceitar convite'
+                                        title={TranslateText("Accept invite")}
                                         onClick={exitGroup}
                                         isLoading={isLoading}
                                         style={{ width: "100%", height: "3.85rem" }}

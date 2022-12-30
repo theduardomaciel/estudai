@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { parseCookies } from 'nookies';
-import type { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
 
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -26,6 +24,17 @@ import { GoogleButton, ScopeMissing } from './login';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../contexts/AuthContext';
 import EarlyAccessModalPreset from '../../components/Modal/Presets/EarlyAccessModal';
+import Translate, { TranslateText } from '../../components/Translate';
+import { NextPageWithTheme } from '..';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+    return {
+        props: {
+
+        }
+    }
+}
 
 interface TimerProps {
     current?: boolean;
@@ -89,33 +98,13 @@ const transition = {
 
 const INTERVAL_TIME = 4;
 
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
-
-    if (token) {
-        return {
-            redirect: {
-                destination: "/home",
-                permanent: false
-            }
-        }
-    }
-
-    return {
-        props: {
-
-        }
-    }
-}
-
-const Register: NextPage = () => {
+const Register: NextPageWithTheme = () => {
     const router = useRouter();
-    const { registered } = router.query;
 
     const { signIn } = useAuth();
     const [isLoading, setLoading] = useState(router.query.code !== undefined);
 
-    const [[section, direction], setSection] = useState(registered ? [3, 1] : router.query.code ? [3, 1] : [1, 0]);
+    const [[section, direction], setSection] = useState(router.query.code ? [3, 1] : [1, 1]);
     const [selected, setSelected] = useState<null | number>(null);
 
     const progressBar = useRef<HTMLDivElement>(null);
@@ -196,8 +185,8 @@ const Register: NextPage = () => {
         transition={transition}
     >
         <header style={{ alignItems: "center", "textAlign": "center" }}>
-            <h1>Organize seus estudos.</h1>
-            <p>Escolha em que tipo de curso você se encaixa para que possamos preparar a plataforma para você.</p>
+            <h1><Translate>Organize your study flow</Translate>.</h1>
+            <p><Translate>Choose which type of course you fit in so we can prepare the platform for you</Translate>.</p>
         </header>
         <div className={styles.cardsHolder}>
             <Button
@@ -208,8 +197,8 @@ const Register: NextPage = () => {
                 onClick={(event) => changeSection(0)}
             >
                 <div className={styles.buttonInfo} >
-                    <h6>Estou cursando o ensino fundamental</h6>
-                    <p>Preciso de ajuda para revisar assuntos base</p>
+                    <h6><Translate>I'm attending</Translate> <Translate>elementary school</Translate></h6>
+                    <p><Translate>I need help reviewing core subjects</Translate></p>
                 </div>
                 {
                     selected === 0 &&
@@ -224,8 +213,8 @@ const Register: NextPage = () => {
                 onClick={(event) => changeSection(1)}
             >
                 <div className={styles.buttonInfo}>
-                    <h6>Estou cursando o ensino médio</h6>
-                    <p>Preciso de ajuda para organizar horários e ter sanidade mental </p>
+                    <h6><Translate>I'm attending</Translate> <Translate>high school</Translate></h6>
+                    <p><Translate>I need help organizing schedules, remembering homework, studying for exams and staying sane</Translate> </p>
                 </div>
                 {
                     selected === 1 &&
@@ -240,19 +229,19 @@ const Register: NextPage = () => {
                 onClick={(event) => changeSection(2)}
             >
                 <div className={styles.buttonInfo}>
-                    <h6>Estou cursando o ensino superior</h6>
-                    <p>Preciso de ajuda para organizar horários e ter sanidade mental sem recorrer às drogas e/ou outros métodos ilícitos</p>
+                    <h6><Translate>I'm attending</Translate> <Translate>college</Translate></h6>
+                    <p><Translate>I need help with my researches, projects, thesis, etc.</Translate></p>
                 </div>
                 {
                     selected === 2 &&
                     <TimerIcon current={selected === 2 ? true : false} />
                 }
             </Button>
-            <p onClick={() => setSection([2, 1])} className={styles.outro}>Não possuo filiação a nenhuma instituição de ensino</p>
+            <p onClick={() => setSection([2, 1])} className={styles.outro}>I am not affiliated with any educational institution</p>
         </div>
         <div ref={progressBar} className={styles.progressBar} />
         <Link href={"/auth/login"}>
-            <p className={loginStyles.link}>Já tem uma conta? <span className="click bold">Log in</span></p>
+            <p className={loginStyles.link}><Translate>Already have an account?</Translate> <span className="click bold">Log in</span></p>
         </Link>
     </motion.div>
 
@@ -267,17 +256,17 @@ const Register: NextPage = () => {
         transition={transition}
     >
         <header>
-            <h1>Criar sua conta</h1>
-            <p>Agora que já sabemos do que você precisa, entre com sua conta Google abaixo para cadastrar-se na plataforma.</p>
-            <p><span className='bold'>Lembre-se de permitir o acesso ao Google Drive! </span><br />
-                Caso o acesso não seja concedido, você será incapaz de enviar anexos em atividades!</p>
+            <h1><Translate  >Create your account</Translate></h1>
+            <p><Translate>Now that we know what you need, enter your Google account below to register on the platform.</Translate></p>
+            <p><span className='bold'><Translate>Remember to allow access to Google Drive!</Translate> </span><br />
+                <Translate>If access is not granted, you will be unable to upload attachments in activities!</Translate></p>
         </header>
         <GoogleButton onClick={authenticate} isLoading={isLoading} />
-        <p className={styles.privacy}>Ao se cadastrar, você concorda com os <Link href="/tos" target={"_blank"}>Termos de Serviço</Link> e a <Link target={"_blank"} href="/privacy">Política de Privacidade</Link>.</p>
+        <p className={styles.privacy}><Translate>By registering, you agree to the</Translate> <Link href="/tos" target={"_blank"}><Translate>Terms of Service</Translate></Link> <Translate>and</Translate> <Link target={"_blank"} href="/privacy"><Translate>Privacy Policy</Translate></Link>.</p>
         <Separator style={separator} orientation='horizontal' />
         <div onClick={returnToSection1} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
-            <p className={loginStyles.link}>Voltar para o início</p>
+            <p className={loginStyles.link}><Translate>Back to beggining</Translate></p>
         </div>
     </motion.div>
 
@@ -292,14 +281,14 @@ const Register: NextPage = () => {
         transition={transition}
     >
         <header>
-            <h1>Criando sua conta</h1>
-            <p>Calma um pouco que estamos apertando uns botões e rodando algumas manivelas para que sua conta seja criada!</p>
+            <h1><Translate>Creating your account</Translate></h1>
+            <p><Translate>Don't worry, we're pressing a few buttons and turning a few handles to get your account created!</Translate></p>
         </header>
         <GoogleButton onClick={authenticate} isLoading={isLoading} />
         <Separator style={separator} orientation='horizontal' />
         <div onClick={returnToSection1} className='row click' style={{ color: "var(--primary-02)", justifyContent: "center", gap: "0.5rem" }}>
             <span style={{ fontSize: "1.4rem" }} className='material-symbols-rounded '>keyboard_backspace</span>
-            <p className={loginStyles.link}>Voltar para o início</p>
+            <p className={loginStyles.link}><Translate>Back to beggining</Translate></p>
         </div>
     </motion.div>
 
@@ -314,15 +303,15 @@ const Register: NextPage = () => {
         transition={transition}
     >
         <header>
-            <h1>Já estamos prontos!</h1>
-            <p>Aproveite todas as funcionalidades da plataforma e organize os seus estudos de uma vez por todas.
+            <h1><Translate>We're ready</Translate>!</h1>
+            <p><Translate>Take advantage of all the features of the platform and organize your studies once and for all.</Translate>
                 <br />
-                Nunca mais uma matéria ficará atrasada.</p>
+                <Translate>A subject will never be accumulated again.</Translate></p>
         </header>
-        <Link href={"/home"} style={{ width: "100%" }}>
+        <Link href={{ pathname: "/home", query: { newAccount: true } }} style={{ width: "100%" }}>
             <Button
                 style={{ padding: "1rem 1.5rem", width: "100%" }}
-                title='Entrar na plataforma'
+                title={TranslateText("Enter the platform")}
             />
         </Link>
         <Separator style={separator} orientation='horizontal' />
@@ -330,7 +319,7 @@ const Register: NextPage = () => {
 
     const Error = <div>
         <p style={{ color: "var(--primary-02)", textAlign: "center" }}>
-            Houve um erro interno. <br /> Por favor, reinicie a página.
+            <Translate>There was an internal error.</Translate> <br /> <Translate>Please restart the page.</Translate>
         </p>
     </div>
 
@@ -349,20 +338,10 @@ const Register: NextPage = () => {
 
     const sections = [Error, Section1, Section2, Section2_1, Section3, MissingScope]
 
-    /*  */
-
     const googleLogin = useGoogleLogin({
         /* onSuccess: async ({ code }) => {
-            const response = await signIn(code, { course: selected as number })
-            if (response === 'success') {
-                setSection([3, 1])
-            } else if (response === 'scopeMissing') {
-                setSection([4, 1])
-                setLoading(false)
-                setSelected(null)
-            } else {
-                setSection([0, 1])
-            }
+            setLoading(true)
+            registerUser(code)
         }, */
         onError(errorResponse) {
             console.log(errorResponse)
@@ -377,20 +356,21 @@ const Register: NextPage = () => {
 
     function authenticate() {
         googleLogin()
-        setLoading(true)
     }
 
     const hasRegisteredRef = useRef(false);
 
-    async function registerUser() {
-        if (router.query.code && hasRegisteredRef.current === false) {
+    async function registerUser(codeParam?: string) {
+        const code = codeParam || router.query.code
+        if (code && hasRegisteredRef.current === false) {
             console.log("Registrando")
             hasRegisteredRef.current = true
+            setSection([3, 1])
 
             const course = parseInt(window.sessionStorage.getItem("course") as string);
             console.log(window.sessionStorage, course)
 
-            const response = await signIn(router.query.code as string, { course: course })
+            const response = await signIn(code as string, { course: course })
             if (response === 'success') {
                 setSection([4, 1])
             } else if (response === 'scopeMissing') {
@@ -404,17 +384,25 @@ const Register: NextPage = () => {
     }
 
     useEffect(() => {
+        if (!router.isReady) return;
         registerUser()
-    }, [])
+    }, [router.isReady])
 
     return (
         <main className={loginStyles.holder}>
             <Head>
-                <title>Criar uma conta</title>
+                <title>{TranslateText("Create an account")}</title>
             </Head>
             <div className={`${loginStyles.container} ${section === 4 ? loginStyles.fullScreen : ""}`} style={{ gap: "3.5rem" }}>
-                <Logo width={121.19} height={58.72} style={{ minHeight: 58 }} fill={`var(--primary-02)`} />
-                <AnimatePresence initial={false} custom={direction} mode="wait">
+                <motion.div
+                    layout
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                >
+                    <Logo width={121.19} height={58.72} style={{ minHeight: 58 }} fill={`var(--primary-02)`} />
+                </motion.div>
+                <AnimatePresence initial={false} custom={direction} mode="popLayout">
                     {sections[section]}
                 </AnimatePresence>
             </div>
@@ -426,4 +414,5 @@ const Register: NextPage = () => {
     )
 }
 
+Register.theme = "default"
 export default Register;

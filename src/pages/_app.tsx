@@ -3,10 +3,9 @@ import React, { CSSProperties, useEffect } from 'react'
 
 // Contexts
 import { AppContextProvider } from '../contexts/AppContext'
+import { ThemeProvider } from 'next-themes'
 
 import { AuthProvider } from '../contexts/AuthContext'
-import { LanguageProvider } from '../contexts/LanguageContext'
-import { ThemeProvider } from '../contexts/ThemeContext'
 
 // Drag 'n Drop
 import { DndProvider, Preview } from 'react-dnd-multi-backend'
@@ -29,22 +28,12 @@ import Progressbar from '../components/Progressbar';
 import { Tag, TagProps } from '../components/AttachmentLoader/Tag';
 import { AppProps } from 'next/dist/shared/lib/router/router';
 
-// Fonts
-import localFont from '@next/font/local'
-import { Inter, Karla, Raleway, Trirong } from '@next/font/google';
+import "@fontsource/material-icons-rounded";
+import "@fontsource/material-icons-outlined";
 
-/* const inter = Inter({ subsets: ['latin'] });
-const karla = Karla({ subsets: ['latin'] });
-const raleway = Raleway({ subsets: ['latin'] });
-const trirong = Trirong({ weight: '900', subsets: ['latin'] })
+type CustomAppProps = AppProps & { Component: { theme: string; }; pageProps: any; }
 
-const materialSymbols = localFont({ src: "../styles/fonts/material-symbols.ttf", display: "block" }) */
-
-import '@material-design-icons/font/round.css';
-import '@material-design-icons/font/outlined.css';
-
-function MyApp({ Component, pageProps }: AppProps) {
-
+function MyApp({ Component, pageProps }: CustomAppProps) {
     useEffect(() => {
         document.fonts.ready.then(function () {
             document.body.classList.add('loaded')
@@ -55,13 +44,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_ID as string}>
             <AuthProvider>
                 <AppContextProvider>
-                    <DndProvider options={HTML5toTouch}>
-                        <Progressbar />
-                        {/* <main className={`${inter.className} ${karla.className} ${raleway.className} ${trirong.className} ${materialSymbols.className}`}> */}
-                        <Component {...pageProps} />
-                        {/* </main> */}
-                        <ComponentPreview />
-                    </DndProvider>
+                    <ThemeProvider forcedTheme={Component.theme || undefined} themes={['default', 'red', 'green', 'blue', 'yellow']}>
+                        <DndProvider options={HTML5toTouch}>
+                            <Progressbar />
+                            <Component {...pageProps} />
+                            <ComponentPreview />
+                        </DndProvider>
+                    </ThemeProvider>
                 </AppContextProvider>
             </AuthProvider>
         </GoogleOAuthProvider>

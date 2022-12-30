@@ -96,8 +96,8 @@
 }
 
 .outsideRange {
-    background-color: var(--font-light);
-    color: var(--light);
+    background-color: var(--background-04);
+    color: var(--primary-04);
     font-weight: 400;
 }
 

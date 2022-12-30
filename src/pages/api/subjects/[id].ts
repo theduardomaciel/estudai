@@ -14,7 +14,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 router
     .use(expressWrapper(cors()))
     .get(async (req, res) => {
-        const { ['auth.token']: token } = req.cookies;
+        const { ['estudai.token']: token } = req.cookies;
         const userId = req.query.id ? await getUserIdByToken(token as string) as number : undefined;
 
         try {

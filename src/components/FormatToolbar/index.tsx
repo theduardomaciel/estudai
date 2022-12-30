@@ -53,7 +53,7 @@ const ToolbarToggleGroup = styled(ToolbarPrimitive.ToggleGroup, {
 const ToolbarToggleItem = styled(ToolbarPrimitive.ToggleItem, {
     ...itemStyles,
     boxShadow: 0,
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     marginLeft: 2,
     '&:first-child': { marginLeft: 0 },
     '&.selected': { backgroundColor: "var(--primary-04)", color: "var(--light)" }

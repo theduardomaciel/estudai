@@ -18,6 +18,7 @@ import LogoutModalPreset from "../Modal/Presets/LogoutModal";
 import { parseCookies } from "nookies";
 import Button from "../Button";
 import useScreenSize from "../../hooks/useScreenSize";
+import Translate, { TranslateText } from "../Translate";
 
 const sections = ["home", "groups", "settings"]
 
@@ -73,20 +74,20 @@ export default function Sidebar({ notAuthenticated }: Props) {
             </Link> */}
 
             <div className={styles.authenticationWarning}>
-                <h6>Organize seus estudos.</h6>
+                <h6><Translate>Organize your study flow</Translate>.</h6>
                 <div className={styles.row}>
-                    <p>Crie uma conta no <span>estudaí{/* <Logo fill={"var(--light)"} width={72} height={24} /> */}</span> para aproveitar todas as funções da plataforma.</p>
+                    <p><Translate>Create an account at</Translate> <span>estudaí{/* <Logo fill={"var(--light)"} width={72} height={24} /> */}</span> <Translate>to take advantage of all the functions of the platform.</Translate></p>
                 </div>
                 <div className={styles.row}>
                     <Link href={`/auth/login`}>
                         <Button
-                            title="Entrar"
+                            title={TranslateText("Sign in")}
                             style={{ border: "1px solid var(--light)", borderRadius: "5rem", padding: "0.75rem 2.25rem", width: "100%" }}
                         />
                     </Link>
                     <Link href={`/auth/register`} >
                         <Button
-                            title="Cadastrar"
+                            title={TranslateText("Sign up")}
                             style={{
                                 border: "1px solid var(--light)",
                                 borderRadius: "5rem",

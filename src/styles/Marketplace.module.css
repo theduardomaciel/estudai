@@ -85,11 +85,13 @@
 
 .marketplaceEvent header span {
     font-size: 1.2rem;
+    color: var(--light);
 }
 
 .marketplaceEvent header p {
     font-family: 'Karla';
     font-style: normal;
+    color: var(--light);
     font-weight: 700;
 }
 

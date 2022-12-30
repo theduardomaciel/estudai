@@ -30,7 +30,7 @@ router
     .patch(async (req, res) => {
         const groupId = parseInt(req.query.id as string);
         const { updateInteraction } = req.body;
-        const { ['auth.token']: token } = req.cookies;
+        const { ['estudai.token']: token } = req.cookies;
 
         const userId = await getUserIdByToken(token as string) as number;
 
@@ -162,7 +162,7 @@ router
     })
     .delete(async (req, res) => {
         const groupId = parseInt(req.query.id as string);
-        const { ['auth.token']: token } = req.cookies;
+        const { ['estudai.token']: token } = req.cookies;
 
         const userId = await getUserIdByToken(token as string);
 

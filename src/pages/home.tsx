@@ -29,35 +29,22 @@ import styles from '../styles/Home.module.css'
 import { useAppContext } from '../contexts/AppContext';
 
 // Server Props
-import getUser from '../services/getUser';
-import getUserIdByToken from '../services/getUserIdByToken';
+import getUser from '../services/getUserByToken';
 import removeCookies from '../services/removeCookies';
 import { User } from '../types/User';
-import { Task } from '../types/Task';
-
+import { useRouter } from 'next/router';
+import useTranslate, { TranslateText } from '../components/Translate';
+import Translate from '../components/Translate';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['app.userId']: userId, ['app.shownModal']: shownModal } = parseCookies(context)
+    const { ['estudai.token']: token } = parseCookies(context)
 
-    /* context.res.setHeader(
+    context.res.setHeader(
         'Cache-Control',
         'public, s-maxage=60, stale-while-revalidate=59'
-    ) */
+    )
 
-    /* console.warn(token, context.req.cookies)
-    const userId = await getUserIdByToken(token as string); */
-
-    if (!userId) {
-        await removeCookies(context);
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        }
-    }
-
-    let user = await getUser(parseInt(userId) as number, 'full') as unknown as User;
+    let user = await getUser(token, 'full', "full") as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
@@ -80,13 +67,10 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         return group;
     })
 
-    const alreadyShownIntroModal = shownModal === 'true' ? true : false;
-    console.log(alreadyShownIntroModal)
 
     return {
         props: {
-            user,
-            alreadyShownIntroModal
+            user
         }
     }
 }
@@ -97,9 +81,9 @@ interface EmptyTasks {
 }
 
 export const EmptyTasksMessage = ({ description, removeMargin }: EmptyTasks) => <div style={{ marginTop: removeMargin ? "0px" : "10rem" }} className={styles.emptyTasks}>
-    <span className={`material-icons-round static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
-    <p><strong>Um pouco vazio aqui, né?</strong> </p>
-    <p>{description ? description : "Adicione uma nova tarefa com o botão acima para que ela apareça aqui!"}</p>
+    <span className={`material-icons-rounded static`} style={{ fontSize: "5.6rem" }}>blur_on</span>
+    <p><strong><Translate>A little empty here, huh?</Translate></strong> </p>
+    <p>{description ? description : TranslateText("Add a new task with the button above to make it appear here!")}</p>
 </div>
 
 export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) => <Link
@@ -117,16 +101,15 @@ export const AddTaskButton = ({ query, width }: { query?: {}, width?: string }) 
                 { backgroundColor: "var(--primary-02)", padding: "1rem 2.5rem", fontSize: "1.6rem", border: "1px solid var(--primary-04)" }
             }
             icon={"add"}
-            title='Adicionar tarefa'
+            title={TranslateText('Add task')}
         />
     </a>
 </Link>
 
-const Home = ({ user }: { user: User }) => {
+export default function Home({ user }: { user: User }) {
     const { changeViewMode, viewMode, toggleMenu } = useAppContext();
 
-    const [alreadyShownModal, setAlreadyShownModal] = useState(true);
-    const [actualSection, setActualSection] = useState('Pendente');
+    const [actualSection, setActualSection] = useState({ name: TranslateText("Pending"), id: 0 });
 
     const actualDate = new Date();
     const now = actualDate.getTime();
@@ -173,13 +156,10 @@ const Home = ({ user }: { user: User }) => {
         .filter((task, i) => !task.date && task.interactedBy.find((taskUser, i) => taskUser.id !== user.id) || task.date === 0 && task.interactedBy.find((taskUser, i) => taskUser.id !== user.id))
         .map((task, index) => <TaskView key={index} task={task} status={"pending"} />)
 
-    useEffect(() => {
-        const haveShown = localStorage.getItem('shownModal') ? true : false;
-        if (!haveShown) {
-            localStorage.setItem('shownModal', "true")
-            setAlreadyShownModal(false)
-        }
-    }, [])
+    const emptyStyle = actualSection.id === 0 ? (monthTasks.length === 0 && otherMonthsTasks.length === 0 ? styles.empty : "") :
+        (concludedTasks.length && expiredTasks.length & expiredTasks.length & noDateTasks.length) === 0 ? styles.empty : "";
+
+    const router = useRouter()
 
     return (
         <main>
@@ -195,20 +175,20 @@ const Home = ({ user }: { user: User }) => {
             <div className={styles.container}>
                 <Profile onClick={toggleMenu} user={user} showMenu />
                 <div className={"header"}>
-                    <h3 className={"title"}>Minhas tarefas</h3>
+                    <h3 className={"title"}><Translate>My tasks</Translate></h3>
                     <div className={styles.actionButtons}>
                         {
                             user.tasks.length > 0 &&
                             <div className={styles.viewType}>
-                                <span onClick={() => changeViewMode("list")} className={`material-icons-round click static ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
-                                <span onClick={() => changeViewMode('card')} className={`material-icons-round click static ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
+                                <span onClick={() => changeViewMode("list")} className={`material-icons-rounded click static ${styles.icon} ${viewMode === "list" && styles.active}`}>format_list_bulleted</span>
+                                <span onClick={() => changeViewMode('card')} className={`material-icons-rounded click static ${styles.icon} ${viewMode === "card" && styles.active}`}>event_note</span>
                             </div>
                         }
                         <AddTaskButton query={{ userId: user.id, groups: JSON.stringify(user.groups) }} />
                     </div>
                 </div>
                 <div className={styles.subheader}>
-                    <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
+                    <SectionSelector sections={[{ name: TranslateText("Pending"), id: 0 }, { name: TranslateText("Archived"), id: 1 }]} actualSection={actualSection} setSection={setActualSection} />
                     {/* <Button
                         style={{ fontSize: "1.4rem", paddingInline: "2rem", paddingBlock: "0.5rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
                         icon={'filter_alt'}
@@ -217,76 +197,76 @@ const Home = ({ user }: { user: User }) => {
                         title='Filtrar'
                     /> */}
                 </div>
-                <div className={`${styles.tasks} ${viewMode === "card" ? styles.cardView : ""}`}>
+                <div className={`${styles.tasks} ${emptyStyle} ${viewMode === "card" ? styles.cardView : ""}`} >
                     {
-                        actualSection === 'Pendente' ?
+                        actualSection.id === 0 ?
                             monthTasks.length > 0 || otherMonthsTasks.length > 0 ?
                                 <>
                                     {
                                         monthTasks.length > 0 &&
                                         <>
-                                            {viewMode === 'list' && <h5>Este mês</h5>}
+                                            {viewMode === 'list' && <h5><Translate>This month</Translate></h5>}
                                             {monthTasks}
                                         </>
                                     }
                                     {
                                         otherMonthsTasks.length > 0 &&
                                         <>
-                                            {viewMode === 'list' && <h5>Próximos meses</h5>}
+                                            {viewMode === 'list' && <h5><Translate>Next months</Translate></h5>}
                                             {otherMonthsTasks}
                                         </>
                                     }
                                 </>
                                 :
-                                <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente para você :)`} />
+                                <EmptyTasksMessage description={TranslateText("Looks like there are no pending tasks for you :)")} />
                             :
                             concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 || noDateTasks.length > 0 ?
                                 <>
-                                    {concludedTasks.length > 0 && viewMode === 'list' && <h5>Concluído</h5>}
+                                    {concludedTasks.length > 0 && viewMode === 'list' && <h5><Translate>Concluded</Translate></h5>}
                                     {concludedTasks}
-                                    {noDateTasks.length > 0 && viewMode === 'list' && <h5>Sem data</h5>}
+                                    {noDateTasks.length > 0 && viewMode === 'list' && <h5><Translate>No date</Translate></h5>}
                                     {noDateTasks}
-                                    {expiredTasks.length > 0 && viewMode === 'list' && <h5>Expirado</h5>}
+                                    {expiredTasks.length > 0 && viewMode === 'list' && <h5><Translate>Expired</Translate></h5>}
                                     {expiredTasks}
-                                    {expiredTasks.length > 0 && viewMode === 'list' && <h5>Arquivado</h5>}
+                                    {expiredTasks.length > 0 && viewMode === 'list' && <h5><Translate>Archived</Translate></h5>}
                                     {archivedTasks}
                                 </>
                                 :
-                                <EmptyTasksMessage description={`Parece que não há nenhuma tarefa arquivada por aqui :)`} />
+                                <EmptyTasksMessage description={TranslateText("Looks like there aren't any tasks archived around here :)")} />
                     }
                 </div>
             </div>
             <Menu />
             {
-                !alreadyShownModal &&
+                router.query?.newAccount &&
                 <LandingIntroModal sections={[
                     {
-                        title: 'Bem-vindo ao estudaí',
-                        description: "Estamos felizes em ter você por aqui.\n Acompanhe algumas dicas rápidas pra te fazer aproveitar todas as funcionalidades.",
+                        title: TranslateText("Welcome to estudaí"),
+                        description: TranslateText("We're happy to have you here.\nHere are some quick tips to make you enjoy all the features."),
                         image_path: Modal1Image,
                         imageSize: { height: 225, width: 400 }
                     },
                     {
-                        title: 'Organize seus estudos',
-                        description: "Salve atividades, avaliações e eventos na plataforma para evitar aquela correria momentos antes da data de entrega.",
+                        title: TranslateText("Organize your study flow"),
+                        description: TranslateText("Save activities, tests and events on the platform to avoid any rush moments before the due date."),
                         image_path: Modal2Image,
                         imageSize: { height: 100, width: 400 }
                     },
                     {
-                        title: 'Mantenha-se em dia com seus compromissos',
-                        description: "Participe e crie grupos comunitários para unir aquela galera que tem os mesmos objetivos que você.",
+                        title: TranslateText("Keep up with your appointments"),
+                        description: TranslateText("Participate and create community groups to unite those people who have the same goals as you."),
                         image_path: Modal3Image,
                         imageSize: { height: 180, width: 400 }
                     },
                     {
-                        title: 'Acompanhe o progresso de suas tarefas',
-                        description: "Marque anexos e links enviados por outros usuários em tarefas e tenha o controle de quais materiais você já utilizou.",
+                        title: TranslateText("Track the progress of your tasks"),
+                        description: TranslateText("Tag attachments and links sent by other users in assignments and keep track of which materials you've already used."),
                         image_path: Modal4Image,
                         imageSize: { height: 180, width: 400 }
                     },
                     {
-                        title: 'Desbrave e aproveite',
-                        description: "O estudaí é todo seu.\nAproveite todas as funcionalidades preparadas com carinho para você e bom aprendizado!\nfeito com ❤️ por @theduardomaciel",
+                        title: TranslateText("Explore and enjoy"),
+                        description: TranslateText("estudaí is all yours.\nEnjoy all the features lovingly prepared for you and good learning!\nMade with ❤️ by @theduardomaciel"),
                         image_path: Modal5Image,
                         marginTop: "3.5rem",
                         imageSize: { height: 350, width: 400 }
@@ -296,5 +276,3 @@ const Home = ({ user }: { user: User }) => {
         </main>
     )
 }
-
-export default Home;

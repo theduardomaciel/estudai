@@ -3,7 +3,7 @@ import Spinner from "../Spinner";
 
 import styles from "./button.module.css"
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     title?: string;
     classes?: string;
     isLoading?: boolean;
@@ -21,11 +21,11 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     preset?: 'sendForm' | 'fillHover'
 }
 
-const Button = React.forwardRef(function Button({ title, classes, isLoading, icon, coloredSpinner, accentColor, iconProps, isSelected, preset, children, disableHoverEffect, ...rest }: ButtonProps, ref) {
+const Button = React.forwardRef(function Button({ title, classes, disabled, isLoading, icon, coloredSpinner, accentColor, iconProps, isSelected, preset, children, disableHoverEffect, ...rest }: ButtonProps, ref) {
     return <button
         type={preset === "sendForm" ? "submit" : "button"}
-        className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading ? styles.loading : ""} ${isSelected ? 'selected' : ""} ${disableHoverEffect ? 'disableHoverEffect' : ""}`}
-        disabled={isLoading}
+        className={`${classes} ${styles.button} button ${preset ? styles[preset] : ""} ${isLoading || disabled ? styles.loading : ""} ${isSelected ? 'selected' : ""} ${disableHoverEffect ? 'disableHoverEffect' : ""}`}
+        disabled={disabled || isLoading}
         {...rest}
     >
         {
@@ -46,7 +46,7 @@ const Button = React.forwardRef(function Button({ title, classes, isLoading, ico
                                     /*  color: iconProps?.color ? iconProps.color : "var(--light)" */
                                 }}
                                 /* className={`material-symbols-rounded ${iconProps?.filled ? "instantFilled" : "instantOutlined"}`} */
-                                className={iconProps?.filled ? `material-icons-round` : 'material-icons-outlined'}
+                                className={iconProps?.filled ? `material-icons-rounded` : 'material-icons-outlined'}
                             >
                                 {icon}
                             </span> :

@@ -23,25 +23,25 @@ import PiIcon from "/public/landing/pi.svg";
 import EnergyIcon from "/public/landing/energy.svg";
 import PaperPlaneIcon from "/public/landing/paper_plane.svg";
 import BaskharaIcon from "/public/landing/baskhara.svg";
+import Translate, { TranslateText } from '../components/Translate';
 
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
-
-    if (token) {
-        return {
-            redirect: {
-                destination: "/home",
-                permanent: false
-            }
-        }
-    }
-
-    return {
-        props: {}
-    }
+export function LandingNote({ showOnlyInDesktop, showOnlyInMobile }: { showOnlyInDesktop?: boolean, showOnlyInMobile?: boolean }) {
+    return (
+        <Note
+            showOnlyInDesktop={showOnlyInDesktop}
+            showOnlyInMobile={showOnlyInMobile}
+            tag='ALPHA'
+            description={{
+                landscape: TranslateText(`${TranslateText("This project is still in progress")}, ${TranslateText("so expect bugs and other issues")}.`),
+                portrait: TranslateText(`${TranslateText("This project is still in progress")}.`)
+            }}
+        />
+    )
 }
 
-const Landing: NextPage = () => {
+export type NextPageWithTheme = NextPage & { theme: string };
+
+const Landing: NextPageWithTheme = () => {
     return (
         <main className={styles.holder}>
             <Head>
@@ -60,23 +60,16 @@ const Landing: NextPage = () => {
             <PaperPlaneIcon className={styles.paperPlane} />
             <BaskharaIcon className={styles.baskhara} />
             <StarIcon className={styles.star2} />
-            <Note
-                showOnlyInMobile
-                tag='ALPHA'
-                description={{
-                    landscape: "Este projeto ainda está em andamento, portanto, espere bugs e outros problemas.",
-                    portrait: "Este projeto ainda está em andamento."
-                }}
-            />
-            <div className={styles.container}>
 
+            <div className={styles.container}>
+                <LandingNote showOnlyInMobile />
                 <div className={styles.title}>
-                    <h1>Organize seus estudos.</h1>
-                    <p>Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.</p>
+                    <h1><Translate>Organize your study flow</Translate>.</h1>
+                    <p><Translate>Put an end to desperate revisions 15 minutes before the test once and for all</Translate>.</p>
                     <Link href={"/auth/register"}>
                         <Button
                             icon={'arrow_right_alt'}
-                            title={"Criar uma conta"}
+                            title={TranslateText("Create an account")}
                             style={{ padding: "1rem 1.5rem", backgroundColor: "var(--primary-02)", borderRadius: "0.5rem", flexDirection: "row-reverse", zIndex: 5 }}
                         />
                     </Link>
@@ -88,4 +81,5 @@ const Landing: NextPage = () => {
     )
 }
 
+Landing.theme = "default";
 export default Landing;

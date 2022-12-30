@@ -24,7 +24,7 @@ router
     .post(async (req, res) => {
         const { meta } = req.body;
 
-        const { ['auth.token']: token, ['auth.googleRefreshToken']: googleRefreshToken } = req.cookies;
+        const { ['estudai.token']: token, ['auth.googleRefreshToken']: googleRefreshToken } = req.cookies;
         const userId = await getUserIdByToken(token as string) as number;
 
         async function getFolderId(token: string) {

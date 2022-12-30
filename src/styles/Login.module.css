@@ -49,6 +49,7 @@
     align-items: flex-start;
     justify-content: flex-start;
 
+    width: 100%;
     gap: 2.5rem;
 }
 

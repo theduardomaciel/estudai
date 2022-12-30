@@ -9,6 +9,7 @@ import FormatToolbar from '../FormatToolbar';
 // Stylesheets
 import styles from "./editor.module.css";
 import inputStyles from "../Input/label.module.css";
+import { TranslateText } from '../Translate';
 
 
 //const CustomEditorContent = ({ editor }: { editor: any }) => <EditorContent className={`${inputStyles.input} ${styles.input}`} editor={editor} />;
@@ -22,7 +23,7 @@ interface Props {
 export default function CustomEditor({ editor, title, inError }: Props) {
     return <div className={styles.column}>
         <div className={'header'}>
-            <Section classes={styles.descriptionHeader} title={title ? title : "Descrição"} />
+            <Section classes={styles.descriptionHeader} title={title ? title : TranslateText("Description")} />
             <FormatToolbar editor={editor as Editor} />
         </div>
         <div className={styles.input}>

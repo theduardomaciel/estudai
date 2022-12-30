@@ -16,10 +16,12 @@ import TopicsGroup from "../Topic/TopicsGroup";
 import styles from "./focus.module.css"
 import Modal from "../Modal";
 import useHorizontalScroll from "../../hooks/useHorizontalScroll";
+import Translate, { TranslateText } from "../Translate";
+import { parseCookies, setCookie } from "nookies";
 
 // Types
 interface Props {
-
+    language?: string;
 }
 
 export interface Focus {
@@ -27,14 +29,6 @@ export interface Focus {
     topicId: number;
     totalTime: number; // em mili segundos
 }
-
-const focusData = [
-    { icon: '📒', title: 'Resumo' },
-    { icon: '📚', title: 'Leitura do Livro' },
-    { icon: '📖', title: 'Leitura' },
-    { icon: '📝', title: 'Atividade' },
-    { icon: '📌', title: 'Revisão' }
-];
 
 const getCountdownTimes = (countdownSeconds: number) => {
     const hours = Math.floor(countdownSeconds / 3600)
@@ -78,7 +72,7 @@ const transition = {
     opacity: { duration: 0.75 },
 }
 
-export default function Focus({ }: Props) {
+export default function Focus({ language }: Props) {
     const { moveScroll } = useHorizontalScroll('topicsScroll');
 
     const topicIdRef = useRef<number>(-1);
@@ -88,18 +82,29 @@ export default function Focus({ }: Props) {
     const pauseInterval = (focusMinutes as number * 60) / (focusPauses + 1)
 
     const { currentFocus, startNewFocus, removeFocus } = useAppContext();
-
     const [errorMessage, setErrorMessage] = useState("");
+
+    const focusData = [
+        { icon: '📒', title: TranslateText("Abstract") },
+        { icon: '📚', title: TranslateText("Book reading") },
+        { icon: '📖', title: TranslateText("Article reading") },
+        { icon: '📝', title: TranslateText("Assignment") },
+        { icon: '📌', title: TranslateText("Review") }
+    ];
+
+    const TITLE_MISSING = TranslateText("You forgot to give the focus a title!")
+    const CATEGORY_MISSING = TranslateText("You forgot to choose a focus category!")
+
     function StartFocus(event: React.FormEvent<HTMLFormElement>) {
         const formData = new FormData(event.currentTarget);
         const data = Object.fromEntries(formData.entries()) as unknown as { focusName: string };
 
         if (!data.focusName) {
-            return setErrorMessage("Você esqueceu de dar um título ao foco!")
+            return setErrorMessage(TITLE_MISSING)
         }
 
         if (topicIdRef.current === -1) {
-            return setErrorMessage("Você esqueceu de escolher uma categoria para o foco!")
+            return setErrorMessage(CATEGORY_MISSING)
         }
 
         if (data.focusName && topicIdRef.current !== -1) {
@@ -108,7 +113,7 @@ export default function Focus({ }: Props) {
         }
     }
 
-    const [hasNotificationPermission, setHasNotificationPermission] = useState(true);
+    const [hasNotificationPermission, setHasNotificationPermission] = useState(false);
 
     async function grantNotificationPermission() {
         if (typeof Notification !== 'undefined') {
@@ -134,7 +139,11 @@ export default function Focus({ }: Props) {
     }
 
     useEffect(() => {
-        setHasNotificationPermission(Notification.permission === "granted")
+        const ignoredFocus = parseCookies().ignoredFocus;
+        console.log(ignoredFocus, Notification.permission)
+        if (ignoredFocus === "true" || Notification.permission === "granted") {
+            setHasNotificationPermission(true)
+        }
 
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
@@ -163,7 +172,7 @@ export default function Focus({ }: Props) {
                 >
                     <header>
                         <div className={styles.column}>
-                            <h5>Epa, epa, epa!</h5>
+                            <h5><Translate>Wait a little bit!</Translate></h5>
                             <div className={styles.iconHolder}>
                                 <p>{errorMessage}</p>
                             </div>
@@ -171,7 +180,7 @@ export default function Focus({ }: Props) {
                     </header>
                     <Button
                         icon={'keyboard_return'}
-                        title="Voltar"
+                        title={TranslateText("Return")}
                         style={{ width: "100%" }}
                         onClick={() => setErrorMessage("")}
                     />
@@ -188,28 +197,34 @@ export default function Focus({ }: Props) {
                     >
                         <header>
                             <div className={styles.column}>
-                                <h5>Tá faltando alguma coisa...</h5>
+                                <h5><Translate>Something's missing...</Translate></h5>
                                 <div className={styles.iconHolder}>
-                                    <p>Para aproveitar o máximo do Foco precisamos que você nos permita enviar notificações!</p>
+                                    <p><Translate>To get the most out of Focus we need you to allow us to send you notifications!</Translate></p>
                                 </div>
                             </div>
                         </header>
                         <Button
                             icon={'notifications'}
-                            title="Permitir"
+                            title={TranslateText("Allow")}
                             style={{ width: "100%" }}
                             onClick={grantNotificationPermission}
                         />
                         <Button
                             icon={'notifications_paused'}
-                            title="Prefiro não ser notificado"
+                            title={TranslateText("I prefer not to be notified")}
                             style={{ width: "100%" }}
-                            onClick={() => setHasNotificationPermission(true)}
+                            onClick={() => {
+                                setCookie(null, 'estudai.ignoreFocus', "true", {
+                                    path: '/',
+                                    maxAge: 15,
+                                })
+                                setHasNotificationPermission(true)
+                            }}
                         />
                     </motion.div>
                     :
                     <>
-                        <Input label='Nome da tarefa' name="focusName" placeholder='Insira o nome da tarefa aqui' height={'3.85rem'} maxLength={25} />
+                        <Input label={TranslateText('Task name')} name="focusName" placeholder={TranslateText("Insert the task name here")} height={'3.85rem'} maxLength={25} />
                         <div className={'row'} style={{ gap: "1.5rem" }}>
                             <span className={`material-symbols-rounded click static`} style={{ color: "var(--primary-02)" }} onClick={() => moveScroll(-25)}>chevron_left</span>
                             <TopicsGroup topics={focusData} topicIdRef={topicIdRef} />
@@ -225,19 +240,19 @@ export default function Focus({ }: Props) {
                                 }
                             }}
                             value={focusMinutes}
-                            label='Tempo de atividade'
+                            label={TranslateText("Activity duration")}
                             /* placeholder='escolha um tempo confortável <3' */
                             placeholder="60"
                             maxLength={5}
                             type={'text'}
                             height={'3.85rem'}
-                            fixedUnit='minutos'
+                            fixedUnit='minutes'
                         />
                         <div /* style={{ gap: "2.5rem" }} */ className="row">
-                            <Button icon={'av_timer'} title={'Iniciar Foco'} preset="sendForm" />
+                            <Button icon={'av_timer'} title={TranslateText("Begin Focus")} preset="sendForm" />
                             <Separator decorative orientation="vertical" />
-                            <p className={styles.intervalCount}>Você terá <br />
-                                <span>{focusPauses} intervalo{focusPauses !== 1 && "s"}</span></p>
+                            <p className={styles.intervalCount}><Translate>You will have</Translate> <br />
+                                <span>{focusPauses} <Translate>break</Translate>{focusPauses !== 1 && "s"}</span></p>
                         </div>
                     </>
         }
@@ -272,18 +287,18 @@ export default function Focus({ }: Props) {
                     status === "interval" ?
                         <>
                             <div className={styles.column}>
-                                <h5>Hora da pausa!</h5>
+                                <h5><Translate>Break time!</Translate></h5>
                                 <div className={styles.iconHolder}>
-                                    <p>Ninguém é feito de aço, então levanta essa bunda da cadeira e vai beber uma aguinha :)</p>
+                                    <p><Translate>You're doing well! But you're still not made of steel, so get off the chair and go drink some water :)</Translate></p>
                                 </div>
                             </div>
                         </>
                         : status === 'inactive' ?
                             <>
                                 <div className={styles.column}>
-                                    <h5>E chegamos ao fim!</h5>
+                                    <h5><Translate>And it comes to an end!</Translate></h5>
                                     <div className={styles.iconHolder}>
-                                        <p>Parabéns por ter mantido o foco até aqui.</p>
+                                        <p><Translate>Congrats on staying focused this far.</Translate></p>
                                     </div>
                                 </div>
                             </>
@@ -299,7 +314,7 @@ export default function Focus({ }: Props) {
                                 <div className={styles.info}>
                                     <div className={styles.column} style={{ alignItems: "flex-end" }}>
                                         <h6>{actualSection}/{focusPauses + 1}</h6>
-                                        {focusPauses + 1 > 1 && <p>{Math.floor(timePerSection)} minuto{Math.floor(timePerSection) !== 1 ? 's' : ""}</p>}
+                                        {focusPauses + 1 > 1 && <p>{Math.floor(timePerSection)} <Translate>minute</Translate>{Math.floor(timePerSection) !== 1 ? 's' : ""}</p>}
                                     </div>
                                     {
                                         status as 'interval' | 'active' | 'inactive' !== "interval" && <span
@@ -335,7 +350,7 @@ export default function Focus({ }: Props) {
                     :
                     <Button
                         icon={'keyboard_return'}
-                        title="Voltar"
+                        title={TranslateText("Return")}
                         style={{ width: "100%" }}
                         onClick={() => removeFocus()}
                     />
@@ -358,7 +373,7 @@ export default function Focus({ }: Props) {
                 exit="exit"
                 transition={transition}
             >
-                <h3>Foco</h3>
+                <h3><Translate>Focus</Translate></h3>
                 {
                     currentFocus &&
                     <div className={styles.focusInfo} >

@@ -142,13 +142,13 @@ export default function Calendar(props: Props) {
                 <div style={{ justifyContent: "space-between" }} className={`${styles.days} row`}>
                     {
                         currentMonth.current !== 0 ?
-                            <span className={`material-icons-round click static`} onClick={decreaseMonth}>chevron_left</span>
+                            <span className={`material-icons-rounded click static`} onClick={decreaseMonth}>chevron_left</span>
                             : <div style={{ width: 24 }}></div>
                     }
                     <p>{months[currentMonth.current]}</p>
                     {
                         currentMonth.current !== 11 ?
-                            <span className={`material-icons-round click static `} onClick={increaseMonth}>chevron_right</span>
+                            <span className={`material-icons-rounded click static `} onClick={increaseMonth}>chevron_right</span>
                             : <div style={{ width: 24 }}></div>
                     }
                 </div>

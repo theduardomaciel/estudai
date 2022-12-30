@@ -18,6 +18,7 @@ import LinkAttachment from "./Link";
 import Modal from "../Modal";
 import Input from "../Input";
 import useHorizontalScroll from "../../hooks/useHorizontalScroll";
+import Translate, { TranslateText } from "../Translate";
 
 type Props = React.StyleHTMLAttributes<HTMLInputElement> & {
     attachments: any[];
@@ -133,7 +134,7 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
 
         return <div id="tagsScroll" className={styles.tagsHolder}>
             <div>
-                <span className="material-icons-round">sell</span>
+                <span className="material-icons-rounded">sell</span>
                 <p>Tags</p>
             </div>
             <AttachmentTag index={"1"} tagId={1} />
@@ -145,11 +146,11 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
 
     return <div className={createTaskStyles.column} {...rest}>
         <div className='header'>
-            <Section title='Anexos' />
+            <Section title={TranslateText("Attachments")} />
             <Button
                 style={{ backgroundColor: "var(--primary-02)", padding: "0.5rem 1rem", border: "1px solid var(--primary-04)" }}
                 icon={"link"}
-                title='Adicionar link'
+                title={`${TranslateText("Add")} ${TranslateText("link")}`}
                 onClick={() => setLinksModalVisible(true)}
             />
         </div>
@@ -197,17 +198,17 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
                                 {
                                     !hasFiles &&
                                     <>
-                                        <h6>Arraste arquivos para cá</h6>
-                                        <p>ou</p>
+                                        <h6><Translate>Drag files here</Translate></h6>
+                                        <p><Translate>or</Translate></p>
                                     </>
                                 }
-                                <label className={`${styles.searchFile} ${buttonStyles.button}`} htmlFor="attachmentUpload">{hasFiles ? "Adicionar arquivo" : "Escolher arquivo"}</label>
+                                <label className={`${styles.searchFile} ${buttonStyles.button}`} htmlFor="attachmentUpload">{hasFiles ? `${TranslateText("Add")} ${TranslateText("file")}` : `${TranslateText("Choose")} ${TranslateText("file")}`}</label>
                             </div>
                             <div className={styles.afterHover}>
                                 <span className={`material-symbols-rounded filled`}>
                                     upload_file
                                 </span>
-                                <h6>Solte para carregar</h6>
+                                <h6><Translate>Drop to upload</Translate></h6>
                             </div>
                         </div>
                     }
@@ -222,20 +223,20 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
                 </div>
                 :
                 <div className={`${styles.attachmentHolder} ${styles.expired}`}>
-                    <span className={`${styles.icon} static material-icons-round`}>
+                    <span className={`${styles.icon} static material-icons-rounded`}>
                         sentiment_dissatisfied
                     </span>
                     <div className="">
                         {
                             !hasGoogleAuthentication ?
                                 <>
-                                    <p>{`Eita!\nParece que o nosso acesso a sua conta Google expirou :(`}</p>
-                                    <p>Para anexar arquivos novamente, entre novamente na plataforma para revalidar seus dados.</p>
+                                    <p>{TranslateText("Jeez!\Looks like our access to your Google account has expired :(")}</p>
+                                    <p><Translate>To attach files again, enter the platform again to revalidate your data.</Translate></p>
                                 </>
                                 :
                                 <>
-                                    <p>{`Eita!\nTivemos um problema interno no servidor :(`}</p>
-                                    <p>Por favor, tente reiniciar a página para resolver o erro.</p>
+                                    <p>{`${TranslateText("It looks like we had an internal server problem.")} :(`}</p>
+                                    <p><Translate>Please try restarting the page to resolve the error.</Translate></p>
                                 </>
                         }
                     </div>
@@ -246,9 +247,9 @@ export default function AttachmentsLoader({ attachments, setAttachments, links, 
             color={`var(--primary-02)`}
             icon={'link'}
             toggleVisibility={() => setLinksModalVisible(!isLinksModalVisible)}
-            title={"Insira o link abaixo:"}
+            title={`${TranslateText("Insert the link below")}:`}
             actionProps={{
-                buttonText: "ADICIONAR",
+                buttonText: TranslateText("ADD"),
                 function: () => {
                     if (linkInputValue.current.length > 10 && isValidUrl(linkInputValue.current)) {
                         setLinks(links.concat(linkInputValue.current))

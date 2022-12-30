@@ -77,6 +77,8 @@
     font-weight: 500;
     font-size: 1.6rem;
 
+    white-space: nowrap;
+
     color: var(--font-light);
     cursor: pointer;
     transition: 0.45s;
@@ -100,12 +102,31 @@
     gap: 2.5rem;
 }
 
-.deleteFooter {
-    background-color: var(--red-01);
-}
-
 .icon {
     display: flex;
+}
+
+.avatarSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.avatar {
+    width: 7.5rem;
+    height: 7.5rem;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #502D8A 0%, #9747FF 100%);
+
+    cursor: pointer;
+}
+
+.avatar.selected {
+    outline: 3.5px solid var(--primary-02);
+    outline-offset: 0.25rem;
 }
 
 @media (min-width: 1024px) {

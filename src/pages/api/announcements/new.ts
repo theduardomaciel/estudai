@@ -14,10 +14,8 @@ router
     //.use(isAuthenticated)
     .use(expressWrapper(cors()))
     .post(async (req, res) => {
-        console.log(req.body)
         try {
             const userId = parseInt(req.body.userId);
-            console.log(userId)
 
             if (!userId || typeof userId === "string") {
                 console.log('O ID do usuário não foi informado corretamente.')

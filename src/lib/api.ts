@@ -2,7 +2,7 @@ import axios from "axios";
 import { parseCookies } from "nookies";
 
 export function getAPIClient(ctx?: any, preToken?: string) {
-    const { 'auth.token': token } = parseCookies(ctx)
+    const { 'estudai.token': token } = parseCookies(ctx)
 
     const api = axios.create({
         baseURL: '/api'

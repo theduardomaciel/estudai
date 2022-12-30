@@ -23,7 +23,7 @@ interface GoogleResponse {
 function getAppAuthenticationToken(user_email: string) {
     const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
     console.log(jwtSecretKey)
-    const token = jwt.sign({ user_email }, jwtSecretKey);
+    const token = jwt.sign({ email: user_email }, jwtSecretKey);
     console.log("CRIOU", token)
     return token;
 }

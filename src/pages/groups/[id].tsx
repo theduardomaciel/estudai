@@ -25,27 +25,16 @@ import { Separator } from '../../components/Separator';
 import Modal from '../../components/Modal';
 import { api } from '../../lib/api';
 import { useRouter } from 'next/router';
-import getUser from '../../services/getUser';
+import getUser from '../../services/getUserByToken';
 import { User } from '../../types/User';
 import Input, { InputLabel } from '../../components/Input';
 import Image from 'next/image';
 import UsersPortraits from '../../components/UsersPortraits';
 import UsersModalPreset from '../../components/Modal/Presets/UsersModal';
+import Translate, { TranslateText } from '../../components/Translate';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
-
-    const userId = await getUserIdByToken(token);
-
-    if (userId === null) {
-        await removeCookies(context);
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        }
-    }
+    const { ['estudai.token']: token } = parseCookies(context)
 
     const groupId = parseInt(context.query.id as string);
 
@@ -64,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         group = null
     }
 
-    let user = await getUser(userId as number, 'full') as unknown as User;
+    let user = await getUser(token, "full", "full") as unknown as User;
 
     user.tasks.map((task, index) => {
         const date = new Date(task.date);
@@ -96,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 
 const Group = ({ group, user }: { group: Group, user: User }) => {
     const router = useRouter();
-    const [actualSection, setActualSection] = useState('Pendente');
+    const [actualSection, setActualSection] = useState({ name: TranslateText("Pending"), id: 0 });
 
     const [isShareModalVisible, setShareModalVisible] = useState(false);
     const linkTextRef = useRef<HTMLParagraphElement>(null);
@@ -105,7 +94,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
     function onLinkClick() {
         navigator.clipboard.writeText(url)
         if (linkTextRef.current) {
-            linkTextRef.current.textContent = "Copiado para a área de transferência!"
+            linkTextRef.current.textContent = TranslateText("Copied to clipboard!")
             setTimeout(() => {
                 if (linkTextRef.current) {
                     linkTextRef.current.textContent = url
@@ -231,25 +220,25 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
             </Head>
             <Sidebar />
             <div className={styles.container}>
-                <Navigator directory={'Grupos'} />
+                <Navigator directory={TranslateText("Groups")} />
                 <div className={styles.header}>
                     <h1>{group.name} </h1>
                     <div className={styles.details}>
-                        <h4>Detalhes</h4>
+                        <h4><Translate>Details</Translate></h4>
                         <div className={styles.info}>
                             <span className={'material-symbols-rounded static'}>group</span>
-                            <p>{group.users.length} participante{group.users.length > 1 ? 's' : ''}</p>
+                            <p>{group.users.length} <Translate>participant</Translate>{group.users.length > 1 ? 's' : ''}</p>
                         </div>
                         <div className={styles.info}>
                             <span className={'material-symbols-rounded static'}>schedule</span>
-                            <p>desde {formatDate(group.createdAt as number)}</p>
+                            <p><Translate>since</Translate> {formatDate(group.createdAt as number)}</p>
                         </div>
                     </div>
                 </div>
                 <div className={styles.content}>
                     <div className={styles.tasks}>
                         <div className={homeStyles.subheader}>
-                            <SectionSelector sections={["Pendente", "Arquivado"]} actualSection={actualSection} setSection={setActualSection} />
+                            <SectionSelector sections={[{ name: TranslateText("Pending"), id: 0 }, { name: TranslateText("Archived"), id: 1 }]} actualSection={actualSection} setSection={setActualSection} />
                             {/* <Button
                                 style={{ fontSize: "1.4rem", paddingInline: "1.15rem", paddingBlock: "1.15rem", backgroundColor: "var(--font-light)", cursor: "not-allowed" }}
                                 icon={'filter_alt'}
@@ -259,25 +248,25 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         </div>
                         <div className={`${homeStyles.tasks}`}>
                             {
-                                actualSection === 'Pendente' ?
+                                actualSection.id === 0 ?
                                     pendingTasks.length > 0 ?
                                         pendingTasks
                                         :
-                                        <EmptyTasksMessage description={`Parece que não há nenhuma tarefa pendente neste grupo pra você :)`} />
+                                        <EmptyTasksMessage description={TranslateText("It looks like there are no pending tasks in this group for you :)")} />
                                     :
                                     concludedTasks.length > 0 || expiredTasks.length > 0 || expiredTasks.length > 0 || noDateTasks.length > 0 ?
                                         <>
-                                            {concludedTasks.length > 0 && <h5>Concluído</h5>}
+                                            {concludedTasks.length > 0 && <h5><Translate>Concluded</Translate></h5>}
                                             {concludedTasks}
-                                            {noDateTasks.length > 0 && <h5>Sem data</h5>}
+                                            {noDateTasks.length > 0 && <h5><Translate>No date</Translate></h5>}
                                             {noDateTasks}
-                                            {expiredTasks.length > 0 && <h5>Expirado</h5>}
+                                            {expiredTasks.length > 0 && <h5><Translate>Expired</Translate></h5>}
                                             {expiredTasks}
-                                            {expiredTasks.length > 0 && <h5>Arquivado</h5>}
+                                            {expiredTasks.length > 0 && <h5><Translate>Archived</Translate></h5>}
                                             {archivedTasks}
                                         </>
                                         :
-                                        <EmptyTasksMessage description={`Parece que não há nenhuma tarefa arquivada neste grupo por aqui :)`} />
+                                        <EmptyTasksMessage description={TranslateText("Looks like there aren't any tasks archived in this group around here :)")} />
                             }
                         </div>
                     </div>
@@ -286,12 +275,12 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                             <AddTaskButton width='100%' query={{ userId: user.id, groups: JSON.stringify(user.groups), selectedGroupId: group.id }} />
                             <div className={`${styles.pinnedMessageContainer} ${styles.sidebarContainer}`}>
                                 <header>
-                                    <span className={'material-icons-round static'}>push_pin</span>
-                                    Mensagem Fixada
+                                    <span className={'material-icons-rounded static'}>push_pin</span>
+                                    <Translate>Pinned message</Translate>
                                 </header>
                                 <p>{group.pinnedMessage && group.pinnedMessage.length > 0 ? group.pinnedMessage : "[nenhuma]"}</p>
                                 <Button
-                                    title='ESTOU CIENTE'
+                                    title={TranslateText("I'M AWARE")}
                                     onClick={toggleUserInteraction}
                                     icon={'check'}
                                     isSelected={userInteracted}
@@ -304,18 +293,18 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                             </div>
                             <div className={`${styles.tasksInfoContainer} ${styles.sidebarContainer}`}>
                                 <div>
-                                    <p>Atividades pendentes</p>
+                                    <p><Translate>Pending tasks</Translate></p>
                                     <h6>{pendingTasks.length}</h6>
                                 </div>
                                 <Separator orientation='horizontal' />
                                 <div>
-                                    <p>Atividades concluídas</p>
+                                    <p><Translate>Concluded tasks</Translate></p>
                                     <h6>{concludedTasks.length}</h6>
                                 </div>
                             </div>
                             <div className={`${styles.sidebarContainer}`}>
                                 <Button
-                                    title='CONVIDAR USUÁRIOS'
+                                    title={TranslateText("INVITE USERS")}
                                     onClick={() => setShareModalVisible(true)}
                                     icon={'share'}
                                     iconProps={{ size: "1.8rem" }}
@@ -324,7 +313,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                 {
                                     user.groups.find((group, i) => group.id === group.id) &&
                                     <Button
-                                        title='CONFIGURAÇÕES'
+                                        title={TranslateText("SETTINGS")}
                                         onClick={() => setConfigModalVisible(true)}
                                         icon={'tune'}
                                         iconProps={{ size: "1.8rem", color: "var(--font-light)" }}
@@ -332,14 +321,16 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                                         style={{ width: "100%", padding: "1rem 1.5rem" }}
                                     />
                                 }
-                                <Button
-                                    title='SAIR DO GRUPO'
-                                    onClick={() => setExitModalVisible('default')}
-                                    icon={'exit_to_app'}
-                                    iconProps={{ color: "var(--red-01)" }}
-                                    preset={"fillHover"}
-                                    style={{ width: "100%", padding: "0.5rem 1.5rem" }}
-                                />
+                                {
+                                    user.groups.find((userGroup, i) => userGroup.id === group.id) ? false : true && <Button
+                                        title={TranslateText("LEAVE GROUP")}
+                                        onClick={() => setExitModalVisible('default')}
+                                        icon={'exit_to_app'}
+                                        iconProps={{ color: "var(--red-01)" }}
+                                        preset={"fillHover"}
+                                        style={{ width: "100%", padding: "0.5rem 1.5rem" }}
+                                    />
+                                }
                             </div>
                         </div>
                     </aside>
@@ -351,10 +342,11 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 icon={'share'}
                 iconProps={{ position: "flex-start", builtWithTitle: true, size: "3.8rem" }}
                 color={`var(--primary-02)`}
-                title={'Olha aqui o link ó:'}
+                title={`${TranslateText("Invite link")}:`}
             >
-                <p style={{ color: "var(--primary-02)" }}>Compartilhe-o com outros usuários da plataforma para que eles possam entrar no grupo e participar de sua comunidade!
-                    <br />Tarefas enviadas em um grupo serão visíveis para todos que estiverem nele!
+                <p style={{ color: "var(--primary-02)" }}>
+                    <Translate>Share it with other platform users so they can join the group and participate in your community!</Translate> <br />
+                    <Translate>Tasks sent in a group will be visible to everyone in it!</Translate>
                 </p>
                 <div className={`${inputStyles.input} hoverLink`} style={{ overflow: "hidden" }} onClick={onLinkClick}>
                     <p ref={linkTextRef}>{url}</p>
@@ -366,15 +358,15 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 toggleVisibility={() => setExitModalVisible('')}
                 icon={'exit_to_app'}
                 color={`var(--primary-02)`}
-                title={isExitModalVisible === 'default' ? 'Tem certeza que deseja sair do grupo?' : "Epa. Algo deu ruim."}
+                title={isExitModalVisible === 'default' ? TranslateText("Are you sure you want to leave the group?") : TranslateText("Oh. Looks like something went bad.")}
                 actionProps={{
-                    buttonText: "SAIR DO GRUPO",
+                    buttonText: TranslateText("LEAVE GROUP"),
                     disabled: isExitModalVisible !== 'default',
                     function: exitGroup
                 }}
                 suppressReturnButton={isExitModalVisible !== 'default'}
                 isLoading={isLoading}
-                description={isExitModalVisible === 'default' ? "Para voltar a participar do grupo será necessário ser convidado por um integrante ou administrador novamente." : "Por favor, tente novamente mais tarde. Caso o problema persista, nos avise :)"}
+                description={isExitModalVisible === 'default' ? TranslateText("You will no longer be able to see the group's tasks or interact with other group members. You'll only can rejoin the groupif a member or administrator invites you again.") : TranslateText("Please try again later. If the problem persists, let us know :)")}
             >
             </Modal>
             <Modal
@@ -386,13 +378,13 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 iconProps={{ position: "flex-start", builtWithTitle: true, size: "2.8rem" }}
                 color={`var(--primary-02)`}
                 actionProps={{
-                    buttonText: "SALVAR",
+                    buttonText: TranslateText("SAVE"),
                     buttonIcon: 'save',
                     disabled: !hasDeviantInfo,
                     function: updateGroup
                 }}
             >
-                <Input label='Nome do Grupo' placeholder={group.name}
+                <Input label={TranslateText("Group name")} placeholder={group.name}
                     onChange={(event) => {
                         if (event.currentTarget.value.length === 0) {
                             setNewGroupName(group.name)
@@ -402,7 +394,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                     }}
                 />
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
-                    <InputLabel label='Mensagem Fixada' />
+                    <InputLabel label={TranslateText("Pinned message")} />
                     <textarea
                         className={inputStyles.input}
                         style={{ height: "7.5rem" }}
@@ -417,7 +409,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                         }}
                     />
                 </div>
-                <InputLabel label='Participantes' />
+                <InputLabel label={TranslateText("Participants")} />
                 <div className={styles.membersContainer}>
                     {
                         group.users.map((user, index) => <li key={index} className={styles.groupMember}>
@@ -429,7 +421,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                             {
                                 !group.admins.find((admin, i) => admin.id === user.id) &&
                                 <Button
-                                    title='REMOVER PARTICIPANTE'
+                                    title={`${TranslateText("REMOVE")}  ${TranslateText("PARTICIPANT")}}`}
                                     iconProps={{ filled: true, size: '1.8rem' }}
                                     icon={'person_remove'}
                                     style={{
@@ -449,7 +441,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                     }
                 </div>
                 <div className={'dangerZone'}>
-                    <p>Zona de Perigo</p>
+                    <p><Translate>Danger Zone</Translate></p>
                     <Button
                         icon={"delete_forever"}
                         iconProps={{
@@ -457,7 +449,7 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                             size: "1.6rem"
                         }}
                         accentColor={'var(--red-02)'}
-                        title='EXCLUIR GRUPO'
+                        title={`${TranslateText("DELETE")} ${TranslateText("GROUP")}`}
                         style={{
                             width: "100%",
                             backgroundColor: "var(--red-01)",
@@ -474,10 +466,10 @@ const Group = ({ group, user }: { group: Group, user: User }) => {
                 toggleVisibility={() => setDeleteModalVisible(!isDeleteModalVisible)}
                 isLoading={isLoading}
                 color={"var(--red-01)"}
-                title={"Você tem certeza que quer deletar este grupo?"}
-                description={`Ao apagar o grupo TUDO será perdido: tarefa, anexos e usuários.\nNão há como recuperar um grupo após ele ser apagado.`}
+                title={TranslateText("Are you sure you want to delete this group?")}
+                description={TranslateText("When deleting the group EVERYTHING will be lost: tasks, attachments and users.\nThere is no way to recover a group after it has been deleted.")}
                 actionProps={{
-                    buttonText: "DELETAR",
+                    buttonText: TranslateText("DELETE"),
                     function: deleteGroup
                 }}
             />

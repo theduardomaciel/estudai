@@ -5,8 +5,9 @@ import { AnimatePresence, MotionStyle, motion } from "framer-motion";
 
 // Components
 import Button from '../Button';
+import { TranslateText } from '../Translate';
 
-type Props = React.HTMLAttributes<HTMLDivElement> & {
+export type ModalProps = React.HTMLAttributes<HTMLDivElement> & {
     isVisible: boolean;
     style?: MotionStyle;
     toggleVisibility: () => void;
@@ -34,7 +35,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
     suppressReturnButton?: boolean;
 }
 
-export default function Modal({ isVisible, toggleVisibility, style, color, isLoading, icon, title, description, suppressReturnButton, iconProps, actionProps, children, ...rest }: Props) {
+export default function Modal({ isVisible, toggleVisibility, style, color, isLoading, icon, title, description, suppressReturnButton, iconProps, actionProps, children, ...rest }: ModalProps) {
 
     const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const target = event.nativeEvent.target as HTMLDivElement;
@@ -70,7 +71,7 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
                                 <div className={styles.headerContainer} style={{ justifyContent: iconProps?.position ? iconProps?.position : "center" }}>
                                     <div style={{ backgroundColor: color }} className={styles.iconHolder}>
                                         <span
-                                            className={'material-icons-round static'}
+                                            className={'material-icons-rounded static'}
                                             style={{ color: "var(--light)", fontSize: iconProps?.size ? iconProps?.size : "4.8rem" }}>
                                             {icon}
                                         </span>
@@ -110,9 +111,10 @@ export default function Modal({ isVisible, toggleVisibility, style, color, isLoa
                                         !suppressReturnButton && !isLoading /* && iconProps?.position !== "flex-start" */ &&
                                         <Button
                                             onClick={toggleVisibility}
-                                            title={actionProps?.function ? `CANCELAR` : "RETORNAR"}
+                                            title={actionProps?.function ? TranslateText(`Cancel`) : TranslateText("Return")}
                                             icon={actionProps?.function ? 'close' : 'arrow_back'}
                                             style={{
+                                                textTransform: "uppercase",
                                                 background: color ? color === "var(--primary-02)" ? 'var(--primary-04)' : "var(--font-light)" : "var(--primary-02)",
                                                 padding: `0.7rem 1.5rem`
                                             }}

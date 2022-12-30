@@ -21,8 +21,8 @@ import GoogleLogo from "/public/google_logo.svg";
 import Button from '../../components/Button';
 import { Separator } from '../../components/Separator';
 import Device from '../../components/Landing/Device';
-import EarlyAccessModalPreset from '../../components/Modal/Presets/EarlyAccessModal';
-import Note from '../../components/Landing/Note';
+import Translate, { TranslateText } from '../../components/Translate';
+import { NextPageWithTheme } from '..';
 
 interface Props {
     onClick?: () => void;
@@ -30,17 +30,6 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
-
-    if (token) {
-        return {
-            redirect: {
-                destination: "/home",
-                permanent: false
-            }
-        }
-    }
-
     return {
         props: {
 
@@ -50,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 
 export const GoogleButton = (props: any) => <Button
     icon={<GoogleLogo />}
-    title={"Entrar com Google"}
+    title={TranslateText("Sign in with Google")}
     iconProps={{ color: 'var(--primary-02)' }}
     coloredSpinner
     style={{
@@ -71,14 +60,14 @@ export const GoogleButton = (props: any) => <Button
 
 export const ScopeMissing = ({ setSection }: { setSection: () => void }) => <div className={styles.section}>
     <header>
-        <h1>Eita!</h1>
-        <p><strong>Parece que você não nos deu acesso ao Drive :(</strong> <br /> <br />
-            Para poder logar ou criar uma conta é necessário permitir o acesso a todos os escopos solicitados para que você possa enviar anexos em suas tarefas.
+        <h1><Translate>Jeez</Translate>!</h1>
+        <p><strong><Translate>Looks like you didn't give us Drive access.</Translate> :(</strong> <br /> <br />
+            <Translate>To be able to log in or create an account it is necessary to allow access to all requested scopes so that you can send attachments in your tasks.</Translate>
         </p>
     </header>
     <Button
         style={{ padding: "1rem 1.5rem", width: "100%" }}
-        title='Voltar ao início'
+        title={TranslateText("Back to home")}
         onClick={setSection}
     />
     <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
@@ -86,20 +75,20 @@ export const ScopeMissing = ({ setSection }: { setSection: () => void }) => <div
 
 const Error = ({ setSection }: { setSection: () => void }) => <div className={styles.section}>
     <header>
-        <h1>Eita!</h1>
-        <p><strong>Parece que tivemos um problema interno no servidor :(</strong> <br /> <br />
-            Provavelmente, já estamos trabalhando o mais rápido possível para resolver isso. Desde já agradecemos sua compreensão e espera!
+        <h1><Translate>Jeez</Translate>!</h1>
+        <p><strong><Translate>It looks like we had an internal server problem.</Translate> :(</strong> <br /> <br />
+            <Translate>We are probably already working as quickly as possible to resolve this. Thank you in advance for your understanding and waiting!</Translate>
         </p>
     </header>
     <Button
         style={{ padding: "1rem 1.5rem", width: "100%" }}
-        title='Voltar ao início'
+        title={TranslateText("Back to home")}
         onClick={setSection}
     />
     <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
 </div>
 
-const Login: NextPage = () => {
+const Login: NextPageWithTheme = () => {
     const { signIn } = useAuth();
     const router = useRouter();
 
@@ -107,15 +96,6 @@ const Login: NextPage = () => {
     const [section, setSection] = useState<string | null>(null)
 
     const googleLogin = useGoogleLogin({
-        /* onSuccess: async ({ code }) => {
-            const response = await signIn(code) // success | noAccount | scopeMissing
-
-            if (response === 'success') {
-                router.push(`/home`)
-            } else {
-                setSection(response)
-            }
-        }, */
         onError(errorResponse) {
             console.log(errorResponse)
             setLoading(false)
@@ -158,7 +138,7 @@ const Login: NextPage = () => {
                         <>
                             <header>
                                 <h1>Log in</h1>
-                                <p>Entre com sua conta para desfrutar de todas as funcionalidades da plataforma.</p>
+                                <p><Translate>Login with your account to enjoy all the features of the platform</Translate>.</p>
                             </header>
                             <GoogleButton
                                 isLoading={isLoading}
@@ -168,22 +148,22 @@ const Login: NextPage = () => {
                                 }} />
                             <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
                             <Link href={"/auth/register"}>
-                                <p className={styles.link}>Não tem uma conta? <span className="click bold">Criar uma conta</span></p>
+                                <p className={styles.link}><Translate>Don't have an account?</Translate> <span className="click bold"><Translate>Create an account</Translate></span></p>
                             </Link>
                         </>
                         :
                         section === 'noAccount' ?
                             <div className={styles.section}>
                                 <header>
-                                    <h1>Eita!</h1>
-                                    <p>Parece que você ainda não criou sua conta na plataforma. <br />
-                                        Crie sua conta agora para aproveitar todas as funcionalidades de sua conta Estudaí.
+                                    <h1><Translate>Jeez</Translate>!</h1>
+                                    <p><Translate>It looks like you haven't created your account on the platform yet.</Translate> <br />
+                                        <Translate>Create your account now to enjoy all the features of your Estudaí account.</Translate>
                                     </p>
                                 </header>
                                 <Link href={"/auth/register"} style={{ width: "100%" }}>
                                     <Button
                                         style={{ padding: "1rem 1.5rem", width: "100%" }}
-                                        title='Criar uma conta'
+                                        title={TranslateText("Create an account")}
                                     />
                                 </Link>
                                 <Separator style={{ backgroundColor: "var(--primary-02)", width: "10rem" }} orientation='horizontal' />
@@ -209,4 +189,5 @@ const Login: NextPage = () => {
     )
 }
 
+Login.theme = "default";
 export default Login;

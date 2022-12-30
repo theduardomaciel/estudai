@@ -87,7 +87,7 @@
 }
 
 .holder .pendingReminder p {
-    font-family: 'Roboto';
+    font-family: 'Karla';
     font-style: normal;
     font-weight: 700;
     font-size: 1.1rem;
@@ -150,6 +150,11 @@
 
 .row2 .openMenu {
     display: flex;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
 }
 
 @media (min-width: 1024px) {

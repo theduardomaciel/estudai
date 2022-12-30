@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-import Modal from '..';
+import Modal, { ModalProps } from '..';
 
 // Stylesheets
 import taskStyles from '../../../styles/Task.module.css';
@@ -11,11 +11,11 @@ import menuStyles from "../../Menu/menu.module.css"
 import { Contents, Task, TaskMode, TaskType } from '../../../types/Task';
 
 // Data
-import { perQuestion, subjectsString, taskGroupType, taskMaxScore, taskMode, taskType } from '../../Task';
+import { taskGroupType } from '../../Task';
 
 // Components
 import Calendar from '../../Calendar';
-import { ActivityModeSelector, ActivityTypeSelector, EventAddressSelector, EventTitleSelector, MaxScoreSelector, QuestionsAmountSelector, SubjectsContentsSelector, SubjectSelector } from "../../../pages/task/new";
+import { ActivityModeSelector, ActivityTypeSelector, EventAddressSelector, EventTitleSelector, MaxScoreSelector, QuestionsAmountSelector, SubjectsContentsSelector, SubjectSelector } from "../../../pages/groups/task/new";
 import Button from '../../Button';
 import SubjectsSelector from '../../SubjectsSelector';
 import SubjectsModalPreset from './SubjectsModal';
@@ -33,6 +33,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { api } from '../../../lib/api';
 import { useRouter } from 'next/router';
 import { Subject } from '../../../types/Subject';
+import Translate, { TranslateText } from '../../Translate';
 
 export default function EditTaskModalPreset(task: Task) {
     const router = useRouter();
@@ -126,10 +127,10 @@ export default function EditTaskModalPreset(task: Task) {
         toggleVisibility={() => setDeleteModalVisible(!isDeleteModalVisible)}
         isLoading={isLoading}
         color={"var(--red-01)"}
-        title={"Você tem certeza que quer deletar esta tarefa?"}
-        description={`Cuidado! Todos que tiverem acesso a esta tarefa não poderão mais visualizá-la.\nNão há como recuperar uma atividade excluída.`}
+        title={TranslateText("Are you sure you want to delete this task?")}
+        description={TranslateText("Watch out! Anyone who has access to this task will no longer be able to view it.\nThere is no way to recover a deleted activity.")}
         actionProps={{
-            buttonText: "DELETAR",
+            buttonText: TranslateText("Delete"),
             function: deleteTask
         }}
     />
@@ -192,33 +193,63 @@ export default function EditTaskModalPreset(task: Task) {
         }
     }
 
+    const CalendarColumn = <div className={taskStyles.column}>
+        <h3 className={menuStyles.title}>Data</h3>
+        <Calendar initialDate={taskDate} setDate={setNewDate} />
+    </div>
+
+    const DetailsTitle = <h3 className={menuStyles.title}><Translate>Details</Translate></h3>
+
+    const DangerZone = ({ onClick, buttonText }: { onClick: () => void, buttonText: string }) => {
+        return (
+            <div className={'dangerZone'}>
+                <p><Translate>Danger Zone</Translate></p>
+                <Button
+                    icon={"delete_forever"}
+                    iconProps={{
+                        filled: true,
+                        size: "1.6rem"
+                    }}
+                    accentColor={'var(--red-02)'}
+                    title={buttonText}
+                    style={{
+                        width: "100%",
+                        backgroundColor: "var(--red-01)",
+                        padding: "1rem 2.5rem"
+                    }}
+                    disabled={isLoading}
+                    isLoading={isLoading}
+                    onClick={onClick}
+                />
+            </div>
+        )
+    }
+
+    const EditModalProps = {
+        icon: 'edit',
+        isVisible: isModalVisible,
+        toggleVisibility: () => setModalVisible(!isModalVisible),
+        isLoading: isLoading,
+        color: "var(--primary-02)",
+        style: { maxHeight: "90vh", minWidth: "40vw" },
+        iconProps: { position: "flex-start", size: '2.4rem', builtWithTitle: true },
+        suppressReturnButton: true,
+        actionProps: {
+            buttonText: TranslateText("Save"),
+            buttonIcon: "save",
+            disabled: !hasDifferences,
+            function: updateTask
+        }
+    } as ModalProps;
+
     return {
         EditTaskModal: isActivity ?
-            <Modal
-                icon={'edit'}
-                isVisible={isModalVisible}
-                toggleVisibility={() => setModalVisible(!isModalVisible)}
-                isLoading={isLoading}
-                color={"var(--primary-02)"}
-                style={{ maxHeight: "90vh", minWidth: "40vw" }}
-                iconProps={{ position: "flex-start", size: '2.4rem', builtWithTitle: true }}
-                suppressReturnButton
-                title={"Editar atividade"}
-                actionProps={{
-                    buttonText: "SALVAR",
-                    buttonIcon: "save",
-                    disabled: !hasDifferences,
-                    function: updateTask
-                }}
-            >
+            <Modal title={TranslateText("Edit task")} {...EditModalProps}>
                 <div className={taskStyles.contentsHolder} style={{ padding: "0.5rem" }}>
                     <div className={taskStyles.modalRow}>
-                        <div className={taskStyles.column}>
-                            <h3 className={menuStyles.title}>Data</h3>
-                            <Calendar initialDate={taskDate} setDate={setNewDate} />
-                        </div>
+                        {CalendarColumn}
                         <div className={taskStyles.column} style={{ height: "initial", justifyContent: "space-between" }}>
-                            <h3 className={menuStyles.title}>Detalhes</h3>
+                            {DetailsTitle}
                             <ActivityTypeSelector limitType='activity' defaultValue={task.type} setType={setNewTaskType} />
                             <ActivityModeSelector defaultValue={task.mode} setSelectedValue={setNewMode} />
                             <MaxScoreSelector defaultValue={task.maxScore?.toString()} setSelectedValue={setNewMaxScore} />
@@ -228,54 +259,17 @@ export default function EditTaskModalPreset(task: Task) {
                         task.subjects.length > 0 && <SubjectSelector defaultValue={task.subjects[0].id} setSelectedValue={setNewSubjects} userSubjects={subjectsData.userSubjects} defaultSubjects={subjectsData.defaultSubjects} />
                     }
                     <CustomEditor editor={editor} />
-                    <div className={'dangerZone'}>
-                        <p>Zona de Perigo</p>
-                        <Button
-                            icon={"delete_forever"}
-                            iconProps={{
-                                filled: true,
-                                size: "1.6rem"
-                            }}
-                            accentColor={'var(--red-02)'}
-                            title='EXCLUIR ATIVIDADE'
-                            style={{
-                                width: "100%",
-                                backgroundColor: "var(--red-01)",
-                                padding: "1rem 2.5rem"
-                            }}
-                            isLoading={isLoading}
-                            onClick={() => setDeleteModalVisible(true)}
-                        />
-                    </div>
+                    <DangerZone buttonText={TranslateText("Delete task")} onClick={() => setDeleteModalVisible(true)} />
                 </div>
                 {ConfirmDeleteModal}
             </Modal>
             : isTest ?
-                <Modal
-                    icon={'edit'}
-                    isVisible={isModalVisible}
-                    toggleVisibility={() => setModalVisible(!isModalVisible)}
-                    isLoading={isLoading}
-                    color={"var(--primary-02)"}
-                    style={{ maxHeight: "90vh", minWidth: "40vw" }}
-                    iconProps={{ position: "flex-start", size: '2.4rem', builtWithTitle: true }}
-                    suppressReturnButton
-                    title={"Editar avaliação"}
-                    actionProps={{
-                        buttonText: "SALVAR",
-                        buttonIcon: "save",
-                        disabled: !hasDifferences,
-                        function: updateTask
-                    }}
-                >
+                <Modal title={TranslateText("Edit test")} {...EditModalProps}>
                     <div className={taskStyles.contentsHolder} style={{ padding: "0.5rem" }}>
                         <div className={taskStyles.modalRow}>
-                            <div className={taskStyles.column}>
-                                <h3 className={menuStyles.title}>Data</h3>
-                                <Calendar initialDate={taskDate} setDate={setNewDate} />
-                            </div>
+                            {CalendarColumn}
                             <div className={taskStyles.column} style={{ height: "initial", justifyContent: "space-between" }}>
-                                <h3 className={menuStyles.title}>Detalhes</h3>
+                                {DetailsTitle}
                                 <ActivityTypeSelector limitType='test' defaultValue={task.type} setType={setNewTaskType} />
                                 <MaxScoreSelector defaultValue={task.maxScore?.toString()} setSelectedValue={setNewMaxScore} />
                                 <QuestionsAmountSelector defaultValue={task.questionsAmount?.toString()} setSelectedValue={setNewQuestionsAmount} />
@@ -283,79 +277,24 @@ export default function EditTaskModalPreset(task: Task) {
                         </div>
                         <SubjectsSelector setSubjects={setNewSubjects} subjects={newSubjects} openModal={() => setSubjectsModalVisible(true)} />
                         <SubjectsContentsSelector subjects={task.subjects} stateContents={newContents} setContents={setNewContents} />
-                        <div className={'dangerZone'}>
-                            <p>Zona de Perigo</p>
-                            <Button
-                                icon={"delete_forever"}
-                                iconProps={{
-                                    filled: true,
-                                    size: "1.6rem"
-                                }}
-                                accentColor={'var(--red-02)'}
-                                title='EXCLUIR AVALIAÇÃO'
-                                style={{
-                                    width: "100%",
-                                    backgroundColor: "var(--red-01)",
-                                    padding: "1rem 2.5rem"
-                                }}
-                                isLoading={isLoading}
-                                onClick={() => setDeleteModalVisible(true)}
-                            />
-                        </div>
+                        <DangerZone buttonText={TranslateText("Delete test")} onClick={() => setDeleteModalVisible(true)} />
                     </div>
                     {SubjectsModal}
                     {ConfirmDeleteModal}
                 </Modal> :
-                <Modal
-                    icon={'edit'}
-                    isVisible={isModalVisible}
-                    toggleVisibility={() => setModalVisible(!isModalVisible)}
-                    isLoading={isLoading}
-                    color={"var(--primary-02)"}
-                    style={{ maxHeight: "90vh", minWidth: "40vw" }}
-                    iconProps={{ position: "flex-start", size: '2.4rem', builtWithTitle: true }}
-                    suppressReturnButton
-                    title={"Editar evento"}
-                    actionProps={{
-                        buttonText: "SALVAR",
-                        buttonIcon: "save",
-                        disabled: !hasDifferences,
-                        function: updateTask
-                    }}
-                >
+                <Modal title={TranslateText("Edit event")} {...EditModalProps}>
                     <div className={taskStyles.contentsHolder} style={{ padding: "0.5rem" }}>
                         <div className={taskStyles.modalRow}>
-                            <div className={taskStyles.column}>
-                                <h3 className={menuStyles.title}>Data</h3>
-                                <Calendar initialDate={taskDate} setDate={setNewDate} />
-                            </div>
+                            {CalendarColumn}
                             <div className={taskStyles.column} style={{ height: "initial", justifyContent: "space-between" }}>
-                                <h3 className={menuStyles.title}>Detalhes</h3>
+                                {DetailsTitle}
                                 <ActivityTypeSelector limitType='event' defaultValue={task.type} setType={setNewTaskType} />
                                 <EventTitleSelector defaultValue={task.title} setSelectedValue={setNewTitle} />
                                 <EventAddressSelector defaultValue={task.address} setSelectedValue={setNewAddress} />
                             </div>
                         </div>
                         <CustomEditor editor={editor} />
-                        <div className={'dangerZone'}>
-                            <p>Zona de Perigo</p>
-                            <Button
-                                icon={"delete_forever"}
-                                iconProps={{
-                                    filled: true,
-                                    size: "1.6rem"
-                                }}
-                                accentColor={'var(--red-02)'}
-                                title='EXCLUIR ATIVIDADE'
-                                style={{
-                                    width: "100%",
-                                    backgroundColor: "var(--red-01)",
-                                    padding: "1rem 2.5rem"
-                                }}
-                                isLoading={isLoading}
-                                onClick={() => setDeleteModalVisible(true)}
-                            />
-                        </div>
+                        <DangerZone buttonText={TranslateText("Delete event")} onClick={() => setDeleteModalVisible(true)} />
                     </div>
                     {ConfirmDeleteModal}
                 </Modal>,

@@ -18,7 +18,6 @@ router
     .get(async (req, res) => {
         const { id } = req.query;
         try {
-            console.log(id)
             const group = await getGroup(undefined, id as string)
             console.log(group, "🐶 Grupo obtido com sucesso!")
             res.status(200).json(group);
@@ -76,7 +75,7 @@ router
     })
     .delete(async (req, res) => {
         const announcementId = parseInt(req.query.id as string);
-        const { ['auth.token']: token } = req.cookies;
+        const { ['estudai.token']: token } = req.cookies;
 
         const userId = await getUserIdByToken(token as string);
 

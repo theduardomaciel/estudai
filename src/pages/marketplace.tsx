@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectItemIndicator, Se
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
 // Server Props
-import getUser from '../services/getUser';
+import getUser from '../services/getUserByToken';
 import getUserIdByToken from '../services/getUserIdByToken';
 
 // Stylesheets
@@ -43,14 +43,9 @@ import Menu from '../components/Menu';
 import { EmptyTasksMessage } from './home';
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
-    const { ['auth.token']: token } = parseCookies(context)
+    const { ['estudai.token']: token } = parseCookies(context)
 
-    const userId = await getUserIdByToken(token);
-    let user = null;
-
-    if (userId) {
-        user = await getUser(userId as number, "basic") as unknown as User;
-    }
+    const user = await getUser(token, false, "full") as unknown as User;
 
     if (user) {
         user.tasks.map((task, index) => {
@@ -60,13 +55,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
                 task.group.createdAt = Math.floor(task.group.createdAt as number);
             }
             return task;
-        })
-
-        user.groups.map((group, index) => {
-            const date = new Date(group.createdAt);
-            group.createdAt = Math.floor(date.getTime());
-
-            return group;
         })
     }
 
@@ -99,6 +87,7 @@ import LandingIntroModal from '../components/Landing/IntroModal';
 
 import parse from 'html-react-parser';
 import CustomEditor from '../components/Editor';
+import Translate, { TranslateText } from '../components/Translate';
 
 function EventHeader({ hasUser }: { hasUser: boolean }) {
     return <div className={styles.marketplaceEvent}>
@@ -156,34 +145,34 @@ function Announcement({ userId, announcement, setContactModalState, setDeleteMod
                         {parse(announcement.description)}
                     </div>
                     :
-                    <p>{`[nenhuma descrição fornecida]`}</p>}
+                    <p>{`[${TranslateText("No description provided")}]`}</p>}
             </h3>
             <div className={styles.subheader}>
                 <div style={{ overflow: "hidden", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Image src={announcement.user.image_url} width={18} height={18} alt={"Imagem do usuário"} />
                 </div>
-                <p>Anúncio por <strong>{`${announcement.user.firstName} ${announcement.user.lastName !== null ? announcement.user.lastName : ""}`}</strong></p>
+                <p><Translate>Advertisement by</Translate> <strong>{`${announcement.user.firstName} ${announcement.user.lastName !== null ? announcement.user.lastName : ""}`}</strong></p>
             </div>
             <div className={styles.iconHolder}>
                 <span className={'material-icons-outlined static'} style={{ fontSize: "1.5rem" }}>visibility</span>
-                <p>{announcement.visualizationsCount.length} pessoa{announcement.visualizationsCount.length !== 1 ? "s" : ""} já {announcement.visualizationsCount.length !== 1 ? "visualizaram" : "visualizou"} </p>
+                <p>{announcement.visualizationsCount.length} <Translate>user</Translate>{announcement.visualizationsCount.length !== 1 ? "s" : ""} <Translate>already</Translate> <Translate plural={announcement.visualizationsCount.length !== 1}>visualized</Translate> </p>
             </div>
         </div>
         <div className={`${styles.column} ${styles.second}`} style={{ alignItems: "flex-end" }}>
             <div className={styles.row}>
                 {
-                    announcement.isLocked && userId ? <p style={{ fontFamily: "Karla" }}>Este anúncio foi bloqueado por você!</p> :
+                    announcement.isLocked && userId ? <p style={{ fontFamily: "Karla" }}><Translate>This advertisement has been blocked by you!</Translate></p> :
                         <>
                             <div className={styles.iconHolder}>
                                 {
                                     announcement.materialPrice === -1 && <span className={'material-symbols-rounded static'} style={{ fontSize: "1.6rem" }}>{"volunteer_activism"}</span>
                                 }
-                                <p style={{ fontSize: "1.4rem" }}><strong>{announcement.materialPrice === 0 ? "Valor não informado" : announcement.materialPrice < 0 ? "Doação" : `R$${announcement.materialPrice},00`}</strong></p>
+                                <p style={{ fontSize: "1.4rem" }}><strong>{announcement.materialPrice === 0 ? TranslateText("Value not informed") : announcement.materialPrice < 0 ? TranslateText("Donation") : `R$${announcement.materialPrice},00`}</strong></p>
                             </div>
                             <Separator orientation="vertical" style={{ backgroundColor: "var(--light)" }} />
                             <div className={styles.iconHolder}>
                                 {announcement.materialCondition !== "used" && <span className={'material-symbols-rounded static'} style={{ fontSize: "1.5rem" }}>{announcement.materialCondition === "new" ? "temp_preferences_custom" : announcement.materialCondition === "used" ? "autorenew" : "add_moderator"}</span>}
-                                <p style={{ fontSize: "1.4rem", fontWeight: 600 }}>{announcement.materialCondition === "new" ? "Novo" : announcement.materialCondition === "used" ? "Usado" : "Usado e bem conservado"}</p>
+                                <p style={{ fontSize: "1.4rem", fontWeight: 600 }}>{announcement.materialCondition === "new" ? TranslateText("New") : announcement.materialCondition === "used" ? TranslateText("Used") : TranslateText("Used and well conserved")}</p>
                             </div>
                         </>
                 }
@@ -196,10 +185,10 @@ function Announcement({ userId, announcement, setContactModalState, setDeleteMod
                     </>
                 }
                 <Button
-                    title={userId ? "MEUS CONTATOS" : 'CONTATAR'}
+                    title={userId ? TranslateText("My contacts") : TranslateText("Contact")}
                     icon={'alternate_email'}
                     iconProps={{ size: "1.8rem", color: `var(--light)` }}
-                    style={{ padding: "0.65rem 1rem" }}
+                    style={{ padding: "0.65rem 1rem", textTransform: "uppercase" }}
                     accentColor={'var(--primary-01)'}
                     classes={styles.defaultButton}
                     preset={'fillHover'}
@@ -210,7 +199,7 @@ function Announcement({ userId, announcement, setContactModalState, setDeleteMod
         {
             announcement.isLocked && !userId && <div className={styles.lockView}>
                 <span className={'material-symbols-rounded static instantFilled'}>{announcement.materialPrice === -1 ? "volunteer_activism" : "attach_money"}</span>
-                <p>Os itens deste anúncio já foram {announcement.materialPrice === -1 ? "doados" : "vendidos"}!</p>
+                <p><Translate>Items in this listing have already been {announcement.materialPrice === -1 ? "donated" : "sold"}</Translate>!</p>
             </div>
         }
     </div >
@@ -371,7 +360,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
         }
     }, [contactModalState])
 
-    const [alreadyShownModal, setAlreadyShownModal] = useState(true);
+    /* const [alreadyShownModal, setAlreadyShownModal] = useState(true);
 
     useEffect(() => {
         const haveShown = localStorage.getItem('shownModal.2') ? true : false;
@@ -379,7 +368,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
             localStorage.setItem('shownModal.2', "true")
             setAlreadyShownModal(false)
         }
-    }, [])
+    }, []) */
 
     const MAX_CHARACTERS = 180;
 
@@ -392,7 +381,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
             }),
             Placeholder.configure({
                 // Use a placeholder:
-                placeholder: `Seja o mais descritivo possível em ${MAX_CHARACTERS} caracteres.`,
+                placeholder: `${TranslateText("Be as descriptive as possible in")} ${MAX_CHARACTERS} ${TranslateText("characters")}.`,
             }),
             Highlight.configure({ multicolor: true }),
             CharacterCount.configure({ limit: MAX_CHARACTERS }),
@@ -408,10 +397,10 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
             <div className={`${styles.container} ${user ? "" : styles.noUser}`}>
                 {user && <Profile user={user} />}
                 <div className={"header"}>
-                    <h3 className={"title"}>Marketplaces ativos</h3>
+                    <h3 className={"title"}><Translate>Active marketplaces</Translate></h3>
                 </div>
                 <EventHeader hasUser={user ? true : false} />
-                <p className={inputStyles.input}>Clique no texto de um anúncio para vê-lo por completo.</p>
+                <p className={inputStyles.input}><Translate>Click on the text of an advertisement to see it in full.</Translate></p>
                 <ul className={styles.groupHolder} style={{ paddingBottom: "5rem" }}>
                     {
                         announcements && announcements.length > 0 ? announcements.map(announcement =>
@@ -615,7 +604,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                             contactModalState.phoneNumber && <div className={styles.content}>
                                 <div className={styles.header}>
                                     <span className={'material-symbols-rounded static'}>phone</span>
-                                    <p>Telefone</p>
+                                    <p><Translate>Phone</Translate></p>
                                 </div>
                                 <a href={`tel:+55${contactModalState.phoneNumber}`}>{contactModalState.phoneNumber}</a>
                             </div>
@@ -661,7 +650,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
             {
                 user && <Menu />
             }
-            {
+            {/* {
                 !alreadyShownModal &&
                 <LandingIntroModal sections={[
                     {
@@ -677,7 +666,7 @@ const Marketplace = ({ user, announcements }: { user: User, announcements: Annou
                         imageSize: { height: 165, width: 400 }
                     },
                 ]} />
-            }
+            } */}
         </main>
     )
 }

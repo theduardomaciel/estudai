@@ -1,6 +1,11 @@
+import { decode } from 'jsonwebtoken';
 import prisma from '../lib/prisma';
 
-export default async function getUser(id: number, includeGroups?: 'basic' | 'full') {
+export default async function getUser(token: string, groupsComplexity?: 'basic' | 'full' | boolean, tasksComplexity?: 'basic' | 'full' | boolean) {
+    const decodePayload = decode(token) as { email: string };
+
+    if (!decodePayload) return null;
+
     const fullGroupsQuery = {
         include: {
             users: true,
@@ -12,20 +17,22 @@ export default async function getUser(id: number, includeGroups?: 'basic' | 'ful
         }
     }
 
+    const fullTasksQuery = {
+        include: {
+            interactedBy: true,
+            group: true,
+            subjects: true
+        }
+    }
+
     try {
         const user = await prisma.user.findUnique({
             where: {
-                id: id,
+                email: decodePayload?.email
             },
             include: {
-                tasks: {
-                    include: {
-                        interactedBy: true,
-                        group: true,
-                        subjects: true
-                    }
-                },
-                groups: includeGroups === 'full' ? fullGroupsQuery : includeGroups === 'basic' ? true : false
+                tasks: tasksComplexity === "full" ? fullTasksQuery : tasksComplexity === "basic" ? true : false,
+                groups: groupsComplexity === 'full' ? fullGroupsQuery : groupsComplexity === 'basic' ? true : false
             }
         })
         if (user && user !== null) {

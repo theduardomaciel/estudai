@@ -19,6 +19,7 @@ model User {
     role      String  @default("user")
     email     String  @unique
     image_url String
+    avatar    String? @default("google")
 
     course       Int?
     timeMeasure  Int?

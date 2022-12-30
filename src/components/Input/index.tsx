@@ -1,6 +1,7 @@
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { MouseEvent, useEffect } from 'react';
 import { useRef } from 'react';
+import Translate from '../Translate';
 
 import styles from "./label.module.css"
 
@@ -68,8 +69,8 @@ const Input = ({ label, fixedUnit, height, numberControl, icon, ...rest }: Props
                     {
                         numberControl &&
                         <div className={`${styles.increaseControl}`}>
-                            <span className={`click material-icons-round ${styles.increaseArrow}`} onClick={increaseCount}>expand_less</span>
-                            <span className={`click material-icons-round ${styles.decreaseArrow}`} onClick={decreaseCount}>expand_more</span>
+                            <span className={`click material-icons-rounded ${styles.increaseArrow}`} onClick={increaseCount}>expand_less</span>
+                            <span className={`click material-icons-rounded ${styles.decreaseArrow}`} onClick={decreaseCount}>expand_more</span>
                         </div>
                     }
                     <input
@@ -81,7 +82,7 @@ const Input = ({ label, fixedUnit, height, numberControl, icon, ...rest }: Props
                         {...rest}
                     />
                     <div className={`${styles.input} ${styles.fixedUnit}`}>
-                        {fixedUnit}
+                        <Translate>{fixedUnit}</Translate>
                     </div>
                 </div>
                 :
@@ -89,7 +90,7 @@ const Input = ({ label, fixedUnit, height, numberControl, icon, ...rest }: Props
                     <div className={styles.fixedUnitFrame}>
                         {
                             icon &&
-                            <span style={{ fontSize: "1.8rem" }} className={`static material-icons-round ${styles.icon}`}>{icon}</span>
+                            <span style={{ fontSize: "1.8rem" }} className={`static material-icons-rounded ${styles.icon}`}>{icon}</span>
                         }
                         <input style={{ height: height ? height : "3.8rem", paddingLeft: "3.4rem" }} className={styles.input} key={'taskNAme'} id="taskName" {...rest} />
                     </div>

@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, CSSProperties } from 'react'
 import { useAppContext } from '../../contexts/AppContext';
 
 // Components
 import Button from '../Button';
 import Calendar from '../Calendar';
 import Focus from '../Focus';
+import Translate from '../Translate';
 
 // Stylesheets
 import styles from './menu.module.css'
@@ -12,24 +13,25 @@ import styles from './menu.module.css'
 interface Props {
     children?: React.ReactNode;
     flex?: boolean;
+    style?: CSSProperties;
 }
 
-export default function Menu({ children, flex }: Props) {
+export default function Menu({ children, flex, style }: Props) {
     const { isMenuOpened, toggleMenu } = useAppContext();
 
     const focus = useMemo(() => <Focus />, [])
 
     return children ?
-        <div className={`${isMenuOpened || flex ? styles.open : ""} ${flex ? styles.flex : ""} ${styles.holder}`}>
+        <div className={`${isMenuOpened || flex ? styles.open : ""} ${flex ? styles.flex : ""} ${styles.holder}`} style={style}>
             <div className={styles.content}>
                 {children}
             </div>
         </div> :
-        <div className={`${isMenuOpened || flex ? styles.open : ""} ${flex ? styles.flex : ""} ${styles.holder}`}>
+        <div className={`${isMenuOpened || flex ? styles.open : ""} ${flex ? styles.flex : ""} ${styles.holder}`} style={style}>
             <div className={styles.content}>
                 <div className={styles.menuHeader}>
                     <div className='row'>
-                        <h3>Agenda</h3>
+                        <h3><Translate>Agenda</Translate></h3>
                         <Button classes={styles.closeButton} icon={'close'} onClick={toggleMenu} style={{ height: "3rem", width: "3rem", padding: 0 }} />
                     </div>
                     <Calendar linkToCreate />

@@ -10,6 +10,7 @@ import { toggleSubject } from "../Modal/Presets/SubjectsModal";
 
 import { Subject } from "../../types/Subject";
 import useHorizontalScroll from "../../hooks/useHorizontalScroll";
+import { TranslateText } from "../Translate";
 
 interface TaskProps {
     openModal: () => void;
@@ -27,7 +28,7 @@ export default function SubjectsSelector({ subjects, setSubjects, openModal }: T
     </li>
 
     return <div className={`${styles.container}`}>
-        <InputLabel label="Quais matérias estarão presentes na avaliação?" />
+        <InputLabel label={TranslateText("Which subjects will be present in the test?")} />
         <div className={`${inputStyles.input} ${styles.tagsContainer}`} style={{ justifyContent: "space-between", padding: "1rem" }}>
             <div id="subjectsScroll" className={`${styles.tagsContainer}`}>
                 {

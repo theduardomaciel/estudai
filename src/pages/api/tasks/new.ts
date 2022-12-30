@@ -42,7 +42,7 @@ router
     //.use(isAuthenticated)
     .use(expressWrapper(cors()))
     .post(async (req, res) => {
-        const { ['auth.token']: token } = req.cookies;
+        const { ['estudai.token']: token } = req.cookies;
         const userId = await getUserIdByToken(token as string) as number;
 
         if (!userId || typeof userId === "string") {

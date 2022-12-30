@@ -3,6 +3,7 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from '..';
 import { EmptyTasksMessage } from '../../../pages/home';
 import Input from '../../Input';
+import { TranslateText } from '../../Translate';
 
 import styles from "../preset.module.css";
 
@@ -98,12 +99,12 @@ export default function IconPickerModalPreset(setSelectedIcon: Dispatch<SetState
             icon={'donut_large'}
             suppressReturnButton
             style={{ minWidth: "80vw" }}
-            title={"Selecionar ícone"}
+            title={TranslateText("Select icon")}
             iconProps={{ size: "2.8rem", builtWithTitle: true, position: "flex-start" }}
         >
             <Input
                 icon='search'
-                placeholder='Pesquisar por ícone (em inglês)'
+                placeholder={TranslateText("Search for an icon")}
                 onChange={(event) => setSearch(event.currentTarget.value.replaceAll(' ', '_').toLowerCase())}
             />
             <ul className={`${styles.iconsContainer} ${icons.length < 7 ? styles.empty : ""}`}>
@@ -119,7 +120,7 @@ export default function IconPickerModalPreset(setSelectedIcon: Dispatch<SetState
                             </li>
                         })
                         :
-                        <EmptyTasksMessage removeMargin description={`Não encontramos ícones que correspondam a sua pesquisa.\nLembre-se de que os ícones devem ser pesquisados em inglês!`} />
+                        <EmptyTasksMessage removeMargin description={TranslateText("We couldn't find icons that match your search.")} />
                 }
             </ul>
         </Modal>,
