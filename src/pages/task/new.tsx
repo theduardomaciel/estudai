@@ -8,29 +8,29 @@ import styles from '../../styles/CreateTask.module.css';
 import inputStyles from "../../components/Input/label.module.css";
 
 // Components
-import Sidebar from '../../../components/Sidebar';
-import Navigator from '../../../components/Navigator';
-import Section from '../../../components/Section';
-import Input, { InputLabel } from '../../../components/Input';
-import Calendar from '../../../components/Calendar';
-import Menu from '../../../components/Menu';
-import Button from '../../../components/Button';
-import UsersPortraits from '../../../components/UsersPortraits';
-import AttachmentsLoader from '../../../components/AttachmentLoader';
-import Modal from '../../../components/Modal';
-import SubjectsSelector from '../../../components/SubjectsSelector';
-import { isActivity, isTest, taskGroupType } from '../../../components/Task';
-import SubjectsModalPreset from '../../../components/Modal/Presets/SubjectsModal';
-import CustomEditor from '../../../components/Editor';
+import Sidebar from '../../components/Sidebar';
+import Navigator from '../../components/Navigator';
+import Section from '../../components/Section';
+import Input, { InputLabel } from '../../components/Input';
+import Calendar from '../../components/Calendar';
+import Menu from '../../components/Menu';
+import Button from '../../components/Button';
+import UsersPortraits from '../../components/UsersPortraits';
+import AttachmentsLoader from '../../components/AttachmentLoader';
+import Modal from '../../components/Modal';
+import SubjectsSelector from '../../components/SubjectsSelector';
+import { isActivity, isTest, taskGroupType } from '../../components/Task';
+import SubjectsModalPreset from '../../components/Modal/Presets/SubjectsModal';
+import CustomEditor from '../../components/Editor';
 
 // Select Components
-import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../../components/Input/Select';
+import { Select, SelectContent, SelectGroup, SelectIcon, SelectItem, SelectItemIndicator, SelectItemText, SelectLabel, SelectScrollDownButton, SelectSeparator, SelectTrigger, SelectValue, SelectViewport } from '../../components/Input/Select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 
 // Types
-import { Attachment } from '../../../types/Attachment';
-import { Contents, TaskMode, TaskType } from '../../../types/Task';
-import { Group } from '../../../types/Group';
+import { Attachment } from '../../types/Attachment';
+import { Contents, TaskMode, TaskType } from '../../types/Task';
+import { Group } from '../../types/Group';
 
 // Editor
 import { useEditor } from '@tiptap/react'
@@ -41,11 +41,11 @@ import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
 
 // Services
-import { useAppContext } from '../../../contexts/AppContext';
-import { api } from '../../../lib/api';
-import { Subject } from '../../../types/Subject';
-import NewSubjectModalPreset from '../../../components/Modal/Presets/NewSubjectModal';
-import Translate, { TranslateText } from '../../../components/Translate';
+import { useAppContext } from '../../contexts/AppContext';
+import { api } from '../../lib/api';
+import { Subject } from '../../types/Subject';
+import NewSubjectModalPreset from '../../components/Modal/Presets/NewSubjectModal';
+import Translate, { TranslateText } from '../../components/Translate';
 
 interface TaskData {
     type: string;

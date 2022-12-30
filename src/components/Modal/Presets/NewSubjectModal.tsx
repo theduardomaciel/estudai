@@ -9,7 +9,7 @@ import IconPickerModalPreset from './IconPickerModal';
 import { api } from '../../../lib/api';
 
 // Types
-import { SetSubjectsData, SubjectsData } from '../../../pages/groups/task/new';
+import { SetSubjectsData, SubjectsData } from '../../../pages/task/new';
 import { TranslateText } from '../../Translate';
 
 /* interface SubjectInfo {

@@ -1,42 +1,42 @@
-import React, { SetStateAction, useEffect, useMemo, useRef, useState, Dispatch, useCallback } from 'react';
+import React, { SetStateAction, useEffect, useMemo, useState, Dispatch } from 'react';
 
 import Head from 'next/head';
-import type { GetStaticPaths, GetStaticPropsContext, NextPage } from 'next'
+import type { GetStaticPropsContext } from 'next'
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 // Stylesheets
-import styles from "../../styles/Task.module.css"
+import styles from "styles/Task.module.css"
 
 // Components
-import Sidebar from '../../../components/Sidebar';
-import Navigator from '../../../components/Navigator';
-import Button from '../../../components/Button';
-import UsersPortraits from '../../../components/UsersPortraits';
-import { Separator } from '../../../components/Separator';
-import SectionSelector from '../../../components/SectionSelector';
-import ErrorContainer from '../../../components/ErrorContainer';
-import Spinner from '../../../components/Spinner';
-import EditTaskModalPreset from '../../../components/Modal/Presets/EditTaskModal';
-import UsersModalPreset from '../../../components/Modal/Presets/UsersModal';
-import AttachmentsLoader from '../../../components/AttachmentLoader';
-import LinkAttachment from '../../../components/AttachmentLoader/Link';
-import { Attachment } from '../../../types/Attachment';
-import AttachmentPreview from '../../../components/AttachmentPreview';
-import Modal from '../../../components/Modal';
-import { EmptyTasksMessage } from '../../home';
+import Sidebar from 'components/Sidebar';
+import Navigator from 'components/Navigator';
+import Button from 'components/Button';
+import UsersPortraits from 'components/UsersPortraits';
+import { Separator } from 'components/Separator';
+import SectionSelector from 'components/SectionSelector';
+import ErrorContainer from 'components/ErrorContainer';
+import Spinner from 'components/Spinner';
+import EditTaskModalPreset from 'components/Modal/Presets/EditTaskModal';
+import UsersModalPreset from 'components/Modal/Presets/UsersModal';
+import AttachmentsLoader from 'components/AttachmentLoader';
+import LinkAttachment from 'components/AttachmentLoader/Link';
+import { Attachment } from 'types/Attachment';
+import AttachmentPreview from 'components/AttachmentPreview';
+import Modal from 'components/Modal';
+import { EmptyTasksMessage } from '../home';
 
 
 // Types
-import { Task } from '../../../types/Task';
+import { Task } from 'types/Task';
 
 // Services and Utilities
-import getAllTasks from '../../../services/getAllTasks';
-import getTask from '../../../services/getTask';
-import formatDate from '../../../utils/formatDate';
-import { perQuestion, subjectsString, taskGroupType, taskMaxScore, taskMode, taskType } from "../../../components/Task";
+import getAllTasks from 'services/getAllTasks';
+import getTask from 'services/getTask';
+import formatDate from 'utils/formatDate';
+import { perQuestion, subjectsString, taskGroupType, taskMaxScore, taskMode, taskType } from "components/Task";
 
-import { getTagInfo, tagsNames } from '../../../utils/getTagInfo';
+import { getTagInfo, tagsNames } from 'utils/getTagInfo';
 
 // Imports
 import DocAttachment from "/public/icons/attachment/doc.svg";
@@ -95,14 +95,14 @@ interface SectionProps {
     tagsSectionId: number;
 }
 
-import fileStyles from "../../components/AttachmentLoader/File/styles.module.css"
+import fileStyles from "components/AttachmentLoader/File/styles.module.css"
 
 // Authentication
 import { parseCookies } from 'nookies';
-import { api } from '../../../lib/api';
-import { useAuth } from '../../../contexts/AuthContext';
-import { Subject } from '../../../types/Subject';
-import Translate, { TranslateText } from '../../../components/Translate';
+import { api } from 'lib/api';
+import { useAuth } from 'contexts/AuthContext';
+import { Subject } from 'types/Subject';
+import Translate, { TranslateText } from 'components/Translate';
 
 type TagComponentProps = React.LiHTMLAttributes<HTMLLIElement> & {
     attachment: Attachment;
@@ -360,7 +360,7 @@ const Task = ({ task }: { task: Task }) => {
 
     const Column2 = isActivity ? <>
         <Button
-            title={hasInteracted ? `${TranslateText("Mark off")} ${TranslateText("as concluded")}` : TranslateText("Mark as done")}
+            title={hasInteracted ? `${TranslateText("Unmark")} ${TranslateText("as concluded")}` : TranslateText("Mark as done")}
             icon={hasInteracted ? 'remove' : 'check'}
             style={{ height: "3.25rem", textTransform: "uppercase" }}
             iconProps={{ size: "1.8rem", color: `var(--primary-02)` }}

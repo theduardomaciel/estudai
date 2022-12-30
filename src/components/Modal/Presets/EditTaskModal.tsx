@@ -15,7 +15,7 @@ import { taskGroupType } from '../../Task';
 
 // Components
 import Calendar from '../../Calendar';
-import { ActivityModeSelector, ActivityTypeSelector, EventAddressSelector, EventTitleSelector, MaxScoreSelector, QuestionsAmountSelector, SubjectsContentsSelector, SubjectSelector } from "../../../pages/groups/task/new";
+import { ActivityModeSelector, ActivityTypeSelector, EventAddressSelector, EventTitleSelector, MaxScoreSelector, QuestionsAmountSelector, SubjectsContentsSelector, SubjectSelector } from "../../../pages/task/new";
 import Button from '../../Button';
 import SubjectsSelector from '../../SubjectsSelector';
 import SubjectsModalPreset from './SubjectsModal';
