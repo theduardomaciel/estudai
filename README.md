@@ -1,22 +1,22 @@
 <h1 align="center">
-    Estudaí
+    estudaí
 </h1>
 
 ![cover](.github/cover.png?style=flat)
 
-
 ## 💻 Project
+
 An online study organization platform that will help you review and keep your subjects up to date. Enough of forgetting.
 
 ## ✨ Technologies
 
-- [ ] HTML
-- [ ] CSS
-- [ ] JavaScript
-- [ ] React
-- [ ] Next.js
-- [ ] Radix
-- [ ] Stitches
+-   [ ] HTML
+-   [ ] CSS
+-   [ ] JavaScript
+-   [ ] React
+-   [ ] Next.js
+-   [ ] Radix
+-   [ ] Stitches
 
 ## 📄 License
 

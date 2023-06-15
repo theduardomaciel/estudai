@@ -1,0 +1,114 @@
+.menu {
+	display: flex;
+	flex-direction: row;
+
+	position: relative;
+	top: 0;
+	position: sticky;
+
+	justify-content: space-between;
+
+	gap: 1rem;
+	width: 100%;
+	overflow: hidden;
+
+	color: var(--primary-04);
+}
+
+.menu .sections {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+
+	overflow-y: auto;
+
+	gap: 2.5rem;
+}
+
+.menu::-webkit-scrollbar,
+.menu .sections::-webkit-scrollbar {
+	display: none;
+	scrollbar-width: 0px;
+}
+
+.menu .sections .section {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.6rem;
+
+	white-space: nowrap;
+
+	color: var(--font-light);
+	cursor: pointer;
+	transition: 0.45s;
+}
+
+.menu .sections .section.selected {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 1.6rem;
+	color: var(--primary-02);
+}
+
+.mainSection {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	width: 100%;
+
+	gap: 2.5rem;
+}
+
+.avatarSection {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 2.5rem;
+	flex-wrap: wrap;
+}
+
+.avatar {
+	width: 7.5rem;
+	height: 7.5rem;
+	border-radius: 50%;
+	background: linear-gradient(180deg, #502d8a 0%, #9747ff 100%);
+
+	cursor: pointer;
+}
+
+.avatar.selected {
+	outline: 3.5px solid var(--primary-02);
+	outline-offset: 0.25rem;
+}
+
+.chevron {
+	display: flex;
+}
+
+@media (min-width: 1024px) {
+	.section {
+		min-height: fit-content;
+		overflow-y: scroll;
+	}
+
+	.section::-webkit-scrollbar {
+		display: none;
+	}
+	.menu,
+	.menu .sections {
+		flex-direction: column;
+	}
+
+	.menu {
+		width: 25%;
+		height: fit-content;
+	}
+
+	.chevron {
+		display: none;
+	}
+}

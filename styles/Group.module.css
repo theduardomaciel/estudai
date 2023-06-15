@@ -1,0 +1,306 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
+
+	position: initial;
+
+	width: 100%;
+	height: 100%;
+
+	overflow-y: none;
+
+	padding: 3.5rem 3.5rem 3.5rem 3.5rem;
+	gap: 2.5rem;
+
+	transition: 1s;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	padding: 2.5rem 3.5rem;
+	gap: 1.5rem;
+
+	width: 100%;
+
+	background: var(--neutral);
+
+	border: 1px solid var(--light-gray);
+	border-radius: 0.5rem;
+}
+
+.header h1 {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 900;
+	font-size: 5.2rem;
+	line-height: 8.5rem;
+
+	display: flex;
+	align-items: center;
+
+	color: var(--primary-02);
+}
+
+.header .details {
+	display: flex;
+	flex-direction: row;
+	gap: 2.5rem;
+	justify-content: center;
+}
+
+.header .details h4 {
+	display: none;
+}
+
+.header .info {
+	font-weight: 500;
+	font-size: 1rem;
+	color: var(--light-gray);
+
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.header .info p {
+	font-family: "Inter";
+	font-style: normal;
+}
+
+.header .info span {
+	font-size: 1.6rem;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+
+	position: relative;
+
+	gap: 2.5rem;
+
+	width: 100%;
+}
+
+.tasks {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	gap: 2.5rem;
+	padding-bottom: calc(3.5rem + var(--sidebar-height));
+
+	order: 1;
+
+	overflow-y: visible;
+}
+
+.tasks::-webkit-scrollbar {
+	display: none;
+}
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+
+	padding-bottom: 3.5rem;
+}
+
+.sidebar .sidebarContent {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+
+	overflow: visible;
+
+	align-items: center;
+	justify-content: flex-start;
+
+	order: 0;
+
+	gap: 1rem;
+}
+
+.sidebar::-webkit-scrollbar {
+	display: none;
+}
+
+.sidebar .sidebarContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 2rem;
+	gap: 1rem;
+
+	width: 100%;
+
+	background: var(--neutral);
+
+	border: 1px solid var(--primary-03);
+	border-radius: 0.5rem;
+}
+
+.pinnedMessageContainer header {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	padding: 0px;
+	gap: 1rem;
+}
+
+.pinnedMessageContainer header {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 1.4rem;
+	line-height: 1.5rem;
+	/* primary-02 */
+
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+	justify-content: flex-start;
+
+	color: var(--primary-02);
+}
+
+.pinnedMessageContainer p {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 1.5rem;
+	text-align: left;
+	color: var(--primary-03);
+}
+
+.tasksInfoContainer div {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	width: 100%;
+	color: var(--primary-02);
+}
+
+.tasksInfoContainer p {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 1.5rem;
+
+	display: flex;
+	align-items: center;
+}
+
+.tasksInfoContainer h6 {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 3.6rem;
+}
+
+.membersContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 2.5rem;
+	width: 100%;
+	min-height: fit-content;
+}
+
+.membersContainer::-webkit-scrollbar {
+	display: none;
+}
+
+.groupMember {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.groupMember p {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.4rem;
+
+	display: flex;
+	align-items: center;
+
+	color: var(--primary-04);
+}
+
+@media (min-width: 1024px) {
+	.container {
+		position: absolute;
+		top: 0;
+		left: var(--sidebar-width);
+		flex: 1;
+		width: calc(100vw - var(--sidebar-width));
+		margin-left: auto;
+
+		transition: 0s;
+	}
+
+	.header {
+		flex-direction: row;
+	}
+
+	.header h1 {
+		font-size: 7.2rem;
+	}
+
+	.header .details h4 {
+		display: flex;
+		font-family: "Raleway";
+		font-style: normal;
+		font-weight: 700;
+		font-size: 1.4rem;
+
+		margin-bottom: 0.5rem;
+
+		color: var(--font-light);
+	}
+
+	.header .details {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: row;
+		order: 0;
+	}
+
+	.tasks {
+		padding-bottom: 3.5rem;
+		overflow-y: visible;
+	}
+
+	.sidebar {
+		order: 1;
+		width: 35rem;
+
+		display: flex;
+		height: 100%;
+	}
+
+	.sidebar .sidebarContent {
+		position: sticky;
+		top: 1rem;
+	}
+}

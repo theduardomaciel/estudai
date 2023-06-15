@@ -1,0 +1,417 @@
+.content {
+	max-width: 100%;
+	width: 100%;
+	margin: 0 auto;
+	gap: 2.5rem;
+	display: grid;
+	gap: 2.5rem;
+	grid-template-columns: repeat(auto-fit, minmax(75%, 1fr));
+}
+
+.marketplaceEvent {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	overflow: hidden;
+
+	gap: 2.5rem;
+	flex-wrap: wrap;
+
+	padding: 2.5rem;
+	width: 100%;
+	position: relative;
+
+	min-height: 12rem;
+	height: fit-content;
+
+	border: 1px solid var(--primary-03);
+	border-radius: 5px;
+
+	border-radius: 0.5rem;
+}
+
+.marketplaceEvent .image {
+	position: absolute;
+	top: -500%;
+	left: -2%;
+
+	filter: blur(15px);
+	-webkit-filter: blur(15px);
+	z-index: 0;
+}
+
+.marketplaceEvent header {
+	z-index: 1;
+	font-size: 1.2rem;
+	color: var(--background-02);
+
+	display: flex;
+	flex-direction: row;
+	gap: 1.5rem;
+
+	flex-wrap: wrap;
+}
+
+.marketplaceEvent header span {
+	font-size: 1.2rem;
+	color: var(--neutral);
+}
+
+.marketplaceEvent header p {
+	font-family: "Karla";
+	font-style: normal;
+	color: var(--neutral);
+	font-weight: 700;
+}
+
+.marketplaceEvent h2 {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 800;
+	font-size: 3.2rem;
+	color: var(--neutral);
+	z-index: 1;
+}
+
+.container .title {
+	color: var(--primary-02);
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 2.4rem;
+
+	width: 100%;
+}
+
+.header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+
+	gap: 1.5rem;
+
+	flex-wrap: wrap;
+}
+
+.subheader {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.subheader p {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 300;
+	font-size: 1.4rem;
+
+	color: var(--neutral);
+}
+
+.subheader p strong {
+	font-weight: 600;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+
+	width: 100%;
+
+	gap: 1rem;
+}
+
+.column h3 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	text-overflow: -o-ellipsis-lastline;
+	width: 100%;
+	height: fit-content;
+
+	color: var(--neutral);
+}
+
+.column h3.big:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.iconHolder {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 1rem;
+
+	font-family: "Karla";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1.2rem;
+
+	color: var(--neutral);
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+}
+
+.selectHolder {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+
+	width: 100%;
+}
+
+.announcement {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding: 2rem 2.5rem;
+	gap: 1rem;
+
+	position: relative;
+
+	background: linear-gradient(
+		180deg,
+		var(--primary-03) 0%,
+		var(--primary-02) 100%
+	);
+	width: 100%;
+
+	border: 3px solid var(--primary-04);
+	box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.25);
+	border-radius: 1rem;
+
+	transition: 0.25s;
+}
+
+.announcement:hover {
+	outline: 1.5px solid var(--primary-04);
+}
+
+.announcement h3 {
+	font-family: "Raleway";
+	font-size: 2.4rem;
+}
+
+.modalContent {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 3.5rem;
+	width: 100%;
+
+	position: relative;
+}
+
+.buttonHolder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	position: sticky;
+	bottom: 0;
+	left: 0;
+
+	background-color: var(--background-01);
+	width: 100%;
+	height: 8.5rem;
+}
+
+.groupHolder {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+
+	gap: 1.5rem;
+	width: 100%;
+}
+
+.toggleContainer {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.modalContent h3 {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 2.4rem;
+
+	color: var(--primary-02);
+}
+
+.row span.button {
+	color: var(--neutral);
+}
+
+.row span.button:hover {
+	transform: scale(1.1);
+	color: var(--background-02);
+}
+
+.contentsHolder {
+	display: flex;
+	flex-direction: column;
+	gap: 3.5rem;
+
+	width: 100%;
+}
+
+.contentsHolder .content {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+
+	text-align: left;
+	width: 100%;
+}
+
+.contentsHolder .content a {
+	color: var(--primary-03);
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.6rem;
+	width: fit-content;
+
+	cursor: pointer;
+}
+
+.contentsHolder .content a:hover {
+	text-decoration: underline;
+}
+
+.contentsHolder .content .header {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+	justify-content: flex-start;
+	color: var(--primary-02);
+}
+
+.contentsHolder .content .header p {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 2rem;
+	width: fit-content;
+	color: var(--primary-02);
+
+	user-select: none;
+}
+
+.lockView {
+	display: flex;
+	flex-direction: row;
+	gap: 1.5rem;
+	justify-content: center;
+	align-items: center;
+
+	background: rgba(0, 0, 0, 0.75);
+	border-radius: 1rem;
+
+	user-select: none;
+
+	padding: 3rem;
+
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 5;
+}
+
+.lockView p {
+	font-family: "Trirong";
+	font-size: 1.6rem;
+	color: var(--neutral);
+	font-style: normal;
+	font-weight: 800;
+	z-index: 6;
+}
+
+.lockView span {
+	color: var(--neutral);
+	font-size: 2.6rem;
+	z-index: 6;
+}
+
+.description {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 600;
+	font-size: 2.2rem;
+
+	color: var(--neutral);
+}
+
+.description ul {
+	list-style-type: circle;
+	margin-left: 2.5rem;
+}
+
+.description ol {
+	margin-left: 2.5rem;
+}
+
+.description strong {
+	font-weight: 900;
+}
+
+@media (min-width: 1024px) {
+	.announcement {
+		flex-direction: row;
+	}
+
+	.column.first {
+		width: 50%;
+	}
+
+	.column.second {
+		width: 49%;
+	}
+
+	.container.noUser {
+		width: calc(100vw - (var(--sidebar-width) * 2));
+		left: calc(var(--sidebar-width) * 2);
+	}
+
+	.lockView {
+		padding: 0px;
+	}
+
+	.lockView p {
+		font-family: "Trirong";
+		font-size: 2rem;
+		color: var(--neutral);
+		font-style: normal;
+		font-weight: 800;
+		z-index: 6;
+	}
+
+	.lockView span {
+		color: var(--neutral);
+		font-size: 3rem;
+		z-index: 6;
+	}
+}

@@ -1,0 +1,188 @@
+{
+	"landing": {
+		"title": "Organize your study flow",
+		"subtitle": "Put an end to desperate revisions 15 minutes before your tests.",
+		"button": "Create an account",
+		"early_access_new": "New on",
+		"early_access_landscape": "Multiple languages, custom themes, dark mode (beta), and more!",
+		"early_access_portrait": "Multiple languages, custom themes, dark mode (beta), and more!",
+		"login": "Log in",
+		"register": "Register",
+		"greeting": "made with ❤️ by"
+	},
+	"empty": {
+		"title": "It's a little empty here, huh?",
+		"tasks": "Add a new task with the button above to make it appear here!"
+	},
+	"auth": {
+		"footer": {
+			"back": "Back"
+		},
+		"google_login_button": "Sign in with Google",
+		"scope_missing": {
+			"title": "Want to connect to Google Drive?",
+			"bold": "To attach files on the platform we need access to Google Drive.",
+			"text": "That way, we'll be able to send the attachments you choose and store them neatly in your account.",
+			"buttons": {
+				"accept": "Connect with Google Drive",
+				"deny": "No, I prefer to configure this later"
+			}
+		},
+		"error": {
+			"title": "Oops!",
+			"bold": "It looks like we had an internal server problem. :(",
+			"text": "We are probably already working as quickly as possible to resolve this.\nYou can try restarting the page, but if the problem persists, please contact us directly."
+		},
+		"login": {
+			"title": "Log in",
+			"subtitle": "Login with your account to enjoy all the features of the platform.",
+			"no_account": {
+				"title": "Jeez!",
+				"subtitle": "It looks like you haven't created your account on the platform yet.\nWhat are you waiting for? Create your account now to enjoy all the features of an estudaí account.",
+				"button": "Create an account"
+			},
+			"button": "Log in",
+			"forgot": "Forgot your password?",
+			"footer": {
+				"no_account": "Don't have an account?",
+				"register": "Create an account"
+			}
+		},
+		"register": {
+			"account_already_exists": {
+				"title": "Oops!",
+				"bold": "It looks like you already have an account on the platform.",
+				"text": "We've already logged you in with your Google account, so you can start using the platform right away."
+			},
+			"section1": {
+				"title": "Organize your study flow.",
+				"subtitle": "Choose which type of course you fit in so we can prepare the platform for you.",
+				"card1": {
+					"title": "I'm attending elementary school",
+					"subtitle": "I need help reviewing core subjects"
+				},
+				"card2": {
+					"title": "I'm attending high school",
+					"subtitle": "I need help organizing schedules, remembering homework, studying for exams and staying sane"
+				},
+				"card3": {
+					"title": "I'm attending college",
+					"subtitle": "I need help with my researches, projects, thesis, etc."
+				},
+				"no_choice": "I am not affiliated with any educational institution",
+				"footer": {
+					"has_account": "Already have an account?",
+					"login": "Log in"
+				}
+			},
+			"section2": {
+				"title": "Create your account",
+				"subtitle": "Now that we know what you need, enter your Google account below to register on the platform.",
+				"google_drive": {
+					"bold": "We use Google Drive to store your files, so, remember to allow access to it!",
+					"text": "If access is not granted, you will be unable to upload attachments in activities."
+				},
+				"terms": {
+					"condition": "By creating an account, you agree to our",
+					"terms": "Terms of Service",
+					"and": "and",
+					"privacy": "Privacy Policy"
+				}
+			},
+			"section2_1": {
+				"title": "Creating your account",
+				"subtitle": "Don't worry, we're pressing a few buttons and turning a few handles to get your account created!"
+			},
+			"section3": {
+				"title": "We're ready!",
+				"subtitle": "Your account has been created successfully!\nTake advantage of all the features of the platform and organize your studies once and for all.",
+				"button": "Enter the platform"
+			}
+		}
+	},
+	"modal": {
+		"cancel": "Cancel",
+		"return": "Return",
+		"logout": {
+			"title": "Log out",
+			"description": "Are you sure you want to log out of your account?",
+			"button": "Log out"
+		}
+	},
+	"greetings": {
+		"morning": "Good morning",
+		"afternoon": "Good afternoon",
+		"evening": "Good evening",
+		"night": "Good night"
+	},
+	"home": {
+		"title": "My tasks",
+		"sections": {
+			"pending": "Pending",
+			"other": "Other",
+			"archived": "Archived"
+		},
+		"intro_modal": {
+			"modal1": {
+				"title": "Welcome to estudaí",
+				"description": "We're happy to have you here.\nHere are some quick tips to make you enjoy all the features."
+			},
+			"modal2": {
+				"title": "Organize your study flow",
+				"description": "Save activities, tests and events on the platform to avoid any rush moments before the due date."
+			},
+			"modal3": {
+				"title": "Keep up with your appointments",
+				"description": "Participate and create community groups to unite those people who have the same goals as you."
+			},
+			"modal4": {
+				"title": "Track the progress of your tasks",
+				"description": "Tag attachments and links sent by other users in assignments and keep track of which materials you've already used."
+			},
+			"modal5": {
+				"title": "Explore and enjoy",
+				"description": "estudaí is all yours.\nEnjoy all the features lovingly prepared for you and good learning!"
+			}
+		}
+	},
+	"tasks": {
+		"and": "and",
+		"points": "points",
+		"memberPortraits": {
+			"others": "+ than",
+			"member": "member",
+			"member_plural": "members",
+			"empty": "no members concluded this task yet"
+		},
+		"activity": {
+			"restrictions": {
+				"individual": "Individual",
+				"group": "Group"
+			},
+			"obligatoriness": {
+				"mandatory": "Mandatory",
+				"optional": "Optional"
+			},
+			"no_description": "no description provided",
+			"placeholder_title": "'s activity_reverse",
+			"concluded_by": "concluded this activity",
+			"status": {
+				"pending": "deliver until",
+				"concluded": "completed on",
+				"archived": "archived on"
+			}
+		}
+	},
+	"settings": {
+		"title": "Settings",
+		"wip": "This page is still under construction.",
+		"sections": {
+			"account": "Account",
+			"connections": "Connections",
+			"preferences": "Preferences",
+			"customization": "Customization",
+			"language": "Language",
+			"logout": "Log out"
+		}
+	}
+}

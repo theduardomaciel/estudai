@@ -1,0 +1,52 @@
+.default {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.5rem;
+	background-color: none;
+
+	/* min-width: fit-content; */
+	flex: 1;
+
+	transition: 0.35s;
+}
+
+.default span {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 1.2rem;
+
+	color: var(--neutral);
+}
+
+.default:hover {
+	background-color: var(--primary-02);
+}
+
+.selected {
+	background-color: var(--primary-02);
+}
+
+.default.selected:hover {
+	background-color: var(--primary-03);
+}
+
+.topics {
+	overflow-x: scroll;
+	gap: 1.5rem;
+}
+
+.topics::-webkit-scrollbar {
+	display: none;
+}
+
+.topics {
+	-ms-overflow-style: none;
+	/* IE and Edge */
+	scrollbar-width: none;
+	/* Firefox */
+}

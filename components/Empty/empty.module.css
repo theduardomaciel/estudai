@@ -1,0 +1,31 @@
+.emptyTasks {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	margin-top: 10rem;
+	font-size: 1.6rem;
+
+	width: 100%;
+
+	color: var(--primary-02);
+}
+
+.emptyTasks p {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 500;
+
+	white-space: pre-line;
+
+	width: 50%;
+}
+
+.emptyTasks p strong {
+	font-family: "Raleway";
+	font-size: 1.6rem;
+	font-weight: 800;
+	margin-bottom: 1rem;
+}

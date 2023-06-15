@@ -1,10 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 datasource db {
     provider          = "postgresql"
     url               = env("DATABASE_URL")
+    directUrl         = env("DIRECT_URL")
     shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+    // If you want to use Prisma Migrate, you will need to manually create a shadow database
+    // https://neon.tech/docs/guides/prisma-migrate#configure-a-shadow-database-for-prisma-migrate
+    // make sure to append ?connect_timeout=10 to the connection string
 }
 
 generator client {
@@ -12,26 +13,28 @@ generator client {
 }
 
 model User {
-    id        Int     @id @unique @default(autoincrement())
+    id        String   @id @unique @default(cuid())
+    createdAt DateTime @default(now())
+    lastSeen  DateTime @default(now()) // used to track notifications (auto-archived tasks, new comments, new group tasks, group invites, etc.)
+
     firstName String
     lastName  String?
     username  String?
-    role      String  @default("user")
     email     String  @unique
-    image_url String
+    image_url String?
     avatar    String? @default("google")
-
-    course       Int?
-    timeMeasure  Int?
-    defaultColor Int?
-    language     String?
+    course    Course?
 
     customSubjects Subject[]
 
-    account Account?
+    activities           Activity[]
+    activitiesInteracted Activity[] @relation(name: "activity_interacted")
 
-    tasks           Task[]
-    tasksInteracted Task[] @relation(name: "task_interacted")
+    tests           Test[]
+    testsInteracted Test[] @relation(name: "test_interacted")
+
+    events           Event[]
+    eventsInteracted Event[] @relation(name: "event_interacted")
 
     attachments           Attachment[]
     attachmentsInteracted Attachment[] @relation(name: "attachment_interacted")
@@ -40,75 +43,82 @@ model User {
     groupsInteracted Group[] @relation(name: "group_interacted")
     groupsAdmin      Group[] @relation(name: "admin")
 
-    subgroups  Subgroup? @relation(fields: [subgroupId], references: [id])
-    subgroupId String?
+    subgroups      Subgroup[]
+    subgroupsAdmin Subgroup[] @relation(name: "subgroup_admin")
 
-    announcements Announcement[]
+    announcements     Announcement[]
+    comments          Comment[]
+    commentsUpvoted   Comment[]      @relation(name: "upvotedComments")
+    commentsDownvoted Comment[]      @relation(name: "downvotedComments")
 
     @@map("users")
 }
 
-model Account {
-    id           String  @id @unique @default(uuid())
-    access_token String  @unique
-    expires_at   BigInt?
-
-    google_access_token  String? @db.Text
-    google_refresh_token String? @db.Text
-    google_expires_at    BigInt?
-
-    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId Int  @unique
-
-    @@map("accounts")
+enum Course {
+    MIDDLE
+    HIGH
+    COLLEGE
 }
 
 model Subject {
-    id   String @id @unique @default(cuid())
+    id        String   @id @unique @default(cuid())
+    createdAt DateTime @default(now())
+
     name String
     icon String
 
-    isDefault Boolean @default(false)
+    activities Activity[]
+    tests      Test[]
 
-    createdByUser User? @relation(fields: [userId], references: [id])
-    userId        Int?
-
-    tasks Task[]
+    createdBy User?   @relation(fields: [userId], references: [id])
+    userId    String?
 
     @@map("subjects")
 }
 
 model Subgroup {
-    id    String @id @unique @default(uuid())
-    title String
+    id        String   @id @unique @default(uuid())
+    createdAt DateTime @default(now())
 
-    group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-    groupId Int
+    title       String
+    description String?
+    image_url   String?
+    banner_url  String?
 
-    users User[]
-    tasks Task[]
+    group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    groupId String
+
+    users  User[]
+    admins User[] @relation(name: "subgroup_admin")
+
+    activities Activity[]
+    tests      Test[]
+    events     Event[]
 
     @@map("subgroups")
 }
 
 model Group {
-    id        Int      @id @unique @default(autoincrement())
+    id        String   @id @unique @default(cuid())
     createdAt DateTime @default(now())
 
-    name      String
-    image_url String?
+    name        String
+    description String?
+    isPrivate   Boolean @default(false)
+
+    image_url  String?
+    banner_url String?
 
     pinnedMessage String?
-    shareLink     String  @unique @default(cuid())
-    private       Boolean @default(false)
+    interactedBy  User[]  @relation(name: "group_interacted")
 
-    tasks Task[]
-
-    users               User[]
-    admins              User[] @relation(name: "admin")
-    usersThatInteracted User[] @relation(name: "group_interacted")
-
+    users     User[]
+    admins    User[]     @relation(name: "admin")
     subgroups Subgroup[]
+
+    activities Activity[]
+    tests      Test[]
+    events     Event[]
 
     @@map("groups")
 }
@@ -126,68 +136,175 @@ model Attachment {
 
     interactedBy User[] @relation(name: "attachment_interacted")
 
-    task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
-    taskId Int
+    activity   Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+    activityId String?
 
-    uploadedBy User @relation(fields: [userId], references: [id])
-    userId     Int
+    test   Test?   @relation(fields: [testId], references: [id], onDelete: Cascade)
+    testId String?
+
+    event   Event?  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    eventId String?
+
+    uploadedBy User   @relation(fields: [userId], references: [id])
+    userId     String
 
     @@map("attachments")
 }
 
-model Task {
-    id Int @id @default(autoincrement())
+model Activity {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
 
-    // Geral (general)
-    type        String
+    title       String?
+    description String?
     date        DateTime?
-    attachments Attachment[]
-    links       String[]
-
-    // Specific and shared
-    description String? // precisa ser opcional já que avaliações não têm descrição, somente as matérias
     subjects    Subject[]
 
-    // Atividade (activity)
-    mode     String?
-    maxScore Int?
+    // Config
+    maxScore    Float               @default(10)
+    restriction ActivityRestriction @default(INDIVIDUAL)
+    isMandatory Boolean             @default(false)
+    privacy     TaskPrivacy         @default(PUBLIC)
 
-    // Avaliação (test)
-    questionsAmount Int?
-    contents        Json
+    links       String[]
+    attachments Attachment[]
 
-    // Evento (event)
-    title   String?
-    address String?
-
-    interactedBy User[] @relation(name: "task_interacted")
-
-    group   Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
-    groupId Int?
-
+    group      Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    groupId    String?
     subgroup   Subgroup? @relation(fields: [subgroupId], references: [id])
     subgroupId String?
 
-    createdBy User? @relation(fields: [userId], references: [id])
-    userId    Int?
+    interactedBy User[]    @relation(name: "activity_interacted")
+    comments     Comment[]
 
-    @@map("tasks")
+    createdBy User   @relation(fields: [userId], references: [id])
+    userId    String
+
+    @@map("activities")
+}
+
+enum TaskPrivacy {
+    // Individual
+    PUBLIC_FULL
+    PUBLIC_ATTACHMENTS
+    PUBLIC
+    PRIVATE
+}
+
+enum ActivityRestriction {
+    INDIVIDUAL
+    GROUP
+}
+
+model Test {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    date DateTime?
+
+    title    String?
+    subjects Subject[]
+    contents Json
+    addendum String?
+
+    // Config
+    questionsAmount      Int?
+    maxScore             Float?      @default(10)
+    showQuestionsAverage Boolean     @default(false)
+    isMandatory          Boolean     @default(false)
+    privacy              TaskPrivacy @default(PUBLIC)
+
+    links       String[]
+    attachments Attachment[]
+
+    group      Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    groupId    String?
+    subgroup   Subgroup? @relation(fields: [subgroupId], references: [id])
+    subgroupId String?
+
+    interactedBy User[]    @relation(name: "test_interacted")
+    comments     Comment[]
+
+    createdBy User   @relation(fields: [userId], references: [id])
+    userId    String
+
+    @@map("tests")
+}
+
+model Event {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    title       String?
+    description String?
+    address     String?
+    date        DateTime?
+
+    links       String[]
+    attachments Attachment[]
+
+    // Config
+    isMandatory Boolean     @default(false)
+    privacy     TaskPrivacy @default(PUBLIC)
+
+    group      Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    groupId    String?
+    subgroup   Subgroup? @relation(fields: [subgroupId], references: [id])
+    subgroupId String?
+
+    interactedBy User[]    @relation(name: "event_interacted")
+    comments     Comment[]
+
+    createdBy User   @relation(fields: [userId], references: [id])
+    userId    String
+
+    @@map("events")
+}
+
+model Comment {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    //comments  Comment[] @relation("comments")
+
+    content String
+
+    commentUpvotedBy   User[]  @relation(name: "upvotedComments")
+    commentDownvotedBy User[]  @relation(name: "downvotedComments")
+    isPinned           Boolean @default(false)
+
+    activity   Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+    activityId String?
+
+    test   Test?   @relation(fields: [testId], references: [id], onDelete: Cascade)
+    testId String?
+
+    event   Event?  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    eventId String?
+
+    createdBy User   @relation(fields: [userId], references: [id])
+    userId    String
+
+    @@map("comments")
 }
 
 model Announcement {
-    id Int @id @default(autoincrement())
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
 
-    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId Int
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
 
-    description       String
+    title             String
+    description       String?
     materialCondition String
     materialPrice     Int
 
-    whatsAppNumber String?
-    phoneNumber    String?
-    email          String?
+    phone1 String?
+    phone2 String?
+    email  String?
 
-    visualizationsCount String[]
-    isLocked            Boolean  @default(false)
+    visualizationsCount Int
+    isLocked            Boolean @default(false)
 }

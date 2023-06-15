@@ -1,0 +1,426 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	/* :root {
+		--color-primary: 255 115 179;
+		--color-secondary: 111 114 185;
+	} */
+
+	[data-theme="dark"] {
+		--primary-01: #6821d9;
+		--primary-02: #6c3abb;
+		--primary-03: #7a4cc5;
+		--primary-04: #a57ce8;
+
+		--neutral: #292727;
+
+		--font-dark: #ffffff;
+		--font-dark-02: #e0e0e0;
+		--font-light: #bcbcbc;
+		--light-gray: #5a5959;
+
+		--background-01: #1a1919;
+		--background-02: #242424;
+		--background-03: #313131;
+		--background-04: #201f1f;
+	}
+
+	[data-theme="red"] {
+		--primary-01: #ff0331;
+		--primary-02: #ff5476;
+		--primary-03: #ff8ab6;
+		--primary-04: #fc98b4;
+
+		--background-02: #fdd0e6;
+		--background-03: #ffdcf0;
+	}
+
+	[data-theme="green"] {
+		--primary-01: #005600;
+		--primary-02: #087c0d;
+		--primary-03: #43a438;
+		--primary-04: #6fce5f;
+
+		--background-02: #d0fdd3;
+		--background-03: #e9ffdc;
+	}
+
+	[data-theme="blue"] {
+		--primary-01: #2ca49e;
+		--primary-02: #4fb7b0;
+		--primary-03: #41c09e;
+		--primary-04: #79b5b2;
+
+		--background-02: #e1fdf2;
+		--background-03: #f1f6ff;
+	}
+
+	[data-theme="yellow"] {
+		--primary-01: #fb8830;
+		--primary-02: #e7b52d;
+		--primary-03: #fbc83c;
+		--primary-04: #ffc36e;
+
+		--background-02: #fdfcd0;
+		--background-03: #fff9dc;
+	}
+
+	:root {
+		font-size: 62.5%;
+		/* 
+    100% ----- 16px
+    x  ------- 10px
+    
+    1rem = 10px
+    */
+
+		--menu-width: 60rem;
+		--sidebar-width: 10rem;
+		--sidebar-height: 7.5rem;
+
+		--primary-01: #6628ca;
+		--primary-02: #7642cb;
+		--primary-03: #905ae7;
+		--primary-04: #a57ce8;
+
+		--background-01: #f1ecf4;
+		--background-02: #e1d0fd;
+		--background-03: #e9dcff;
+		--background-04: #f5eefa;
+
+		--font-light: #797979;
+		--font-dark: #141414;
+		--font-dark-02: #29252c;
+		--light-gray: #d9d9d9;
+
+		--neutral: #ffffff;
+
+		--red-01: #ff0331;
+		--red-02: #fe2950;
+
+		--yellow-01: #ffc803;
+		--green-01: #6fce5f;
+
+		--color-primary-01: 102 40 202;
+		--color-primary-02: 118 66 203;
+		--color-primary-03: 144 90 231;
+		--color-primary-04: 165 124 232;
+
+		--color-background-01: 241 236 244;
+		--color-background-02: 225 208 253;
+		--color-background-03: 233 220 255;
+		--color-background-04: 245 238 250;
+
+		--color-font-light: 245 238 250;
+		--color-font-dark: 20 20 20;
+		--color-font-dark-02: 41 37 44;
+		--color-light-gray: 217 217 217;
+
+		--color-neutral: 255 255 255;
+
+		--color-red-01: 255 3 49;
+		--color-red-02: 254 41 80;
+
+		--color-yellow-01: 255 200 3;
+		--color-green-01: 111 206 95;
+	}
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	/* As caixas agora passam a ser contadas a partir da borda, e não do conteúdo, evitando problemas com o "padding" */
+}
+
+html {
+	scroll-behavior: smooth;
+	overflow: overlay;
+
+	font-family: var(--font-inter);
+	font-size: 1.6rem;
+	background-color: var(--background-01);
+}
+
+html,
+body {
+	width: 100%;
+	height: 100%;
+
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* SVG STYLING */
+/*  Setting width and height to 1em allows changing size via font-size. Setting fill to currentColor allows changing color via color. */
+
+.icon,
+.icon svg {
+	width: 1em;
+	height: 1em;
+	fill: currentColor;
+}
+
+/* RESETS */
+
+a:link {
+	text-decoration: inherit;
+	color: inherit;
+	cursor: auto;
+}
+
+a:visited {
+	color: inherit;
+}
+
+input[type="number"] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	appearance: textfield;
+}
+
+textarea {
+	resize: none;
+}
+
+ul {
+	list-style-type: none;
+	margin-block-start: 0px;
+	margin-block-end: 0px;
+	margin-inline-start: 0px;
+	margin-inline-end: 0px;
+}
+
+/* Custom Classes */
+
+.row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	width: 100%;
+}
+
+.click {
+	cursor: pointer;
+}
+
+.static {
+	user-select: none;
+}
+
+.header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+
+	gap: 1.5rem;
+
+	flex-wrap: wrap;
+}
+
+.bold {
+	font-weight: 700;
+}
+
+.title {
+	color: var(--primary-02);
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 2.4rem;
+
+	width: 100%;
+}
+
+.full {
+	min-width: 100%;
+}
+
+/* Editor */
+
+.ProseMirror {
+	width: 100%;
+	height: 100%;
+
+	font-family: "Karla";
+	font-size: 1.6rem;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+	content: attr(data-placeholder);
+	float: left;
+	color: var(--primary-04);
+	pointer-events: none;
+	height: 0;
+}
+
+.ProseMirror ul {
+	list-style-type: circle;
+	margin-left: 2.5rem;
+}
+
+.ProseMirror ol {
+	margin-left: 2.5rem;
+}
+
+.ProseMirror strong {
+	font-weight: 900;
+}
+
+.ProseMirror:focus {
+	outline: none;
+	border: none;
+}
+
+.underline {
+	text-decoration: underline;
+}
+
+input[type="file"],
+input[type="submit"] {
+	display: none;
+}
+
+@media (min-width: 1024px) {
+	.title {
+		width: fit-content;
+	}
+
+	.full {
+		width: fit-content;
+	}
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.hoverLink {
+	cursor: pointer;
+}
+
+.hoverLink:hover p {
+	text-decoration: underline;
+}
+
+.hoverLink:hover span {
+	transform: scale(1.05);
+}
+
+.hoverLink span {
+	transform: scale(1);
+	font-size: 1.8rem;
+
+	transition: 0.3s;
+}
+
+.iconHolder {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+/* Modal */
+.dangerZone {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	text-align: left;
+	gap: 1.5rem;
+
+	width: 100%;
+}
+
+.dangerZone p {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 1.4rem;
+	width: fit-content;
+
+	color: var(--red-01);
+}
+
+/* Scrollbar */
+textarea::-webkit-scrollbar,
+.customScroll::-webkit-scrollbar {
+	background: transparent;
+	width: 1rem;
+}
+
+textarea::-webkit-scrollbar-track,
+.customScroll::-webkit-scrollbar-track {
+	background: transparent;
+	opacity: 0.85;
+}
+
+/* Handle */
+textarea::-webkit-scrollbar-thumb,
+.customScroll::-webkit-slider-thumb {
+	background: var(--light-gray);
+	border-radius: 1rem;
+	opacity: 0.5;
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: var(--background-02);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: var(--light-gray);
+	border-radius: 1rem;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: var(--font-light);
+}
+
+.avatar_one {
+	background: linear-gradient(180deg, #ffc803 0%, #91f481 100%) !important;
+}
+
+.avatar_two {
+	background: linear-gradient(180deg, #ff0331 0%, #9747ff 100%) !important;
+}
+
+.avatar_three {
+	background: linear-gradient(180deg, #ff0331 0%, #fe2950 100%) !important;
+}
+
+.avatar_four {
+	background: linear-gradient(180deg, #21833c 0%, #91f481 100%) !important;
+}
+
+.avatar_five {
+	background: linear-gradient(180deg, #ffc803 0%, #a57ce8 100%) !important;
+}
+
+.avatar_six {
+	background: linear-gradient(180deg, #a27edc 0%, #91f481 100%) !important;
+}
+
+.avatar_seven {
+	background: linear-gradient(180deg, #fe2950 0%, #2a1849 100%) !important;
+}

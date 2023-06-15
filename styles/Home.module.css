@@ -1,0 +1,167 @@
+.actionButtons {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	gap: 1.5rem;
+
+	align-items: stretch;
+
+	height: 100%;
+}
+
+.actionButtons .viewType {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 2.5rem;
+
+	padding-inline: 2rem;
+	align-items: center;
+
+	background: var(--background-02);
+	border-radius: 0.5rem;
+}
+
+.subheader {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	width: 100%;
+	gap: 1.5rem;
+
+	flex-wrap: wrap;
+}
+
+.eventHolder {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.card {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding: 1.5rem;
+
+	background: linear-gradient(
+		90deg,
+		var(--primary-01) 0%,
+		var(--primary-03) 100%
+	);
+	box-shadow: 0px 0.4rem 2.5rem 0.5rem rgba(0, 0, 0, 0.1);
+	border-radius: 0.5rem;
+
+	cursor: pointer;
+}
+
+.card h5 {
+	font-family: "Raleway";
+	font-style: normal;
+	font-weight: 700;
+	font-size: 2.2rem;
+	display: flex;
+	align-items: center;
+
+	margin-top: 0.5rem;
+	max-width: 70%;
+
+	color: var(--neutral);
+}
+
+.card p {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 0.95rem;
+	color: var(--neutral);
+
+	min-width: fit-content;
+}
+
+.card .cardColumn {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	height: 100%;
+}
+
+.actionButtons .viewType {
+	display: none;
+}
+
+.actionButtons,
+.addButton {
+	min-width: 100%;
+}
+
+.tasks {
+	display: flex;
+	flex-direction: column;
+	overflow-y: visible;
+
+	height: fit-content;
+	width: 100%;
+
+	gap: 1.5rem;
+}
+
+.tasks h5 {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.8rem;
+	color: var(--primary-03);
+}
+
+.icon {
+	color: var(--primary-04);
+}
+
+.icon.active {
+	color: var(--primary-01);
+}
+
+.tasks.cardView:not(.empty) {
+	display: grid;
+	width: 100%;
+
+	gap: 1rem;
+	margin: 0 auto;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto;
+
+	row-gap: 3.5rem;
+}
+
+.filterGroup {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	gap: 1.5rem;
+}
+
+@media (min-width: 768px) and (max-width: 1124px) {
+	.actionButtons {
+		width: 100%;
+	}
+}
+
+@media (min-width: 1024px) {
+	.actionButtons,
+	.addButton {
+		min-width: fit-content;
+		height: initial;
+	}
+
+	.actionButtons .viewType {
+		display: flex;
+	}
+}
