@@ -1,3 +1,5 @@
+"use client";
+
 import React, { SetStateAction, useRef, useState } from "react";
 
 import { AnimatePresence } from "framer-motion";
@@ -9,8 +11,7 @@ import styles from "./styles.module.css";
 // Components
 import Button from "../../Button";
 import Image, { StaticImageData } from "next/image";
-import useScreenSize from "../../../../hooks/useScreenSize";
-import { TranslateText } from "../../Translate";
+import useScreenSize from "@/hooks/useScreenSize";
 
 interface Section {
 	title: string;
@@ -90,10 +91,10 @@ export default function IntroductionModal({
 		}
 	}
 
-	const SKIP_TRANSLATED = TranslateText("Skip");
-	const PREVIOUS_TRANSLATED = TranslateText("Previous");
-	const NEXT_TRANSLATED = TranslateText("Next");
-	const ENTER_TRANSLATED = TranslateText("Enter the platform");
+	const SKIP_TRANSLATED = "Skip";
+	const PREVIOUS_TRANSLATED = "Previous";
+	const NEXT_TRANSLATED = "Next";
+	const ENTER_TRANSLATED = "Enter the platform";
 
 	const sectionsModals = sections.map((section, index) => {
 		return (

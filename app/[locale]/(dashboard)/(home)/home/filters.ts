@@ -1,28 +1,18 @@
-import { Activity, Test, Event } from "@prisma/client";
+import {
+	Activity,
+	Test,
+	Event,
+	InteractedActivity,
+	InteractedEvent,
+	InteractedTest,
+} from "@prisma/client";
 
-type Task = Activity | Test | Event;
+type Task =
+	| (Activity & { interactions: InteractedActivity[] })
+	| (Test & { interactions: InteractedTest[] })
+	| (Event & { interactions: InteractedEvent[] });
 
-declare global {
-	interface Array<T> {
-		filterNoDateTasks(): Array<T>;
-		filterArchivedTasks(): Array<T>;
-
-		filterWeekTasks(): Array<T>;
-		filterMonthTasks(month?: number, invert?: boolean): Array<T>;
-	}
-}
-
-export const arrayPrototype = (array: Array<Activity | Test | Event>) => {
-	Array.prototype.filterWeekTasks = filterWeekTasks;
-	Array.prototype.filterMonthTasks = filterMonthTasks;
-	Array.prototype.filterNoDateTasks = filterNoDateTasks;
-
-	Array.prototype.filterArchivedTasks = filterArchivedTasks;
-	return array;
-};
-
-const filterWeekTasks = () => {
-	const tasks = this! as Task[];
+export const filterWeekTasks = (tasks: Task[], invert?: boolean) => {
 	const actualDate = new Date();
 	return tasks.filter((task, _) => {
 		if (!task.date) return false;
@@ -34,15 +24,18 @@ const filterWeekTasks = () => {
 			taskDate.getDate() >= actualDate.getDate() &&
 			taskDate.getDate() <= actualDate.getDate() + 7
 		) {
-			return true;
+			return invert ? false : true;
 		} else {
-			return false;
+			return invert ? true : false;
 		}
 	});
 };
 
-const filterMonthTasks = (month?: number, invert?: boolean) => {
-	const tasks = this! as Task[];
+export const filterMonthTasks = (
+	tasks: Task[],
+	month?: number,
+	invert?: boolean
+) => {
 	const actualDate = new Date();
 	return invert
 		? tasks.filter((task, _) => {
@@ -73,14 +66,33 @@ const filterMonthTasks = (month?: number, invert?: boolean) => {
 		  });
 };
 
-const filterArchivedTasks = () => {
-	const tasks = this! as Task[];
-	return tasks.filter(
-		(task, _) => task.date && task.date.getTime() <= new Date().getTime()
+export const filterNoDateTasks = (tasks: Task[]) => {
+	return tasks.filter((task, _) => !task.date);
+};
+
+export const filterArchivedTasks = (tasks: Task[], invert?: boolean) => {
+	return tasks.filter((task, _) =>
+		invert
+			? task.date && task.date.getTime() > new Date().getTime()
+			: task.date && task.date.getTime() <= new Date().getTime()
 	);
 };
 
-const filterNoDateTasks = () => {
-	const tasks = this! as Task[];
-	return tasks.filter((task, _) => !task.date);
+export const filterInteractedTasks = (
+	tasks: Task[],
+	userId: string,
+	invert?: boolean
+) => {
+	return invert
+		? tasks.filter(
+				(task, _) =>
+					task.interactions.some(
+						(interaction, _) => interaction.userId === userId
+					) === false
+		  )
+		: tasks.filter((task, _) =>
+				task.interactions.some(
+					(interaction, _) => interaction.userId === userId
+				)
+		  );
 };

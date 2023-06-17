@@ -21,16 +21,14 @@ const getUser = cache(async (/* id: string */) => {
 	const decodePayload = decode(token) as { email: string };
 	if (!decodePayload) return null;
 
-	const interactedByInclude = {
-		include: {
-			interactedBy: true,
-		},
-	};
-
-	const subjectsInclude = {
+	const taskInclude = {
 		include: {
 			subjects: true,
-			interactedBy: true,
+			interactions: {
+				include: {
+					user: true,
+				},
+			},
 		},
 	};
 
@@ -40,19 +38,13 @@ const getUser = cache(async (/* id: string */) => {
 				email: decodePayload.email,
 			},
 			include: {
-				groups: {
+				activities: taskInclude,
+				tests: taskInclude,
+				events: {
 					include: {
-						activities: interactedByInclude,
-						tests: interactedByInclude,
-						events: interactedByInclude,
+						interactions: true,
 					},
 				},
-				activities: subjectsInclude,
-				activitiesInteracted: subjectsInclude,
-				tests: subjectsInclude,
-				testsInteracted: subjectsInclude,
-				events: true,
-				eventsInteracted: true,
 			},
 		});
 

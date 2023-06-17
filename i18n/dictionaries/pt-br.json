@@ -148,29 +148,46 @@
 	},
 	"tasks": {
 		"and": "e",
-		"points": "pontos",
 		"memberPortraits": {
 			"others": "+ de",
 			"member": "membro",
 			"member_plural": "membros",
 			"empty": "nenhum membro concluiu esta tarefa ainda"
 		},
+		"obligatoriness": {
+			"mandatory": "Obrigatório",
+			"optional": "Opcional"
+		},
 		"activity": {
+			"points": "pontos",
 			"restrictions": {
 				"individual": "Individual",
 				"group": "Em grupo"
 			},
-			"obligatoriness": {
-				"mandatory": "Obrigatório",
-				"optional": "Opcional"
-			},
 			"no_description": "nenhuma descrição enviada",
 			"placeholder_title": "Atividade de",
-			"concluded_by": "concluíram essa atividade",
-			"concluded_by_singular": "concluiu essa atividade",
+			"interacted_by": "concluíram essa atividade",
+			"interacted_by_singular": "concluiu essa atividade",
 			"status": {
 				"pending": "entrega até",
 				"concluded": "completado em",
+				"archived": "arquivado em"
+			}
+		},
+		"test": {
+			"questions": "questões",
+			"per_question": "por questão",
+			"placeholder_title": "Avaliação de",
+			"status": {
+				"archived": "arquivado em"
+			}
+		},
+		"event": {
+			"default_title": "Novo evento",
+			"interacted_by": "marcou presença no evento",
+			"interacted_by_singular": "marcou presença no evento",
+			"status": {
+				"pending": "event em",
 				"archived": "arquivado em"
 			}
 		}

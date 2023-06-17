@@ -1,9 +1,15 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Activity, ActivityRestriction, Subject, User } from "@prisma/client";
+import {
+	Activity,
+	ActivityRestriction,
+	InteractedActivity,
+	Subject,
+	Test,
+	User,
+	Event,
+} from "@prisma/client";
 
 import styles from "./task.module.css";
 
@@ -20,9 +26,15 @@ import ConcludedIcon from "@material-symbols/svg-600/rounded/check_circle.svg";
 import ExpiredIcon from "@material-symbols/svg-600/rounded/lock.svg";
 import PendingIcon from "@material-symbols/svg-600/rounded/schedule.svg";
 
+import LinkIcon from "@material-symbols/svg-600/rounded/link.svg";
+import AddressIcon from "@material-symbols/svg-600/rounded/location_on.svg";
+
 // Utils
 import formatDate from "@/utils/formatDate";
+
+// Internationalization
 import { Translations } from "@/i18n/hooks";
+import { Locale } from "@/i18n/config";
 
 export const perQuestion = (questionsAmount: number) =>
 	questionsAmount ? (10 / questionsAmount).toString().slice(0, 5) : 0;
@@ -90,10 +102,14 @@ const STATUS = {
 	},
 };
 
+export type ViewMode = "card" | "list";
+
 // Types
 interface TaskProps {
 	status: "archived" | "concluded" | "expired" | "pending";
 	dict: Translations["tasks"];
+	locale: Locale;
+	viewMode: ViewMode;
 }
 
 const getBorderStyle = (status: TaskProps["status"]) =>
@@ -109,14 +125,19 @@ export function ActivityView({
 	activity,
 	status,
 	dict: t,
+	interactedAt,
+	viewMode,
 }: TaskProps & {
-	activity: Activity & { subjects: Subject[]; interactedBy: User[] };
+	interactedAt?: Date;
+} & {
+	activity: Activity & {
+		subjects: Subject[];
+		interactions: InteractedActivity & { user: User }[];
+	};
 }) {
-	const viewMode = useSearchParams().get("viewMode") || "card";
-
 	const activityObligatoriness = activity.isMandatory
-		? t.activity.obligatoriness.mandatory
-		: t.activity.obligatoriness.optional;
+		? t.obligatoriness.mandatory
+		: t.obligatoriness.optional;
 
 	const activityRestriction =
 		activity.restriction === ActivityRestriction.INDIVIDUAL
@@ -124,6 +145,12 @@ export function ActivityView({
 			: t.activity.restrictions.group;
 
 	const activityStatus = STATUS[status as keyof typeof STATUS];
+
+	const activityDate = formatDate(
+		status === "concluded" && interactedAt
+			? interactedAt
+			: activity.createdAt
+	);
 
 	return (
 		<Link href={`/activities/${activity.id}`}>
@@ -151,7 +178,7 @@ export function ActivityView({
 							<div className={styles.circle} />
 							{activityRestriction}
 							<div className={styles.circle} />
-							{activity.maxScore} {t.points}
+							{activity.maxScore} {t.activity.points}
 						</div>
 						{activity.description &&
 						activity.description.length > 7 ? (
@@ -169,18 +196,20 @@ export function ActivityView({
 					</div>
 				</div>
 				<div className={`${styles.column} ${styles.two}`}>
-					{activity.groupId && (
+					{activity.groupId && activity.interactions && (
 						<MembersPortraits
 							label={
-								activity.interactedBy.length !== 1
-									? t.activity.concluded_by
-									: t.activity.concluded_by_singular
+								activity.interactions.length !== 1
+									? t.activity.interacted_by
+									: t.activity.interacted_by_singular
 							}
-							membersAmount={activity.interactedBy.length}
-							images={activity.interactedBy.map((user) =>
-								user.avatar === "google"
-									? user.image_url
-									: user.avatar
+							membersAmount={activity.interactions.length}
+							images={activity.interactions.map((interaction) =>
+								interaction.user
+									? interaction.user.avatar === "google"
+										? interaction.user.image_url
+										: interaction.user.avatar
+									: null
 							)}
 							dict={t.memberPortraits}
 						/>
@@ -195,6 +224,7 @@ export function ActivityView({
 								status as keyof typeof t.activity.status
 							]
 						}
+						{activityDate}
 					</div>
 				</div>
 			</div>
@@ -202,215 +232,177 @@ export function ActivityView({
 	);
 }
 
-/* export default function TaskView({ task, status }: TaskProps) {
-	const { viewMode } = useAppContext();
+export function TestView({
+	test,
+	status,
+	dict: t,
+}: TaskProps & {
+	test: Test & {
+		subjects: Subject[];
+	};
+}) {
+	const viewMode = useSearchParams().get("viewMode") || "card";
 
-	const description = task.description && (task.description as string);
+	const testObligatoriness = test.isMandatory
+		? t.obligatoriness.mandatory
+		: t.obligatoriness.optional;
 
-	const Content = () =>
-		description && description.length > 7 ? (
-			<div
-				className={styles.content}
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify(
-						task.description
-					) as unknown as string,
-				}}
-			/>
-		) : (
-			<p>{`[${TranslateText("no description provided")}]`}</p>
-		);
+	const subInfo = test.title?.match(/\[(.*?)\]/);
+	const testSubInfo = subInfo ? subInfo[1] : null;
 
-	// Ícones dos usuários e informação de usuários que concluíram
-	const concludedUsersAmount = task.interactedBy
-		? task.interactedBy.length
-		: 0;
-	const images = task.interactedBy
-		? task.interactedBy.map((user, index) => user.image_url)
-		: 0;
-
-	const Status = ({
-		icon,
-		text,
-		color,
-		hideTime,
-	}: {
-		icon: string;
-		text: string;
-		color: string;
-		hideTime?: boolean;
-	}) => (
-		<div className={styles.deadline} style={{ color: color }}>
-			<>
-				<span className={`material-symbols-rounded`}>{icon}</span>
-				{hideTime ? text : `${text} ${formatDate(task.date, true)}`}
-			</>
-		</div>
-	);
-
-	const taskIsActivity = isActivity(task.type);
-	const taskIsTest = isTest(task.type);
-
-	const infoContent = taskIsActivity ? (
-		<>
-			{taskType(task.type)}
-			<div className={styles.circle} />
-			{taskMode(task.mode)}
-			<div className={styles.circle} />
-			{taskMaxScore(task.maxScore)}
-		</>
-	) : taskIsTest ? (
-		<>
-			{taskType(task.type)}
-			<div className={styles.circle} />
-			{task.questionsAmount + ` ${TranslateText("questions")}`}
-			<div className={styles.circle} />
-			{perQuestion(task.questionsAmount as number) +
-				` ${TranslateText(" per question")}`}
-		</>
-	) : (
-		<>
-			<span
-				style={{ fontSize: "1.6rem" }}
-				className={`material-symbols-rounded`}
-			>
-				location_on
-			</span>
-			<p>{task.address}</p>
-		</>
-	);
-
-	const statusMessage = taskIsActivity ? (
-		task.group && (
-			<UsersPortraitsFromTask
-				message={`${TranslateText("already")} ${TranslateText(
-					"concluded",
-					concludedUsersAmount !== 1
-				)} ${TranslateText("the activity")}`}
-				groupName={task.group.name}
-				concludedUsersAmount={concludedUsersAmount}
-				images={images as string[]}
-			/>
-		)
-	) : taskIsTest ? (
-		<></>
-	) : (
-		task.group && (
-			<UsersPortraitsFromTask
-				message={`${TranslateText("already")} ${TranslateText(
-					"confirmed",
-					concludedUsersAmount !== 1
-				)} ${TranslateText("presence")}`}
-				groupName={task.group.name}
-				concludedUsersAmount={concludedUsersAmount}
-				images={images as string[]}
-			/>
-		)
-	);
-
-	const statusContent = taskIsActivity ? (
-		status === "concluded" ? (
-			<Status
-				icon="check"
-				text={`${TranslateText("task concluded")}`}
-				color="var(--green-01)"
-				hideTime
-			/>
-		) : status === "expired" ? (
-			<Status
-				icon="schedule"
-				text={`${TranslateText("expired")} ${TranslateText(
-					"in the day"
-				)}`}
-				color="var(--red-01)"
-			/>
-		) : task.date ? (
-			<Status
-				icon="schedule"
-				text="entrega até"
-				color="var(--primary-02)"
-			/>
-		) : (
-			<></>
-		)
-	) : taskIsTest ? (
-		status === "expired" ? (
-			<Status
-				icon="archive"
-				text={`${TranslateText("archived")} ${TranslateText(
-					"in the day"
-				)}`}
-				color="var(--primary-02)"
-			/>
-		) : (
-			<Status icon="calendar_today" text="" color="var(--primary-02)" />
-		)
-	) : status === "concluded" ? (
-		<Status
-			icon="schedule"
-			text={TranslateText("Concluded")}
-			color="var(--green-01)"
-		/>
-	) : status === "expired" ? (
-		<Status
-			icon="schedule"
-			text={`${TranslateText("expired")} ${TranslateText("in the day")}`}
-			color="var(--red-01)"
-		/>
-	) : (
-		<Status
-			icon="schedule"
-			text={`${TranslateText("event")} ${TranslateText("in the day")}`}
-			color="var(--primary-02)"
-		/>
-	);
-
-	const icon = taskIsActivity
-		? task.subjects.length > 0
-			? task.subjects[0].icon
-			: "check_box_outline_blank"
-		: taskIsTest
-		? "glyphs"
-		: "local_activity";
-	const title = taskIsActivity
-		? task.subjects.length > 0
-			? task.subjects[0].name
-			: TranslateText("Generic task")
-		: taskIsTest
-		? task.type === "av1"
-			? TranslateText("Monthly evaluation (AV1)")
-			: TranslateText("Bimonthly evaluation (AV2)")
-		: task.title;
+	const testStatus = STATUS[status as keyof typeof STATUS];
 
 	return (
-		<Link href={`/task/${task.id}`}>
+		<Link href={`/tests/${test.id}`}>
 			<div
 				className={`${styles.container} ${
 					viewMode === "card" ? styles.card : ""
 				}`}
-				style={{ border: borderStyle }}
+				style={{ border: getBorderStyle(status) }}
 			>
 				<div className={styles.column}>
-					<div className={styles.icon}>
-						<span className={`material-symbols-rounded`}>
-							{icon}{" "}
-						</span>
-					</div>
+					<div className={styles.icon}></div>
 					<div className={styles.description}>
-						<h4>{title}</h4>
-						<div className={styles.info}>{infoContent}</div>
-						{taskIsTest ? (
-							<p>{subjectsString(task.subjects)}</p>
-						) : (
-							<Content />
-						)}
+						<h4>
+							{test.title ??
+							t.activity.placeholder_title.includes("_reverse")
+								? `${subjectsString(test.subjects, t)} ${
+										t.test.placeholder_title
+								  }`
+								: `${t.test.placeholder_title} ${subjectsString(
+										test.subjects,
+										t
+								  )}`}
+						</h4>
+						<div className={styles.info}>
+							{testObligatoriness} ({testSubInfo})
+							<div className={styles.circle} />
+							{test.maxScore} {t.test.questions}
+							<div className={styles.circle} />
+							{test.showQuestionsAverage &&
+								test.maxScore &&
+								test.questionsAmount &&
+								`${(
+									test.maxScore / test.questionsAmount
+								).toFixed(2)} ${t.test.per_question}`}
+						</div>
+						{subjectsString(test.subjects, t)}
 					</div>
 				</div>
 				<div className={`${styles.column} ${styles.two}`}>
-					{statusMessage}
-					{statusContent}
+					<div
+						className={styles.deadline}
+						style={{ color: testStatus.color }}
+					>
+						{testStatus.icon}
+						{status === "archived" &&
+							t.activity.status[
+								status as keyof typeof t.activity.status
+							]}
+						{test.date?.toLocaleDateString("pt-BR", {
+							day: "2-digit",
+							month: "2-digit",
+						})}
+					</div>
 				</div>
 			</div>
 		</Link>
 	);
-} */
+}
+
+export function EventView({
+	event,
+	status,
+	dict: t,
+	viewMode,
+}: TaskProps & {
+	event: Event & {
+		interactions: InteractedActivity & { user: User }[];
+	};
+}) {
+	const eventObligatoriness = event.isMandatory
+		? t.obligatoriness.mandatory
+		: t.obligatoriness.optional;
+
+	const eventStatus = STATUS[status as keyof typeof STATUS];
+
+	return (
+		<Link href={`/events/${event.id}`}>
+			<div
+				className={`${styles.container} ${
+					viewMode === "card" ? styles.card : ""
+				}`}
+				style={{ border: getBorderStyle(status) }}
+			>
+				<div className={styles.column}>
+					<div className={styles.icon}></div>
+					<div className={styles.description}>
+						<h4>{event.title}</h4>
+						<div className={styles.info}>
+							{eventObligatoriness}
+							<div className={styles.circle} />
+							{event.address?.includes("http") ? (
+								<>
+									<LinkIcon />
+									{event.address}
+								</>
+							) : (
+								<>
+									<AddressIcon />
+									{event.address}
+								</>
+							)}
+						</div>
+						{event.description && event.description.length > 7 ? (
+							<div
+								className={styles.content}
+								dangerouslySetInnerHTML={{
+									__html: JSON.stringify(
+										event.description
+									) as unknown as string,
+								}}
+							/>
+						) : (
+							<p>{`[${t.activity.no_description}]`}</p>
+						)}
+					</div>
+				</div>
+				<div className={`${styles.column} ${styles.two}`}>
+					{event.groupId && event.interactions && (
+						<MembersPortraits
+							label={
+								event.interactions.length !== 1
+									? t.activity.interacted_by
+									: t.activity.interacted_by_singular
+							}
+							membersAmount={event.interactions.length}
+							images={event.interactions.map((interaction) =>
+								interaction.user
+									? interaction.user.avatar === "google"
+										? interaction.user.image_url
+										: interaction.user.avatar
+									: null
+							)}
+							dict={t.memberPortraits}
+						/>
+					)}
+					<div
+						className={styles.deadline}
+						style={{ color: eventStatus.color }}
+					>
+						{eventStatus.icon}
+						{
+							t.activity.status[
+								status as keyof typeof t.activity.status
+							]
+						}
+						{event.date?.toLocaleDateString("pt-BR", {
+							day: "2-digit",
+							month: "2-digit",
+						})}
+					</div>
+				</div>
+			</div>
+		</Link>
+	);
+}

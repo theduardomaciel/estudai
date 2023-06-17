@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 
 // Stylesheets
-import styles from "../styles/Home.module.css";
+import styles from "@/styles/Home.module.css";
 
 // Components
-import TaskView from "@/components/Task";
+import { ActivityView, EventView, TestView, ViewMode } from "@/components/Task";
 import EmptyMessage from "@/components/Empty";
 
 // Internationalization
@@ -12,59 +12,93 @@ import { useTranslations } from "@/i18n/hooks";
 
 // Utils
 import getUser from "@/services/getUser";
-import { arrayPrototype } from "../filters";
+import { Locale, i18n } from "@/i18n/config";
 
 export default async function HomeArchived({
 	params,
 	searchParams,
 }: {
-	params: { section?: string };
+	params: { locale: string };
 	searchParams: { isNewUser?: string; viewMode?: string };
 }) {
-	const t = useTranslations().home;
+	const dict = useTranslations();
 	const user = await getUser();
+
+	const locale = (params.locale as Locale) ?? i18n.defaultLocale;
 
 	if (!user) {
 		redirect("/login");
 	}
 
-	const { viewMode } = searchParams;
+	const viewMode = searchParams?.viewMode as ViewMode;
 
-	const tasksArray = arrayPrototype([
-		...user.activitiesInteracted,
-		...user.eventsInteracted,
-	]);
+	const defaultParams = {
+		dict: dict.tasks,
+		locale,
+		viewMode: (viewMode ?? "list") as ViewMode,
+	};
 
-	// Avaliações - arquivam sem estar expirados
-	// Atividades - expiram e concluem
-	// Eventos - expiram e arquivam, mas não concluem
+	// Avaliações e eventos - arquivam sem estar expirados
+	// Atividades - são arquivadas quando expiram (podem ter sido concluídas ou não)
 
-	const archivedTasks = [
-		...user.tests.filterArchivedTasks(),
-		...user.events.filterArchivedTasks(),
-	];
+	const archivedTests = user.tests.filterArchivedTasks();
+	const archivedEvents = user.events.filterArchivedTasks();
 
-	const expiredTasks = user.activities.filterArchivedTasks();
-	const concludedTasks = user.activitiesInteracted;
+	// As tarefas que expiraram são aquelas que não foram interagidas e que a data de entrega já passou
+	// Para esse sistema funcionar, o usuário não poderá interagir com a tarefa depois que ela expirar
+	const expiredActivities = user.activities
+		.filterInteractedTasks(user.id, true)
+		.filterArchivedTasks();
 
-	const archivedTasksViews = archivedTasks.map((task, index) => (
-		<TaskView key={index} task={task} status={"archived"} />
+	// Como somente é possível concluir uma tarefa que já foi interagida, não é necessário filtrar por interação
+	const concludedActivities = user.activities
+		.filterWeekTasks(true)
+		.filterInteractedTasks(user.id)
+		.filterArchivedTasks();
+
+	const archivedTestsViews = archivedTests.map((task, index) => (
+		<TestView
+			key={index}
+			test={task}
+			status={"archived"}
+			{...defaultParams}
+		/>
 	));
 
-	const expiredTasksViews = expiredTasks.map((task, index) => (
-		<TaskView key={index} task={task} status={"expired"} />
+	const archivedEventsViews = archivedEvents.map((event, index) => (
+		<EventView
+			key={index}
+			event={event as any}
+			status={"archived"}
+			{...defaultParams}
+		/>
 	));
 
-	const concludedTasksViews = concludedTasks.map((task, index) => (
-		<TaskView key={index} task={task} status={"concluded"} />
+	const expiredActivitiesViews = expiredActivities.map((activity, index) => (
+		<ActivityView
+			key={index}
+			activity={activity as any}
+			status={"expired"}
+			{...defaultParams}
+		/>
+	));
+
+	const concludedActivitiesViews = concludedActivities.map((task, index) => (
+		<ActivityView
+			key={index}
+			activity={task as any}
+			status={"concluded"}
+			{...defaultParams}
+		/>
 	));
 
 	const sortedArray = [
-		...archivedTasksViews,
-		...expiredTasksViews,
-		...concludedTasksViews,
+		...archivedTestsViews,
+		...archivedEventsViews,
+		...expiredActivitiesViews,
+		...concludedActivitiesViews,
 	].sort((a, b) => {
-		/*  const aDate = new Date(a.props.task.date);
+		/* const aDate = new Date(a.props.task.date);
         const bDate = new Date(b.props.task.date);
         return aDate.getTime() - bDate.getTime(); */
 		const aDate = new Date(a.props.task.date);
@@ -80,7 +114,13 @@ export default async function HomeArchived({
 		}
 	});
 
-	const hasTasks = tasksArray.length > 0;
+	/* const tasksArray = arrayPrototype([
+		...user.activities,
+		...user.tests,
+		...user.events,
+	]); */
+
+	const hasTasks = true; //tasksArray.length > 0;
 
 	return (
 		<>

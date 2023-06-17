@@ -1,63 +1,127 @@
 import { redirect } from "next/navigation";
 
 // Components
-import TaskView from "@/components/Task";
+import { ActivityView, TestView, EventView, ViewMode } from "@/components/Task";
 import IntroductionModal from "@/components/Landing/IntroModal";
 
 // Stylesheets
-import styles from "../styles/Home.module.css";
+import styles from "@/styles/Home.module.css";
 
 // Internationalization
 import { useTranslations, Translations } from "@/i18n/hooks";
 
 // Utils
-import { arrayPrototype } from "./filters";
 import getUser from "@/services/getUser";
 
 export default async function Home({
+	params,
 	searchParams,
 }: {
+	params: { locale: string };
 	searchParams: { isNewUser?: string; viewMode?: string };
 }) {
-	const t = useTranslations().home;
+	const dict = useTranslations();
+	const t = dict.home;
+	const locale = (params.locale as Locale) ?? i18n.defaultLocale;
 	const user = await getUser();
 
 	if (!user) {
 		redirect("/login");
 	}
 
-	const { isNewUser, viewMode } = searchParams;
-	const tasksArray = arrayPrototype([
-		...user.activities,
-		...user.tests,
-		...user.events,
-	]);
+	const viewMode = searchParams?.viewMode as ViewMode;
+	const isNewUser = searchParams?.isNewUser === "true";
 
-	const weekTasks = tasksArray
+	const defaultParams = {
+		dict: dict.tasks,
+		locale,
+		viewMode: (viewMode ?? "list") as ViewMode,
+	};
+
+	// Somente exibimos atividades concluídas na semana
+	const concludedActivities = user.activities
 		.filterWeekTasks()
-		.map((task, index) => (
-			<TaskView key={index} task={task} status={"pending"} />
+		.filterArchivedTasks(true)
+		.filterInteractedTasks(user.id)
+		.map((activity, index) => (
+			<ActivityView
+				key={index}
+				activity={activity as any}
+				status={"concluded"}
+				{...defaultParams}
+			/>
 		));
 
-	const monthTasks = tasksArray
-		.filterMonthTasks()
-		.map((task, index) => (
-			<TaskView key={index} task={task} status={"pending"} />
+	const pendingActivities = user.activities
+		.filterArchivedTasks(true)
+		.map((activity, index) => (
+			<ActivityView
+				key={index}
+				activity={activity as any}
+				status={"pending"}
+				{...defaultParams}
+			/>
 		));
 
-	const otherMonthsTasks = tasksArray
-		.filterMonthTasks(undefined, true)
-		.map((task, index) => (
-			<TaskView key={index} task={task} status={"pending"} />
+	const pendingTests = user.tests
+		.filterArchivedTasks(true)
+		.map((test, index) => (
+			<TestView
+				key={index}
+				test={test}
+				status={"pending"}
+				{...defaultParams}
+			/>
 		));
 
-	const otherTasks = tasksArray
-		.filterNoDateTasks()
-		.map((task, index) => (
-			<TaskView key={index} task={task} status={"pending"} />
+	const pendingEvents = user.events
+		.filterArchivedTasks(true)
+		.map((event, index) => (
+			<EventView
+				key={index}
+				event={event as any}
+				status={"pending"}
+				{...defaultParams}
+			/>
 		));
 
-	const hasTasks = tasksArray.length > 0;
+	const sortedTasks = [
+		...concludedActivities,
+		...pendingActivities,
+		...pendingTests,
+		...pendingEvents,
+	].sort((a, b) => {
+		const aDate = new Date(a.props.activity.date);
+		const bDate = new Date(b.props.activity.date);
+		return aDate.getTime() - bDate.getTime();
+	});
+
+	const weekTasks = sortedTasks.filter((task) => {
+		const taskDate = new Date(task.props.activity.date);
+		const today = new Date();
+		const week = 7 * 24 * 60 * 60 * 1000;
+		return taskDate.getTime() - today.getTime() < week;
+	});
+
+	const monthTasks = sortedTasks.filter((task) => {
+		const taskDate = new Date(task.props.activity.date);
+		const today = new Date();
+		const month = 30 * 24 * 60 * 60 * 1000;
+		return taskDate.getTime() - today.getTime() < month;
+	});
+
+	const otherMonthsTasks = sortedTasks.filter((task) => {
+		const taskDate = new Date(task.props.activity.date);
+		const today = new Date();
+		const month = 30 * 24 * 60 * 60 * 1000;
+		return taskDate.getTime() - today.getTime() > month;
+	});
+
+	const otherTasks = sortedTasks.filter((task) => {
+		return !task.props.activity.date;
+	});
+
+	const hasTasks = true;
 
 	return (
 		<>
@@ -109,6 +173,8 @@ import Modal3Image from "/public/landing/introModal/modal_3.png";
 import Modal4Image from "/public/landing/introModal/modal_4.png";
 import Modal5Image from "/public/landing/introModal/modal_5.png";
 import EmptyMessage from "@/components/Empty";
+import { Locale, i18n } from "@/i18n/config";
+import tasksArray, { arrayPrototype, filterWeekTasks } from "./filters";
 
 const INTRO_MODAL_SECTIONS = ({
 	dict: t,

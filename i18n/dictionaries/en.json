@@ -147,28 +147,46 @@
 	},
 	"tasks": {
 		"and": "and",
-		"points": "points",
 		"memberPortraits": {
 			"others": "+ than",
 			"member": "member",
 			"member_plural": "members",
 			"empty": "no members concluded this task yet"
 		},
+		"obligatoriness": {
+			"mandatory": "Mandatory",
+			"optional": "Optional"
+		},
 		"activity": {
+			"points": "points",
 			"restrictions": {
 				"individual": "Individual",
 				"group": "Group"
 			},
-			"obligatoriness": {
-				"mandatory": "Mandatory",
-				"optional": "Optional"
-			},
 			"no_description": "no description provided",
 			"placeholder_title": "'s activity_reverse",
-			"concluded_by": "concluded this activity",
+			"interacted_by": "concluded this activity",
+			"interacted_by_singular": "concluded this activity",
 			"status": {
 				"pending": "deliver until",
 				"concluded": "completed on",
+				"archived": "archived on"
+			}
+		},
+		"test": {
+			"questions": "questions",
+			"per_question": "per question",
+			"placeholder_title": "'s test_reverse",
+			"status": {
+				"archived": "archived on"
+			}
+		},
+		"event": {
+			"default_title": "Untitled event",
+			"interacted_by": "marked presence",
+			"interacted_by_singular": "marked presence",
+			"status": {
+				"pending": "event on",
 				"archived": "archived on"
 			}
 		}

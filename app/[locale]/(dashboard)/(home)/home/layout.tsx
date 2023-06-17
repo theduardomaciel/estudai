@@ -24,7 +24,7 @@ export default async function HomeLayout({
 }) {
 	const t = useTranslations().home;
 
-	const { viewMode } = searchParams;
+	const viewMode = searchParams?.viewMode;
 	const user = await getUser();
 
 	const userHasTasks =
