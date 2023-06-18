@@ -1,28 +1,26 @@
 "use client";
-
 import { CSSProperties } from "react";
 import { ThemeProvider } from "next-themes";
+
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import { Tag, TagProps } from "@/components/AttachmentLoader/Tag";
 // Drag 'n Drop
 import { DndProvider, Preview } from "react-dnd-multi-backend";
 import { HTML5toTouch } from "rdndmb-html5-to-touch"; // or any other pipeline
 
-import { Tag, TagProps } from "@/components/AttachmentLoader/Tag";
+interface GeneratorProps {
+	item: TagProps;
+	style: CSSProperties;
+}
+
 const ComponentPreview = (): JSX.Element => {
 	return (
 		<Preview
 			generator={({
-				itemType,
 				item,
 				style,
-				ref,
-			}: {
-				itemType: any;
-				item: TagProps;
-				style: CSSProperties;
-				ref: any;
-			}): JSX.Element => {
+			}: GeneratorProps): JSX.Element => {
 				return (
 					<Tag tagId={item.tagId} index={item.index} style={style} />
 				);

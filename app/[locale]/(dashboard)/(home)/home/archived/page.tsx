@@ -13,6 +13,11 @@ import { useTranslations } from "@/i18n/hooks";
 // Utils
 import getUser from "@/services/getUser";
 import { Locale, i18n } from "@/i18n/config";
+import {
+	filterArchivedTasks,
+	filterInteractedTasks,
+	filterWeekTasks,
+} from "../filters";
 
 export default async function HomeArchived({
 	params,
@@ -41,21 +46,7 @@ export default async function HomeArchived({
 	// Avaliações e eventos - arquivam sem estar expirados
 	// Atividades - são arquivadas quando expiram (podem ter sido concluídas ou não)
 
-	const archivedTests = user.tests.filterArchivedTasks();
-	const archivedEvents = user.events.filterArchivedTasks();
-
-	// As tarefas que expiraram são aquelas que não foram interagidas e que a data de entrega já passou
-	// Para esse sistema funcionar, o usuário não poderá interagir com a tarefa depois que ela expirar
-	const expiredActivities = user.activities
-		.filterInteractedTasks(user.id, true)
-		.filterArchivedTasks();
-
-	// Como somente é possível concluir uma tarefa que já foi interagida, não é necessário filtrar por interação
-	const concludedActivities = user.activities
-		.filterWeekTasks(true)
-		.filterInteractedTasks(user.id)
-		.filterArchivedTasks();
-
+	const archivedTests = filterArchivedTasks(user.tests) as typeof user.tests;
 	const archivedTestsViews = archivedTests.map((task, index) => (
 		<TestView
 			key={index}
@@ -65,6 +56,9 @@ export default async function HomeArchived({
 		/>
 	));
 
+	const archivedEvents = filterArchivedTasks(
+		user.events
+	) as typeof user.events;
 	const archivedEventsViews = archivedEvents.map((event, index) => (
 		<EventView
 			key={index}
@@ -74,6 +68,16 @@ export default async function HomeArchived({
 		/>
 	));
 
+	const archivedActivities = filterArchivedTasks(
+		user.activities
+	) as typeof user.activities;
+	// As tarefas que expiraram são aquelas que não foram interagidas e que a data de entrega já passou
+	// Para esse sistema funcionar, o usuário não poderá interagir com a tarefa depois que ela expirar
+	const expiredActivities = filterInteractedTasks(
+		archivedActivities,
+		user.id,
+		true
+	);
 	const expiredActivitiesViews = expiredActivities.map((activity, index) => (
 		<ActivityView
 			key={index}
@@ -82,6 +86,12 @@ export default async function HomeArchived({
 			{...defaultParams}
 		/>
 	));
+
+	// Como somente é possível concluir uma tarefa que já foi interagida, não é necessário filtrar por interação
+	const concludedActivities = filterWeekTasks(
+		filterInteractedTasks(archivedActivities, user.id),
+		true
+	);
 
 	const concludedActivitiesViews = concludedActivities.map((task, index) => (
 		<ActivityView
@@ -114,13 +124,7 @@ export default async function HomeArchived({
 		}
 	});
 
-	/* const tasksArray = arrayPrototype([
-		...user.activities,
-		...user.tests,
-		...user.events,
-	]); */
-
-	const hasTasks = true; //tasksArray.length > 0;
+	const hasTasks = sortedArray.length > 0;
 
 	return (
 		<>
@@ -130,7 +134,7 @@ export default async function HomeArchived({
 						<div className={styles.filterGroup}>{sortedArray}</div>
 					</>
 				) : (
-					<EmptyMessage />
+					<EmptyMessage description={dict.home.empty_archived} />
 				)}
 			</ul>
 		</>

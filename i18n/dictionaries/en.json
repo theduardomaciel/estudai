@@ -101,27 +101,38 @@
 		}
 	},
 	"modal": {
-		"cancel": "Cancel",
-		"return": "Return",
+		"default": {
+			"cancel": "Cancel",
+			"return": "Return"
+		},
 		"logout": {
 			"title": "Log out",
 			"description": "Are you sure you want to log out of your account?",
 			"button": "Log out"
 		}
 	},
-	"greetings": {
-		"morning": "Good morning",
-		"afternoon": "Good afternoon",
-		"evening": "Good evening",
-		"night": "Good night"
+	"profile": {
+		"pending": {
+			"pending": "You have 1 pending task",
+			"pending_plural": "You have {{count}} pending tasks",
+			"no_pending": "You don't have any pending tasks"
+		},
+		"greetings": {
+			"morning": "Good morning",
+			"afternoon": "Good afternoon",
+			"evening": "Good evening",
+			"night": "Good night"
+		}
 	},
 	"home": {
 		"title": "My tasks",
+		"add_task": "Add task",
 		"sections": {
 			"pending": "Pending",
 			"other": "Other",
 			"archived": "Archived"
 		},
+		"empty_archived": "You don't have any archived tasks.",
 		"intro_modal": {
 			"modal1": {
 				"title": "Welcome to estudaí",
@@ -156,6 +167,23 @@
 		"obligatoriness": {
 			"mandatory": "Mandatory",
 			"optional": "Optional"
+		},
+		"new": {
+			"title": "Create new task",
+			"tasks": {
+				"activity": {
+					"title": "Create activity",
+					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+				},
+				"test": {
+					"title": "Create test",
+					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+				},
+				"event": {
+					"title": "Create event",
+					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+				}
+			}
 		},
 		"activity": {
 			"points": "points",

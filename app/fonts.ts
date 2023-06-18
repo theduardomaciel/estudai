@@ -15,7 +15,7 @@ export const raleway = Raleway({
 });
 
 export const karla = Karla({
-	weight: ["700"],
+	weight: ["700", "800"],
 	subsets: ["latin"],
 	variable: "--font-karla",
 	display: "swap",

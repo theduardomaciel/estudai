@@ -3,11 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-	/* :root {
-		--color-primary: 255 115 179;
-		--color-secondary: 111 114 185;
-	} */
-
 	[data-theme="dark"] {
 		--primary-01: #6821d9;
 		--primary-02: #6c3abb;
@@ -70,11 +65,11 @@
 	:root {
 		font-size: 62.5%;
 		/* 
-    100% ----- 16px
-    x  ------- 10px
-    
-    1rem = 10px
-    */
+        100% ----- 16px
+        x  ------- 10px
+        
+        1rem = 10px
+        */
 
 		--menu-width: 60rem;
 		--sidebar-width: 10rem;
@@ -113,7 +108,7 @@
 		--color-background-03: 233 220 255;
 		--color-background-04: 245 238 250;
 
-		--color-font-light: 245 238 250;
+		--color-font-light: 121 121 121;
 		--color-font-dark: 20 20 20;
 		--color-font-dark-02: 41 37 44;
 		--color-light-gray: 217 217 217;
@@ -151,6 +146,14 @@ body {
 
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
+}
+
+/* DEFAULT BODY STYLING */
+body {
+	font-family: var(--font-inter);
+	font-size: 1.6rem;
+	overflow: overlay;
+	background-color: var(--background-01);
 }
 
 /* SVG STYLING */
@@ -377,25 +380,25 @@ textarea::-webkit-scrollbar-thumb,
 }
 
 /* width */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
 	width: 10px;
-}
+} */
 
 /* Track */
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
 	background: var(--background-02);
-}
+} */
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
 	background: var(--light-gray);
 	border-radius: 1rem;
-}
+} */
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+/* ::-webkit-scrollbar-thumb:hover {
 	background: var(--font-light);
-}
+} */
 
 .avatar_one {
 	background: linear-gradient(180deg, #ffc803 0%, #91f481 100%) !important;

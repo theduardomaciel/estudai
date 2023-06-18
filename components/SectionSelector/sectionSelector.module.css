@@ -1,43 +1,43 @@
 .selector {
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
 
-    gap: 5.5rem;
+	gap: 5.5rem;
 }
 
 .section {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .section p {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 1.8rem;
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1.8rem;
 
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 
-    color: var(--primary-04);
+	color: var(--primary-04);
 
-    transition: 1s;
+	transition: 1s;
 }
 
 .section.selected p {
-    font-weight: 600;
-    color: var(--primary-02);
+	font-weight: 600;
+	color: var(--primary-02);
 }
 
 .section div {
-    width: 0px;
-    height: 2px;
+	width: 0px;
+	height: 2px;
 
-    margin-top: 1rem;
+	margin-top: 1rem;
 
-    background-color: var(--primary-02);
-    transition: 1s;
+	background-color: var(--primary-02);
+	transition: 1s;
 }
 
 .section.selected div {
-    width: 125%;
+	width: 125%;
 }

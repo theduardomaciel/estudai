@@ -20,7 +20,7 @@ import styles from "./Register.module.css";
 // Components
 import Button from "@/components/Button";
 import Separator from "@/components/Separator";
-import RedirectButton from "@/components/Button/Redirect";
+import Anchor from "@/components/Button/Anchor";
 import { GoogleButton } from "../components/Google";
 import { Error, Footer, ScopeMissing } from "../components/Sections";
 
@@ -210,9 +210,7 @@ export default function RegisterForm({ code, dict }: Props) {
 			</header>
 			<div className={styles.cardsHolder}>
 				<Button
-					additionalClasses={
-						selected === "MIDDLE" ? styles.current : ""
-					}
+					className={selected === "MIDDLE" ? styles.current : ""}
 					style={
 						selected === "MIDDLE" ? selectedStyle : unselectedStyle
 					}
@@ -231,9 +229,7 @@ export default function RegisterForm({ code, dict }: Props) {
 					{selected === "MIDDLE" && <TimerIcon />}
 				</Button>
 				<Button
-					additionalClasses={
-						selected === "HIGH" ? styles.current : ""
-					}
+					className={selected === "HIGH" ? styles.current : ""}
 					style={
 						selected === "HIGH" ? selectedStyle : unselectedStyle
 					}
@@ -252,9 +248,7 @@ export default function RegisterForm({ code, dict }: Props) {
 					{selected === "HIGH" && <TimerIcon />}
 				</Button>
 				<Button
-					additionalClasses={
-						selected === "COLLEGE" ? styles.current : ""
-					}
+					className={selected === "COLLEGE" ? styles.current : ""}
 					style={
 						selected === "COLLEGE" ? selectedStyle : unselectedStyle
 					}
@@ -433,17 +427,13 @@ export default function RegisterForm({ code, dict }: Props) {
 					{t.account_already_exists.text}
 				</p>
 			</header>
-			<Link
+			<Anchor
 				href={{ pathname: "/home", query: { isNewUser: true } }}
 				as={"/home"}
-				style={{ width: "100%" }}
+				className="w-full py-6 px-[0.85rem]"
 			>
-				<RedirectButton
-					style={{ padding: "0.85rem 1.5rem", width: "100%" }}
-				>
-					{t.section3.button}
-				</RedirectButton>
-			</Link>
+				{t.section3.button}
+			</Anchor>
 			<Separator style={separator} orientation="horizontal" />
 		</motion.div>
 	);

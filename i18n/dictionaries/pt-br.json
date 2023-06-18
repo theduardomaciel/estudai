@@ -101,28 +101,38 @@
 		}
 	},
 	"modal": {
-		"cancel": "Cancelar",
-		"return": "Voltar",
+		"default": {
+			"cancel": "Cancelar",
+			"return": "Voltar"
+		},
 		"logout": {
 			"title": "Sair da plataforma",
 			"description": "Tem certeza que deseja sair da plataforma? Você precisará logar novamente para acessar sua conta.",
 			"button": "Sair"
 		}
 	},
-	"greetings": {
-		"morning": "Bom dia",
-		"afternoon": "Boa tarde",
-		"evening": "Boa noite",
-		"night": "Boa noite"
+	"profile": {
+		"pending": {
+			"pending": "Você tem uma tarefa pendente",
+			"pending_plural": "Você tem {{count}} tarefas pendentes",
+			"no_pending": "Você não possui tarefas pendentes"
+		},
+		"greetings": {
+			"morning": "Bom dia",
+			"afternoon": "Boa tarde",
+			"evening": "Boa noite",
+			"night": "Boa noite"
+		}
 	},
 	"home": {
-		"profile": {},
 		"title": "Minhas tarefas",
+		"add_task": "Adicionar tarefa",
 		"sections": {
 			"pending": "Pendente",
 			"other": "Outros",
 			"archived": "Arquivado"
 		},
+		"empty_archived": "Você não possui tarefas arquivadas.",
 		"intro_modal": {
 			"modal1": {
 				"title": "Bem-vindo ao estudaí",
@@ -157,6 +167,23 @@
 		"obligatoriness": {
 			"mandatory": "Obrigatório",
 			"optional": "Opcional"
+		},
+		"new": {
+			"title": "Criar uma nova tarefa",
+			"tasks": {
+				"activity": {
+					"title": "Criar atividade",
+					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+				},
+				"test": {
+					"title": "Criar avaliação",
+					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+				},
+				"event": {
+					"title": "Criar evento",
+					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+				}
+			}
 		},
 		"activity": {
 			"points": "pontos",

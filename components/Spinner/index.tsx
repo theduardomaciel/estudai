@@ -3,10 +3,10 @@ import styles from "./spinner.module.css";
 interface Props {
 	color: string;
 	size?: number;
-	classes?: string;
+	className?: string;
 }
 
-export default function Spinner({ color, size, classes }: Props) {
+export default function Spinner({ color, size, className }: Props) {
 	const parentStyle = {
 		width: size ? `${size}rem` : "2.5rem",
 		height: size ? `${size}rem` : "2.5rem",
@@ -20,7 +20,7 @@ export default function Spinner({ color, size, classes }: Props) {
 	};
 
 	return (
-		<div className={`${styles.loader} ${classes}`} style={parentStyle}>
+		<div className={`${styles.loader} ${className}`} style={parentStyle}>
 			<div style={childrenStyle} />
 			<div style={childrenStyle} />
 		</div>

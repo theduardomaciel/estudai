@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 // Stylesheets
 import "app/global.css";
+import { Providers } from "../providers";
 
 // Fonts - Inter is the base font and Karla is used for the majority of buttons
 import { inter, raleway, karla, trirong } from "app/fonts";
@@ -29,7 +30,9 @@ export default function BaseLayout({
 			lang={params.locale}
 			className={`${inter.variable} ${raleway.variable} ${karla.variable} ${trirong.variable}`}
 		>
-			<body>{children}</body>
+			<body>
+				<Providers>{children}</Providers>
+			</body>
 		</html>
 	);
 }

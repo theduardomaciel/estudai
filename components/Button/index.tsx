@@ -1,21 +1,21 @@
 "use client";
-
 import React from "react";
+
+// Components
 import Spinner from "../Spinner";
 
-import styles from "./button.module.css";
+// Styles
+import { cn } from "@/lib/ui";
+import { DEFAULT, presets } from "./button.classes";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-	className?: string;
 	isLoading?: boolean;
-	accentColor?: string;
-	preset?: "primary" | "neutral" | "sendForm" | "fillHover";
+	preset?: keyof typeof presets | (keyof typeof presets)[] | null;
 };
 
 export default function Button({
 	disabled,
 	isLoading,
-	accentColor,
 	preset = "primary",
 	className,
 	children,
@@ -24,16 +24,25 @@ export default function Button({
 	return (
 		<button
 			type={preset === "sendForm" ? "submit" : "button"}
-			className={`button ${styles.button} ${
-				preset ? styles[preset] : ""
-			} ${isLoading ? styles.disabled : ""} ${className}`}
+			className={cn(
+				DEFAULT,
+				typeof preset === "string"
+					? presets[preset]
+					: preset
+					? preset.map((t) => presets[t])
+					: "",
+				className
+			)}
 			disabled={disabled || isLoading}
 			{...rest}
 		>
 			{isLoading ? (
 				<Spinner
-					classes={styles.hovered}
-					color={accentColor ?? "var(--neutral)"}
+					color={
+						preset === "neutral"
+							? "var(--primary-02)"
+							: "var(--neutral)"
+					}
 				/>
 			) : (
 				<>{children && children}</>

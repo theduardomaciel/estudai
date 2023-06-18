@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+
 import jwt, { decode } from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 
-// Lib
+// Utils
 import prisma from "@/lib/prisma";
-import type { RegisterProps } from "@/lib/auth";
 import { Course } from "@prisma/client";
+import type { RegisterProps } from "@/lib/auth";
 
 interface GoogleResponse {
 	email: string;
@@ -24,7 +25,6 @@ function getAppAuthenticationToken(user_email: string) {
 	return token;
 }
 
-const PREFIX = `estudai.auth.`;
 const CORS_HEADERS = {
 	"Access-Control-Allow-Origin": "*",
 	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -33,10 +33,15 @@ const CORS_HEADERS = {
 
 export async function POST(request: Request) {
 	const body = await request.json();
-	const { registerData, code } = body as {
+	const { registerData, code, PREFIX } = body as {
 		registerData: RegisterProps;
 		code: string;
+		PREFIX: string;
 	};
+
+	if (!PREFIX) {
+		return new Response("Prefix not provided.", { status: 400 });
+	}
 
 	const oAuth2Client = new OAuth2Client(
 		process.env.NEXT_PUBLIC_GOOGLE_ID,

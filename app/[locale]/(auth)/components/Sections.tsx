@@ -5,7 +5,7 @@ import ArrowLeftIcon from "@material-symbols/svg-600/rounded/keyboard_backspace.
 
 // Components
 import Separator from "@/components/Separator";
-import RedirectButton from "@/components/Button/Redirect";
+import Anchor from "@/components/Button/Anchor";
 
 interface SectionProps {
 	setSection?: () => void;
@@ -54,15 +54,12 @@ export const ScopeMissing = ({ dict: t }: SectionProps) => {
 				</p>
 			</header>
 			<div className="flex flex-col items-center justify-center gap-y-5 w-full">
-				<Link className="w-full" href={`/settings/connections`}>
-					<RedirectButton
-						style={{
-							padding: "0.85rem 2rem",
-						}}
-					>
-						{t.scope_missing.buttons.accept}
-					</RedirectButton>
-				</Link>
+				<Anchor
+					className="w-full px-8 py-[0.85rem]"
+					href={`/settings/connections`}
+				>
+					{t.scope_missing.buttons.accept}
+				</Anchor>
 				<Link href={`/home`}>
 					<p className={styles.outro}>
 						{t.scope_missing.buttons.deny}

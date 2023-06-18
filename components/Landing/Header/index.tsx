@@ -21,9 +21,9 @@ export default function LandingHeader({
 				<Link href={"/login"}>
 					<p className={styles.link}>{t.landing.login}</p>
 				</Link>
-				<Link href={"/register"}>
+				{/* <Link href={"/register"}>
 					<p className={styles.register}>{t.landing.register}</p>
-				</Link>
+				</Link> */}
 			</div>
 		</div>
 	);

@@ -1,19 +1,15 @@
 "use client";
-
 import React, { useState } from "react";
 
 import Modal from "..";
 
-import { signOut } from "@/lib/auth";
-
 import ExitIcon from "@material-symbols/svg-600/rounded/exit_to_app.svg";
 
+import { Translations } from "@/i18n/hooks";
+import { signOut } from "@/lib/auth";
+
 interface LogoutModalProps {
-	dict: {
-		title: string;
-		description: string;
-		buttonText: string;
-	};
+	dict: Translations["modal"];
 }
 
 export default function LogoutModalPreset({ dict: t }: LogoutModalProps) {
@@ -32,12 +28,13 @@ export default function LogoutModalPreset({ dict: t }: LogoutModalProps) {
 				toggleVisibility={() => setModalVisible(!isModalVisible)}
 				icon={ExitIcon}
 				color={`var(--primary-02)`}
-				title={t.title}
-				description={t.description}
+				title={t.logout.title}
+				description={t.logout.description}
 				actionProps={{
-					buttonText: t.buttonText,
+					buttonText: t.logout.button,
 					function: logout,
 				}}
+				dict={t.default}
 				isLoading={isLoading}
 			/>
 		),

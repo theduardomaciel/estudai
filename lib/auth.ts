@@ -1,6 +1,9 @@
+"use client";
+
 import { hasGrantedAllScopesGoogle } from "@react-oauth/google";
 import { api } from "./api";
-import { useRouter } from "next/navigation";
+
+export const PREFIX = `estudai.auth.`;
 
 export interface RegisterProps {
 	course: string | null;
@@ -9,7 +12,11 @@ export interface RegisterProps {
 export async function signIn(code: string, registerData?: RegisterProps) {
 	try {
 		console.log(registerData);
-		const response = await api.post("/auth/google", { registerData, code });
+		const response = await api.post("/auth/google", {
+			registerData,
+			code,
+			PREFIX,
+		});
 		console.log(response);
 
 		const { tokens, appToken } = response.data;
@@ -65,8 +72,12 @@ export async function signIn(code: string, registerData?: RegisterProps) {
 }
 
 export async function signOut() {
-	const router = useRouter();
 	console.log("Des-logando usuário e retornando para página inicial.");
-
-	router.push("/");
+	try {
+		const response = await api.post(`/auth/logout?prefix=${PREFIX}`);
+		console.log(response);
+		return true;
+	} catch (error: any) {
+		console.log(error);
+	}
 }

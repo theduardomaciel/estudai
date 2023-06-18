@@ -34,8 +34,8 @@ export default async function HomeLayout({
 
 	return (
 		<>
-			<div className="flex flex-col w-full h-full items-start overflow-y-auto px-14 pt-14 pb-[calc(3.5rem+var(--sidebar-height))] lg:px-20 lg:py-14 overflow-x-hidden gap-28">
-				<h1 className="text-primary-02 font-raleway font-bold text-[3.25rem] lg:text-6xl">
+			<div className="flex flex-col w-full h-full items-start overflow-y-auto px-9 pt-9 pb-[calc(3.5rem+var(--sidebar-height))] lg:px-12 lg:py-9 overflow-x-hidden gap-12 lg:gap-24 z-50">
+				<h1 className="text-primary-02 font-raleway font-bold text-3xl lg:text-4xl">
 					{t.settings.title}
 				</h1>
 				<div className="flex flex-col w-full gap-14 lg:flex-row">

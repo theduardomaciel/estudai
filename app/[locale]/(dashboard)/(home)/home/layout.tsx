@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 
 // Stylesheets
@@ -14,6 +15,11 @@ import { AddTaskButton } from "@/components/Button/presets/AddTask";
 // Utils
 import getUser from "@/services/getUser";
 import { useTranslations } from "@/i18n/hooks";
+
+export const metadata: Metadata = {
+	title: "estudaí",
+	description: "estudaí",
+};
 
 export default async function HomeLayout({
 	children,
@@ -35,7 +41,7 @@ export default async function HomeLayout({
 	return (
 		<>
 			<div className={"header"}>
-				<h3 className={"title"}>My tasks</h3>
+				<h3 className={"title"}>{t.title}</h3>
 				<div className={styles.actionButtons}>
 					{userHasTasks && (
 						<div className={styles.viewType}>
@@ -71,13 +77,13 @@ export default async function HomeLayout({
 							</Link>
 						</div>
 					)}
-					<AddTaskButton />
+					<AddTaskButton label={t.add_task} />
 				</div>
 			</div>
 			<div className={styles.subheader}>
 				<SectionSelector
 					sections={[
-						{ id: "", name: t.sections.pending },
+						{ id: undefined, name: t.sections.pending },
 						{ id: "archived", name: t.sections.archived },
 					]}
 				/>

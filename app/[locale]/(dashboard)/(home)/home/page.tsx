@@ -3,15 +3,22 @@ import { redirect } from "next/navigation";
 // Components
 import { ActivityView, TestView, EventView, ViewMode } from "@/components/Task";
 import IntroductionModal from "@/components/Landing/IntroModal";
+import EmptyMessage from "@/components/Empty";
 
 // Stylesheets
 import styles from "@/styles/Home.module.css";
 
 // Internationalization
+import { Locale, i18n } from "@/i18n/config";
 import { useTranslations, Translations } from "@/i18n/hooks";
 
 // Utils
 import getUser from "@/services/getUser";
+import {
+	filterArchivedTasks,
+	filterInteractedTasks,
+	filterWeekTasks,
+} from "./filters";
 
 export default async function Home({
 	params,
@@ -38,52 +45,57 @@ export default async function Home({
 		viewMode: (viewMode ?? "list") as ViewMode,
 	};
 
-	// Somente exibimos atividades concluídas na semana
-	const concludedActivities = user.activities
-		.filterWeekTasks()
-		.filterArchivedTasks(true)
-		.filterInteractedTasks(user.id)
-		.map((activity, index) => (
-			<ActivityView
-				key={index}
-				activity={activity as any}
-				status={"concluded"}
-				{...defaultParams}
-			/>
-		));
+	const notArchivedActivities = filterArchivedTasks(user.activities, true);
 
-	const pendingActivities = user.activities
-		.filterArchivedTasks(true)
-		.map((activity, index) => (
-			<ActivityView
-				key={index}
-				activity={activity as any}
-				status={"pending"}
-				{...defaultParams}
-			/>
-		));
+	const pendingActivities = notArchivedActivities.map((activity, index) => (
+		<ActivityView
+			key={index}
+			activity={activity as any}
+			status={"pending"}
+			{...defaultParams}
+		/>
+	));
 
-	const pendingTests = user.tests
-		.filterArchivedTasks(true)
-		.map((test, index) => (
-			<TestView
-				key={index}
-				test={test}
-				status={"pending"}
-				{...defaultParams}
-			/>
-		));
+	// Somente exibimos atividades concluídas na semana, as outras ficam arquivadas
+	const concludedActivities = filterInteractedTasks(
+		filterWeekTasks(notArchivedActivities),
+		user.id
+	).map((activity, index) => (
+		<ActivityView
+			key={index}
+			activity={activity as any}
+			status={"concluded"}
+			{...defaultParams}
+		/>
+	));
 
-	const pendingEvents = user.events
-		.filterArchivedTasks(true)
-		.map((event, index) => (
-			<EventView
-				key={index}
-				event={event as any}
-				status={"pending"}
-				{...defaultParams}
-			/>
-		));
+	const notArchivedTests = filterArchivedTasks(
+		user.tests,
+		true
+	) as typeof user.tests;
+
+	const pendingTests = notArchivedTests.map((test, index) => (
+		<TestView
+			key={index}
+			test={test}
+			status={"pending"}
+			{...defaultParams}
+		/>
+	));
+
+	const notArchivedEvents = filterArchivedTasks(
+		user.events,
+		true
+	) as typeof user.events;
+
+	const pendingEvents = notArchivedEvents.map((event, index) => (
+		<EventView
+			key={index}
+			event={event as any}
+			status={"pending"}
+			{...defaultParams}
+		/>
+	));
 
 	const sortedTasks = [
 		...concludedActivities,
@@ -121,7 +133,7 @@ export default async function Home({
 		return !task.props.activity.date;
 	});
 
-	const hasTasks = true;
+	const hasTasks = sortedTasks.length > 0;
 
 	return (
 		<>
@@ -172,9 +184,6 @@ import Modal2Image from "/public/landing/introModal/modal_2.png";
 import Modal3Image from "/public/landing/introModal/modal_3.png";
 import Modal4Image from "/public/landing/introModal/modal_4.png";
 import Modal5Image from "/public/landing/introModal/modal_5.png";
-import EmptyMessage from "@/components/Empty";
-import { Locale, i18n } from "@/i18n/config";
-import tasksArray, { arrayPrototype, filterWeekTasks } from "./filters";
 
 const INTRO_MODAL_SECTIONS = ({
 	dict: t,

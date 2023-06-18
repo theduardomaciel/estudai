@@ -13,29 +13,28 @@ import styles from "./profile.module.css";
 //import type { User } from "@/types/User";
 import type { User } from "@prisma/client";
 
-import { useTranslations } from "@/i18n/hooks";
+import { Translations, useTranslations } from "@/i18n/hooks";
 
 interface Props {
 	user: User | null;
 	showMenu?: boolean;
 }
 
-function getGreetings() {
-	const t = useTranslations();
-
+function getGreetings(t: Translations["profile"]["greetings"]) {
 	const now = new Date();
 	const actualHour = now.getHours();
 
-	if (actualHour > 4 && actualHour <= 11) {
-		return `${t.greetings.morning},`;
-	} else if (now.getHours() > 11 && actualHour <= 18) {
-		return `${t.greetings.afternoon},`;
-	} else if (now.getHours() > 18) {
-		return `${t.greetings.evening},`;
+	if (actualHour >= 4 && actualHour <= 11) {
+		return `${t.morning},`;
+	} else if (actualHour >= 12 && actualHour < 18) {
+		return `${t.afternoon},`;
 	}
+	return `${t.evening},`;
 }
 
 export default function Profile({ user, showMenu = true }: Props) {
+	const t = useTranslations().profile;
+
 	const pendingTasksLength = 0;
 	const completedTasksLength = 0;
 
@@ -65,7 +64,7 @@ export default function Profile({ user, showMenu = true }: Props) {
 					)}
 				</div>
 				<div className={styles.text}>
-					<p>{getGreetings()}</p>
+					<p>{getGreetings(t.greetings)}</p>
 					<p>{`${user?.firstName} ${
 						user?.lastName ? user?.lastName : ""
 					}`}</p>
@@ -77,12 +76,12 @@ export default function Profile({ user, showMenu = true }: Props) {
 					{pendingTasksLength && pendingTasksLength > 0 ? (
 						<>
 							<p>
-								Você tem{" "}
-								<span>{`${pendingTasksLength} atividade${
-									pendingTasksLength !== 1 ? "s" : ""
-								}`}</span>{" "}
-								pendente
-								{pendingTasksLength !== 1 ? "s" : ""}
+								{pendingTasksLength !== 1
+									? t.pending.pending_plural.replace(
+											"{{count}}",
+											pendingTasksLength
+									  )
+									: t.pending.pending}
 							</p>
 							<div className={styles.progressHolder}>
 								<p>{Math.floor(completedPercentage)}%</p>
@@ -97,7 +96,7 @@ export default function Profile({ user, showMenu = true }: Props) {
 							</div>
 						</>
 					) : (
-						<p>You have no pending activities!</p>
+						<p>{t.pending.no_pending}.</p>
 					)}
 				</div>
 				{showMenu && <ToggleMenuButton />}

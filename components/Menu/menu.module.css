@@ -98,13 +98,6 @@
 	width: 100%;
 }
 
-.toggleButton {
-	display: block;
-	height: 3rem;
-	width: 3rem;
-	padding: 0;
-}
-
 @media (min-width: 1024px) {
 	.holder {
 		display: flex;
@@ -112,10 +105,6 @@
 		align-items: center;
 
 		position: relative;
-		/* position: fixed;
-		top: 0;
-		left: initial;
-		right: 0; */
 		width: var(--menu-width);
 
 		border-top: 0px;
@@ -139,9 +128,5 @@
 		justify-content: space-between;
 
 		overflow-y: scroll;
-	}
-
-	.toggleButton {
-		display: none;
 	}
 }

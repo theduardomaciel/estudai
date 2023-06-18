@@ -12,7 +12,7 @@ export default async function MainHomeLayout({
 
 	return (
 		<>
-			<div className="flex flex-col w-full h-full items-start overflow-y-auto px-14 pt-14 pb-[calc(3.5rem+var(--sidebar-height))] lg:p-14 overflow-x-hidden">
+			<div className="flex flex-col w-full h-full items-start overflow-y-auto px-9 pt-9 pb-[calc(3.5rem+var(--sidebar-height))] lg:px-12 lg:py-9 overflow-x-hidden gap-6">
 				<Profile user={user} />
 				{children}
 			</div>

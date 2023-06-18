@@ -1,9 +1,11 @@
+"use client";
+
 import React, { RefObject } from "react";
 
 // Drag 'n drop
 import { useMultiDrag } from "react-dnd-multi-backend";
-import useScreenSize from "../../../../hooks/useScreenSize";
-import { getTagInfo } from "../../../../utils/getTagInfo";
+import useScreenSize from "@/hooks/useScreenSize";
+import { getTagInfo } from "@/utils/getTagInfo";
 
 // Stylesheets
 import styles from "./styles.module.css";

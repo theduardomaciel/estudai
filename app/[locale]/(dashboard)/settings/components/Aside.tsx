@@ -8,6 +8,7 @@ import ChevronRight from "@material-symbols/svg-600/rounded/chevron_right.svg";
 
 import LogoutModalPreset from "@/components/Modal/Presets/LogoutModal";
 import Link from "next/link";
+import { Translations } from "@/i18n/hooks";
 
 const SECTIONS = [
 	"account",
@@ -21,20 +22,19 @@ interface Props {
 	dict: {
 		[key: string]: string;
 	};
-	modalDict: any;
+	modalDict: Translations["modal"];
 }
 
 export default function SettingsAside({ dict, modalDict }: Props) {
 	const pathname = usePathname();
 	const purePathname = pathname.split("/")[3]; // We use index 3 to match locale on pathname (and ignore "/settings")
-	console.log(purePathname);
 
 	const currentActive = SECTIONS.findIndex(
 		(section) => section === purePathname
 	);
 
 	const { setLogoutModalVisible, LogoutModal } = LogoutModalPreset({
-		dict: modalDict.logout,
+		dict: modalDict,
 	});
 
 	return (

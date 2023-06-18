@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import styles from "./sectionSelector.module.css";
 
 interface Section {
-	id: string;
+	id?: string;
 	name: string;
 }
 
@@ -16,22 +16,27 @@ interface SectionSelectorProps {
 
 export default function SectionSelector({ sections }: SectionSelectorProps) {
 	const pathname = usePathname();
-	const actualSection = pathname.split("/")[2];
+	const actualSection = pathname.split("/")[3];
+	console.log("Actual", actualSection);
 
 	return (
 		<ul className={styles.selector}>
 			{sections.map((section, index) => (
 				<Link
+					className="flex-1"
 					key={index}
-					className={`${styles.section} ${
-						actualSection === section.id ? styles.selected : ""
-					}`}
 					href={{
-						pathname: `/home/${section.name}`,
+						pathname: `/home/${section.id ?? ""}`,
 					}}
 				>
-					<p>{section.name}</p>
-					<div />
+					<li
+						className={`${styles.section} ${
+							actualSection === section.id ? styles.selected : ""
+						}`}
+					>
+						<p>{section.name}</p>
+						<div />
+					</li>
 				</Link>
 			))}
 		</ul>

@@ -2,7 +2,7 @@
 import styles from "styles/Landing.module.css";
 
 // Components
-import Button from "@/components/Button";
+import Anchor from "@/components/Button/Anchor";
 
 // Icons
 import StarIcon from "/public/landing/star.svg";
@@ -12,8 +12,6 @@ import PaperPlaneIcon from "/public/landing/paper_plane.svg";
 import BaskharaIcon from "/public/landing/baskhara.svg";
 
 import ArrowLeftIcon from "@material-symbols/svg-600/rounded/keyboard_backspace.svg";
-import RedirectButton from "@/components/Button/Redirect";
-import Link from "next/link";
 
 export const metadata = {
 	title: "404! parece que essa página não existe...",
@@ -41,12 +39,10 @@ export default function NotFound() {
 						não demore muito, porque o tempo está passando e você
 						tem muito o que estudar!
 					</p>
-					<Link href={`/`}>
-						<RedirectButton>
-							<ArrowLeftIcon className="icon" fontSize={18} />
-							Voltar para o início
-						</RedirectButton>
-					</Link>
+					<Anchor href={"/"}>
+						<ArrowLeftIcon className="icon" fontSize={18} />
+						Voltar para o início
+					</Anchor>
 				</div>
 			</div>
 			<StarIcon className={styles.star} />

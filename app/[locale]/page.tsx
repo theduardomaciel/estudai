@@ -9,7 +9,7 @@ import styles from "styles/Landing.module.css";
 
 // Components
 import Note from "@/components/Landing/Note";
-import RedirectButton, { ICON_PROPS } from "@/components/Button/Redirect";
+import Anchor from "@/components/Button/Anchor";
 import Device from "@/components/Landing/Device";
 
 // Icons
@@ -73,12 +73,10 @@ export default async function Landing({
 				<div className={styles.title}>
 					<h1>{t.landing.title}</h1>
 					<p>{t.landing.subtitle}</p>
-					<Link href={"/register"}>
-						<RedirectButton>
-							{t.landing.button}
-							<ArrowRightIcon className="icon" fontSize={20} />
-						</RedirectButton>
-					</Link>
+					<Anchor href={"/register"} className="px-8">
+						{t.landing.button}
+						<ArrowRightIcon className="icon" fontSize={20} />
+					</Anchor>
 				</div>
 				<Device />
 			</div>

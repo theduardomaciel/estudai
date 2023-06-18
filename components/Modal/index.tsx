@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./modal.module.css";
-import React, { FC, ReactElement, SVGProps } from "react";
+import React, { FC, SVGProps } from "react";
 
 import { AnimatePresence, MotionStyle, motion } from "framer-motion";
 
@@ -10,6 +10,7 @@ import Button from "../Button";
 
 import CloseIcon from "@material-symbols/svg-600/rounded/close.svg";
 import ArrowBack from "@material-symbols/svg-600/rounded/arrow_back.svg";
+import { Translations } from "@/i18n/hooks";
 
 export type ModalProps = React.HTMLAttributes<HTMLDivElement> & {
 	isVisible: boolean;
@@ -36,6 +37,8 @@ export type ModalProps = React.HTMLAttributes<HTMLDivElement> & {
 		isForm?: boolean;
 	};
 
+	dict: Translations["modal"]["default"];
+
 	isLoading?: boolean;
 	suppressReturnButton?: boolean;
 };
@@ -53,6 +56,7 @@ export default function Modal({
 	iconProps,
 	actionProps,
 	children,
+	dict,
 	...rest
 }: ModalProps) {
 	const handleClick = (
@@ -103,7 +107,9 @@ export default function Modal({
 										<Icon
 											className="icon"
 											color={iconProps?.color}
-											fontSize={iconProps?.size}
+											fontSize={
+												iconProps?.size ?? "3.6rem"
+											}
 										/>
 									</div>
 								)}
@@ -159,55 +165,49 @@ export default function Modal({
 									!isLoading /* && iconProps?.position !== "flex-start" */ && (
 										<Button
 											onClick={toggleVisibility}
-											style={{
-												textTransform: "uppercase",
-												background: color
-													? color ===
-													  "var(--primary-02)"
-														? "var(--primary-04)"
-														: "var(--font-light)"
-													: "var(--primary-02)",
-												padding: `0.7rem 1.5rem`,
-											}}
-											accentColor={
-												color && "var(--light-gray)"
-											}
+											className="uppercase px-6 py-[0.7rem]"
+											preset="secondary"
 										>
-											{actionProps?.function
-												? `Cancel`
-												: `Return`}
 											{actionProps?.function ? (
-												<CloseIcon className={`icon`} />
+												<CloseIcon
+													className={`icon`}
+													fontSize={`2.4rem`}
+												/>
 											) : (
-												<ArrowBack className={`icon`} />
+												<ArrowBack
+													className={`icon`}
+													fontSize={`2.4rem`}
+												/>
 											)}
+											{actionProps?.function
+												? dict.cancel
+												: dict.return}
 										</Button>
 									)}
 								{actionProps?.function && (
 									<Button
 										onClick={actionProps?.function}
-										disabled={actionProps?.disabled}
+										disabled={
+											actionProps?.disabled || isLoading
+										}
 										isLoading={isLoading}
-										/* disableHoverEffect={
-											actionProps?.disabled
-										} */
 										style={{
-											background: !actionProps?.disabled
-												? color
-												: "var(--light-gray)",
+											background: actionProps?.disabled
+												? "var(--light-gray)"
+												: color,
 											padding: `0.7rem 1.5rem`,
 											textTransform: "uppercase",
-											cursor:
-												actionProps.disabled ||
-												isLoading
-													? "not-allowed"
-													: "pointer",
 										}}
-										accentColor={color && color}
 									>
-										{actionProps?.buttonIcon && (
+										{actionProps?.buttonIcon ? (
 											<actionProps.buttonIcon
 												className={`icon`}
+												fontSize={"2.4rem"}
+											/>
+										) : (
+											<Icon
+												className={`icon`}
+												fontSize={"2.4rem"}
 											/>
 										)}
 										{actionProps?.buttonText}

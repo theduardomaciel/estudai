@@ -8,6 +8,7 @@ import Button from "../Button";
 // Icons
 import CloseIcon from "@material-symbols/svg-600/rounded/close.svg";
 import OpenIcon from "@material-symbols/svg-600/rounded/menu.svg";
+import clsx from "clsx";
 
 interface Props {
 	type?: "open" | "close";
@@ -22,11 +23,25 @@ export default function ToggleMenuButton({ type = "open" }: Props) {
 	}
 
 	return (
-		<Button className={styles.toggleButton} onClick={toggleMenu}>
+		<Button
+			className={clsx("p-2 flex lg:hidden", {
+				"bg-transparent border-none": type === "close",
+			})}
+			preset={type === "open" ? "primary" : "scale"}
+			onClick={toggleMenu}
+		>
 			{type === "open" ? (
-				<OpenIcon className="icon" fontSize={"2rem"} />
+				<OpenIcon
+					className="icon"
+					color="var(--neutral)"
+					fontSize={"2rem"}
+				/>
 			) : (
-				<CloseIcon className="icon" fontSize={"2rem"} />
+				<CloseIcon
+					className="icon min-w-[2rem] min-h-[2rem]"
+					color="var(--font-dark)"
+					fontSize={"2rem"}
+				/>
 			)}
 		</Button>
 	);
