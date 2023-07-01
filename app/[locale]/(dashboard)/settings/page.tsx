@@ -1,4 +1,4 @@
-import styles from "@/styles/settings.module.css";
+import styles from "@/styles/Settings.module.css";
 
 import EmptyMessage from "@/components/Containers/Empty";
 
@@ -6,11 +6,11 @@ import getUser from "@/services/getUser";
 import { useTranslations } from "@/i18n/hooks";
 
 export default async function Page({ params }: { params: {} }) {
-	const t = useTranslations();
-	const user = await getUser();
+    const t = useTranslations();
+    const user = await getUser();
 
-	const message = <EmptyMessage description={t.settings.wip} />;
-	const NAME = `${user?.firstName} ${user?.lastName ?? ""}`;
+    const message = <EmptyMessage description={t.settings.wip} />;
+    const NAME = `${user?.firstName} ${user?.lastName ?? ""}`;
 
-	return <div className={styles.mainSection}>{message}</div>;
+    return <div className={styles.mainSection}>{message}</div>;
 }
