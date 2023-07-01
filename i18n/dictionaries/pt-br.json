@@ -8,7 +8,69 @@
 		"early_access_portrait": "Múltiplas linguagens, temas de cores, modo escuro (beta) e muito mais!",
 		"login": "Entrar",
 		"register": "Criar uma conta",
-		"greeting": "feito com ❤️ por"
+		"greeting": "feito com ❤️ por",
+		"section1": {
+			"header": {
+				"title": "Uma nova forma de estudar.",
+				"subtitle": "Atividades, avaliações e eventos. Todas as suas necessidades em um só lugar."
+			},
+			"description": "O estudaí foi desenhado desde o princípio para ajudar estudantes de todos os tipos. Em todas as situações.\n\nSeja pra evitar revisões desesperadas próximo ao prazo.\n\nSeja pra unir uma comunidade de pessoas que buscam o mesmo tipo de conhecimento.",
+			"call": "O estudaí é a escolha certa pra você.",
+			"features": [
+				"Revisões",
+				"Pomodoro",
+				"Foco",
+				"Comunidade",
+				"Educação",
+				"Marketplace",
+				"Aulas",
+				"Estudos",
+				"Acadêmico",
+				"Turmas",
+				"Trabalhos em grupo"
+			]
+		},
+		"section2": {
+			"header": {
+				"title": "Participe de comunidades.\nCrie conexões.",
+				"subtitle": "Encontre Grupos criados por estudantes como você, todos compartilhando um interesse em comum por um tópico educacional específico."
+			},
+			"highlights": {
+				"title": "Comunidades em destaque"
+			},
+			"call": {
+				"link": "Junte-se a uma comunidade",
+				"text": "e amplie suas oportunidades de aprendizado."
+			}
+		},
+		"section3": {
+			"header": {
+				"title": "Anexar nunca foi tão fácil.",
+				"subtitle": "Links, documentos, apresentações. Todos os seus arquivos em um só lugar."
+			},
+			"row1": {
+				"description": "Marque e desmarque. A qualquer hora.\n\nAcompanhe o seu progresso individual ou o progresso do grupo e tenha o controle de quais tarefas precisam ser concluídas.",
+				"call": "Nunca mais se esqueça de uma tarefa."
+			},
+			"row2": {
+				"description": "Todos os seus links favoritos, de fácil acesso.\n\nNunca mais passe horas procurando uma fonte, referência ou artigo importante perdido nas profundezas do histórico."
+			}
+		},
+		"section4": {
+			"header": {
+				"title": "100% gratuito. Para sempre.",
+				"subtitle": "Prezamos por um serviço de qualidade, acessível a todos. Nosso compromisso é ajudar estudantes como você, independentemente de sua renda. ",
+				"call": "Queremos que o estudaí seja uma comunidade de aprendizagem colaborativa, **feita_por_estudantes_e_para_estudantes.**"
+			},
+			"content": {
+				"description": "Acreditamos que o acesso à educação de qualidade deve estar disponível para todos, e é por isso que construímos essa plataforma.\n\nNossa missão é fornecer um ambiente online onde estudantes possam organizar sua rotina, encontrar recursos educacionais, tirar dúvidas, compartilhar conhecimento e se conectar com outros estudantes.\nQueremos criar uma comunidade vibrante e solidária, onde todos possam aprender e crescer juntos.\n\nPara mais informações, {{leia nosso artigo}} ou acesse o repositório do projeto no Github.",
+				"button": "Acessar repositório no Github"
+			}
+		},
+		"section5": {
+			"title": "Transforme seu método de estudos.",
+			"description": "Organize sua rotina, interaja com outros estudantes e acelere seu aprendizado.\nJunte-se a nossa comunidade e transforme sua jornada educacional agora mesmo."
+		}
 	},
 	"empty": {
 		"title": "Um pouco vazio por aqui, não?",

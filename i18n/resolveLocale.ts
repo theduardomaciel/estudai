@@ -16,28 +16,6 @@ export function getHost(requestHeaders: Headers) {
 	);
 }
 
-/* function getAcceptLanguageLocale(
-	requestHeaders: Headers,
-	locales: Array<string>,
-	defaultLocale: string
-) {
-	let locale;
-
-	const languages = new Negotiator({
-		headers: {
-			"accept-language":
-				requestHeaders.get("accept-language") || undefined,
-		},
-	}).languages();
-	try {
-		locale = match(languages, locales, defaultLocale);
-	} catch (e) {
-		// Invalid language
-	}
-
-	return locale;
-} */
-
 function getAcceptLanguageLocale(headers: Headers) {
 	// Negotiator expects plain object so we need to transform headers
 	const negotiatorHeaders: Record<string, string> = {};

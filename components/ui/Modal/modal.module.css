@@ -1,0 +1,159 @@
+.background {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(0, 0, 0, 0.75);
+
+    transition: 0.5s;
+    z-index: 100;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem;
+    gap: 3.5rem;
+
+    max-height: 90vh;
+    width: 85%;
+
+    overflow-y: overlay;
+
+    background-color: var(--background-01);
+    border-radius: 1.5rem;
+
+    z-index: 15;
+}
+
+.iconHolder {
+    display: flex;
+    padding: 1.5rem;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 0.5rem;
+    color: var(--neutral);
+}
+
+.container h2 {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 3.6rem;
+    line-height: 4.4rem;
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    letter-spacing: 0.05rm;
+    color: var(--primary-03);
+}
+
+.container .description {
+    text-align: center;
+    color: var(--primary-03);
+    width: 100%;
+
+    white-space: pre-line;
+}
+
+.buttonsHolder {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+
+    flex-wrap: wrap-reverse;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.headerHolder {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+
+    align-items: center;
+    justify-content: space-between;
+}
+
+.headerContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+    align-items: center;
+    justify-content: center;
+
+    /* flex-wrap: wrap; */
+
+    transition: 0.5s;
+
+    width: 100%;
+}
+
+.headerContainer h2 {
+    font-size: 3.8rem;
+    font-family: "Raleway";
+    font-weight: 700;
+    color: var(--primary-02);
+    text-transform: none;
+}
+
+.closeIcon {
+    display: none;
+}
+
+.dangerZone {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 1.5rem;
+
+    width: 100%;
+}
+
+.dangerZone p {
+    font-family: var(--font-raleway);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.4rem;
+    width: fit-content;
+
+    color: var(--red-01);
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 42.5%;
+        padding: 5rem;
+    }
+
+    .headerContainer {
+        justify-content: flex-start;
+    }
+
+    .headerContainer h2 {
+        text-align: left;
+    }
+
+    .closeIcon {
+        display: flex;
+        justify-self: flex-end;
+    }
+
+    .buttonsHolder {
+        flex-wrap: nowrap;
+    }
+}

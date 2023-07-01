@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import styles from "styles/Landing.module.css";
 
 // Components
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 
 // Icons
 import StarIcon from "/public/landing/star.svg";

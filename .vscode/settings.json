@@ -1,3 +1,4 @@
 {
-	"tailwindCSS.rootFontSize": 10
+    "tailwindCSS.rootFontSize": 10,
+    "cSpell.language": "en,pt-BR"
 }

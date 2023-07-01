@@ -10,9 +10,9 @@ import ToggleMenuButton from "@/components/Menu/ToggleButton";
 import styles from "./profile.module.css";
 
 // Types
-//import type { User } from "@/types/User";
 import type { User } from "@prisma/client";
 
+// Internationalization
 import { Translations, useTranslations } from "@/i18n/hooks";
 
 interface Props {

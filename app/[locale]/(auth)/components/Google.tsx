@@ -6,7 +6,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleLogo from "/public/google_logo.svg";
 
 // Components
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 
 interface Props {
 	onClick?: () => void;

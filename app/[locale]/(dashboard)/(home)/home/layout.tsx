@@ -10,7 +10,7 @@ import CardIcon from "@material-symbols/svg-600/rounded/event_note.svg";
 
 // Components
 import SectionSelector from "@/components/SectionSelector";
-import { AddTaskButton } from "@/components/Button/presets/AddTask";
+import { AddTaskButton } from "@/components/ui/Button/presets/AddTask";
 
 // Utils
 import getUser from "@/services/getUser";

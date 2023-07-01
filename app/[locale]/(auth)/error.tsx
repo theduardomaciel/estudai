@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import styles from "styles/Landing.module.css";
 
 // Components
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 
 import ArrowLeftIcon from "@material-symbols/svg-600/rounded/keyboard_backspace.svg";
 

@@ -1,9 +1,14 @@
 import { redirect } from "next/navigation";
 
 // Components
-import { ActivityView, TestView, EventView, ViewMode } from "@/components/Task";
+import {
+	ActivityView,
+	TestView,
+	EventView,
+	ViewMode,
+} from "@/components/Previews/TaskPreview";
 import IntroductionModal from "@/components/Landing/IntroModal";
-import EmptyMessage from "@/components/Empty";
+import EmptyMessage from "@/components/Containers/Empty";
 
 // Stylesheets
 import styles from "@/styles/Home.module.css";

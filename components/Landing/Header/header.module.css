@@ -3,7 +3,7 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	padding: 2rem 3.5rem;
+	padding: 2rem var(--wrapper);
 	gap: 1rem;
 
 	width: 100%;
@@ -39,29 +39,4 @@
 	.device {
 		display: block;
 	}
-
-	.container {
-		padding: 2rem 10rem;
-	}
 }
-
-/* @media (min-width: 1280px) {
-	.container .links .register {
-		display: block;
-		padding: 1rem 1.5rem;
-		gap: 1rem;
-
-		cursor: pointer;
-
-		background: var(--primary-02);
-		border: 0.5px solid var(--primary-04);
-		border-radius: 0.5rem;
-
-		color: var(--neutral);
-		font-family: var(--font-karla);
-		font-style: normal;
-		font-weight: 700;
-		font-size: 1.4rem;
-		line-height: 1.6rem;
-	}
-} */

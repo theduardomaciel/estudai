@@ -5,10 +5,9 @@ import Link from "next/link";
 
 // Stylesheets
 import styles from "./sidebar.module.css";
-import LogoutModalPreset from "@/components/Modal/Presets/LogoutModal";
-import Button from "@/components/Button";
 
 // Components
+import Button from "@/components/ui/Button";
 
 // Icons
 import HomeIcon from "@material-symbols/svg-600/rounded/space_dashboard.svg";

@@ -3,7 +3,7 @@
 import styles from "./menu.module.css";
 
 // Components
-import Button from "../Button";
+import Button from "@/components/ui/Button";
 
 // Icons
 import CloseIcon from "@material-symbols/svg-600/rounded/close.svg";

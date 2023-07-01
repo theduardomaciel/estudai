@@ -18,9 +18,9 @@ import loginStyles from "../styles.module.css";
 import styles from "./Register.module.css";
 
 // Components
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 import Separator from "@/components/Separator";
-import Anchor from "@/components/Button/Anchor";
+import Anchor from "@/components/ui/Button/Anchor";
 import { GoogleButton } from "../components/Google";
 import { Error, Footer, ScopeMissing } from "../components/Sections";
 
@@ -466,6 +466,13 @@ export default function RegisterForm({ code, dict }: Props) {
 		}
 	}
 
+	function disableFullScreen() {
+		const container = document.getElementById("authMainContainer");
+		if (container) {
+			container.classList.remove(loginStyles.fullscreen);
+		}
+	}
+
 	const hasRegisteredRef = useRef(false);
 	async function registerUser() {
 		if (code && hasRegisteredRef.current === false) {
@@ -494,6 +501,7 @@ export default function RegisterForm({ code, dict }: Props) {
 
 	useEffect(() => {
 		registerUser();
+		disableFullScreen();
 	}, []);
 
 	return (

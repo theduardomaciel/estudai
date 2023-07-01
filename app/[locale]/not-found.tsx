@@ -2,7 +2,7 @@
 import styles from "styles/Landing.module.css";
 
 // Components
-import Anchor from "@/components/Button/Anchor";
+import Anchor from "@/components/ui/Button/Anchor";
 
 // Icons
 import StarIcon from "/public/landing/star.svg";

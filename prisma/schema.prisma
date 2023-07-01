@@ -105,6 +105,7 @@ model Group {
     name        String
     description String?
     isPrivate   Boolean @default(false)
+    memberLimit Int?
 
     image_url  String?
     banner_url String?

@@ -1,6 +1,6 @@
 "use client";
-
-import React, { SetStateAction, useRef, useState } from "react";
+import React, { useState } from "react";
+import Image, { StaticImageData } from "next/image";
 
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
@@ -9,8 +9,9 @@ import { motion } from "framer-motion";
 import styles from "./styles.module.css";
 
 // Components
-import Button from "../../Button";
-import Image, { StaticImageData } from "next/image";
+import Button from "@/components/ui/Button";
+
+// Hooks
 import useScreenSize from "@/hooks/useScreenSize";
 
 interface Section {

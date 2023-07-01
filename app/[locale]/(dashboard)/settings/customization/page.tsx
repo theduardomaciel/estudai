@@ -1,6 +1,6 @@
 import styles from "@/styles/settings.module.css";
 
-import EmptyMessage from "@/components/Empty";
+import EmptyMessage from "@/components/Containers/Empty";
 
 import getUser from "@/services/getUser";
 import { useTranslations } from "@/i18n/hooks";

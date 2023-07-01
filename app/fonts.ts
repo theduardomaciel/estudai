@@ -8,21 +8,21 @@ export const inter = Inter({
 });
 
 export const raleway = Raleway({
-	weight: ["700"],
+	weight: ["700", "800"],
 	subsets: ["latin"],
 	variable: "--font-raleway",
 	display: "swap",
 });
 
 export const karla = Karla({
-	weight: ["700", "800"],
+	weight: ["500", "700", "800"],
 	subsets: ["latin"],
 	variable: "--font-karla",
 	display: "swap",
 });
 
 export const trirong = Trirong({
-	weight: ["400"],
+	weight: ["900"],
 	subsets: ["latin"],
 	variable: "--font-trirong",
 	display: "swap",

@@ -8,7 +8,7 @@ import Link from "next/link";
 import styles from "../styles.module.css";
 
 // Components
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 import Separator from "@/components/Separator";
 import { Error, ScopeMissing } from "../components/Sections";
 
@@ -109,11 +109,7 @@ export default function LoginForm({ code, dict, locale }: Props) {
 					{t.no_account.subtitle}
 				</p>
 			</header>
-			<Link
-				href={"/register"}
-				style={{ width: "100%" }}
-				onClick={toggleFullScreen}
-			>
+			<Link href={"/register"} style={{ width: "100%" }}>
 				<Button style={{ padding: "1rem 1.5rem", width: "100%" }}>
 					{t.no_account.button}
 				</Button>

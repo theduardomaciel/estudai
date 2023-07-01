@@ -4,8 +4,13 @@ import { redirect } from "next/navigation";
 import styles from "@/styles/Home.module.css";
 
 // Components
-import { ActivityView, EventView, TestView, ViewMode } from "@/components/Task";
-import EmptyMessage from "@/components/Empty";
+import {
+	ActivityView,
+	EventView,
+	TestView,
+	ViewMode,
+} from "@/components/Previews/TaskPreview";
+import EmptyMessage from "@/components/Containers/Empty";
 
 // Internationalization
 import { useTranslations } from "@/i18n/hooks";

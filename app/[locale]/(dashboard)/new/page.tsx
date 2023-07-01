@@ -1,4 +1,4 @@
-import { useTranslations } from "@/i18n/hooks";
+import { Metadata } from "next";
 import Link from "next/link";
 
 // Icons
@@ -8,10 +8,18 @@ import EventIcon from "@material-symbols/svg-600/rounded/local_activity.svg";
 
 import GenericIcon from "@material-symbols/svg-600/rounded/square.svg";
 
+// Internationalization
+import { useTranslations } from "@/i18n/hooks";
+
 const TASK_TYPES = {
 	activity: ActivityIcon,
 	test: TestIcon,
 	event: EventIcon,
+};
+
+export const metadata: Metadata = {
+	title: "New Task",
+	description: "Create a new task",
 };
 
 export default function Page({
@@ -59,7 +67,7 @@ const TaskType = ({ icon: Icon, title, description, type }: TaskTypeProps) => (
 	<Link className="flex-1" href={`/new/${type}`}>
 		<li
 			key={type}
-			className="box-border flex flex-row items-start p-4 gap-4 border-2 border-primary-02 rounded-md cursor-pointer hover:outline-none hover:border-primary-04 hover:border-2 hover:shadow-md transition-all"
+			className="box-border flex flex-row items-start p-4 gap-4 border-2 border-primary-02 rounded-md cursor-pointer hover:outline-none hover:border-primary-04 hover:border-2 hover:scale-105 transition-all"
 		>
 			<div className="p-5 bg-background-03 rounded-md flex items-center justify-center">
 				{Icon ? (

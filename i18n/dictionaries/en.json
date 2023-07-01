@@ -8,7 +8,68 @@
 		"early_access_portrait": "Multiple languages, custom themes, dark mode (beta), and more!",
 		"login": "Log in",
 		"register": "Register",
-		"greeting": "made with ❤️ by"
+		"greeting": "made with ❤️ by",
+		"section1": {
+			"header": {
+				"title": "A new way of studying.",
+				"subtitle": "Activities, tests and events. All your needs in one place."
+			},
+			"description": "estudaí was designed from the beginning to help students of all types. In all situations.\n\nWhether to avoid desperate revisions close to the deadline.\n\nWhether to unite a community of people who seek the same type of knowledge.",
+			"call": "estudaí is the right choice for you.",
+			"features": [
+				"Reviews",
+				"Pomodoro",
+				"Focus",
+				"Community",
+				"Education",
+				"Marketplace",
+				"Classes",
+				"Study",
+				"Academic",
+				"Group work"
+			]
+		},
+		"section2": {
+			"header": {
+				"title": "Join communities.\nMake connections.",
+				"subtitle": "Find Groups created by students like you, all sharing a common interest in a specific educational topic."
+			},
+			"highlights": {
+				"title": "Featured communities"
+			},
+			"call": {
+				"link": "Join a community",
+				"text": "and expand your learning opportunities."
+			}
+		},
+		"section3": {
+			"header": {
+				"title": "Attaching has never been easier.",
+				"subtitle": "Links, documents, presentations. All your files in one place."
+			},
+			"row1": {
+				"description": "Check and uncheck. At any time.\n\nTrack your individual progress or group progress and stay in control of which tasks need to be completed.",
+				"call": "Never forget a task again."
+			},
+			"row2": {
+				"description": "All your favorite links, within easy reach.\n\nNever again spend hours looking for an important source, reference or article lost in the depths of your history."
+			}
+		},
+		"section4": {
+			"header": {
+				"title": "100% free. Forever.",
+				"subtitle": "We value a quality service, accessible to all. Our commitment is to help students like you, regardless of your income.",
+				"call": "We want estudaí to be a collaborative learning community, **made_by_students_and_for_students.**"
+			},
+			"content": {
+				"description": "We believe that access to quality education should be available to everyone, which is why we built this platform.\n\nOur mission is to provide an online environment where students can organize their routine, find educational resources, ask questions, share knowledge and connect with other students.\nWe want to create a vibrant, supportive community where everyone can learn and grow together.\n\nFor more information, {{read our article}} or access the project's repository on Github.",
+				"button": "Access Github repository"
+			}
+		},
+		"section5": {
+			"title": "Transform your study method.",
+			"description": "Organize your routine, interact with other students, and accelerate your learning.\nJoin our community and transform your educational journey right now."
+		}
 	},
 	"empty": {
 		"title": "It's a little empty here, huh?",

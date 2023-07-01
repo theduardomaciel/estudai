@@ -6,7 +6,7 @@ import styles from "@/styles/settings.module.css";
 import ChevronLeft from "@material-symbols/svg-600/rounded/chevron_left.svg";
 import ChevronRight from "@material-symbols/svg-600/rounded/chevron_right.svg";
 
-import LogoutModalPreset from "@/components/Modal/Presets/LogoutModal";
+import LogoutModalPreset from "@/components/ui/Modal/Presets/LogoutModal";
 import Link from "next/link";
 import { Translations } from "@/i18n/hooks";
 

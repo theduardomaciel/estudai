@@ -5,7 +5,7 @@ import ArrowLeftIcon from "@material-symbols/svg-600/rounded/keyboard_backspace.
 
 // Components
 import Separator from "@/components/Separator";
-import Anchor from "@/components/Button/Anchor";
+import Anchor from "@/components/ui/Button/Anchor";
 
 interface SectionProps {
 	setSection?: () => void;
