@@ -16,12 +16,6 @@ export default function SubjectItem({
     isSelected,
     icon,
 }: SubjectItemProps) {
-    const searchParams = useSearchParams();
-    const search = searchParams.get("search");
-
-    if (search && !name.toLowerCase().includes(search.toLowerCase()))
-        return null;
-
     return (
         <div className="self-stretch justify-start items-center gap-2.5 inline-flex">
             <Checkbox

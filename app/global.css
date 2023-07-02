@@ -357,6 +357,14 @@ input[type="number"]::-webkit-outer-spin-button {
     opacity: 0.5;
 }
 
+/* Mark */
+mark {
+    background-color: var(--primary-02);
+    color: var(--background-01);
+    border-radius: 0.25rem;
+    padding: 0.15rem 0.25rem;
+}
+
 .avatar_one {
     background: linear-gradient(180deg, #ffc803 0%, #91f481 100%) !important;
 }

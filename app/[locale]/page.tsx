@@ -395,6 +395,7 @@ function PatternLine({ className }: { className?: string }) {
         >
             {Array.from({ length: 25 }).map((_, index) => (
                 <p
+                    key={index}
                     className={cn(
                         "font-serif font-black text-lg text-neutral",
                         className
@@ -428,7 +429,7 @@ function Pattern({
             )}
         >
             {Array.from({ length: linesAmount || 3 }).map((_, index) => (
-                <PatternLine className={lineClassName} />
+                <PatternLine key={index} className={lineClassName} />
             ))}
         </div>
     );

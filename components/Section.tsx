@@ -26,7 +26,7 @@ export interface SectionHeaderProps {
 
 export function Header({ title, children }: SectionHeaderProps) {
     return (
-        <div className="w-full justify-between items-center gap-[25px] inline-flex">
+        <div className="w-full justify-between items-start gap-[25px] inline-flex">
             <div className="px-4 py-2 bg-primary-04 rounded-md justify-start items-start gap-2.5 inline-flex">
                 <p className="text-center text-white text-[16px] font-semibold">
                     {title}

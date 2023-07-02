@@ -17,6 +17,7 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+// import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
 
 // Plugins
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
@@ -31,6 +32,16 @@ import Section, {
 } from "@/components/Section";
 import { OpenLinkPlugin } from "./plugins/OpenLink";
 import { MaxLengthPlugin } from "./plugins/MaxLengthPlugin";
+
+const EDITOR_NODES = [
+    HeadingNode,
+    ListNode,
+    ListItemNode,
+    QuoteNode,
+    AutoLinkNode,
+    LinkNode,
+    CodeNode,
+];
 
 const Placeholder = () => {
     return (
@@ -53,14 +64,9 @@ export default function Editor({
     return (
         <LexicalComposer
             initialConfig={{
-                namespace: "teste",
-                onError: (error) => {
-                    throw error;
-                },
+                namespace: "lexical-editor",
                 theme: {
-                    //root: "p-4 border-slate-500 border-2 rounded h-auto min-h-[200px] focus:outline-none focus-visible:border-black",
-                    root: "w-full",
-                    link: "cursor-default underline text-primary-04",
+                    link: "cursor-pointer",
                     text: {
                         bold: "font-semibold",
                         underline: "underline decoration-wavy",
@@ -70,15 +76,10 @@ export default function Editor({
                     },
                 },
                 // Any custom nodes go here
-                nodes: [
-                    HeadingNode,
-                    ListNode,
-                    ListItemNode,
-                    QuoteNode,
-                    AutoLinkNode,
-                    LinkNode,
-                    CodeNode,
-                ],
+                nodes: EDITOR_NODES,
+                onError: (error) => {
+                    console.log(error);
+                },
             }}
         >
             <Section>
@@ -87,7 +88,7 @@ export default function Editor({
                         {includeToolbar && <ToolbarPlugin />}
                     </SectionHeader>
                 )}
-                <div className="flex w-full h-full relative prose prose-slate prose-p:my-0 prose-headings:mb-4 prose-headings:mt-2 max-w-none">
+                <div className="flex w-full h-full relative prose prose-slate prose-p:my-0 prose-headings:mb-4 prose-headings:mt-2 prose-strong:text-inherit max-w-none">
                     {/* Official Plugins */}
                     <RichTextPlugin
                         contentEditable={

@@ -28,7 +28,7 @@ export default function SubjectsSelector({}: Props) {
                             <div className="text-primary-02 text-xs font-medium tracking-wide">
                                 Suas matérias
                             </div>
-                            <Suspense fallback={<Loading />}>
+                            {/* <Suspense fallback={<Loading />}>
                                 <SubjectsList userOnly />
                             </Suspense>
                             <div className="text-primary-02 text-xs font-medium tracking-wide">
@@ -36,7 +36,7 @@ export default function SubjectsSelector({}: Props) {
                             </div>
                             <Suspense fallback={<Loading />}>
                                 <SubjectsList />
-                            </Suspense>
+                            </Suspense> */}
                         </div>
                     </div>
                 </div>

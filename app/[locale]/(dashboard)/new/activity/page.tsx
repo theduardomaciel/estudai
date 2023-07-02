@@ -3,11 +3,11 @@ import { Metadata } from "next";
 // Components
 import Navigator from "@/components/Navigator";
 import SubjectsSelector from "@/components/SubjectsSelector";
+import Menu from "@/components/Menu";
+import Editor from "@/components/RichText/Editor";
 
 // Internationalization
 import { useTranslations } from "@/i18n/hooks";
-import Menu from "@/components/Menu";
-import Editor from "@/components/RichText/Editor";
 
 export const metadata: Metadata = {
     title: "New activity",
@@ -40,6 +40,7 @@ export default function Page({
                     ]}
                 />
                 <div className="w-full justify-between items-start gap-[25px] inline-flex min-h-[50%]">
+                    {/* <Editor title="Descrição" maxLength={650} /> */}
                     <Editor title="Descrição" maxLength={650} />
                     <SubjectsSelector />
                 </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { startTransition, useCallback } from "react";
 
 // Icons
 import SearchIcon from "@material-symbols/svg-600/rounded/search.svg";
@@ -15,13 +15,20 @@ export default function SubjectsSelectorHeader({}) {
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
     const createQueryString = useCallback(
-        (name: string, value: string) => {
-            const params = new URLSearchParams(
-                searchParams as unknown as URLSearchParams
+        (params: Record<string, string | number | null>) => {
+            const newSearchParams = new URLSearchParams(
+                searchParams?.toString()
             );
-            params.set(name, value);
 
-            return params.toString();
+            for (const [key, value] of Object.entries(params)) {
+                if (value === null) {
+                    newSearchParams.delete(key);
+                } else {
+                    newSearchParams.set(key, String(value));
+                }
+            }
+
+            return newSearchParams.toString();
         },
         [searchParams]
     );
@@ -39,14 +46,19 @@ export default function SubjectsSelectorHeader({}) {
                     </div>
                     <input
                         onChange={(e) => {
-                            const newQueryString = createQueryString(
-                                "search",
-                                e.target.value
-                            );
+                            const newQueryString = createQueryString({
+                                search: e.target.value,
+                            });
                             if (e.target.value === "") {
-                                router.push(pathname);
+                                startTransition(() => {
+                                    router.push(pathname);
+                                });
                             } else {
-                                router.push(pathname + "?" + newQueryString);
+                                startTransition(() => {
+                                    router.push(
+                                        pathname + "?" + newQueryString
+                                    );
+                                });
                             }
                         }}
                         placeholder="Pesquisar matérias"

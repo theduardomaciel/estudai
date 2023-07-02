@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 
 import {
     $getSelection,
+    $isRangeSelection,
     COMMAND_PRIORITY_LOW,
     createCommand,
     LexicalCommand,
@@ -26,6 +27,7 @@ import { $getSharedLinkTarget } from "../utils/$getSharedLinkTarget";
 import TrashIcon from "@material-symbols/svg-600/rounded/delete.svg";
 import CheckIcon from "@material-symbols/svg-600/rounded/check.svg";
 import { cn } from "@/lib/ui";
+import { $patchStyleText } from "@lexical/selection";
 
 type EditLinkMenuPosition = { x: number; y: number } | undefined;
 
@@ -57,10 +59,7 @@ export function EditLinkPlugin() {
             () => {
                 const nativeSel = window.getSelection();
                 const isCollapsed =
-                    nativeSel?.rangeCount ===
-                    0; /* || nativeSel?.isCollapsed; */
-
-                console.log(nativeSel, "nativeSel");
+                    nativeSel?.rangeCount === 0 || nativeSel?.isCollapsed;
 
                 if (
                     !!pos?.x ||
@@ -81,7 +80,10 @@ export function EditLinkPlugin() {
                         setDomRange(domRange);
                         editor.getEditorState().read(() => {
                             const selection = $getSelection();
+                            console.log(selection, "selection");
+                            console.log(domRange);
                             const linkTarget = $getSharedLinkTarget(selection);
+                            console.log(linkTarget, "target");
                             setHasLink(!!linkTarget);
                         });
                     })
@@ -113,6 +115,18 @@ export function EditLinkPlugin() {
         resetState();
     });
 
+    /* const applyStyleText = useCallback(
+        (styles: Record<string, string>) => {
+            editor.update(() => {
+                const selection = $getSelection();
+                if ($isRangeSelection(selection)) {
+                    $patchStyleText(selection, styles);
+                }
+            });
+        },
+        [editor]
+    ); */
+
     const handleSetLink = (event?: SyntheticEvent) => {
         if (event) {
             event.preventDefault();
@@ -143,10 +157,10 @@ export function EditLinkPlugin() {
                 style={{ top: pos?.y, left: pos?.x }}
                 aria-hidden={!pos?.x || !pos?.y}
                 className={cn(
-                    `absolute flex items-center justify-between bg-neutral border-[1px] px-2.5 py-1.5 border-light-gray rounded-md gap-1 opacity-0 invisible`,
+                    `absolute flex items-center justify-between bg-neutral border-[1px] px-2.5 py-1.5 border-light-gray z-[100] rounded-md gap-1 opacity-0 invisible`,
                     {
                         "border-red-500": error,
-                        "opacity-1 visible": pos?.x && pos?.y,
+                        "opacity-1 visible shadow": pos?.x && pos?.y,
                     }
                 )}
             >
@@ -156,7 +170,7 @@ export function EditLinkPlugin() {
                     onChange={(e) => setValue(e.target.value)}
                     type="url"
                     className="text-xs text-font-light bg-transparent border-none outline-none"
-                    placeholder="Enter URL"
+                    placeholder="Insira uma URL" // Enter URL
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
                             e.preventDefault();
@@ -187,12 +201,17 @@ export function EditLinkPlugin() {
                     </div>
                 ) : null}
                 <button
-                    className="flex items-center justify-center p-0.5 hover:bg-background-04 rounded transition-colors"
+                    className={cn(
+                        "flex items-center justify-center p-0.5 rounded transition-colors cursor-not-allowed",
+                        {
+                            "hover:bg-background-04 cursor-pointer": value,
+                        }
+                    )}
                     type="submit"
                     name="submitButton"
                 >
                     <CheckIcon
-                        className="icon cursor-pointer"
+                        className="icon"
                         fontSize={`1.8rem`}
                         color="var(--primary-03)"
                         style={{
@@ -217,7 +236,7 @@ function FakeSelection({ range }: { range: Range | undefined }) {
     const domRect = range.getBoundingClientRect();
     return createPortal(
         <div
-            className="absolute bg-slate-200 -z-[1]"
+            className="absolute bg-slate-200 z-50"
             style={{
                 left: domRect.left,
                 width: domRect.width,

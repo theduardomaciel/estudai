@@ -18,6 +18,7 @@ import {
     StrikethroughIcon,
     FontBoldIcon,
     FontItalicIcon,
+    LinkBreak1Icon,
     UnderlineIcon,
     Pencil1Icon,
     Link1Icon,
@@ -32,6 +33,7 @@ interface Props {
         isItalic: boolean;
         isStrikethrough: boolean;
         isUnderline: boolean;
+        isHighlight: boolean;
         isLink: boolean;
     };
 }
@@ -71,6 +73,15 @@ function Toolbar({ editor, values }: Props) {
             >
                 <StrikethroughIcon color="var(--neutral)" />
             </ToolbarItem>
+            <ToolbarItem
+                isActive={values.isHighlight}
+                aria-label="Highlight"
+                onClick={() =>
+                    editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight")
+                }
+            >
+                <Pencil1Icon color="var(--neutral)" fontSize={"1.2rem"} />
+            </ToolbarItem>
             <div className="w-[0.75px] h-[50%] rounded bg-neutral mx-[10px] pointer-events-none select-none" />
             <ToolbarItem
                 isActive={values.isLink}
@@ -79,19 +90,23 @@ function Toolbar({ editor, values }: Props) {
                     editor.dispatchCommand(TOGGLE_EDIT_LINK_MENU, undefined)
                 }
             >
-                <Link1Icon color="var(--neutral)" />
+                {values.isLink ? (
+                    <LinkBreak1Icon color="var(--neutral)" />
+                ) : (
+                    <Link1Icon color="var(--neutral)" />
+                )}
             </ToolbarItem>
         </div>
     );
 }
 
-interface ToolbarItemProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ToolbarItemProps extends React.HTMLAttributes<HTMLButtonElement> {
     isActive: boolean;
 }
 
 function ToolbarItem({ isActive, children, ...props }: ToolbarItemProps) {
     return (
-        <div
+        <button
             className={cn(
                 "flex-shrink-0 flex-grow-0 basis-auto rounded inline-flex p-1 text-[13px] leading-none items-center justify-center bg-transparent outline-none hover:bg-primary-04 focus:relative focus:shadow-[0_0_0_2px] focus:shadow-primary-04 first:ml-0 data-[state=on]:bg-primary-04",
                 isActive && "bg-primary-04"
@@ -99,7 +114,7 @@ function ToolbarItem({ isActive, children, ...props }: ToolbarItemProps) {
             {...props}
         >
             {children}
-        </div>
+        </button>
     );
 }
 
@@ -108,6 +123,7 @@ export default function ToolbarPlugin() {
     const [isLink, setIsLink] = useState(false);
     const [isItalic, setIsItalic] = useState(false);
     const [isUnderline, setIsUnderline] = useState(false);
+    const [isHighlight, setIsHighlight] = useState(false);
     const [isStrikethrough, setIsStrikethrough] = useState(false);
 
     const [editor] = useLexicalComposerContext();
@@ -127,6 +143,7 @@ export default function ToolbarPlugin() {
             setIsBold(selection.hasFormat("bold"));
             setIsItalic(selection.hasFormat("italic"));
             setIsUnderline(selection.hasFormat("underline"));
+            setIsHighlight(selection.hasFormat("highlight"));
             setIsStrikethrough(selection.hasFormat("strikethrough"));
             setIsLink(nodes.every((node) => $isLinkNode(node.getParent())));
             /* } */
@@ -151,6 +168,7 @@ export default function ToolbarPlugin() {
                 isItalic,
                 isStrikethrough,
                 isUnderline,
+                isHighlight,
                 isLink,
             }}
         />

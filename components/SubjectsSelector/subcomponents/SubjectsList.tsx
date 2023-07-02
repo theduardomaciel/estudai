@@ -1,5 +1,6 @@
-// Components
 import { useMemo } from "react";
+
+// Components
 import SubjectItem from "./SubjectItem";
 
 import getSubjects from "@/services/getSubjects";

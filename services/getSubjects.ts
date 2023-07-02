@@ -12,7 +12,7 @@ export const preload = () => {
 };
 
 const getSubjects = cache(async (includeUser?: boolean) => {
-    //console.log("📚 Obtendo matérias...");
+    console.log("📚 Obtendo matérias...");
     if (includeUser) {
         const token = cookies().get("estudai.auth.token")?.value;
 
