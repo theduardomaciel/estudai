@@ -16,7 +16,7 @@ import {
     LexicalCommand,
 } from "lexical";
 
-import { TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { computePosition } from "@floating-ui/dom";
 
@@ -29,6 +29,8 @@ import CheckIcon from "@material-symbols/svg-600/rounded/check.svg";
 import { cn } from "@/lib/ui";
 import { $patchStyleText } from "@lexical/selection";
 
+const LINK_PREVIEW_BG_COLOR = "var(--background-01)";
+
 type EditLinkMenuPosition = { x: number; y: number } | undefined;
 
 export const TOGGLE_EDIT_LINK_MENU: LexicalCommand<undefined> = createCommand();
@@ -40,7 +42,7 @@ export function EditLinkPlugin() {
     const [value, setValue] = useState("");
     const [error, setError] = useState(false);
     const [pos, setPos] = useState<EditLinkMenuPosition>(undefined);
-    const [domRange, setDomRange] = useState<Range | undefined>(undefined);
+    /* const [domRange, setDomRange] = useState<Range | undefined>(undefined); */
     const [hasLink, setHasLink] = useState(false);
 
     const [editor] = useLexicalComposerContext();
@@ -49,7 +51,11 @@ export function EditLinkPlugin() {
         setValue("");
         setError(false);
         setPos(undefined);
-        setDomRange(undefined);
+        /* setDomRange(undefined); */
+        applyStyleText({
+            "background-color": "",
+            color: "",
+        });
         editor.focus();
     }, [editor]);
 
@@ -60,6 +66,11 @@ export function EditLinkPlugin() {
                 const nativeSel = window.getSelection();
                 const isCollapsed =
                     nativeSel?.rangeCount === 0 || nativeSel?.isCollapsed;
+
+                /* const selectedNode =  $getSelection()?.extract()[0].getParent();
+                const isLink = $isLinkNode(
+                    selectedNode
+                    ); */
 
                 if (
                     !!pos?.x ||
@@ -76,14 +87,16 @@ export function EditLinkPlugin() {
 
                 computePosition(domRange, ref.current, { placement: "bottom" })
                     .then((pos) => {
+                        // Aplicamos um preview de como ficaria o link (não muda essa função de aplicar estilo ao texto de lugar, pelo amor de Deus)
+                        applyStyleText({
+                            "background-color": LINK_PREVIEW_BG_COLOR,
+                            color: "var(--font-light)",
+                        });
                         setPos({ x: pos.x, y: pos.y + 10 });
-                        setDomRange(domRange);
+                        /* setDomRange(domRange); */
                         editor.getEditorState().read(() => {
                             const selection = $getSelection();
-                            console.log(selection, "selection");
-                            console.log(domRange);
                             const linkTarget = $getSharedLinkTarget(selection);
-                            console.log(linkTarget, "target");
                             setHasLink(!!linkTarget);
                         });
                     })
@@ -115,17 +128,20 @@ export function EditLinkPlugin() {
         resetState();
     });
 
-    /* const applyStyleText = useCallback(
-        (styles: Record<string, string>) => {
+    const applyStyleText = useCallback(
+        (styles: Record<string, string | undefined>) => {
             editor.update(() => {
                 const selection = $getSelection();
                 if ($isRangeSelection(selection)) {
-                    $patchStyleText(selection, styles);
+                    $patchStyleText(
+                        selection,
+                        styles as Record<string, string>
+                    );
                 }
             });
         },
         [editor]
-    ); */
+    );
 
     const handleSetLink = (event?: SyntheticEvent) => {
         if (event) {
@@ -149,7 +165,7 @@ export function EditLinkPlugin() {
 
     return (
         <>
-            <FakeSelection range={domRange} />
+            {/* <FakeSelection range={domRange} /> */}
             <form
                 ref={ref}
                 id="edit-link-menu"
@@ -236,7 +252,7 @@ function FakeSelection({ range }: { range: Range | undefined }) {
     const domRect = range.getBoundingClientRect();
     return createPortal(
         <div
-            className="absolute bg-slate-200 z-50"
+            className="absolute bg-slate-200 -z-10"
             style={{
                 left: domRect.left,
                 width: domRect.width,
