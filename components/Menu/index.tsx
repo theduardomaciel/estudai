@@ -7,32 +7,33 @@ import ToggleMenuButton from "./ToggleButton";
 
 // Stylesheets
 import styles from "./menu.module.css";
+import { cn } from "@/lib/ui";
 
 interface Props {
-	children?: React.ReactNode;
-	flex?: boolean;
-	style?: CSSProperties;
+    children?: React.ReactNode;
+    flex?: boolean;
+    style?: CSSProperties;
 }
 
 export default function Menu({ children, flex, style }: Props) {
-	return (
-		<div
-			className={`${flex ? styles.open : ""} ${flex ? styles.flex : ""} ${
-				styles.holder
-			}`}
-			style={style}
-		>
-			<div className={styles.content}>
-				{children ?? (
-					<>
-						<div className={styles.menuHeader}>
-							<div className="row">
-								<h3>Agenda</h3>
-								<ToggleMenuButton type="close" />
-							</div>
-							<Calendar />
+    return (
+        <div
+            className={cn(styles.holder, {
+                [styles.open]: flex,
+                [styles.flex]: flex,
+            })}
+        >
+            <div className={cn(styles.content)} style={style}>
+                {children ?? (
+                    <>
+                        <div className={styles.menuHeader}>
+                            <div className="row">
+                                <h3>Agenda</h3>
+                                <ToggleMenuButton type="close" />
+                            </div>
+                            <Calendar />
 
-							{/* <div className={styles.eventHolder} >
+                            {/* <div className={styles.eventHolder} >
                         <h6>Próximo evento importante</h6>
                         <div className={styles.card}>
                         </div>
@@ -50,11 +51,11 @@ export default function Menu({ children, flex, style }: Props) {
                             </div>
                         </div>
                     </div> */}
-						</div>
-						{/* <Focus /> */}
-					</>
-				)}
-			</div>
-		</div>
-	);
+                        </div>
+                        {/* <Focus /> */}
+                    </>
+                )}
+            </div>
+        </div>
+    );
 }

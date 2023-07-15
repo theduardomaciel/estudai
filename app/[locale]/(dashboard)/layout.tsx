@@ -1,14 +1,14 @@
 import Sidebar from "@/components/Sidebar";
 
 export default function DashboardLayout({
-	children,
+    children,
 }: {
-	children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-	return (
-		<main className="flex flex-row w-full h-full">
-			<Sidebar isAuthenticated />
-			{children}
-		</main>
-	);
+    return (
+        <main className="flex flex-row w-full h-full">
+            <Sidebar isAuthenticated />
+            {children}
+        </main>
+    );
 }

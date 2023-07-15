@@ -11,9 +11,11 @@ import { createPortal } from "react-dom";
 import {
     $getSelection,
     $isRangeSelection,
+    $setSelection,
     COMMAND_PRIORITY_LOW,
     createCommand,
     LexicalCommand,
+    RangeSelection,
 } from "lexical";
 
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
@@ -67,17 +69,15 @@ export function EditLinkPlugin() {
                 const isCollapsed =
                     nativeSel?.rangeCount === 0 || nativeSel?.isCollapsed;
 
-                /* const selectedNode =  $getSelection()?.extract()[0].getParent();
-                const isLink = $isLinkNode(
-                    selectedNode
-                    ); */
+                const selectedNode = $getSelection()?.extract()[0].getParent();
+                const isLink = $isLinkNode(selectedNode);
 
                 if (
                     !!pos?.x ||
                     !!pos?.y ||
                     !ref.current ||
                     !nativeSel ||
-                    isCollapsed
+                    (isCollapsed && !isLink)
                 ) {
                     resetState();
                     return false;
@@ -93,12 +93,13 @@ export function EditLinkPlugin() {
                             color: "var(--font-light)",
                         });
                         setPos({ x: pos.x, y: pos.y + 10 });
+                        setHasLink(isLink);
                         /* setDomRange(domRange); */
-                        editor.getEditorState().read(() => {
+                        /* editor.getEditorState().read(() => {
                             const selection = $getSelection();
                             const linkTarget = $getSharedLinkTarget(selection);
                             setHasLink(!!linkTarget);
-                        });
+                        }); */
                     })
                     .catch(() => {
                         resetState();

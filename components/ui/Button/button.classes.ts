@@ -23,15 +23,17 @@ export const neutral = [
 
 export const scale = ["enabled:hover:scale-105"];
 
-export const sendForm = [
-    "py-4 px-8 gap-6 bg-gradient-to-r from-primary-01 to-primary-02 shadow-sm rounded-base font-sans font-bold text-xs translate-y-0 uppercase transition",
-    "enabled:hover:shadow-lg enabled:hover:translate-y-[-2.5%]",
+export const submit = [
+    "py-3 px-8 gap-6 bg-gradient-to-r from-primary-01 to-primary-02 shadow-sm rounded-lg font-sans font-bold text-xs translate-y-0 uppercase transition shadow group",
+    "enabled:hover:shadow-lg",
 ];
+
+// enabled:hover:translate-y-[-1.5%]
 
 export const presets = {
     primary,
     secondary,
     neutral,
     scale,
-    sendForm,
+    submit,
 };

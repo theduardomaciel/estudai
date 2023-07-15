@@ -24,7 +24,7 @@ export default function Button({
 }: ButtonProps) {
     return (
         <button
-            type={preset === "sendForm" ? "submit" : "button"}
+            type={preset === "submit" ? "submit" : "button"}
             className={cn(
                 DEFAULT,
                 typeof preset === "string"
