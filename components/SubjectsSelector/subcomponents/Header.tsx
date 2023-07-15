@@ -1,16 +1,19 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { startTransition, useCallback } from "react";
+import { useTransition, useCallback } from "react";
 
 // Icons
 import SearchIcon from "@material-symbols/svg-600/rounded/search.svg";
 import { cn } from "@/lib/ui";
+import Spinner from "@/components/ui/Spinner";
 
 export default function SubjectsSelectorHeader({}) {
-    const router = useRouter();
+    const { replace } = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams()!;
+
+    const [isPending, startTransition] = useTransition();
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -49,21 +52,24 @@ export default function SubjectsSelectorHeader({}) {
                             const newQueryString = createQueryString({
                                 search: e.target.value,
                             });
-                            if (e.target.value === "") {
+                            if (e.target.value) {
                                 startTransition(() => {
-                                    router.push(pathname);
+                                    replace(`${pathname}?${newQueryString}`);
                                 });
                             } else {
                                 startTransition(() => {
-                                    router.push(
-                                        pathname + "?" + newQueryString
-                                    );
+                                    replace(`${pathname}`);
                                 });
                             }
                         }}
                         placeholder="Pesquisar matérias"
                         className="flex w-full h-full text-font-light text-xs rounded bg-transparent font-medium tracking-wide gap-2.5 pl-10 py-2.5 pr-2.5 border-transparent focus:border-transparent focus:ring-0 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-primary-04"
                     />
+                    {isPending && (
+                        <div className="flex items-center justify-center w-4 h-4 right-3 top-1/2 -translate-y-1/2 absolute">
+                            <Spinner className="fill-primary-02 w-4 h-4" />
+                        </div>
+                    )}
                 </div>
                 <button
                     type="button"

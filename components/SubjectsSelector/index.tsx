@@ -7,10 +7,16 @@ import SubjectsList from "./subcomponents/SubjectsList";
 import Spinner from "../ui/Spinner";
 import SubjectsSelectorPreview from "./subcomponents/Preview";
 import CreateSubjectButton from "./subcomponents/CreateSubjectButton";
+import getSubjects from "@/services/getSubjects";
 
-interface Props {}
+interface Props {
+    searchParams?: { search?: string };
+}
 
-export default function SubjectsSelector({}: Props) {
+export default async function SubjectsSelector({ searchParams }: Props) {
+    const subjects = await getSubjects();
+    console.log("obtidos do getSubjects");
+
     return (
         <Section className="max-h-full">
             <SectionHeader title="Matérias">
@@ -28,15 +34,23 @@ export default function SubjectsSelector({}: Props) {
                             <div className="text-primary-02 text-xs font-medium tracking-wide">
                                 Suas matérias
                             </div>
-                            <Suspense fallback={<Loading />}>
-                                <SubjectsList userOnly />
-                            </Suspense>
+                            {/*  <Suspense fallback={<Loading />}> */}
+                            <SubjectsList
+                                subjects={subjects?.filter(
+                                    (subject) => !!subject.userId
+                                )}
+                            />
+                            {/* </Suspense> */}
                             <div className="text-primary-02 text-xs font-medium tracking-wide">
                                 Outras matérias
                             </div>
-                            <Suspense fallback={<Loading />}>
-                                <SubjectsList />
-                            </Suspense>
+                            {/*  <Suspense fallback={<Loading />}> */}
+                            <SubjectsList
+                                subjects={subjects?.filter(
+                                    (subject) => !subject.userId
+                                )}
+                            />
+                            {/* </Suspense> */}
                         </div>
                     </div>
                 </div>

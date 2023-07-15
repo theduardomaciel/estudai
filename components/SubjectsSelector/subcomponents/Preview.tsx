@@ -12,7 +12,6 @@ export default function SubjectsSelectorPreview({}) {
     const [subjects, setSubjects] = useState<Subject[]>([]);
 
     useEffect(() => {
-        console.log("SubjectsSelectorPreview");
         const form = document.getElementById(
             "subjectsSelector"
         ) as HTMLFormElement;
@@ -21,11 +20,9 @@ export default function SubjectsSelectorPreview({}) {
             const checkboxes = form.querySelectorAll(
                 "input[type=checkbox][name=subjectItem]"
             ) as NodeListOf<HTMLInputElement>;
-            console.log(checkboxes);
 
             checkboxes.forEach((checkbox) => {
                 checkbox.addEventListener("change", () => {
-                    console.log("change");
                     /* const checkedCheckboxes = form.querySelectorAll(
                         ".subjectItem:checked"
                     ) as NodeListOf<HTMLInputElement>;

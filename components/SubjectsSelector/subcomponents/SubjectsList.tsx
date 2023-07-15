@@ -4,17 +4,13 @@ import { useMemo } from "react";
 import SubjectItem from "./SubjectItem";
 
 import getSubjects from "@/services/getSubjects";
+import { Subject } from "@prisma/client";
 
 interface Props {
-    userOnly?: boolean;
+    subjects?: Subject[];
 }
 
-export default async function SubjectsList({ userOnly }: Props) {
-    const subjects = await useMemo(
-        async () => await getSubjects(userOnly),
-        [userOnly]
-    );
-
+export default async function SubjectsList({ subjects }: Props) {
     return (
         <>
             {subjects && subjects.length > 0 ? (
