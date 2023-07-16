@@ -6,7 +6,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <main className="flex flex-row w-full h-full">
+        <main className="flex flex-col lg:flex-row w-full h-fit lg:h-full">
             <Sidebar isAuthenticated />
             {children}
         </main>

@@ -8,14 +8,23 @@ import { Subject } from "@prisma/client";
 
 interface Props {
     subjects?: Subject[] | null;
+    query?: string;
+    marked?: string[];
 }
 
-export default async function SubjectsList({ subjects }: Props) {
+export default function SubjectsList({ subjects, query, marked }: Props) {
+    const filteredSubjects = subjects?.filter((subject) =>
+        subject.name.toLowerCase().includes(query?.toLowerCase() ?? "")
+    );
     return (
         <>
-            {subjects && subjects.length > 0 ? (
-                subjects.map((subject) => (
-                    <SubjectItem key={subject.id} {...subject} />
+            {filteredSubjects && filteredSubjects.length > 0 ? (
+                filteredSubjects.map((subject) => (
+                    <SubjectItem
+                        key={subject.id}
+                        {...subject}
+                        initialMarked={marked?.includes(subject.id)}
+                    />
                 ))
             ) : (
                 <Empty />

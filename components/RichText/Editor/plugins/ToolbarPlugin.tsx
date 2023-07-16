@@ -42,7 +42,7 @@ function Toolbar({ editor, values }: Props) {
     return (
         <div
             className={
-                "flex px-3 py-1 gap-1.5 justify-center items-center self-stretch rounded-md bg-primary-03"
+                "flex px-3 py-1 gap-1.5 justify-center items-center self-stretch rounded-md bg-primary-03 min-h-[4rem]"
             }
             aria-label="Formatting options"
         >

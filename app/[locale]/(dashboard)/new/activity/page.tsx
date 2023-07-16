@@ -32,7 +32,7 @@ export default function Page({
 
     return (
         <>
-            <div className="flex w-full flex-col items-start gap-[3.5rem] px-[5rem] py-[3.5rem]">
+            <div className="flex flex-1 h-full flex-col items-start gap-[3.5rem] px-[5rem] py-[3.5rem]">
                 <Navigator
                     directories={[
                         {
@@ -51,18 +51,13 @@ export default function Page({
                         />
                     }
                 />
-                <div className="w-full justify-between items-start gap-[25px] inline-flex min-h-[50%]">
+                <div className="w-full justify-between items-start gap-[25px] inline-flex min-h-[50%] flex-wrap">
                     {/* <Editor title="Descrição" maxLength={650} /> */}
                     <Editor title="Descrição" maxLength={650} />
                     <SubjectsSelector />
                 </div>
             </div>
-            <Menu
-                style={{
-                    justifyContent: "flex-start",
-                    gap: "2.5rem",
-                }}
-            >
+            <Menu isFlex>
                 <div className="flex flex-col items-start justify-start gap-4 w-full">
                     <h2 className="text-font-dark-02 text-2xl font-bold">
                         Data

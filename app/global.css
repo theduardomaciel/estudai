@@ -74,7 +74,7 @@
         --wrapper: 3.5rem;
         --menu-width: 60rem;
         --sidebar-width: 10rem;
-        --sidebar-height: 7.5rem;
+        --sidebar-height: 10rem;
 
         --primary-01: #6628ca;
         --primary-02: #7642cb;
@@ -150,7 +150,7 @@ html {
 
 html,
 body {
-    width: 100%;
+    width: 100vw;
     height: 100%;
 
     text-rendering: optimizeLegibility;
@@ -162,6 +162,7 @@ body {
     font-family: var(--font-inter);
     font-size: 1.6rem;
     overflow: overlay;
+    max-width: 100vw;
     background-color: var(--background-01);
 }
 

@@ -1,115 +1,117 @@
 .holder {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	padding: 1.5rem;
-	gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+    gap: 1rem;
 
-	width: 100%;
+    width: 100%;
+    min-width: fit-content;
 
-	background: var(--background-03);
+    background: var(--background-03);
 
-	border: 1px solid var(--background-02);
-	box-shadow: 0px 0.4rem 1.5rem rgba(0, 0, 0, 0.1);
-	border-radius: 1.5rem;
+    border: 1px solid var(--background-02);
+    box-shadow: 0px 0.4rem 1.5rem rgba(0, 0, 0, 0.1);
+    border-radius: 1.5rem;
 }
 
 .days {
-	padding-inline: 1.125rem;
-	color: var(--primary-03);
-	display: flex;
-	align-items: center;
-	align-self: center;
+    padding-inline: 1.125rem;
+    color: var(--primary-03);
+    display: flex;
+    align-items: center;
+    align-self: center;
 }
 
 .days p {
-	font-family: var(--font-inter);
-	font-style: normal;
-	font-weight: 700;
-	font-size: 1.4rem;
-	display: flex;
-	align-items: center;
-	text-align: center;
-	width: fit-content;
+    font-family: var(--font-inter);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: fit-content;
 }
 
 .calendar {
-	display: grid;
+    display: grid;
 
-	width: 100%;
+    width: 100%;
 
-	justify-content: space-between;
-	grid-template-columns: auto auto auto auto auto auto auto;
+    justify-content: space-between;
+    grid-template-columns: auto auto auto auto auto auto auto;
 
-	/* row-gap: 1rem; */
-	row-gap: 0.5rem;
+    /* row-gap: 1rem; */
+    row-gap: 0.5rem;
+    column-gap: 1rem;
 }
 
 .day {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-	/* width: 2.5rem;
+    /* width: 2.5rem;
     height: 2.5rem; */
-	width: 3rem;
-	height: 3rem;
+    width: 3rem;
+    height: 3rem;
 
-	font-family: var(--font-karla);
-	font-style: normal;
-	font-weight: 400;
-	font-size: 1rem;
-	/* border-radius: 1rem; */
-	border-radius: 1.25rem;
+    font-family: var(--font-karla);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1rem;
+    /* border-radius: 1rem; */
+    border-radius: 1.25rem;
 
-	user-select: none;
-	cursor: pointer;
-	transition: 0.35s;
+    user-select: none;
+    cursor: pointer;
+    transition: 0.35s;
 }
 
 .day.selected,
 .day:hover {
-	border: 1px solid var(--neutral);
-	background-color: var(--primary-02);
+    border: 1px solid var(--neutral);
+    background-color: var(--primary-02);
 
-	color: var(--background-02);
-	font-weight: 700;
+    color: var(--background-02);
+    font-weight: 700;
 
-	outline: 1px solid var(--primary-02);
+    outline: 1px solid var(--primary-02);
 
-	font-size: 1.6rem;
+    font-size: 1.6rem;
 }
 
 .day:active {
-	font-size: 5rem;
+    font-size: 5rem;
 }
 
 .default {
-	background-color: var(--primary-03);
-	color: var(--neutral);
+    background-color: var(--primary-03);
+    color: var(--neutral);
 }
 
 .unavailable {
-	background-color: var(--primary-03);
-	border: 1px dashed var(--primary-02);
-	color: var(--primary-02);
+    background-color: var(--primary-03);
+    border: 1px dashed var(--primary-02);
+    color: var(--primary-02);
 }
 
 .outsideRange {
-	background-color: var(--background-04);
-	color: var(--primary-04);
-	font-weight: 400;
+    background-color: var(--background-04);
+    color: var(--primary-04);
+    font-weight: 400;
 }
 
 .today {
-	background-color: var(--neutral);
-	border: 1px dashed var(--primary-02);
-	color: var(--primary-02);
+    background-color: var(--neutral);
+    border: 1px dashed var(--primary-02);
+    color: var(--primary-02);
 }
 
 .add {
-	background-color: var(--primary-03);
-	border: 1px solid var(--neutral);
-	border-radius: 0.6rem;
+    background-color: var(--primary-03);
+    border: 1px solid var(--neutral);
+    border-radius: 0.6rem;
 }

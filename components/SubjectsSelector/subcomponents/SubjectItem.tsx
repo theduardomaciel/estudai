@@ -1,28 +1,27 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { Checkbox } from "@/components/ui/Checkbox";
 
 interface SubjectItemProps {
     id: string;
     name: string;
-    isSelected?: boolean;
+    initialMarked?: boolean;
     icon: string;
 }
 
 export default function SubjectItem({
     id,
     name,
-    isSelected,
+    initialMarked,
     icon,
 }: SubjectItemProps) {
     return (
         <div className="self-stretch justify-start items-center gap-2.5 inline-flex">
             <Checkbox
-                name="subjectItem"
+                name={id}
                 className="subjectItem"
                 id={id}
-                checked={isSelected}
+                defaultChecked={initialMarked}
             />
             <div className="justify-start items-center gap-[5px] flex">
                 <div

@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import Section, { Header as SectionHeader } from "../Section";
 
 // Subcomponents
-import SubjectsSelectorPreview from "./subcomponents/Preview";
 import CreateSubjectButton from "./subcomponents/CreateSubjectButton";
 import SubjectsSelectorPicker from "./subcomponents/PickerFetch";
 import { SubjectsSelectorPickerUI } from "./subcomponents/Picker";
@@ -19,17 +18,13 @@ export default function SubjectsSelector({ searchParams }: Props) {
             <SectionHeader title="Matérias">
                 <CreateSubjectButton />
             </SectionHeader>
-            <form
-                id="subjectsSelector"
-                className="self-stretch grow shrink basis-0  flex-col justify-start items-start gap-[5px] flex h-full"
-            >
-                <SubjectsSelectorPreview />
+            <div className="self-stretch grow shrink basis-0  flex-col justify-start items-start gap-[5px] flex h-full">
                 <Suspense
                     fallback={<SubjectsSelectorPickerUI subjects={null} />}
                 >
                     <SubjectsSelectorPicker />
                 </Suspense>
-            </form>
+            </div>
         </Section>
     );
 }
