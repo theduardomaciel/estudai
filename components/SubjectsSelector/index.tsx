@@ -2,21 +2,18 @@ import { Suspense } from "react";
 
 // Components
 import Section, { Header as SectionHeader } from "../Section";
-import SubjectsSelectorHeader from "./subcomponents/Header";
-import SubjectsList from "./subcomponents/SubjectsList";
-import Spinner from "../ui/Spinner";
+
+// Subcomponents
 import SubjectsSelectorPreview from "./subcomponents/Preview";
 import CreateSubjectButton from "./subcomponents/CreateSubjectButton";
-import getSubjects from "@/services/getSubjects";
+import SubjectsSelectorPicker from "./subcomponents/PickerFetch";
+import { SubjectsSelectorPickerUI } from "./subcomponents/Picker";
 
 interface Props {
     searchParams?: { search?: string };
 }
 
-export default async function SubjectsSelector({ searchParams }: Props) {
-    const subjects = await getSubjects();
-    console.log("obtidos do getSubjects");
-
+export default function SubjectsSelector({ searchParams }: Props) {
     return (
         <Section className="max-h-full">
             <SectionHeader title="Matérias">
@@ -27,42 +24,12 @@ export default async function SubjectsSelector({ searchParams }: Props) {
                 className="self-stretch grow shrink basis-0  flex-col justify-start items-start gap-[5px] flex h-full"
             >
                 <SubjectsSelectorPreview />
-                <div className="self-stretch grow shrink basis-0 bg-white rounded-lg border border-primary-03 flex-col justify-start items-center flex">
-                    <SubjectsSelectorHeader />
-                    <div className="self-stretch grow shrink basis-0 pt-2.5 pb-[15px] justify-center items-start inline-flex overflow-x-hidden overflow-y-auto scrollbar">
-                        <div className="grow shrink basis-0 px-5 flex-col justify-start items-start gap-2.5 inline-flex">
-                            <div className="text-primary-02 text-xs font-medium tracking-wide">
-                                Suas matérias
-                            </div>
-                            {/*  <Suspense fallback={<Loading />}> */}
-                            <SubjectsList
-                                subjects={subjects?.filter(
-                                    (subject) => !!subject.userId
-                                )}
-                            />
-                            {/* </Suspense> */}
-                            <div className="text-primary-02 text-xs font-medium tracking-wide">
-                                Outras matérias
-                            </div>
-                            {/*  <Suspense fallback={<Loading />}> */}
-                            <SubjectsList
-                                subjects={subjects?.filter(
-                                    (subject) => !subject.userId
-                                )}
-                            />
-                            {/* </Suspense> */}
-                        </div>
-                    </div>
-                </div>
+                <Suspense
+                    fallback={<SubjectsSelectorPickerUI subjects={null} />}
+                >
+                    <SubjectsSelectorPicker />
+                </Suspense>
             </form>
         </Section>
-    );
-}
-
-function Loading() {
-    return (
-        <div className="flex items-center justify-center w-full">
-            <Spinner className="h-5 w-5" />
-        </div>
     );
 }

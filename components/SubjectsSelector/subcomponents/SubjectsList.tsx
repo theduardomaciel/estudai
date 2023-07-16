@@ -1,13 +1,13 @@
-import { useMemo } from "react";
+"use client";
 
 // Components
 import SubjectItem from "./SubjectItem";
 
-import getSubjects from "@/services/getSubjects";
+// Types
 import { Subject } from "@prisma/client";
 
 interface Props {
-    subjects?: Subject[];
+    subjects?: Subject[] | null;
 }
 
 export default async function SubjectsList({ subjects }: Props) {
