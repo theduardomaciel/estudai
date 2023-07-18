@@ -15,18 +15,20 @@ import SubjectsSelectorPreview from "./Preview";
 
 interface Props {
     subjects?: Subject[] | null;
+    hasError?: boolean;
 }
 
-export function SubjectsSelectorPickerUI({ subjects }: Props) {
+export function SubjectsSelectorPickerUI({ subjects, hasError }: Props) {
     const [query, setQuery] = useState("");
     const deferredQuery = useDeferredValue(query);
-    const isStale = query !== deferredQuery;
+    // const isStale = query !== deferredQuery;
 
     const [marked, setMarked] = useState<string[]>([]);
 
     return (
         <form
-            className="self-stretch grow shrink basis-0  flex-col justify-start items-start gap-[5px] flex h-full min-h-[17.5rem]"
+            id="subjectsSelectorPicker"
+            className="self-stretch grow shrink basis-0 flex-col justify-start items-start gap-[5px] flex h-full min-h-[17.5rem]"
             onChange={(event) => {
                 //console.log(event.target);
                 if (event.target instanceof HTMLInputElement) {
@@ -76,6 +78,14 @@ export function SubjectsSelectorPickerUI({ subjects }: Props) {
                             onClick={() => {
                                 setMarked([]);
                                 setQuery("");
+
+                                const form = document.getElementById(
+                                    "subjectsSelectorPicker"
+                                ) as HTMLFormElement;
+
+                                if (form) {
+                                    form.reset();
+                                }
                             }}
                             className={cn(
                                 "flex text-font-light text-xs font-medium tracking-wide cursor-pointer whitespace-nowrap"
@@ -101,6 +111,14 @@ export function SubjectsSelectorPickerUI({ subjects }: Props) {
                                 query={deferredQuery}
                                 marked={marked}
                             />
+                        ) : hasError ? (
+                            <div className="flex w-full h-full items-center justify-center">
+                                <p className="text-primary-02 text-xs font-medium tracking-wide text-center self-center">
+                                    Nos deparamos com um erro ao carregar as
+                                    suas matérias. <br />
+                                    Tente novamente mais tarde.
+                                </p>
+                            </div>
                         ) : (
                             <Loading />
                         )}

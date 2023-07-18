@@ -18,7 +18,7 @@ export default function SubjectsSelector({ searchParams }: Props) {
             <SectionHeader title="Matérias">
                 <CreateSubjectButton />
             </SectionHeader>
-            <div className="self-stretch grow shrink basis-0  flex-col justify-start items-start gap-[5px] flex h-full">
+            <div className="self-stretch grow shrink basis-0 flex-col justify-start items-start gap-[5px] flex h-full">
                 <Suspense
                     fallback={<SubjectsSelectorPickerUI subjects={null} />}
                 >

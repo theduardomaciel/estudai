@@ -22,8 +22,8 @@ export default function SubjectsList({ subjects, query, marked }: Props) {
                 filteredSubjects.map((subject) => (
                     <SubjectItem
                         key={subject.id}
-                        {...subject}
                         initialMarked={marked?.includes(subject.id)}
+                        {...subject}
                     />
                 ))
             ) : (

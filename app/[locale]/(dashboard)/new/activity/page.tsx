@@ -5,8 +5,11 @@ import Navigator from "@/components/Navigator";
 import SubjectsSelector from "@/components/SubjectsSelector";
 import Menu from "@/components/Menu";
 import Editor from "@/components/RichText/Editor";
-import Button from "@/components/ui/Button";
 import Calendar from "@/components/Calendar";
+import TaskNameEdit from "@/components/TaskNameEdit";
+import Button from "@/components/ui/Button";
+
+import NewActivitySettings from "./settings";
 
 // Icons
 import PlaneIcon from "@material-symbols/svg-600/rounded/send-fill.svg";
@@ -43,16 +46,9 @@ export default function Page({
                             name: "Nova atividade",
                         },
                     ]}
-                    customTitle={
-                        <input
-                            placeholder="Nova atividade"
-                            defaultValue={"Nova atividade"}
-                            className="bg-transparent text-2xl placeholder:text-primary-02 text-primary-02 w-fit"
-                        />
-                    }
+                    customTitle={<TaskNameEdit />}
                 />
                 <div className="w-full justify-between items-start gap-[25px] inline-flex min-h-[50%] flex-wrap">
-                    {/* <Editor title="Descrição" maxLength={650} /> */}
                     <Editor title="Descrição" maxLength={650} />
                     <SubjectsSelector />
                 </div>
@@ -68,7 +64,7 @@ export default function Page({
                     <h2 className="text-font-dark-02 text-2xl font-bold">
                         Configurações
                     </h2>
-                    <div className="flex flex-1 h-full"></div>
+                    <NewActivitySettings />
                 </div>
                 <Button preset={"submit"} className="w-full uppercase">
                     <PlaneIcon

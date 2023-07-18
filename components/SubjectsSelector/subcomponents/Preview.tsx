@@ -1,6 +1,7 @@
 "use client";
+import { Fragment } from "react";
 
-import { Subject } from "@prisma/client";
+import type { Subject } from "@prisma/client";
 
 interface Props {
     subjects?: Subject[] | null;
@@ -12,13 +13,13 @@ export default function SubjectsSelectorPreview({ subjects }: Props) {
             <ul className="grow shrink basis-0 h-[15px] justify-start items-center gap-4 flex overflow-hidden">
                 {subjects && subjects.length > 0 ? (
                     subjects.map((subject) => (
-                        <>
+                        <Fragment key={subject.id}>
                             <li
-                                key={subject.id}
+                                key={`${subject.id}_preview`}
                                 className="flex flex-row items-center justify-start select-none pointer-events-none"
                             >
                                 <div
-                                    key={subject.id}
+                                    key={`${subject.id}_preview_icon`}
                                     className="w-3 h-3 relative bg-primary-03"
                                     style={{
                                         mask: `url(${subject.icon}) no-repeat center / contain`,
@@ -32,11 +33,11 @@ export default function SubjectsSelectorPreview({ subjects }: Props) {
                             {subjects.indexOf(subject) !==
                                 subjects.length - 1 && (
                                 <li
-                                    key={subject.id + "separator"}
+                                    key={`${subject.id}_preview_divider`}
                                     className="flex bg-transparent h-3 border-r-primary-04 border-r border-dashed select-none pointer-events-none"
                                 />
                             )}
-                        </>
+                        </Fragment>
                     ))
                 ) : (
                     <p className="text-light-gray text-xs font-semibold tracking-wide cursor-default">

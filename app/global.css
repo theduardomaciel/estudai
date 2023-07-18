@@ -190,10 +190,10 @@ input {
     line-break: normal;
 }
 
-input:focus {
+/* input:focus {
     outline: none;
     border: none;
-}
+} */
 
 input[type="number"] {
     -moz-appearance: textfield;

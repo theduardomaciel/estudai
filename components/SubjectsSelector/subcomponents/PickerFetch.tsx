@@ -9,7 +9,10 @@ export default async function SubjectsSelectorPicker() {
 
     return (
         <>
-            <SubjectsSelectorPickerUI subjects={subjects ?? null} />
+            <SubjectsSelectorPickerUI
+                subjects={subjects ?? undefined}
+                hasError={subjects == null}
+            />
         </>
     );
 }
