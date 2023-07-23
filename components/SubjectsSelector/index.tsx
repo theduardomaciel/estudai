@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 // Components
-import Section, { Header as SectionHeader } from "../Section";
+import Section, { SectionHeader } from "../Section";
 
 // Subcomponents
 import CreateSubjectButton from "./subcomponents/CreateSubjectButton";

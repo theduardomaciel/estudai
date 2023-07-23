@@ -3,206 +3,181 @@
 import styles from "./modal.module.css";
 import React, { FC, SVGProps } from "react";
 
-import { AnimatePresence, MotionStyle, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 // Components
-import Button from "../Button";
+import Button, { ButtonProps } from "../Button";
 
+// Icons
 import CloseIcon from "@material-symbols/svg-600/rounded/close.svg";
 import ArrowBack from "@material-symbols/svg-600/rounded/arrow_back.svg";
+
+// Internationalization
 import { Translations } from "@/i18n/hooks";
 
-export type ModalProps = React.HTMLAttributes<HTMLDivElement> & {
-	isVisible: boolean;
-	style?: MotionStyle;
-	toggleVisibility: () => void;
+// Utils
+import { cn } from "@/lib/ui";
+import { useRouter } from "next/navigation";
 
-	color: string;
-	title?: string;
-	description?: React.ReactNode;
+export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
+    color: string;
 
-	icon: FC<SVGProps<HTMLOrSVGElement>>;
-	iconProps?: {
-		color?: string;
-		size?: number | string;
-	};
+    suppressReturn?: boolean;
+    includeClose?: boolean;
 
-	actionProps?: {
-		buttonText: string;
-		disabled?: boolean;
-		function?: () => void;
-		buttonIcon?: FC<SVGProps<HTMLOrSVGElement>>;
-		isForm?: boolean;
-	};
+    title?: string;
+    icon?: FC<SVGProps<HTMLOrSVGElement>>;
+    headerProps?: {
+        preset?: "default" | "big";
+    };
 
-	dict: Translations["modal"]["default"];
+    buttons?: React.ReactNode;
 
-	isLoading?: boolean;
-	suppressReturnButton?: boolean;
+    dict: Translations["modal"]["default"];
+}
+
+const iconPresets = {
+    default: {
+        size: "2.8rem",
+        padding: "1.5rem",
+    },
+    big: {
+        size: "3.6rem",
+        padding: "2rem",
+    },
 };
 
+const DEFAULT_BUTTON_CLASSES = "w-full uppercase px-4 py-2 gap-3 shadow-none";
+
+export function ModalButton({ className, children, ...rest }: ButtonProps) {
+    return (
+        <Button className={cn(DEFAULT_BUTTON_CLASSES, className)} {...rest}>
+            {children}
+        </Button>
+    );
+}
+
 export default function Modal({
-	isVisible,
-	toggleVisibility,
-	style,
-	color,
-	isLoading,
-	icon: Icon,
-	title,
-	description,
-	suppressReturnButton,
-	iconProps,
-	actionProps,
-	children,
-	dict,
-	...rest
+    title,
+    style,
+    color,
+    className,
+    icon: Icon,
+    suppressReturn,
+    includeClose,
+    headerProps,
+    children,
+    dict,
+    buttons,
+    ...rest
 }: ModalProps) {
-	const handleClick = (
-		event: React.MouseEvent<HTMLDivElement, MouseEvent>
-	) => {
-		const target = event.nativeEvent.target as HTMLDivElement;
-		if (target.id === "background" && !isLoading) {
-			toggleVisibility();
-		}
-	};
+    const router = useRouter();
 
-	return (
-		<AnimatePresence mode="wait">
-			{isVisible && (
-				<motion.div
-					className={styles.background}
-					key="modal"
-					id="background"
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
-					transition={{ duration: 0.15 }}
-					onClick={(event) => handleClick(event)}
-				>
-					<motion.div
-						className={styles.container}
-						key="modalContent"
-						style={style}
-						initial={{ y: 300, x: 0, opacity: 0 }}
-						animate={{ y: 0, x: 0, opacity: 1 }}
-						exit={{ y: 300, x: 0, opacity: 0 }}
-						transition={{ type: "spring", duration: 0.65 }}
-					>
-						<div className={styles.headerHolder}>
-							<div className={styles.headerContainer}>
-								<div
-									style={{ backgroundColor: color }}
-									className={styles.iconHolder}
-								>
-									<Icon
-										className="icon"
-										color={iconProps?.color}
-										fontSize={iconProps?.size ?? "3.6rem"}
-									/>
-								</div>
-								{title && (
-									<h2
-										id="desktop"
-										style={{
-											fontSize:
-												iconProps?.size ?? "3.8rem",
-										}}
-									>
-										{title}
-									</h2>
-								)}
-							</div>
-							{!isLoading && (
-								<CloseIcon
-									className={`${styles.closeIcon} icon`}
-									color="var(--primary-02)"
-									fontSize={iconProps?.size ?? "4.8rem"}
-									onClick={toggleVisibility}
-								/>
-							)}
-						</div>
+    const handleBackgroundClick = (
+        event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    ) => {
+        const target = event.nativeEvent.target as HTMLDivElement;
+        if (target.id === "background" && !suppressReturn) {
+            router.back();
+        }
+    };
 
-						{title && (
-							<h2
-								id="mobile"
-								style={{
-									color: color ? color : "var(--primary-02)",
-								}}
-							>
-								{title}
-							</h2>
-						)}
-						{description && (
-							<p
-								className={styles.description}
-								style={{
-									color: color ? color : "var(--primary-02)",
-								}}
-							>
-								{description}
-							</p>
-						)}
+    return (
+        <AnimatePresence mode="wait">
+            <motion.div
+                className={styles.background}
+                key={`$background-${title}`}
+                id="background"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                onClick={handleBackgroundClick}
+                /* {...rest} */
+            >
+                <motion.div
+                    className={cn(
+                        styles.container,
+                        "flex max-w-[90vw] max-h-[90vh] lg:max-w-[57rem] lg:min-w-[35vw] overflow-y-auto flex-col items-center gap-9 p-13",
+                        "rounded-2xl bg-background-01",
+                        className
+                    )}
+                    key="modalContent"
+                    style={style}
+                    initial={{ y: 300, x: 0, opacity: 0 }}
+                    animate={{ y: 0, x: 0, opacity: 1 }}
+                    exit={{ y: 300, x: 0, opacity: 0 }}
+                    transition={{ type: "spring", duration: 0.65 }}
+                >
+                    <div
+                        className={
+                            "flex flex-row items-start justify-between self-stretch"
+                        }
+                    >
+                        <div
+                            className={
+                                "flex flex-col justify-center items-center lg:items-start gap-5"
+                            }
+                        >
+                            {
+                                Icon && (
+                                    <div
+                                        style={{
+                                            backgroundColor: color,
+                                            padding:
+                                                iconPresets[
+                                                    headerProps?.preset ??
+                                                        "default"
+                                                ].padding,
+                                        }}
+                                        className={styles.iconHolder}
+                                    >
+                                        <Icon
+                                            className="icon"
+                                            color={"var(--neutral)"}
+                                            fontSize={
+                                                iconPresets[
+                                                    headerProps?.preset ??
+                                                        "default"
+                                                ].size
+                                            }
+                                        />
+                                    </div>
+                                )
+                                /*  */
+                            }
+                            <h2>{title}</h2>
+                        </div>
+                        {!suppressReturn && includeClose && (
+                            <CloseIcon
+                                className={`${styles.closeIcon} icon`}
+                                color="var(--primary-02)"
+                                fontSize={"4.8rem"}
+                                onClick={() => router.back()}
+                            />
+                        )}
+                    </div>
 
-						{children}
+                    {children}
 
-						{!actionProps?.isForm && (
-							<div className={styles.buttonsHolder}>
-								{!suppressReturnButton && !isLoading && (
-									<Button
-										onClick={toggleVisibility}
-										className="uppercase px-6 py-[0.7rem]"
-										preset="secondary"
-									>
-										{actionProps?.function ? (
-											<CloseIcon
-												className={`icon`}
-												fontSize={`2.4rem`}
-											/>
-										) : (
-											<ArrowBack
-												className={`icon`}
-												fontSize={`2.4rem`}
-											/>
-										)}
-										{actionProps?.function
-											? dict.cancel
-											: dict.return}
-									</Button>
-								)}
-								{actionProps?.function && (
-									<Button
-										onClick={actionProps?.function}
-										disabled={
-											actionProps?.disabled || isLoading
-										}
-										isLoading={isLoading}
-										style={{
-											background: actionProps?.disabled
-												? "var(--light-gray)"
-												: color,
-											padding: `0.7rem 1.5rem`,
-											textTransform: "uppercase",
-										}}
-									>
-										{actionProps?.buttonIcon ? (
-											<actionProps.buttonIcon
-												className={`icon`}
-												fontSize={"2.4rem"}
-											/>
-										) : (
-											<Icon
-												className={`icon`}
-												fontSize={"2.4rem"}
-											/>
-										)}
-										{actionProps?.buttonText}
-									</Button>
-								)}
-							</div>
-						)}
-					</motion.div>
-				</motion.div>
-			)}
-		</AnimatePresence>
-	);
+                    <div className="flex flex-col lg:flex-row items-center justify-start lg:justify-between gap-3.5 self-stretch w-full">
+                        {!suppressReturn && (
+                            <Button
+                                onClick={() => router.back()}
+                                className={DEFAULT_BUTTON_CLASSES}
+                                preset="neutral"
+                            >
+                                <CloseIcon
+                                    className={`icon text-font-light`}
+                                    fontSize={`2.4rem`}
+                                />
+                                {dict.cancel}
+                            </Button>
+                        )}
+                        {buttons}
+                    </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
+    );
 }

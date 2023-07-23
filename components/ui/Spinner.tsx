@@ -10,7 +10,7 @@ export default function Spinner({ className }: Props) {
             <svg
                 aria-hidden="true"
                 className={cn(
-                    "w-8 h-8 mr-2 text-light-gray animate-spin dark:text-font-dark-02 fill-primary-03 text-center",
+                    "w-5.5 h-5.5 mr-2 text-light-gray animate-spin dark:text-font-dark-02 fill-primary-03 text-center",
                     className
                 )}
                 /* style={{

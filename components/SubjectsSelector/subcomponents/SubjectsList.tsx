@@ -16,12 +16,13 @@ export default function SubjectsList({ subjects, query, marked }: Props) {
     const filteredSubjects = subjects?.filter((subject) =>
         subject.name.toLowerCase().includes(query?.toLowerCase() ?? "")
     );
+
     return (
         <>
             {filteredSubjects && filteredSubjects.length > 0 ? (
                 filteredSubjects.map((subject) => (
                     <SubjectItem
-                        key={subject.id}
+                        key={`${subject.id}_${marked?.length}`}
                         initialMarked={marked?.includes(subject.id)}
                         {...subject}
                     />

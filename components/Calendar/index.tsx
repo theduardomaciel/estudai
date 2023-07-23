@@ -197,7 +197,7 @@ export default function Calendar({
             {hasMonthSelector && (
                 <div
                     style={{ justifyContent: "space-between" }}
-                    className={`${styles.days} row`}
+                    className={`${styles.days}`}
                 >
                     {currentMonth.current !== 0 ? (
                         <ArrowLeft
@@ -224,10 +224,7 @@ export default function Calendar({
             )}
             {
                 /* calendarLength <= 35 && */
-                <div
-                    style={{ justifyContent: "space-between" }}
-                    className={`${styles.days} row`}
-                >
+                <div className={`${styles.days} justify-between`}>
                     <p>D</p>
                     <p>S</p>
                     <p>T</p>

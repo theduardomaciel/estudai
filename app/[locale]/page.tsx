@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 
 // Sections
@@ -11,6 +12,11 @@ import styles from "styles/Landing.module.css";
 import Note from "@/components/Landing/Note";
 import Anchor from "@/components/ui/Button/Anchor";
 import Device from "@/components/Landing/Device";
+
+import GroupPreview from "@/components/Previews/GroupPreview";
+import HorizontalScroll from "@/components/HorizontalScroll";
+import FileUI from "@/components/Attachment/File/ui";
+import LinkUI from "@/components/Attachment/Link/ui";
 
 // Icons
 import StarIcon from "/public/landing/star.svg";
@@ -110,13 +116,13 @@ export default async function Landing({
                     <div className="flex items-center flex-col lg:flex-row lg:justify-between w-full gap-25">
                         <div className="flex flex-col items-start justify-start flex-1 gap-9 w-full lg:max-w-[35%]">
                             <div className="relative">
-                                <ul className="scrollBarHidden flex flex-row items-center justify-start p-0 gap-2.5 overflow-x-scroll">
+                                <HorizontalScroll className="scrollBarHidden flex flex-row items-center justify-start p-0 gap-2.5 overflow-x-scroll">
                                     {t.section1.features.map(
                                         (feature, index) => (
                                             <Tag key={index} label={feature} />
                                         )
                                     )}
-                                </ul>
+                                </HorizontalScroll>
                                 <div className="flex w-96 h-full absolute right-0 top-0 bg-gradient-to-l from-primary-03 to-transparent" />
                             </div>
                             <p className="font-sans font-medium text-lg text-neutral whitespace-pre-line text-left w-full">
@@ -190,8 +196,18 @@ export default async function Landing({
 
                     <div className="flex items-center flex-col lg:flex-row lg:justify-between w-full gap-12.5">
                         <div className="flex flex-row items-start justify-start gap-2.5 w-full lg:w-fit">
-                            <Section3File name="lista-de-exercicios.pdf" />
-                            <Section3File name="crase_e_pontuacao.pdf" />
+                            <FileUI
+                                name="lista-de-exercicios.pdf"
+                                fileType="pdf"
+                            />
+                            <FileUI
+                                name="respostas_lista1.img"
+                                fileType="img"
+                            />
+                            <FileUI
+                                name="crase_e_pontuacao.pdf"
+                                fileType="doc"
+                            />
                         </div>
                         <div className="flex flex-col items-start justify-start flex-1 gap-9 w-full lg:max-w-[45%]">
                             <p className="font-sans font-medium text-lg text-neutral whitespace-pre-line text-left w-full">
@@ -209,22 +225,19 @@ export default async function Landing({
                                 {t.section3.row2.description}
                             </p>
                         </div>
-                        <div className="flex flex-row items-start justify-start gap-2.5 w-full lg:w-fit">
-                            {/* <LinkAttachment
-								className="h-full"
-								index={0}
-								link="https://www.notion.so/meninocoiso/Revisa-4a28264fd113411fb3544e92165288c3"
-							/>
-							<LinkAttachment
-								className="h-full"
-								index={0}
-								link="https://theduardomaciel.vercel.app/"
-							/>
-							<LinkAttachment
-								className="h-full"
-								index={0}
-								link="https://open.spotify.com/user/72adqyozv5b4kkz8l1xsmiroi?si=5e86ac8738b448c0"
-							/> */}
+                        <div className="flex flex-row items-start justify-start gap-2.5 w-full max-w-[60%] lg:w-fit">
+                            <LinkUI
+                                className="h-full"
+                                url="https://www.notion.so/meninocoiso/Revisa-4a28264fd113411fb3544e92165288c3"
+                            />
+                            <LinkUI
+                                className="h-full"
+                                url="https://theduardomaciel.vercel.app/"
+                            />
+                            <LinkUI
+                                className="h-full"
+                                url="https://open.spotify.com/user/72adqyozv5b4kkz8l1xsmiroi?si=5e86ac8738b448c0"
+                            />
                         </div>
                     </div>
                 </div>
@@ -463,8 +476,6 @@ function Call({ children, className, suppressPattern }: CallProps) {
 import ActivityIcon from "@material-symbols/svg-600/rounded/book.svg";
 import TestIcon from "@material-symbols/svg-600/rounded/hotel_class.svg";
 import EventIcon from "@material-symbols/svg-600/rounded/local_activity.svg";
-import React from "react";
-//import LinkAttachment from "@/components/AttachmentLoader/Link";
 
 interface Section1CardProps {
     icon: React.FC<React.SVGProps<HTMLOrSVGElement>>;
@@ -503,29 +514,4 @@ function Section1Card({
             </div>
         </div>
     );
-}
-
-interface Section3FileProps {
-    fileInfo: React.MutableRefObject<File>;
-}
-
-import PDFFileIcon from "/public/icons/attachment/pdf.svg";
-/* import fileStyles from "@/components/AttachmentLoader/File/styles.module.css"; */
-import GroupPreview from "@/components/Previews/GroupPreview";
-import HorizontalScroll from "@/components/HorizontalScroll";
-
-/* function Section3File({ name }: { name: string }) {
-	return (
-		<li className={`${fileStyles.attachment}`}>
-			<div className={fileStyles.header}>
-				<PDFFileIcon className={fileStyles.icon} />
-			</div>
-			<p className={fileStyles.fileName}>{name}</p>
-		</li>
-	);
-}
- */
-
-function Section3File({ name }: { name: string }) {
-    return <div>soon</div>;
 }

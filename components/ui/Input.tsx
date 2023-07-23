@@ -1,7 +1,8 @@
 "use client";
 import React, { MouseEvent, useId } from "react";
 
-import ArrowIcon from "@material-symbols/svg-600/rounded/chevron_left-fill.svg";
+import PlusIcon from "@material-symbols/svg-600/rounded/add.svg";
+import MinusIcon from "@material-symbols/svg-600/rounded/remove.svg";
 
 // Styles
 import { cn } from "@/lib/ui";
@@ -24,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 input.value = Math.max(0, parseInt(input.value) + 1).toString();
             } else {
                 if (input) {
-                    input.value = "0";
+                    input.value = "1";
                 }
             }
         }
@@ -32,11 +33,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         function decreaseCount(/* event: MouseEvent<HTMLSpanElement> */) {
             const input = document.getElementById(id) as HTMLInputElement;
 
-            if (input && parseInt(input.value)) {
+            if (input && (parseInt(input.value) ?? 0) - 1 > 0) {
                 input.value = Math.max(0, parseInt(input.value) - 1).toString();
             } else {
                 if (input) {
-                    input.value = "0";
+                    input.value = "";
                 }
             }
         }
@@ -49,45 +50,54 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 input.value = value.slice(0, value.length - 1);
             }
         }
+
         return (
-            <div className="relative flex h-10 w-full">
-                {numberControl && (
-                    <span className="flex flex-col items-center justify-center gap-0 absolute left-3 top-1/2 -translate-y-1/2">
-                        <ArrowIcon
-                            className="icon rotate-90 cursor-pointer hover:text-primary-02 transition-colors"
-                            fontSize={`1.6rem`}
-                            color="var(--primary-03)"
-                            onClick={increaseCount}
-                        />
-                        <ArrowIcon
-                            className="icon -rotate-90 cursor-pointer hover:text-primary-02 transition-colors"
-                            fontSize={`1.6rem`}
-                            color="var(--primary-03)"
-                            onClick={decreaseCount}
-                        />
-                    </span>
-                )}
-                <input
-                    id={id}
-                    type={numberControl ? "text" : type}
-                    className={cn(
-                        "flex-1 rounded-md border border-primary-03 bg-neutral px-3 py-2 text-xs ring-offset-red file:border-0 file:bg-transparent text-primary-02 file:text-xs file:font-medium placeholder:text-font-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-03 disabled:cursor-not-allowed disabled:opacity-50",
-                        {
-                            "pr-18": !!fixedUnit,
-                        },
-                        {
-                            "pl-10": !!numberControl,
-                        },
-                        className
+            <div className="relative flex flex-row items-center justify-between gap-2.5 h-10 w-full">
+                <div className="flex flex-1 h-full relative">
+                    <input
+                        id={id}
+                        type={numberControl ? "text" : type}
+                        className={cn(
+                            "flex-1 h-full rounded-md border border-primary-03 bg-neutral px-3 py-2 text-xs ring-offset-red file:border-0 file:bg-transparent text-primary-02 file:text-xs file:font-medium placeholder:text-font-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-03 disabled:cursor-not-allowed disabled:opacity-50",
+                            /* {
+                                "pr-18": !!fixedUnit,
+                            }, */
+                            className
+                        )}
+                        onChange={numberControl ? preventText : undefined}
+                        ref={ref}
+                        {...props}
+                    />
+                    {fixedUnit && (
+                        <span className="flex items-center justify-center h-[calc(100%-0.5rem)] pl-2.5 pr-1 bg-neutral absolute right-3 top-1/2 -translate-y-1/2 text-xs text-primary-03 select-none pointer-events-none">
+                            {fixedUnit}
+                        </span>
                     )}
-                    onChange={numberControl ? preventText : undefined}
-                    ref={ref}
-                    {...props}
-                />
-                {fixedUnit && (
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-primary-03 select-none pointer-events-none">
-                        {fixedUnit}
-                    </span>
+                </div>
+                {numberControl && (
+                    <div className="flex flex-row items-center justify-center gap-0 h-full rounded-md bg-neutral border border-primary-04 overflow-hidden">
+                        <button
+                            className="flex items-center justify-center flex-1 h-full px-2.5 cursor-pointer hover:bg-background-04 transition-colors"
+                            onClick={decreaseCount}
+                        >
+                            <MinusIcon
+                                className="icon"
+                                fontSize={`2.4rem`}
+                                color="var(--primary-03)"
+                            />
+                        </button>
+                        <div className="w-0 h-full border-r border-r-background-01" />
+                        <button
+                            className="flex items-center justify-center px-2.5 flex-1 h-full cursor-pointer hover:bg-background-04 transition-colors"
+                            onClick={increaseCount}
+                        >
+                            <PlusIcon
+                                className="icon"
+                                fontSize={`2.4rem`}
+                                color="var(--primary-03)"
+                            />
+                        </button>
+                    </div>
                 )}
             </div>
         );
@@ -95,41 +105,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-// focus-visible:ring-offset-2
-
-interface RootProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export const Root = ({ className, children, ...props }: RootProps) => {
-    return (
-        <div
-            className={cn(
-                "flex flex-col gap-1.5 items-start relative w-full min-h-fit",
-                className
-            )}
-            {...props}
-        >
-            {children}
-        </div>
-    );
-};
-Root.displayName = "Input.Root";
-
-interface LabelProps extends React.HTMLAttributes<HTMLLabelElement> {}
-
-export const Label = ({ className, children, ...props }: LabelProps) => {
-    return (
-        <label
-            className={cn(
-                "font-karla font-bold text-sm text-primary-03 select-none pointer-events-none",
-                className
-            )}
-            {...props}
-        >
-            {children}
-        </label>
-    );
-};
-Root.displayName = "Input.Label";
-
-const InputNamespace = Object.assign(Input, { Root: Root, Label: Label });
-export { InputNamespace as Input };
+export { Input };

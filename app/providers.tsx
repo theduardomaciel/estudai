@@ -4,7 +4,8 @@ import { ThemeProvider } from "next-themes";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import { Tag, TagProps } from "@/components/Attachments/AttachmentLoader/Tag";
+import { Tag, TagProps } from "@/components/Attachment/Loader/Tag";
+
 // Drag 'n Drop
 import { DndProvider, Preview } from "react-dnd-multi-backend";
 import { HTML5toTouch } from "rdndmb-html5-to-touch"; // or any other pipeline

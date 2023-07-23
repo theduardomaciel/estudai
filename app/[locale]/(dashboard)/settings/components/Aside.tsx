@@ -1,14 +1,23 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import styles from "@/styles/Settings.module.css";
 
+// Icons
+import ExitIcon from "@material-symbols/svg-600/rounded/exit_to_app.svg";
 import ChevronLeft from "@material-symbols/svg-600/rounded/chevron_left.svg";
 import ChevronRight from "@material-symbols/svg-600/rounded/chevron_right.svg";
 
-import LogoutModalPreset from "@/components/ui/Modal/Presets/LogoutModal";
-import Link from "next/link";
+// Components
+import Modal, { ModalButton } from "@/components/ui/Modal";
+
+// Internationalization
 import { Translations } from "@/i18n/hooks";
+
+// Utils
+import { signOut } from "@/lib/auth";
 
 const SECTIONS = [
     "account",
@@ -19,10 +28,9 @@ const SECTIONS = [
 ];
 
 interface Props {
-    dict: {
-        [key: string]: string;
-    };
+    dict: Translations["settings"]["sections"];
     modalDict: Translations["modal"];
+    /* searchParams?: Record<string, string> | null | undefined; */
 }
 
 export default function SettingsAside({ dict, modalDict }: Props) {
@@ -33,9 +41,10 @@ export default function SettingsAside({ dict, modalDict }: Props) {
         (section) => section === purePathname
     );
 
-    const { setLogoutModalVisible, LogoutModal } = LogoutModalPreset({
-        dict: modalDict,
-    });
+    const searchParams = useSearchParams();
+    const showLogoutModal = !!searchParams?.get("logout");
+
+    const [isLoading, setLoading] = useState(false);
 
     return (
         <div className={styles.menu}>
@@ -90,20 +99,45 @@ export default function SettingsAside({ dict, modalDict }: Props) {
                         {dict.language}
                     </li>
                 </Link>
-                <li
-                    onClick={() => setLogoutModalVisible(true)}
-                    className={`${styles.section} ${styles.exit}`}
-                    style={{ color: "var(--red-01)" }}
-                >
-                    {dict.logout}
-                </li>
+                <Link href={`${pathname}?logout=true`}>
+                    <li
+                        className={`${styles.section} ${styles.exit}`}
+                        style={{ color: "var(--red-01)" }}
+                    >
+                        {dict.logout}
+                    </li>
+                </Link>
             </ul>
             <ChevronRight
                 className={`icon ${styles.chevron} min-w-[2.4rem]`}
                 color={"var(--primary-02)"}
                 fontSize={"2.4rem"}
             />
-            {LogoutModal}
+            {showLogoutModal && (
+                <Modal
+                    icon={ExitIcon}
+                    color={`var(--primary-02)`}
+                    title={modalDict.logout.title}
+                    buttons={[
+                        <ModalButton
+                            className="w-full"
+                            onClick={() => {
+                                setLoading(true);
+                                signOut();
+                            }}
+                            isLoading={isLoading}
+                        >
+                            <ExitIcon className="icon text-2xl text-neutral" />
+                            {modalDict.logout.button}
+                        </ModalButton>,
+                    ]}
+                    suppressReturn={isLoading}
+                    headerProps={{ preset: "big" }}
+                    dict={modalDict.default}
+                >
+                    <p>{modalDict.logout.description}</p>
+                </Modal>
+            )}
         </div>
     );
 }

@@ -1,296 +1,296 @@
 {
-	"landing": {
-		"title": "Organize seus estudos.",
-		"subtitle": "Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.",
-		"button": "Criar uma conta",
-		"early_access_new": "Novo na",
-		"early_access_landscape": "Múltiplas linguagens, temas de cores, modo escuro (beta) e muito mais!",
-		"early_access_portrait": "Múltiplas linguagens, temas de cores, modo escuro (beta) e muito mais!",
-		"login": "Entrar",
-		"register": "Criar uma conta",
-		"greeting": "feito com ❤️ por",
-		"section1": {
-			"header": {
-				"title": "Uma nova forma de estudar.",
-				"subtitle": "Atividades, avaliações e eventos. Todas as suas necessidades em um só lugar."
-			},
-			"description": "O estudaí foi desenhado desde o princípio para ajudar estudantes de todos os tipos. Em todas as situações.\n\nSeja pra evitar revisões desesperadas próximo ao prazo.\n\nSeja pra unir uma comunidade de pessoas que buscam o mesmo tipo de conhecimento.",
-			"call": "O estudaí é a escolha certa pra você.",
-			"features": [
-				"Revisões",
-				"Pomodoro",
-				"Foco",
-				"Comunidade",
-				"Educação",
-				"Marketplace",
-				"Aulas",
-				"Estudos",
-				"Acadêmico",
-				"Turmas",
-				"Trabalhos em grupo"
-			]
-		},
-		"section2": {
-			"header": {
-				"title": "Participe de comunidades.\nCrie conexões.",
-				"subtitle": "Encontre Grupos criados por estudantes como você, todos compartilhando um interesse em comum por um tópico educacional específico."
-			},
-			"highlights": {
-				"title": "Comunidades em destaque"
-			},
-			"call": {
-				"link": "Junte-se a uma comunidade",
-				"text": "e amplie suas oportunidades de aprendizado."
-			}
-		},
-		"section3": {
-			"header": {
-				"title": "Anexar nunca foi tão fácil.",
-				"subtitle": "Links, documentos, apresentações. Todos os seus arquivos em um só lugar."
-			},
-			"row1": {
-				"description": "Marque e desmarque. A qualquer hora.\n\nAcompanhe o seu progresso individual ou o progresso do grupo e tenha o controle de quais tarefas precisam ser concluídas.",
-				"call": "Nunca mais se esqueça de uma tarefa."
-			},
-			"row2": {
-				"description": "Todos os seus links favoritos, de fácil acesso.\n\nNunca mais passe horas procurando uma fonte, referência ou artigo importante perdido nas profundezas do histórico."
-			}
-		},
-		"section4": {
-			"header": {
-				"title": "100% gratuito. Para sempre.",
-				"subtitle": "Prezamos por um serviço de qualidade, acessível a todos. Nosso compromisso é ajudar estudantes como você, independentemente de sua renda. ",
-				"call": "Queremos que o estudaí seja uma comunidade de aprendizagem colaborativa, **feita_por_estudantes_e_para_estudantes.**"
-			},
-			"content": {
-				"description": "Acreditamos que o acesso à educação de qualidade deve estar disponível para todos, e é por isso que construímos essa plataforma.\n\nNossa missão é fornecer um ambiente online onde estudantes possam organizar sua rotina, encontrar recursos educacionais, tirar dúvidas, compartilhar conhecimento e se conectar com outros estudantes.\nQueremos criar uma comunidade vibrante e solidária, onde todos possam aprender e crescer juntos.\n\nPara mais informações, {{leia nosso artigo}} ou acesse o repositório do projeto no Github.",
-				"button": "Acessar repositório no Github"
-			}
-		},
-		"section5": {
-			"title": "Transforme seu método de estudos.",
-			"description": "Organize sua rotina, interaja com outros estudantes e acelere seu aprendizado.\nJunte-se a nossa comunidade e transforme sua jornada educacional agora mesmo."
-		}
-	},
-	"empty": {
-		"title": "Um pouco vazio por aqui, não?",
-		"tasks": "Adicione uma nova tarefa com o botão acima para fazê-la aparecer aqui!"
-	},
-	"auth": {
-		"footer": {
-			"back": "Voltar"
-		},
-		"google_login_button": "Entrar com o Google",
-		"scope_missing": {
-			"title": "Deseja conectar-se ao Google Drive?",
-			"bold": "Para anexar arquivos na plataforma precisamos do acesso ao Google Drive.",
-			"text": "Dessa maneira, seremos capazes de enviar os anexos que você escolher e guardá-los de maneira organizada em sua conta.",
-			"buttons": {
-				"accept": "Conectar com o Google Drive",
-				"deny": "Não, prefiro configurar isso depois"
-			}
-		},
-		"error": {
-			"title": "Eita!",
-			"bold": "Parece que tivemos um problema interno no servidor. :(",
-			"text": "Provavelmente já estamos trabalhando o mais rápido possível para resolver isso.\nVocê pode tentar reiniciar a página, mas se o problema persistir, entre em contato conosco diretamente."
-		},
-		"login": {
-			"title": "Log in",
-			"subtitle": "Entre com sua conta para aproveitar todas as funcionalidades da plataforma.",
-			"no_account": {
-				"title": "Eita!",
-				"subtitle": "Parece que você ainda não criou sua conta na plataforma.\nO que está esperando? Crie sua conta agora para aproveitar todas as funcionalidades de uma conta estudaí.",
-				"button": "Criar uma conta"
-			},
-			"button": "Log in",
-			"forgot": "Esqueceu sua senha?",
-			"footer": {
-				"no_account": "Não tem uma conta?",
-				"register": "Criar uma conta"
-			}
-		},
-		"register": {
-			"account_already_exists": {
-				"title": "Eita!",
-				"bold": "Parece que você já tem uma conta na plataforma.",
-				"text": "Nós já logamos você com sua conta Google, então você pode começar a usar a plataforma agora mesmo."
-			},
-			"section1": {
-				"title": "Organize seus estudos.",
-				"subtitle": "Escolha em que tipo de curso você se encaixa para que possamos preparar a plataforma para você.",
-				"card1": {
-					"title": "Estou cursando o ensino fundamental",
-					"subtitle": "Preciso de ajuda para revisar assuntos base"
-				},
-				"card2": {
-					"title": "Estou cursando o ensino médio",
-					"subtitle": "Preciso de ajuda para organizar horários e ter sanidade mental"
-				},
-				"card3": {
-					"title": "Estou cursando o ensino superior",
-					"subtitle": "Preciso de ajuda para organizar horários e ter sanidade mental sem recorrer às drogas e/ou outros métodos ilícitos"
-				},
-				"no_choice": "Não possuo filiação a nenhuma instituição de ensino",
-				"footer": {
-					"has_account": "Já tem uma conta?",
-					"login": "Log in"
-				}
-			},
-			"section2": {
-				"title": "Criar sua conta",
-				"subtitle": "Agora que já sabemos do que você precisa, entre com sua conta Google abaixo para cadastrar-se na plataforma.",
-				"google_drive": {
-					"bold": "Usamos o Google Drive para armazenar seus arquivos, então, lembre-se de permitir o acesso!",
-					"text": "Se o acesso não for permitido, você não poderá enviar anexos nas atividades."
-				},
-				"terms": {
-					"condition": "Ao criar uma conta, você concorda com nossos",
-					"terms": "Termos de Serviço",
-					"and": "e",
-					"privacy": "Política de Privacidade"
-				}
-			},
-			"section2_1": {
-				"title": "Estamos criando sua conta",
-				"subtitle": "Não se preocupe, estamos apertando alguns botões e virando algumas alavancas para criar sua conta!"
-			},
-			"section3": {
-				"title": "Estamos prontos!",
-				"subtitle": "Sua conta foi criada com sucesso!\nAproveite todas as funcionalidades da plataforma e organize seus estudos de uma vez por todas.",
-				"button": "Entrar na plataforma"
-			}
-		}
-	},
-	"modal": {
-		"default": {
-			"cancel": "Cancelar",
-			"return": "Voltar"
-		},
-		"logout": {
-			"title": "Sair da plataforma",
-			"description": "Tem certeza que deseja sair da plataforma? Você precisará logar novamente para acessar sua conta.",
-			"button": "Sair"
-		}
-	},
-	"profile": {
-		"pending": {
-			"pending": "Você tem uma tarefa pendente",
-			"pending_plural": "Você tem {{count}} tarefas pendentes",
-			"no_pending": "Você não possui tarefas pendentes"
-		},
-		"greetings": {
-			"morning": "Bom dia",
-			"afternoon": "Boa tarde",
-			"evening": "Boa noite",
-			"night": "Boa noite"
-		}
-	},
-	"home": {
-		"title": "Minhas tarefas",
-		"add_task": "Adicionar tarefa",
-		"sections": {
-			"pending": "Pendente",
-			"other": "Outros",
-			"archived": "Arquivado"
-		},
-		"empty_archived": "Você não possui tarefas arquivadas.",
-		"intro_modal": {
-			"modal1": {
-				"title": "Bem-vindo ao estudaí",
-				"description": "Estamos felizes em ter você aqui.\nAqui estão algumas dicas rápidas para você aproveitar todas as funcionalidades."
-			},
-			"modal2": {
-				"title": "Organize seus estudos",
-				"description": "Salve atividades, avaliações e eventos na plataforma para evitar aquela correria momentos antes da data de entrega."
-			},
-			"modal3": {
-				"title": "Mantenha-se em dia com seus compromissos",
-				"description": "Participe e crie grupos comunitários para unir aquela galera que tem os mesmos objetivos que você."
-			},
-			"modal4": {
-				"title": "Acompanhe o progresso de suas tarefas",
-				"description": "Marque anexos e links enviados por outros usuários em tarefas e tenha o controle de quais materiais você já utilizou."
-			},
-			"modal5": {
-				"title": "Desbrave e aproveite",
-				"description": "Aproveite todas as funcionalidades (inclusive o foco!) que preparamos com carinho para você e bom aprendizado!"
-			}
-		}
-	},
-	"tasks": {
-		"and": "e",
-		"memberPortraits": {
-			"others": "+ de",
-			"member": "membro",
-			"member_plural": "membros",
-			"empty": "nenhum membro concluiu esta tarefa ainda"
-		},
-		"obligatoriness": {
-			"mandatory": "Obrigatório",
-			"optional": "Opcional"
-		},
-		"new": {
-			"title": "Criar uma nova tarefa",
-			"tasks": {
-				"activity": {
-					"title": "Criar atividade",
-					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
-				},
-				"test": {
-					"title": "Criar avaliação",
-					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
-				},
-				"event": {
-					"title": "Criar evento",
-					"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
-				}
-			}
-		},
-		"activity": {
-			"points": "pontos",
-			"restrictions": {
-				"individual": "Individual",
-				"group": "Em grupo"
-			},
-			"no_description": "nenhuma descrição enviada",
-			"placeholder_title": "Atividade de",
-			"interacted_by": "concluíram essa atividade",
-			"interacted_by_singular": "concluiu essa atividade",
-			"status": {
-				"pending": "entrega até",
-				"concluded": "completado em",
-				"archived": "arquivado em"
-			}
-		},
-		"test": {
-			"questions": "questões",
-			"per_question": "por questão",
-			"placeholder_title": "Avaliação de",
-			"status": {
-				"archived": "arquivado em"
-			}
-		},
-		"event": {
-			"default_title": "Novo evento",
-			"interacted_by": "marcou presença no evento",
-			"interacted_by_singular": "marcou presença no evento",
-			"status": {
-				"pending": "event em",
-				"archived": "arquivado em"
-			}
-		}
-	},
-	"settings": {
-		"title": "Configurações",
-		"wip": "Esta página ainda está em desenvolvimento.",
-		"sections": {
-			"account": "Conta",
-			"connections": "Conexões",
-			"preferences": "Preferências",
-			"customization": "Personalização",
-			"language": "Idioma",
-			"logout": "Sair"
-		}
-	}
+    "landing": {
+        "title": "Organize seus estudos.",
+        "subtitle": "Acabe de uma vez por todas com revisões desesperadas 15 minutos antes da prova.",
+        "button": "Criar uma conta",
+        "early_access_new": "Novo na",
+        "early_access_landscape": "Múltiplas linguagens, temas de cores, modo escuro (beta) e muito mais!",
+        "early_access_portrait": "Múltiplas linguagens, temas de cores, modo escuro (beta) e muito mais!",
+        "login": "Entrar",
+        "register": "Criar uma conta",
+        "greeting": "feito com ❤️ por",
+        "section1": {
+            "header": {
+                "title": "Uma nova forma de estudar.",
+                "subtitle": "Atividades, avaliações e eventos. Todas as suas necessidades em um só lugar."
+            },
+            "description": "O estudaí foi desenhado desde o princípio para ajudar estudantes de todos os tipos. Em todas as situações.\n\nSeja pra evitar revisões desesperadas próximo ao prazo.\n\nSeja pra unir uma comunidade de pessoas que buscam o mesmo tipo de conhecimento.",
+            "call": "O estudaí é a escolha certa pra você.",
+            "features": [
+                "Revisões",
+                "Pomodoro",
+                "Foco",
+                "Comunidade",
+                "Educação",
+                "Marketplace",
+                "Aulas",
+                "Estudos",
+                "Acadêmico",
+                "Turmas",
+                "Trabalhos em grupo"
+            ]
+        },
+        "section2": {
+            "header": {
+                "title": "Participe de comunidades.\nCrie conexões.",
+                "subtitle": "Encontre Grupos criados por estudantes como você, todos compartilhando um interesse em comum por um tópico educacional específico."
+            },
+            "highlights": {
+                "title": "Comunidades em destaque"
+            },
+            "call": {
+                "link": "Junte-se a uma comunidade",
+                "text": "e amplie suas oportunidades de aprendizado."
+            }
+        },
+        "section3": {
+            "header": {
+                "title": "Anexar nunca foi tão fácil.",
+                "subtitle": "Links, documentos, apresentações. Todos os seus arquivos em um só lugar."
+            },
+            "row1": {
+                "description": "Marque e desmarque. A qualquer hora.\n\nAcompanhe o seu progresso individual ou o progresso do grupo e tenha o controle de quais tarefas precisam ser concluídas.",
+                "call": "Nunca mais se esqueça de uma tarefa."
+            },
+            "row2": {
+                "description": "Todos os seus links favoritos, de fácil acesso.\n\nNunca mais passe horas procurando uma fonte, referência ou artigo importante perdido nas profundezas do histórico."
+            }
+        },
+        "section4": {
+            "header": {
+                "title": "100% gratuito. Para sempre.",
+                "subtitle": "Prezamos por um serviço de qualidade, acessível a todos. Nosso compromisso é ajudar estudantes como você, independentemente de sua renda. ",
+                "call": "Queremos que o estudaí seja uma comunidade de aprendizagem colaborativa, **feita_por_estudantes_e_para_estudantes.**"
+            },
+            "content": {
+                "description": "Acreditamos que o acesso à educação de qualidade deve estar disponível para todos, e é por isso que construímos essa plataforma.\n\nNossa missão é fornecer um ambiente online onde estudantes possam organizar sua rotina, encontrar recursos educacionais, tirar dúvidas, compartilhar conhecimento e se conectar com outros estudantes.\nQueremos criar uma comunidade vibrante e solidária, onde todos possam aprender e crescer juntos.\n\nPara mais informações, {{leia nosso artigo}} ou acesse o repositório do projeto no Github.",
+                "button": "Acessar repositório no Github"
+            }
+        },
+        "section5": {
+            "title": "Transforme seu método de estudos.",
+            "description": "Organize sua rotina, interaja com outros estudantes e acelere seu aprendizado.\nJunte-se a nossa comunidade e transforme sua jornada educacional agora mesmo."
+        }
+    },
+    "empty": {
+        "title": "Um pouco vazio por aqui, não?",
+        "tasks": "Adicione uma nova tarefa com o botão acima para fazê-la aparecer aqui!"
+    },
+    "auth": {
+        "footer": {
+            "back": "Voltar"
+        },
+        "google_login_button": "Entrar com o Google",
+        "scope_missing": {
+            "title": "Deseja conectar-se ao Google Drive?",
+            "bold": "Para anexar arquivos na plataforma precisamos do acesso ao Google Drive.",
+            "text": "Dessa maneira, seremos capazes de enviar os anexos que você escolher e guardá-los de maneira organizada em sua conta.",
+            "buttons": {
+                "accept": "Conectar com o Google Drive",
+                "deny": "Não, prefiro configurar isso depois"
+            }
+        },
+        "error": {
+            "title": "Eita!",
+            "bold": "Parece que tivemos um problema interno no servidor. :(",
+            "text": "Provavelmente já estamos trabalhando o mais rápido possível para resolver isso.\nVocê pode tentar reiniciar a página, mas se o problema persistir, entre em contato conosco diretamente."
+        },
+        "login": {
+            "title": "Log in",
+            "subtitle": "Entre com sua conta para aproveitar todas as funcionalidades da plataforma.",
+            "no_account": {
+                "title": "Eita!",
+                "subtitle": "Parece que você ainda não criou sua conta na plataforma.\nO que está esperando? Crie sua conta agora para aproveitar todas as funcionalidades de uma conta estudaí.",
+                "button": "Criar uma conta"
+            },
+            "button": "Log in",
+            "forgot": "Esqueceu sua senha?",
+            "footer": {
+                "no_account": "Não tem uma conta?",
+                "register": "Criar uma conta"
+            }
+        },
+        "register": {
+            "account_already_exists": {
+                "title": "Eita!",
+                "bold": "Parece que você já tem uma conta na plataforma.",
+                "text": "Nós já logamos você com sua conta Google, então você pode começar a usar a plataforma agora mesmo."
+            },
+            "section1": {
+                "title": "Organize seus estudos.",
+                "subtitle": "Escolha em que tipo de curso você se encaixa para que possamos preparar a plataforma para você.",
+                "card1": {
+                    "title": "Estou cursando o ensino fundamental",
+                    "subtitle": "Preciso de ajuda para revisar assuntos base"
+                },
+                "card2": {
+                    "title": "Estou cursando o ensino médio",
+                    "subtitle": "Preciso de ajuda para organizar horários e ter sanidade mental"
+                },
+                "card3": {
+                    "title": "Estou cursando o ensino superior",
+                    "subtitle": "Preciso de ajuda para organizar horários e ter sanidade mental sem recorrer às drogas e/ou outros métodos ilícitos"
+                },
+                "no_choice": "Não possuo filiação a nenhuma instituição de ensino",
+                "footer": {
+                    "has_account": "Já tem uma conta?",
+                    "login": "Log in"
+                }
+            },
+            "section2": {
+                "title": "Criar sua conta",
+                "subtitle": "Agora que já sabemos do que você precisa, entre com sua conta Google abaixo para cadastrar-se na plataforma.",
+                "google_drive": {
+                    "bold": "Usamos o Google Drive para armazenar seus arquivos, então, lembre-se de permitir o acesso!",
+                    "text": "Se o acesso não for permitido, você não poderá enviar anexos nas atividades."
+                },
+                "terms": {
+                    "condition": "Ao criar uma conta, você concorda com nossos",
+                    "terms": "Termos de Serviço",
+                    "and": "e",
+                    "privacy": "Política de Privacidade"
+                }
+            },
+            "section2_1": {
+                "title": "Estamos criando sua conta",
+                "subtitle": "Não se preocupe, estamos apertando alguns botões e virando algumas alavancas para criar sua conta!"
+            },
+            "section3": {
+                "title": "Estamos prontos!",
+                "subtitle": "Sua conta foi criada com sucesso!\nAproveite todas as funcionalidades da plataforma e organize seus estudos de uma vez por todas.",
+                "button": "Entrar na plataforma"
+            }
+        }
+    },
+    "modal": {
+        "default": {
+            "cancel": "Cancelar",
+            "return": "Voltar"
+        },
+        "logout": {
+            "title": "Sair da plataforma",
+            "description": "Tem certeza que deseja sair da plataforma? Você precisará logar novamente para acessar sua conta.",
+            "button": "Deslogar"
+        }
+    },
+    "profile": {
+        "pending": {
+            "pending": "Você tem uma tarefa pendente",
+            "pending_plural": "Você tem {{count}} tarefas pendentes",
+            "no_pending": "Você não possui tarefas pendentes"
+        },
+        "greetings": {
+            "morning": "Bom dia",
+            "afternoon": "Boa tarde",
+            "evening": "Boa noite",
+            "night": "Boa noite"
+        }
+    },
+    "home": {
+        "title": "Minhas tarefas",
+        "add_task": "Adicionar tarefa",
+        "sections": {
+            "pending": "Pendente",
+            "other": "Outros",
+            "archived": "Arquivado"
+        },
+        "empty_archived": "Você não possui tarefas arquivadas.",
+        "intro_modal": {
+            "modal1": {
+                "title": "Bem-vindo ao estudaí",
+                "description": "Estamos felizes em ter você aqui.\nAqui estão algumas dicas rápidas para você aproveitar todas as funcionalidades."
+            },
+            "modal2": {
+                "title": "Organize seus estudos",
+                "description": "Salve atividades, avaliações e eventos na plataforma para evitar aquela correria momentos antes da data de entrega."
+            },
+            "modal3": {
+                "title": "Mantenha-se em dia com seus compromissos",
+                "description": "Participe e crie grupos comunitários para unir aquela galera que tem os mesmos objetivos que você."
+            },
+            "modal4": {
+                "title": "Acompanhe o progresso de suas tarefas",
+                "description": "Marque anexos e links enviados por outros usuários em tarefas e tenha o controle de quais materiais você já utilizou."
+            },
+            "modal5": {
+                "title": "Desbrave e aproveite",
+                "description": "Aproveite todas as funcionalidades (inclusive o foco!) que preparamos com carinho para você e bom aprendizado!"
+            }
+        }
+    },
+    "tasks": {
+        "and": "e",
+        "memberPortraits": {
+            "others": "+ de",
+            "member": "membro",
+            "member_plural": "membros",
+            "empty": "nenhum membro concluiu esta tarefa ainda"
+        },
+        "obligatoriness": {
+            "mandatory": "Obrigatório",
+            "optional": "Opcional"
+        },
+        "new": {
+            "title": "Criar uma nova tarefa",
+            "tasks": {
+                "activity": {
+                    "title": "Criar atividade",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+                },
+                "test": {
+                    "title": "Criar avaliação",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+                },
+                "event": {
+                    "title": "Criar evento",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam in turpis sit amet augue ullamcorper egestas."
+                }
+            }
+        },
+        "activity": {
+            "points": "pontos",
+            "restrictions": {
+                "individual": "Individual",
+                "group": "Em grupo"
+            },
+            "no_description": "nenhuma descrição enviada",
+            "placeholder_title": "Atividade de",
+            "interacted_by": "concluíram essa atividade",
+            "interacted_by_singular": "concluiu essa atividade",
+            "status": {
+                "pending": "entrega até",
+                "concluded": "completado em",
+                "archived": "arquivado em"
+            }
+        },
+        "test": {
+            "questions": "questões",
+            "per_question": "por questão",
+            "placeholder_title": "Avaliação de",
+            "status": {
+                "archived": "arquivado em"
+            }
+        },
+        "event": {
+            "default_title": "Novo evento",
+            "interacted_by": "marcou presença no evento",
+            "interacted_by_singular": "marcou presença no evento",
+            "status": {
+                "pending": "event em",
+                "archived": "arquivado em"
+            }
+        }
+    },
+    "settings": {
+        "title": "Configurações",
+        "wip": "Esta página ainda está em desenvolvimento.",
+        "sections": {
+            "account": "Conta",
+            "connections": "Conexões",
+            "preferences": "Preferências",
+            "customization": "Personalização",
+            "language": "Idioma",
+            "logout": "Sair"
+        }
+    }
 }

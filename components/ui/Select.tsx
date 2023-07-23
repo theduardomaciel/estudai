@@ -71,7 +71,7 @@ const SelectLabel = React.forwardRef<
     <SelectPrimitive.Label
         ref={ref}
         className={cn(
-            "py-1.5 pl-8 pr-2 text-sm font-semibold text-primary-03",
+            "py-1.5 pl-8 pr-2 text-xs font-semibold text-primary-03",
             className
         )}
         {...props}
@@ -86,9 +86,10 @@ const SelectItem = React.forwardRef<
     <SelectPrimitive.Item
         ref={ref}
         className={cn(
-            "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-xs outline-none focus:bg-background-04 focus:text-font-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+            "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-8 pr-2 text-xs outline-none focus:bg-background-04 focus:text-primary-03 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
             className
         )}
+        /* py-1.5 */
         {...props}
     >
         <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
@@ -114,44 +115,8 @@ const SelectSeparator = React.forwardRef<
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
-interface RootProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export const Root = ({ className, children, ...props }: RootProps) => {
-    return (
-        <div
-            className={cn(
-                "flex flex-col gap-1.5 items-start relative w-full min-h-fit",
-                className
-            )}
-            {...props}
-        >
-            {children}
-        </div>
-    );
-};
-Root.displayName = "Select.Root";
-
-interface LabelProps extends React.HTMLAttributes<HTMLLabelElement> {}
-
-export const Label = ({ className, children, ...props }: LabelProps) => {
-    return (
-        <label
-            className={cn(
-                "font-karla font-bold text-sm text-primary-03 select-none pointer-events-none",
-                className
-            )}
-            {...props}
-        >
-            {children}
-        </label>
-    );
-};
-Root.displayName = "Select.Label";
-
-const SelectNamespace = Object.assign(Select, { Root: Root, Label: Label });
-
 export {
-    SelectNamespace as Select,
+    Select,
     SelectGroup,
     SelectValue,
     SelectTrigger,

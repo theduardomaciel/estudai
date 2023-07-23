@@ -75,6 +75,7 @@
         --menu-width: 60rem;
         --sidebar-width: 10rem;
         --sidebar-height: 10rem;
+        --scrollbar-width: 1.2rem;
 
         --primary-01: #6628ca;
         --primary-02: #7642cb;
@@ -217,23 +218,9 @@ ul {
     margin-inline-end: 0px;
 }
 
-/* Custom Classes */
-
-.row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    width: 100%;
-}
-
-.click {
-    cursor: pointer;
-}
-
-.static {
-    user-select: none;
+input[type="file"],
+input[type="submit"] {
+    display: none;
 }
 
 .header {
@@ -248,13 +235,9 @@ ul {
     flex-wrap: wrap;
 }
 
-.bold {
-    font-weight: 700;
-}
-
 .title {
     color: var(--primary-02);
-    font-family: "Inter";
+    font-family: var(--font-inter);
     font-style: normal;
     font-weight: 700;
     font-size: 2.4rem;
@@ -262,25 +245,8 @@ ul {
     width: 100%;
 }
 
-.full {
-    min-width: 100%;
-}
-
-.underline {
-    text-decoration: underline;
-}
-
-input[type="file"],
-input[type="submit"] {
-    display: none;
-}
-
 @media (min-width: 1024px) {
     .title {
-        width: fit-content;
-    }
-
-    .full {
         width: fit-content;
     }
 }
@@ -291,33 +257,6 @@ input[type="number"]::-webkit-outer-spin-button {
     appearance: none;
 }
 
-.hoverLink {
-    cursor: pointer;
-}
-
-.hoverLink:hover p {
-    text-decoration: underline;
-}
-
-.hoverLink:hover span {
-    transform: scale(1.05);
-}
-
-.hoverLink span {
-    transform: scale(1);
-    font-size: 1.8rem;
-
-    transition: 0.3s;
-}
-
-.iconHolder {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    align-items: center;
-    justify-content: flex-start;
-}
-
 /* Grab */
 .grabbable {
     cursor: move; /* fallback if grab cursor is unsupported */
@@ -326,7 +265,7 @@ input[type="number"]::-webkit-outer-spin-button {
     cursor: -webkit-grab;
 }
 
-/* (Optional) Apply a "closed-hand" cursor during drag operation. */
+/* Apply a "closed-hand" cursor during drag operation. */
 .grabbable:active {
     cursor: grabbing;
     cursor: -moz-grabbing;
@@ -343,7 +282,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 /* Chrome, Edge, and Safari */
 .scrollbar::-webkit-scrollbar {
-    width: 1.2rem;
+    width: var(--scrollbar-width);
 }
 
 .scrollbar::-webkit-scrollbar-track {
@@ -354,8 +293,21 @@ input[type="number"]::-webkit-outer-spin-button {
     border: 0.4rem solid rgba(0, 0, 0, 0);
     background-clip: padding-box;
     border-radius: 9999px;
+    background-color: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: var(--light-gray);
-    opacity: 0.5;
+}
+
+.scrollBarHidden::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollBarHidden {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
 /* Mark */

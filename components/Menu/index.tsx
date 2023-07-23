@@ -17,7 +17,7 @@ interface Props {
 export default function Menu({ children, isFlex }: Props) {
     return (
         <div
-            className={cn(styles.holder, {
+            className={cn(styles.holder, "scrollbar", {
                 [styles.flex]: isFlex,
             })}
         >

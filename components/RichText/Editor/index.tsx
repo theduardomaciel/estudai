@@ -27,7 +27,7 @@ import { EditLinkPlugin } from "./plugins/EditLink";
 
 // Components
 import Section, {
-    Header as SectionHeader,
+    SectionHeader,
     SectionHeaderProps,
 } from "@/components/Section";
 import { OpenLinkPlugin } from "./plugins/OpenLink";

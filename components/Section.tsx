@@ -24,7 +24,7 @@ export interface SectionHeaderProps {
     children?: React.ReactNode;
 }
 
-export function Header({ title, children }: SectionHeaderProps) {
+export function SectionHeader({ title, children }: SectionHeaderProps) {
     return (
         <div className="w-full justify-between items-start gap-[25px] inline-flex flex-wrap lg:flex-nowrap">
             <div className="px-4 py-2 bg-primary-04 rounded-md justify-start items-start gap-2.5 inline-flex">

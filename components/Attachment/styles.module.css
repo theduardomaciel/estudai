@@ -1,0 +1,66 @@
+.attachment {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem;
+    gap: 1.25rem;
+
+    width: fit-content;
+    min-width: 12.5rem;
+    max-width: 30rem;
+
+    z-index: 7;
+
+    background: var(--background-01);
+    user-select: none;
+
+    border: 1px dashed var(--primary-04);
+    border-radius: 1rem;
+}
+
+.attachment .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.attachment .header .close {
+    color: var(--primary-02);
+    /* font-size: 1.8rem; */
+    cursor: pointer;
+}
+
+.attachment svg path {
+    fill: var(--primary-02);
+}
+
+.attachment .fileName {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+
+    max-width: 100%;
+    word-break: break-all;
+
+    color: var(--primary-02);
+}
+
+.attachment.hovered {
+    border: 1px solid var(--primary-02);
+    animation: pulseAnimation 1s infinite;
+}
+
+@keyframes pulseAnimation {
+    0% {
+        outline: 1px dashed var(--primary-04);
+    }
+    /* 50% {
+        outline: 1.5rem solid rgba(118, 66, 203, 0.5);
+    } */
+    100% {
+        outline: 3px dashed var(--primary-04);
+    }
+}

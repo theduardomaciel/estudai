@@ -11,7 +11,8 @@
     height: 100%;
     width: 100vw;
 
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     transform: translateX(-100%);
 
     z-index: 10;
@@ -22,7 +23,16 @@
     transition: 550ms;
 }
 
-/* .holder h6 {
+/* .holder::-webkit-scrollbar {
+    display: none;
+}
+
+.holder {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+} */
+
+/* .holder h5 {
     font-family: 'Raleway';
     font-style: normal;
     font-weight: 700;
@@ -76,17 +86,6 @@
     flex-wrap: wrap;
 }
 
-.content::-webkit-scrollbar {
-    display: none;
-}
-
-.content {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-}
-
 .holder header {
     display: flex;
     flex-direction: column;
@@ -104,6 +103,7 @@
         position: relative;
         width: var(--menu-width);
         min-width: fit-content;
+        overflow-y: scroll;
 
         border-top: 0px;
         border-left: 1px solid var(--light-gray);
@@ -116,5 +116,10 @@
         position: relative;
         width: fit-content;
         height: 100%;
+    }
+
+    .holder.flex .content {
+        padding: 3.5rem;
+        padding-right: calc(3.5rem - var(--scrollbar-width));
     }
 }
