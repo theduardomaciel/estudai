@@ -57,6 +57,10 @@ export function ModalButton({ className, children, ...rest }: ButtonProps) {
     );
 }
 
+export function ModalWrapper({ children }: { children: React.ReactNode }) {
+    return <AnimatePresence mode="wait">{children}</AnimatePresence>;
+}
+
 export default function Modal({
     title,
     style,
@@ -83,101 +87,97 @@ export default function Modal({
     };
 
     return (
-        <AnimatePresence mode="wait">
+        <motion.div
+            className={styles.background}
+            key={`$background-${title}`}
+            id="background"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={handleBackgroundClick}
+            /* {...rest} */
+        >
             <motion.div
-                className={styles.background}
-                key={`$background-${title}`}
-                id="background"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                onClick={handleBackgroundClick}
-                /* {...rest} */
+                className={cn(
+                    styles.container,
+                    "flex max-w-[90vw] max-h-[90vh] lg:max-w-[57rem] lg:min-w-[35vw] overflow-y-auto flex-col items-center gap-9 p-13",
+                    "rounded-2xl bg-background-01",
+                    className
+                )}
+                key="modalContent"
+                style={style}
+                initial={{ y: 300, x: 0, opacity: 0 }}
+                animate={{ y: 0, x: 0, opacity: 1 }}
+                exit={{ y: 300, x: 0, opacity: 0 }}
+                transition={{ type: "spring", duration: 0.45 }}
             >
-                <motion.div
-                    className={cn(
-                        styles.container,
-                        "flex max-w-[90vw] max-h-[90vh] lg:max-w-[57rem] lg:min-w-[35vw] overflow-y-auto flex-col items-center gap-9 p-13",
-                        "rounded-2xl bg-background-01",
-                        className
-                    )}
-                    key="modalContent"
-                    style={style}
-                    initial={{ y: 300, x: 0, opacity: 0 }}
-                    animate={{ y: 0, x: 0, opacity: 1 }}
-                    exit={{ y: 300, x: 0, opacity: 0 }}
-                    transition={{ type: "spring", duration: 0.65 }}
+                <div
+                    className={
+                        "flex flex-row items-start justify-between self-stretch"
+                    }
                 >
                     <div
                         className={
-                            "flex flex-row items-start justify-between self-stretch"
+                            "flex flex-col justify-center items-center lg:items-start gap-5"
                         }
                     >
-                        <div
-                            className={
-                                "flex flex-col justify-center items-center lg:items-start gap-5"
-                            }
+                        {
+                            Icon && (
+                                <div
+                                    style={{
+                                        backgroundColor: color,
+                                        padding:
+                                            iconPresets[
+                                                headerProps?.preset ?? "default"
+                                            ].padding,
+                                    }}
+                                    className={styles.iconHolder}
+                                >
+                                    <Icon
+                                        className="icon"
+                                        color={"var(--neutral)"}
+                                        fontSize={
+                                            iconPresets[
+                                                headerProps?.preset ?? "default"
+                                            ].size
+                                        }
+                                    />
+                                </div>
+                            )
+                            /*  */
+                        }
+                        <h2>{title}</h2>
+                    </div>
+                    {!suppressReturn && includeClose && (
+                        <CloseIcon
+                            className={`${styles.closeIcon} icon`}
+                            color="var(--primary-02)"
+                            fontSize={"4.8rem"}
+                            onClick={() => router.back()}
+                        />
+                    )}
+                </div>
+
+                {children}
+
+                <div className="flex flex-col lg:flex-row items-center justify-start lg:justify-between gap-3.5 self-stretch w-full">
+                    {!suppressReturn && (
+                        <Button
+                            onClick={() => router.back()}
+                            className={DEFAULT_BUTTON_CLASSES}
+                            preset="neutral"
                         >
-                            {
-                                Icon && (
-                                    <div
-                                        style={{
-                                            backgroundColor: color,
-                                            padding:
-                                                iconPresets[
-                                                    headerProps?.preset ??
-                                                        "default"
-                                                ].padding,
-                                        }}
-                                        className={styles.iconHolder}
-                                    >
-                                        <Icon
-                                            className="icon"
-                                            color={"var(--neutral)"}
-                                            fontSize={
-                                                iconPresets[
-                                                    headerProps?.preset ??
-                                                        "default"
-                                                ].size
-                                            }
-                                        />
-                                    </div>
-                                )
-                                /*  */
-                            }
-                            <h2>{title}</h2>
-                        </div>
-                        {!suppressReturn && includeClose && (
                             <CloseIcon
-                                className={`${styles.closeIcon} icon`}
-                                color="var(--primary-02)"
-                                fontSize={"4.8rem"}
-                                onClick={() => router.back()}
+                                className={`icon text-font-light`}
+                                fontSize={`2.4rem`}
                             />
-                        )}
-                    </div>
-
-                    {children}
-
-                    <div className="flex flex-col lg:flex-row items-center justify-start lg:justify-between gap-3.5 self-stretch w-full">
-                        {!suppressReturn && (
-                            <Button
-                                onClick={() => router.back()}
-                                className={DEFAULT_BUTTON_CLASSES}
-                                preset="neutral"
-                            >
-                                <CloseIcon
-                                    className={`icon text-font-light`}
-                                    fontSize={`2.4rem`}
-                                />
-                                {dict.cancel}
-                            </Button>
-                        )}
-                        {buttons}
-                    </div>
-                </motion.div>
+                            {dict.cancel}
+                        </Button>
+                    )}
+                    {buttons}
+                </div>
             </motion.div>
-        </AnimatePresence>
+        </motion.div>
     );
 }

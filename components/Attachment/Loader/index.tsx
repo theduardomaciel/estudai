@@ -84,11 +84,11 @@ export default function AttachmentLoader() {
                             ou
                         </p>
                         <Button
-                            className="py-1 px-4 shadow-none w-fit border-primary-04 text-primary-04 text-xs z-30"
+                            className="p-0 shadow-none w-fit border-primary-04 text-primary-04 text-xs z-20"
                             preset={["secondary", "neutral"]}
                         >
                             <label
-                                className="flex flex-1 cursor-pointer"
+                                className="flex py-1 px-4 cursor-pointer"
                                 htmlFor="attachmentUpload"
                             >
                                 Procure arquivos

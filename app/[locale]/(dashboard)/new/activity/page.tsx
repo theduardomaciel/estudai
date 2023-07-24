@@ -8,7 +8,7 @@ import Editor from "@/components/RichText/Editor";
 import Calendar from "@/components/Calendar";
 import TaskNameEdit from "@/components/TaskNameEdit";
 import AttachmentLoader from "@/components/Attachment/Loader";
-import Button from "@/components/ui/Button";
+import AutoSave from "@/components/AutoSave";
 
 import NewActivitySettings from "./settings";
 
@@ -37,18 +37,21 @@ export default function Page({
     return (
         <>
             <div className="flex flex-1 h-full flex-col items-start gap-[3.5rem] px-[5rem] py-[3.5rem] overflow-y-scroll overflow-x-hidden scrollbar">
-                <Navigator
-                    directories={[
-                        {
-                            name: "Minhas tarefas",
-                            href: "/",
-                        },
-                        {
-                            name: "Nova atividade",
-                        },
-                    ]}
-                    customTitle={<TaskNameEdit />}
-                />
+                <header className="flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-between w-full gap-2.5">
+                    <Navigator
+                        directories={[
+                            {
+                                name: "Minhas tarefas",
+                                href: "/",
+                            },
+                            {
+                                name: "Nova atividade",
+                            },
+                        ]}
+                        customTitle={<TaskNameEdit />}
+                    />
+                    <AutoSave />
+                </header>
                 <div className="w-full justify-between items-start gap-[25px] inline-flex flex-1 flex-wrap">
                     <Editor title="Descrição" maxLength={650} />
                     <SubjectsSelector />
@@ -69,13 +72,13 @@ export default function Page({
                     <NewActivitySettings />
                 </div>
                 {/* <div className="flex flex-1 bg-transparent" /> */}
-                <Button preset={"submit"} className="w-full uppercase">
+                {/* <Button preset={"submit"} className="w-full uppercase">
                     <PlaneIcon
                         className="icon group-hover:translate-x-2 transition-transform"
                         fontSize={"2.4rem"}
                     />
                     Enviar Atividade
-                </Button>
+                </Button> */}
             </Menu>
         </>
     );

@@ -11,7 +11,7 @@ import ChevronLeft from "@material-symbols/svg-600/rounded/chevron_left.svg";
 import ChevronRight from "@material-symbols/svg-600/rounded/chevron_right.svg";
 
 // Components
-import Modal, { ModalButton } from "@/components/ui/Modal";
+import Modal, { ModalButton, ModalWrapper } from "@/components/ui/Modal";
 
 // Internationalization
 import { Translations } from "@/i18n/hooks";
@@ -113,31 +113,33 @@ export default function SettingsAside({ dict, modalDict }: Props) {
                 color={"var(--primary-02)"}
                 fontSize={"2.4rem"}
             />
-            {showLogoutModal && (
-                <Modal
-                    icon={ExitIcon}
-                    color={`var(--primary-02)`}
-                    title={modalDict.logout.title}
-                    buttons={[
-                        <ModalButton
-                            className="w-full"
-                            onClick={() => {
-                                setLoading(true);
-                                signOut();
-                            }}
-                            isLoading={isLoading}
-                        >
-                            <ExitIcon className="icon text-2xl text-neutral" />
-                            {modalDict.logout.button}
-                        </ModalButton>,
-                    ]}
-                    suppressReturn={isLoading}
-                    headerProps={{ preset: "big" }}
-                    dict={modalDict.default}
-                >
-                    <p>{modalDict.logout.description}</p>
-                </Modal>
-            )}
+            <ModalWrapper>
+                {showLogoutModal && (
+                    <Modal
+                        icon={ExitIcon}
+                        color={`var(--primary-02)`}
+                        title={modalDict.logout.title}
+                        buttons={[
+                            <ModalButton
+                                className="w-full"
+                                onClick={() => {
+                                    setLoading(true);
+                                    signOut();
+                                }}
+                                isLoading={isLoading}
+                            >
+                                <ExitIcon className="icon text-2xl text-neutral" />
+                                {modalDict.logout.button}
+                            </ModalButton>,
+                        ]}
+                        suppressReturn={isLoading}
+                        headerProps={{ preset: "big" }}
+                        dict={modalDict.default}
+                    >
+                        <p>{modalDict.logout.description}</p>
+                    </Modal>
+                )}
+            </ModalWrapper>
         </div>
     );
 }

@@ -201,7 +201,7 @@ export default function Calendar({
                 >
                     {currentMonth.current !== 0 ? (
                         <ArrowLeft
-                            className={`icon click static`}
+                            className={`icon cursor-pointer select-none`}
                             onClick={decreaseMonth}
                         >
                             chevron_left
@@ -212,7 +212,7 @@ export default function Calendar({
                     <p>{months[currentMonth.current]}</p>
                     {currentMonth.current !== 11 ? (
                         <ArrowRight
-                            className={`icon click static`}
+                            className={`icon cursor-pointer select-none`}
                             onClick={increaseMonth}
                         >
                             chevron_right
