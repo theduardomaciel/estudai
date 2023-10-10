@@ -27,7 +27,10 @@ import { Error, Footer, ScopeMissing } from "../components/Sections";
 // Authentication
 import { useGoogleLogin } from "@react-oauth/google";
 import { signIn } from "@/lib/auth";
-import { Course } from "@prisma/client";
+
+// Interfaces
+import type { Course } from "@prisma/client";
+import type { Translations } from "@/i18n/hooks";
 
 const unselectedStyle = {
     padding: "2rem 2.5rem",
@@ -91,7 +94,7 @@ const INTERVAL_TIME = 4;
 
 interface Props {
     code?: string;
-    dict: any;
+    dict: Translations["auth"];
 }
 
 export default function RegisterForm({ code, dict }: Props) {
@@ -376,12 +379,12 @@ export default function RegisterForm({ code, dict }: Props) {
             </header>
             <Link
                 href={{ pathname: "/home", query: { newAccount: true } }}
+                shallow={false}
                 style={{ width: "100%" }}
             >
-                <Button
-                    style={{ padding: "1rem 1.5rem", width: "100%" }}
-                    title={t.section3.button}
-                />
+                <Button style={{ padding: "1rem 1.5rem", width: "100%" }}>
+                    {t.section3.button}
+                </Button>
             </Link>
             <Separator style={separator} orientation="horizontal" />
         </motion.div>

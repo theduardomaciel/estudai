@@ -254,14 +254,13 @@ export default function Calendar({
                             <Link
                                 key={index.toString()}
                                 href={{
-                                    pathname: "/tasks/new",
+                                    pathname: "/new",
                                     query: {
                                         date: `${currentYear}-${calendarMonth}-${
                                             day + 1
                                         }`,
                                     },
                                 }}
-                                as={`/tasks/new`}
                             >
                                 {children}
                             </Link>

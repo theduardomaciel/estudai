@@ -43,8 +43,10 @@ export default function NewActivitySettings() {
                 </RadioGroup>
             </Root>
             <Root className="flex-row justify-between">
-                <Label>A atividade é obrigatória?</Label>
-                <Switch />
+                <Label htmlFor="activity-obligatoriness">
+                    A atividade é obrigatória?
+                </Label>
+                <Switch id="activity-obligatoriness" />
             </Root>
             <Accordion type="single" collapsible className="flex w-full">
                 <AccordionItem value="item-1">

@@ -10,7 +10,7 @@ export default function TaskNameEdit() {
                 e.target.value || (e.target.value = "Nova atividade")
             }
             maxLength={50}
-            className="bg-transparent text-2xl placeholder:text-primary-02 text-primary-02 w-fit"
+            className="bg-transparent text-2xl placeholder:text-primary-02 text-primary-02 w-fit ring-0 outline-none"
         />
     );
 }

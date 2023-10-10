@@ -6,6 +6,8 @@ import PersonIcon from "@material-symbols/svg-600/rounded/person-fill.svg";
 import GenericIcon from "@material-symbols/svg-600/rounded/motion_mode.svg";
 
 export default function GroupPreview() {
+    const dummyArray = new Array(3).fill(0);
+
     return (
         <li className="flex flex-col items-center justify-start relative p-0 border border-primary-03 rounded-lg shadow-md overflow-hidden min-w-[28rem]">
             <div className="flex flex-col min-h-[15rem]"></div>
@@ -35,7 +37,8 @@ export default function GroupPreview() {
                 </div>
                 <footer className="flex flex-row items-center justify-between w-full">
                     <ul className="flex flex-row items-center justify-start">
-                        {[0, 0, 0, 0, 0].map((_, index) => (
+                        {/* 
+                            {dummyArray.map((_, index) => (
                             <Image
                                 width={20}
                                 height={20}
@@ -47,6 +50,17 @@ export default function GroupPreview() {
                                 alt="Profile picture"
                             />
                         ))}
+                        */}
+                        <Image
+                            width={20}
+                            height={20}
+                            className="rounded-full"
+                            style={{
+                                marginLeft: 0,
+                            }}
+                            src="https://github.com/theduardomaciel.png"
+                            alt="Profile picture"
+                        />
                     </ul>
                     <div className="flex flex-row items-center justify-center gap-1">
                         <PersonIcon

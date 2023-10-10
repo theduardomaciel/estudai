@@ -32,7 +32,8 @@ export default function Page({
     params: { slug: string };
     searchParams: { search?: string };
 }) {
-    const t = useTranslations().tasks.new;
+    const dict = useTranslations();
+    const t = dict.tasks.new;
 
     return (
         <>

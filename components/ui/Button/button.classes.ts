@@ -1,5 +1,5 @@
 export const DEFAULT = [
-    "flex flex-row items-center justify-center relative gap-4 px-4 py-2 bg-primary-02 text-neutral visited:text-neutral border border-solid border-primary-04 rounded-base font-karla font-bold text-sm cursor-pointer duration-[450ms] z-10 select-none",
+    "flex flex-row items-center justify-center relative gap-4 px-4 py-2 bg-primary-02 text-neutral visited:text-neutral border border-solid border-primary-04 rounded-base font-karla font-bold text-sm cursor-pointer duration-350 z-10 select-none",
     "disabled:cursor-not-allowed disabled:opacity-50",
     "transition-[all_265ms] ease-in-out",
 ];

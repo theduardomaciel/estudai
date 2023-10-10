@@ -17,15 +17,18 @@ const Root = ({ className, children, ...props }: RootProps) => {
 };
 Root.displayName = "Root";
 
-interface LabelProps extends React.HTMLAttributes<HTMLLabelElement> {}
+interface LabelProps extends React.HTMLAttributes<HTMLLabelElement> {
+    htmlFor?: string;
+}
 
-const Label = ({ className, children, ...props }: LabelProps) => {
+const Label = ({ className, children, htmlFor, ...props }: LabelProps) => {
     return (
         <label
             className={cn(
                 "font-karla font-bold text-sm text-primary-03 select-none pointer-events-none max-w-full",
                 className
             )}
+            htmlFor={htmlFor}
             {...props}
         >
             {children}
