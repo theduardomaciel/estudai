@@ -10,7 +10,7 @@ Uma plataforma de organização de estudos online que ajudará você a revisar e
 
 #### 🧭 Disponível para Web. Atualmente inativo para manutenção.
 
-> [!NOTA]
+> [!NOTE]
 > O design frontend, mockup e protótipo do projeto [está disponível no Figma](https://www.figma.com/design/oouRCiS0qlC3PS0UaRxXZC/officia?node-id=2338-8625&t=0YMqzfzhDGpA4dKT-1).
 
 <br />
