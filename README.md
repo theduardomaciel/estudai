@@ -4,22 +4,36 @@
 
 ![cover](.github/cover.png?style=flat)
 
-## 💻 Project
+## 💻 Projeto
 
-An online study organization platform that will help you review and keep your subjects up to date. Enough of forgetting.
+Uma plataforma de organização de estudos online que ajudará você a revisar e manter seus assuntos atualizados. Chega de esquecimentos.
 
-## ✨ Technologies
+#### 🧭 Disponível para Web. Atualmente inativo para manutenção.
+
+> [!NOTA]
+> O design frontend, mockup e protótipo do projeto [está disponível no Figma](https://www.figma.com/design/oouRCiS0qlC3PS0UaRxXZC/officia?node-id=2338-8625&t=0YMqzfzhDGpA4dKT-1).
+
+<br />
+
+## ✨ Tecnologias
 
 -   [ ] HTML
 -   [ ] CSS
--   [ ] JavaScript
+-   [ ] TypeScript
 -   [ ] React
 -   [ ] Next.js
--   [ ] Radix
--   [ ] Stitches
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 <br />
+
+## 📷 Testes preliminares de divulgação
+
+Para visualizar como poderiam ser as futuras propagandas do serviço, alguns vídeos promocionais preliminares foram produzidos no After Effects.
+Os vídeos estão disponíveis em português e inglês, nas versões portrait (para dispositivos móveis) e landscape.
+
+Os vídeos podem ser [acessados aqui](https://drive.google.com/drive/folders/1hVrqrBvpRX7B9CqMhVr5DKWvLryI6T6Y?usp=sharing)
+
+<br />
+
+## 📄 Licença
+
+Este projeto é licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
